@@ -1,0 +1,15 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+<helloWorld> a elmo:Representation;
+	elmo:url-pattern "/query/helloWorld$";
+	elmo:appearance elmo:HtmlAppearance;
+	elmo:data [
+		rdfs:label "Hello World";
+		elmo:html '''
+			<h3>Hello World!</h3>
+			<p>This is the first of the Linked Data Theatre examples.</p>
+		''';
+	]
+.
