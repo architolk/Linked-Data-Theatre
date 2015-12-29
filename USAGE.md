@@ -1,5 +1,38 @@
 # Linked Data Theatre usage
 This documents gives a tutorial and a reference manual to the Linked Data Theatre vocabulary. All examples are also included in the /examples folder.
+## URI template and return formats
+The Linked Data Theatre uses a specific URL template to know which representation should be presented:
+
+- `http://{Domain Name}/{Subdomain}/id/{ref}` redirects (303) to:
+- `http://{Domain Name}/{Subdomain}/doc/{ref}` represents a page for the subject resource `http://{Domain Name}/{Subdomain}/id/{ref}`.
+- `http://{Domain Name}/{Subdomain}/resource?subject={Resource}` represents a page for the subject resource `{Resource}`. This is the LDT way for dereferenceable URI's. All links will get this URL, except for links that can use the "short" version (the second bullit). This will be the case if the `{Domain Name}` is the same as the domain name of the LDT server itself.
+- `http://{Domain Name}/{Subdomain}/query/{query}` represents any query page (you should create a represention configuration for these pages).
+- `http://{Domain Name}/{Subdomain}/container/{ref}` represents a container.
+
+The `{Subdomain}` part is optional and can be ommited.
+
+There are three ways to control the return format:
+
+- Using a http-accept header;
+- Using a known extension, for example: `http://{Domain Name}/{Subdomain}/resource.ttl?subject={Resource}`. This will return a turtle file.
+- Using the format parameter, for example: `http://{Domain Name}/{Subdomain}/resource?subject={Resource}&format=ttl`
+
+These formats are accepted by the Linked Data Theatre:
+
+| Ext | Accept-header                                                               | Format                        |
+|---------|-------------------------------------------------------------------------|-------------------------------|
+|         | text/html                                                               | (Default) HTML representation |
+| xml     | application/rdf+xml                                                     | RDF in XML format             |
+| txt     | text/plain                                                              | Plain text                    |
+| ttl     | text/turtle                                                             | RDF in turtle format          |
+| json    | application/json                                                        | RDF in json-ld format         |
+| xlsx    | application/vnd.openxmlformats-officedocument.spreadsheetml.sheet       | Microsoft Excel format        |
+| docx    | application/vnd.openxmlformats-officedocument.wordprocessingml.document | Microsoft Word format         |
+| xmi     | application/vnd.xmi+xml                                                 | XMI format                    |
+| graphml |                                                                         | Graphml                       |
+| yed     |                                                                         | Format of the yEd editor      |
+| query   |                                                                         | (Debugging) shows the query   |
+
 ## Examples to start with
 All examples use the following prefixes:
 
