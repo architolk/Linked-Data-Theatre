@@ -1,0 +1,635 @@
+#
+# NAME     elmo.ttl
+# VERSION  1.5.0
+# DATE     2016-01-05
+#
+# Copyright 2012-2016
+#
+# This file is part of the Linked Data Theatre.
+#
+# The Linked Data Theatre is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# The Linked Data Theatre is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with the Linked Data Theatre.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix void: <http://rdfs.org/ns/void#>.
+@prefix sh: <http://www.w3.org/ns/shacl#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>
+
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix yed: <http://bp4mc2.org/yed/def#>.
+@prefix morph: <http://bp4mc2.org/morph/def#>.
+
+#Prefixes for shapes
+@prefix RepresentationShape: <http://bp4mc2.org/elmo/def/shape/Representation#>.
+@prefix FragmentShape: <http://bp4mc2.org/elmo/def/shape/Fragment#>.
+@prefix DatabaseShape: <http://bp4mc2.org/morph/def/shape/Database#>.
+
+### Vocabulary and dataset ###
+<http://bp4mc2.org/elmo/def#> a	owl:Ontology;
+	rdfs:label					"The ELMO vocabulary";
+	rdfs:comment				"The vocabulary to configure the Linked Data Theatre. ELMO stands for Extendible Lightweight Model Ontology.";
+.
+<http://bp4mc2.org/elmo/def> a	void:Dataset;
+	rdfs:label					"The dataset containing the ELMO vocabulary";
+.
+
+### Shapes ###
+# Representation #
+<http://bp4mc2.org/elmo/def/shape/Representation#> a	sh:Shape;
+	sh:scopeClass	elmo:Representation;
+	sh:property		RepresentationShape:query;
+	sh:property		RepresentationShape:url-pattern;
+	sh:property		RepresentationShape:uri-pattern;
+	sh:property		RepresentationShape:index;
+	sh:property		RepresentationShape:contains;
+	sh:property		RepresentationShape:applies-to;
+	sh:property		RepresentationShape:data;
+	sh:property		RepresentationShape:format;
+	sh:property		RepresentationShape:endpoint;
+	sh:property		RepresentationShape:queryForm;
+	sh:property		RepresentationShape:layer;
+	sh:property		RepresentationShape:appearance;
+	sh:property		RepresentationShape:stylesheet;
+.
+RepresentationShape:query	a		sh:PropertyConstraint;
+	sh:predicate	elmo:query;
+	sh:nodeKind		sh:Literal;
+.
+RepresentationShape:url-pattern	a	sh:PropertyConstraint;
+	sh:predicate	elmo:url-pattern;
+	sh:nodeKind		sh:Literal;
+.
+RepresentationShape:uri-pattern	a	sh:PropertyConstraint;
+	sh:predicate	elmo:uri-pattern;
+	sh:nodeKind		sh:Literal;
+.
+RepresentationShape:contains	a	sh:PropertyConstraint;
+	sh:predicate	elmo:contains;
+	sh:nodeKind		sh:IRI;
+	sh:valueClass	elmo:Representation;
+	sh:valueShape	<http://bp4mc2.org/elmo/def/shape/Representation#>
+.
+RepresentationShape:stylesheet	a	sh:PropertyConstraint;
+	sh:predicate	html:stylesheet;
+	sh:nodeKind		sh:Literal;
+.
+
+# Fragment #
+<http://bp4mc2.org/elmo/def/shape/Fragment#> a	sh:Shape;
+	sh:scopeClass	elmo:Fragment;
+	sh:property		FragmentShape:label;
+	sh:property		FragmentShape:appearance;
+	sh:property		FragmentShape:applies-to;
+	sh:property		FragmentShape:index;
+	sh:property		FragmentShape:glossary;
+	sh:property		FragmentShape:stylesheet;
+	sh:property		FragmentShape:link;
+	sh:property		FragmentShape:constraint;
+	sh:property		FragmentShape:valueDatatype;
+	sh:property		FragmentShape:valueFormat;
+	sh:property		FragmentShape:valuesFrom;
+	sh:property		FragmentShape:name;
+	sh:property		FragmentShape:backgroundColor;
+	sh:property		FragmentShape:value;
+	sh:property		FragmentShape:edge;
+	sh:property		FragmentShape:line;
+	sh:property		FragmentShape:sourceArrow;
+	sh:property		FragmentShape:targetArrow;
+.
+FragmentShape:label	a			sh:PropertyConstraint;
+	sh:predicate	rdfs:label;
+	sh:nodeKind		sh:Literal;
+.
+FragmentShape:glossary	a		sh:PropertyConstraint;
+	sh:predicate	html:glossary;
+	sh:nodeKind		sh:Literal;
+.
+FragmentShape:stylesheet	a	sh:PropertyConstraint;
+	sh:predicate	html:stylesheet;
+	sh:nodeKind		sh:Literal;
+.
+FragmentShape:link	a			sh:PropertyConstraint;
+	sh:predicate	html:link;
+	sh:nodeKind		sh:Literal;
+.
+FragmentShape:backgroundColor	a	sh:PropertyConstraint;
+	sh:predicate	yed:backgroundColor;
+	sh:nodeKind		sh:Literal;
+.
+
+### Classes ###
+elmo:Representation	a	owl:Class;
+	rdfs:label 			"Representation"@en;
+	rdfs:label			"Representatie"@nl;
+	rdfs:comment		"The class of representations of a resource"@en;
+	rdfs:comment		"De klasse van representaties van een resource"@nl;
+.
+elmo:Form			a	owl:Class;
+	rdfs:label			"Form"@en;
+	rdfs:label			"Formulier"@nl;
+	rdfs:comment		"The class of UI forms, from which a user can enter some URL parameters"@en;
+	rdfs:comment		"De klasse van UI formulieren, van waaruit een gebruiker bepaalde URL parameters kan invoeren"@nl;
+.
+elmo:Fragment		a	owl:Class;
+	rdfs:label			"Fragment"@en;
+	rdfs:label			"Fragment"@nl;
+	rdfs:comment		"The class of fragments of a representation"@en;
+	rdfs:comment		"De klasse van fragmenten van een representatie"@nl;
+.
+elmo:Appearance		a	owl:Class;
+	rdfs:label			"Appearance"@en;
+	rdfs:label			"Verschijning"@nl;
+	rdfs:comment		"The generic appearance class. Implementations should use a subclass of this appearance."@en;
+	rdfs:comment		"De generieke verschijningsklasse. Implementaties behoren een subklasse van deze verschijning te gebruiken."@nl;
+.
+elmo:Layer			a	owl:Class;
+	rdfs:label			"Layer"@en;
+	rdfs:label			"Laag"@nl;
+	rdfs:comment		"The class of layers. A representation is located at a specific layer"@en;
+	rdfs:comment		"De klasse van lagen. Een verschijning bevindt zich op een specifieke laag"@nl;
+.
+elmo:Container		a	owl:Class;
+	rdfs:label			"Container"@en;
+	rdfs:label			"Container"@nl;
+	rdfs:comment		"The regular container. Updates to this container will be inserted into the graph with the same URI as the container";
+	rdfs:comment		"De normale container. Toevoegingen aan deze container worden toegevoegd aan de graaf met dezelfde URI als de container";
+.
+elmo:VersionContainer	a	owl:Class;
+	rdfs:label			"Versioned container"@en;
+	rdfs:label			"Geversioneerde container"@nl;
+	rdfs:subClassOf		elmo:Container;
+	rdfs:comment		"The versioned container. Update to this container will be inserted into a versioned graph and to regular graph";
+	rdfs:comment		"De geversioneerde container. Toevoegingen aan deze container worden toegevoegd aan een geversioneerde graaf en naar de normale graaf";
+.
+elmo:Translator		a	owl:Class;
+	rdfs:label			"Translator"@en;
+	rdfs:label			"Translator"@nl;
+	rdfs:comment		"The generic translator class. Implementations should use a subclass of this translator."@en;
+	rdfs:comment		"The generieke vertalerklasse. Implementaties behoren een subklasse van deze vertaler te gebruiken."@nl;
+.
+elmo:Constraint		a	owl:Class;
+	rdfs:label			"Constraint"@en;
+	rdfs:label			"Beperking"@nl;
+	rdfs:comment		"The class of constraints. A constraint can be set on a fragment of a form"@en;
+	rdfs:comment		"The klasse van beperkingen. Een beperking kan gezet worden op een fragment van een formulier"@nl;
+.
+elmo:GeoLocator		a	rdfs:Class;
+	rdfs:label			"Geo locator"@en;
+	rdfs:label			"Geo aanwijzer"@nl;
+	rdfs:comment		"A resource that is a GeoLocator will be used to center a geographical map to the coordinates of the GeoLocator"@en;
+	rdfs:comment		"Een resource die een GeoLocator is, wordt gebruikt om de geografische map te centreren op de coordinaten van de GeoLocator"@nl;
+.
+
+# Appearance subclasses #
+elmo:TableAppearance	a	owl:Class;
+	rdfs:subClassOf			elmo:Appearance;
+	rdfs:label				"Table appearance"@en;
+	rdfs:label				"Tabelverschijning"@nl;
+.
+elmo:ShortTableAppearance	a	owl:Class;
+	rdfs:subClassOf			elmo:Appearance;
+	rdfs:label				"Short table appearance"@en;
+	rdfs:label				"Minimale tabelverschijning"@nl;
+.
+elmo:ContentAppearance	a	owl:Class;
+	rdfs:subClassOf			elmo:Appearance;
+	rdfs:label				"Content appearance"@en;
+	rdfs:label				"Eigenschappenverschijning"@nl;
+.
+elmo:HeaderAppearance	a	owl:Class;
+	rdfs:subClassOf			elmo:Appearance;
+	rdfs:label				"Header appearance"@en;
+	rdfs:label				"Kopverschijning"@nl;
+	rdfs:comment			"An appearance used for the header of a page. Usually contains an image and a pay-off text."@en;
+	rdfs:comment			"Een verschijning te gebruiken voor de kop van een pagina. Meestal bevat deze een plaatje en een pay-off tekst."@nl;
+.
+elmo:NavbarAppearance	a	owl:Class;
+	rdfs:subClassOf			elmo:Appearance;
+	rdfs:label				"Navigation bar appearance"@en;
+	rdfs:label				"Navigatiebalkverschijning"@nl;
+	rdfs:comment			"An appearance used for the navigation bar"@en;
+	rdfs:comment			"Een verschijning te gebruiken voor een navigatiebalk."@nl;
+.
+elmo:NavbarSearchAppearance	a	owl:Class;
+	rdfs:subClassOf			elmo:NavbarAppearance;
+	rdfs:label				"Navigation bar with search appearance"@en;
+	rdfs:label				"Navigatiebalkverschijning met zoeken"@nl;
+	rdfs:comment			"An appearance used for the navigation bar, including a search form"@en;
+	rdfs:comment			"Een verschijning te gebruiken voor een navigatiebalk, inclusief een zoekformulier."@nl;
+.
+elmo:HiddenAppearance	a	owl:Class;
+	rdfs:subClassOf			elmo:Appearance;
+	rdfs:label				"Hidden appearance"@en;
+	rdfs:label				"Verborgen verschijning"@nl;
+	rdfs:comment			"An appearance that is actually hidden. These seems paradoxical, but can be usefull if some data should not be shown in a html view, but should be used otherwise"@en;
+	rdfs:comment			"Een verschijning die verborgen is. Dit lijkt paradoxaal, maar kan bruikbaar zijn indien bepaalde gegevens niet getoond moeten worden in de html weergave, maar op een andere manier worden gebruikt"@nl;
+.
+elmo:LoginAppearance	a	owl:Class;
+	rdfs:subClassOf			elmo:Appearance;
+	rdfs:label				"Login appearance"@en;
+	rdfs:label				"Login verschijning"@nl;
+	rdfs:comment			"An appearance used for a login page"@en;
+	rdfs:comment			"Een verschijning te gebruiken voor een login pagina"@nl;
+.
+elmo:CarouselAppearance	a	owl:Class;
+	rdfs:subClassOf			elmo:Appearance;
+	rdfs:label				"Carousel appearance"@en;
+	rdfs:label				"Carrouselverschijning"@nl;
+.
+elmo:IndexAppearance	a	owl:Class;
+	rdfs:subClassOf			elmo:Appearance;
+	rdfs:label				"Index appearance"@en;
+	rdfs:label				"Indexverschijning"@nl;
+.
+elmo:HtmlAppearance		a	owl:Class;
+	rdfs:subClassOf			elmo:Appearance;
+	rdfs:label				"HTML appearance"@en;
+	rdfs:label				"HTML verschijning"@nl;
+	rdfs:comment			"An appearance used for displaying a piece of html. Mostly used for literal representations of a piece of text"@en;
+	rdfs:comment			"Een verschijning te gebruiken voor het tonen van een stukje html. Meestal gebruikt voor letterlijke representaties van een stukje tekst"@nl;
+.
+elmo:GraphAppearance	a	owl:Class;
+	rdfs:subClassOf			elmo:Appearance;
+	rdfs:label				"Graph appearance"@en;
+	rdfs:label				"Grafische verschijning"@nl;
+.
+elmo:TextAppearance	a	owl:Class;
+	rdfs:subClassOf			elmo:Appearance;
+	rdfs:label				"Text appearance"@en;
+	rdfs:label				"Tekstuele verschijning"@nl;
+.
+elmo:FormAppearance	a	owl:Class;
+	rdfs:subClassOf			elmo:Appearance;
+	rdfs:label				"Form appearance"@en;
+	rdfs:label				"Formulierverschijning"@nl;
+.
+elmo:GeoAppearance	a	owl:Class;
+	rdfs:subClassOf			elmo:Appearance;
+	rdfs:label				"Geographical appearance"@en;
+	rdfs:label				"Geografische verschijning"@nl;
+.
+elmo:ImageAppearance	a	owl:Class;
+	rdfs:subClassOf			elmo:Appearance;
+	rdfs:label				"Image appearance"@en;
+	rdfs:label				"Plaatjes-verschijning"@nl;
+.
+elmo:ChartAppearance	a	owl:Class;
+	rdfs:subClassOf			elmo:Appearance;
+	rdfs:label				"Chart appearance"@en;
+	rdfs:label				"Diagramverschijning"@nl;
+.
+elmo:TextSearchAppearance	a	owl:Class;
+	rdfs:subClassOf			elmo:Appearance;
+	rdfs:label				"Text search appearance"@en;
+	rdfs:label				"Zoeken naar tekst verschijning"@nl;
+.
+elmo:GlobalLink			a	owl:Class;
+	rdfs:subClassOf			elmo:Appearance;
+	rdfs:label				"Global link"@en;
+	rdfs:label				"Internetverwijzing"@nl;
+	rdfs:comment			"A global links states that a fragment should contain hyperlinks to the real URL, even if its outside the Linked Data Theatre application"@en;
+	rdfs:comment			"Een internetverwijzing stelt dat een fragment hyperlinks bevat die verwijzen naar de echte URL, zelfs als deze URL zich bevindt buiten de Linked Data Theater applicatie"@nl;
+.
+elmo:FilteredGlossaryAppearance	a	owl:Class;
+	rdfs:subClassOf			elmo:Appearance;
+	rdfs:label				"Filtered glossary appearance";
+	rdfs:label				"Gefilterde woordenlijst verschijning";
+.
+elmo:SubmitAppearance	a	owl:Class;
+	rdfs:subClassOf			elmo:Appearance;
+	rdfs:label				"Submit appearance"@en;
+	rdfs:label				"Submit verschijning"@nl;
+	rdfs:comment			"A fragment that appears as a submit button"@en;
+	rdfs:comment			"Een fragment dat er uit ziet als een submit-knop"@nl;
+.
+elmo:Style				a	owl:Class;
+	rdfs:label				"Style"@en;
+	rdfs:label				"Stijl"@nl;
+	rdfs:comment			"The class of CSS styles (to format a fragment or a representation)."@en;
+	rdfs:comment			"De klasse van CSS stijlen (om een fragment of een represntatie te formatteren)."@nl;
+.
+
+# Layers #
+elmo:TopLayer		a	elmo:Layer;
+	rdfs:label			"top layer"@en;
+	rdfs:label			"bovenste laag"@nl;
+	rdfs:comment		"The top layer. Representations located at this layer are always used"@en;
+	rdfs:comment		"De bovenste laag. Representaties die op deze laag bevinden worden altijd gebruikt"@nl;
+.
+elmo:DefaultLayer	a	elmo:Layer;
+	rdfs:label			"default layer"@en;
+	rdfs:label			"standaardlaag"@nl;
+	rdfs:comment		"The default layer. The default layer is located in the middle between the top and the bottom layer. Representations without an explicitly defined layer are located at the default layer"@en;
+	rdfs:comment		"De standaardlaag. De standaardlaag bevindt zich in het midden tussen de bovenste en onderste laag. Representaties zonder een expliciet gedefinieerde laag bevinden zich op de standaardlaag"@nl;
+.
+elmo:BottomLayer	a	elmo:Layer;
+	rdfs:label			"bottom layer"@en;
+	rdfs:label			"onderste laag"@nl;
+	rdfs:comment		"The bottom layer. Representations located at this layer are only used if no other layer is available"@en;
+	rdfs:comment		"De onderste laag. Representaties die op deze laag bevinden worden alleen gebruikt als er geen andere laag beschikbaar is"@nl;
+.
+
+# Translators #
+elmo:SimpleTranslator	a	owl:Class;
+	rdfs:subClassOf		elmo:Translator;
+	rdfs:label			"Simple translator";
+	rdfs:label			"Eenvoudige vertaler";
+	rdfs:comment		"Translates XML to a simple RDF format. Most usable for debugging purposes"@en;
+	rdfs:comment		"Vertaalt XML in een simpel RDF formaat. Bruikbaar voor debugging"@nl;
+.
+elmo:XMI21Translator	a	owl:Class;
+	rdfs:subClassOf		elmo:Translator;
+	rdfs:label			"XMI2.1 translator";
+	rdfs:label			"XMI2.1 vertaler";
+	rdfs:comment		"Translates XMI2.1 to corresponding linked data (uml schema)"@en;
+	rdfs:comment		"Vertaalt XMI2.1 naar overeenkomstige linked data (uml schema)"@nl;
+.
+elmo:SimpleExcelTranslator	a owl:Class;
+	rdfs:subClassOf		elmo:Translator;
+	rdfs:label			"Simple excel translator";
+	rdfs:label			"Eenvoudige excel vertaler";
+	rdfs:comment		"Simple translator for excel files. Assumes only one excel worksheet and a header row containing the properties."@en;
+	rdfs:comment		"Eenvoudige vertaler voor excel bestanden. Veronderstelt slechts 1 excel werkblad en een kopregel waarin de properties staan."@nl;
+.
+elmo:GenericExcelTranslator	a owl:Class;
+	rdfs:subClassOf		elmo:Translator;
+	rdfs:label			"Generic excel translator";
+	rdfs:label			"Generieke excel vertaler";
+	rdfs:comment		"Generic translator for excel files. Translates an excel file to a SPARQL result set"@en;
+	rdfs:comment		"Generieke vertaler voor excel bestanden. Vertaalt een excel bestand naar een SPARQL result set"@nl;
+.
+
+# Constraints #
+elmo:MandatoryConstraint	a	elmo:Constraint;
+	rdfs:label			"Mandatory constraint"@en;
+	rdfs:label			"Verplichting"@nl;
+	rdfs:comment		"States that a fragment of a form is mandatory"@en;
+	rdfs:comment		"Stelt dat een fragment van een formulier verplicht is"@nl;
+.
+elmo:OneOfGroupConstraint	a	elmo:Constraint;
+	rdfs:label			"One value from a group constraint"@en;
+	rdfs:label			"Een waarde uit een groep beperking"@nl;
+	rdfs:comment		"States that a fragment of a form should contain one value from a predefined group of values"@en;
+	rdfs:comment		"stelt dat een fragment van een formulier een waarde moet bevatten uit een vooraf gedefinieerde groep van waarden"@nl;
+.
+
+# Styles #
+elmo:HiddenStyle	a	elmo:Style;
+	rdfs:label			"Hidden style"@en;
+	rdfs:label			"Verborgen stijl"@nl;
+	rdfs:comment		"A style that makes the content hidden."@en;
+	rdfs:comment		"Een stijl die de inhoud verborgen maakt."@nl;
+.
+
+### Properties ###
+
+elmo:applies-to		a	owl:DatatypeProperty;
+	rdfs:label			"applies to"@en;
+	rdfs:label			"van toepassing op"@nl;
+	rdfs:comment		"states that a (fragment of a) representation applies to a certain resource. The range of applies-to can be the resource itself or a blank-node profile (for example: applies-to/rdf:type owl:Class states that the representation applies to all resource of rdf:type owl:Class)"@en;
+	rdfs:comment		"stelt dat een (fragment van een) representatie van toepassing is op een bepaalde resource. Het bereik van van-toepassing-op kan de resource zelf zijn, of een blank-node profiel (bijvoorbeeld: applies-to/rdf:type owl:Class stelt dat de representatie van toepassing is op alle resources van rdf:type owl:Class)"@nl;
+.
+elmo:url-pattern	a	owl:DatatypeProperty;
+	rdfs:label			"url-pattern"@en;
+	rdfs:label			"url-patroon"@nl;
+	rdfs:comment		"states that a representation applies to all urls with a certain regex pattern"@en;
+	rdfs:comment		"stelt dat een representatie van toepassing is op een bepaald regex patroon"@nl;
+.
+elmo:uri-pattern	a	owl:DatatypeProperty;
+	rdfs:label			"uri-pattern"@en;
+	rdfs:label			"uri-patroon"@nl;
+	rdfs:comment		"states that a representation applies to all resources with a certain regex pattern (for its URI)"@en;
+	rdfs:comment		"stelt dat een representatie van toepassing is op alle resources met een bepaald regex patroon (voor de URI van die resource)"@nl;
+.
+elmo:query			a	owl:DatatypeProperty;
+	rdfs:label			"query"@en;
+	rdfs:label			"query"@nl;
+	rdfs:comment		"defines the SPARQL query that corresponds with the particular representation"@en;
+	rdfs:comment		"definieert de SPARQL query die overeen komt met de betreffende representatie"@nl;
+.
+elmo:data		a	owl:ObjectProperty;
+	rdfs:label			"data"@en;
+	rdfs:label			"gegevens"@nl;
+	rdfs:comment		"defines the data associated with the representation. This data is used instead of the result of the SPARQL query"@en;
+	rdfs:comment		"definieert de gegevens die behoren bij de representatie. Deze gegevens worden gebruikt in plaats van het resultaat van de SPARQL query"@nl;
+.
+elmo:html		a	owl:DatatypeProperty;
+	rdfs:label			"html"@en;
+	rdfs:label			"html"@nl;
+	rdfs:comment		"formulates an html formatted document piece to be inserted in a specific appearance. The html document should be a string an may contain a language descriptor for multi-language purposes"@en;
+	rdfs:comment		"Formuleert een html geformatteerd documentdeel die ingevoegd wordt bij bepaalde verschijningen. Het html document behoort als string aanwezig te zijn, en mag een taal-aanduiding bevatten voor meertalige toepassingen"@nl;
+.
+elmo:contains		a	owl:ObjectProperty;
+	rdfs:label			"contains"@en;
+	rdfs:label			"bevat"@nl;
+	rdfs:comment		"states that a representation contains another representation. This enables the placement of multiple queries on one webpage"@en;
+	rdfs:comment		"stelt dat een representatie een andere representatie bevat. Dit maakt het mogelijk om meerdere queries op 1 webpagina te zetten"@nl;
+.
+elmo:appearance		a	owl:ObjectProperty;
+	rdfs:label			"appearance"@en;
+	rdfs:label			"verschijning"@nl;
+	rdfs:comment		"states that a representation conforms to a certain appearance"@en;
+	rdfs:comment		"stelt dat een representatie er uitziet volgens een bepaalde verschijning"@nl;
+.
+elmo:index			a	owl:DatatypeProperty;
+	rdfs:label			"index"@en;
+	rdfs:label			"index"@nl;
+	rdfs:comment		"the position of a representation that is contained in another representation. Optional field. Representations without an index are always last, but without any other. The 'parent' representation always has a index of '0'. The representation with the lowest number is used in data respresentations (such as ttl, json, etc)."@en;
+	rdfs:comment		"de positie van een representatie die onderdeel is van een andere representatie. Optioneel veld. Representaties zonder een index staan achteraan, maar zonder enige volgorde. De 'ouder' representatie heeft altijd een index van '0'. De representatie met het laagste nummer wordt gebruikt in gegevensrepresentaties (zoals ttl, json, etc)."@nl;
+.
+elmo:fragment		a	owl:ObjectProperty;
+	rdfs:label			"fragment"@en;
+	rdfs:label			"fragment"@nl;
+	rdfs:comment		"defines a fragment of a representation. This is useful for defining a particular fragment of a representation (like a column in a table)"@en;
+	rdfs:comment		"definieert een fragment van een representatie. Dit is bruikbaar voor het definieren van een specifiek fragment van een representatie (zoals een kolom van een tabel)"@nl;
+.
+elmo:layer			a	owl:DatatypeProperty;
+	rdfs:label			"layer"@en;
+	rdfs:label			"laag"@nl;
+	rdfs:comment		"the layer of a representation. Only representations at the highest available layer are used for a specific resource. The lowest layer is the BottomLayer, representations without a layer are considered to be located at the DefaultLayer"@en;
+	rdfs:comment		"de laag van een representatie. Alleen representaties op de bovenste beschikbare laag worden gebruikt voor een specifieke resource. De laagste laag is de BottomLayer, representaties zonder een laag bevinden zich op de DefaultLayer"@nl;
+.
+elmo:name			a	owl:DatatypeProperty;
+	rdfs:label			"name"@en;
+	rdfs:label			"naam"@nl;
+	rdfs:comment		"defines the name of a (fragment of a) representation. This is useful for naming parameters in a html link"@en;
+	rdfs:comment		"definieert de naam van een (fragment van een) representatie. Dit is bruikbaar voor het benoemen van parameters in een html link"@nl;
+.
+elmo:representation	a	owl:ObjectProperty;
+	rdfs:label			"representation"@en;
+	rdfs:label			"representatie"@nl;
+	rdfs:comment		"defines the representation that is used to display a container"@en;
+	rdfs:comment		"definieert de representatie die gebruikt wordt om de container af te beelden"@nl;
+.
+elmo:updates		a	owl:ObjectProperty;
+	rdfs:label			"updates"@en;
+	rdfs:label			"wijzigt"@nl;
+	rdfs:comment		"defines the graph that is updated with the contents of the container. Any old triples for a particular combination of subject en predicate will be replaces with the new ones in the container. All other triples will remain the same."@en;
+	rdfs:comment		"definieert de graaf die wordt vernieuwd met de inhoud van de container. Alle oude triples voor een combinatie van subject en predicate worden vervangen door de nieuwe triples uit de container. Alle andere triples blijven hetzelfde."@nl;
+.
+elmo:partOf			a	owl:ObjectProperty;
+	rdfs:label			"part of"@en;
+	rdfs:label			"onderdeel van"@nl;
+	rdfs:comment		"defines that a container is part of another graph. Only this container-part will be replaced in this graph."@en;
+	rdfs:comment		"definieert dat een container onderdeel is van een andere graaf. Alleen dit container-gedeelte wordt vervangen in deze graaf."@nl;
+.
+elmo:replaces		a	owl:ObjectProperty;
+	rdfs:label			"replaces"@en;
+	rdfs:label			"vervangt"@nl;
+	rdfs:comment		"defines the graph which contents are replaced by the contents of the container"@en;
+	rdfs:comment		"definieert de graaf waarvan de inhoud wordt vervangen door de inhoud van de container"@nl;
+.
+elmo:queryForm		a	owl:ObjectProperty;
+	rdfs:label			"query form"@en;
+	rdfs:label			"vraagformulier"@nl;
+	rdfs:comment		"defines the form that is used when a mandatory URL parameter has no value."@en;
+	rdfs:comment		"definieert het formulier dat wordt gebruikt als een verplichte URL parameter geen waarde heeft."@nl;
+.
+elmo:constraint		a	owl:ObjectProperty;
+	rdfs:label			"contraint"@en;
+	rdfs:label			"beperking"@nl;
+	rdfs:comment		"defines a constraint for a fragment"@en;
+	rdfs:comment		"definieert een verplichting voor een fragment"@nl;
+.
+elmo:use			a	owl:ObjectProperty;
+	rdfs:label			"use"@en;
+	rdfs:label			"gebruik"@nl;
+	rdfs:comment		"defines a custom parameter for a hyperlink. The value of the property will be used, the name will be the name of the property (the part after the '#')"@en;
+	rdfs:comment		"definieert een extra parameter voor een hyperlink. De waarde van de eigenschap zal gebruikt worden, de naam van de parameter wordt de naam van de eigenschap (het gedeelte na de '#')"@nl;
+.
+elmo:file			a	owl:DatatypeProperty;
+	rdfs:label			"file"@en;
+	rdfs:label			"bestand"@nl;
+	rdfs:comment		"defines the file that contains the data used. The file should be placed in the /ldt/data folder"@en;
+	rdfs:comment		"defineert een bestand dat de data bevat. Het bestand moet geplaatst worden in de /ldt/data map"@nl;
+.
+elmo:endpoint		a	owl:ObjectProperty;
+	rdfs:label			"endpoint"@en;
+	rdfs:label			"endpoint"@nl;
+	rdfs:comment		"defines a custom SPARQL endpoint to be used, instead of the regular endpoint (as defined in the defaults.xml configuration file)."@en;
+	rdfs:comment		"definieert een alternatief SPARQL endpoint, in plaats van het normale endpoint (zoals gedefinieerd in het defaults.xml configuratiebestand)."@nl;
+.
+elmo:container		a	owl:ObjectProperty;
+	rdfs:label			"container"@en;
+	rdfs:label			"container"@nl;
+	rdfs:comment		"defines the container that will be used to update the changes made to a representation."@nl;
+	rdfs:comment		"definieert de container die gebruikt wordt voor de wijzigingen die gemaakt zijn aan een representatie."@en;
+.
+elmo:valuesFrom		a	owl:ObjectProperty;
+	rdfs:label			"values from"@en;
+	rdfs:label			"waarden uit"@nl;
+	rdfs:comment		"defines that a picklist in a form should only contain values from another representation"@en;
+	rdfs:comment		"defineert dat een invoerveld op een formulier alleen waarden mag bevatten uit een andere representatie"@nl;
+.
+elmo:valueDatatype	a	owl:ObjectProperty;
+	rdfs:label			"values datatype"@en;
+	rdfs:label			"datatype van de waarde"@nl;
+	rdfs:comment		"defines the datatype of the value that a user can enter in a field on a form. Usable datatypes are dctypes:Dataset, xs:String and xs:Date."@en;
+	rdfs:comment		"defineert het datatype van de waarde die een gebruiker kan invoeren in een invoerveld op een formulier. Bruikbare datatypes zijn: dctypes:Dataset, xs:String en xs:Date."@en;
+.
+elmo:style			a	owl:ObjectProperty;
+	rdfs:label			"style"@en;
+	rdfs:label			"stijl"@nl;
+	rdfs:comment		"defines the style of a fragment"@en;
+	rdfs:comment		"defineert de stijl van een fragment"@nl;
+.
+elmo:template		a	owl:DatatypeProperty;
+	rdfs:label			"template"@en;
+	rdfs:label			"sjabloon"@nl;
+.
+elmo:translator		a	owl:ObjectProperty;
+	rdfs:label			"translator"@en;
+	rdfs:label			"vertaler"@nl;
+	rdfs:comment		"defines the translator to be used to translate an uploaded file to linked data"@en;
+	rdfs:comment		"definieert de vertaler die gebruikt wordt bij het vertalen van een geuploaded bestand naar linked data"@nl;
+.
+
+#### TO BE MADE - DESIGN
+elmo:Performance	a	owl:Class;
+	rdfs:label			"performance"@en;
+	rdfs:label			"optreden"@nl;
+	rdfs:comment		"A performance is an operation that changes the contents of the triple store"@en;
+	rdfs:comment		"Een optreden is een operatie die de inhoud van de triple store veranderd"@nl;
+.
+elmo:Inference		a	owl:Class;
+	rdfs:subClassOf		elmo:Performance;
+.
+elmo:Conversion		a	owl:Class;
+	rdfs:subClassOf		elmo:Performance;
+	rdfs:label			"conversion"@en;
+	rdfs:label			"conversie"@nl;
+	rdfs:comment		"A conversion is a performance that converts some RDB data into linked data. A conversion should be places after the \convert (like a container is always behind \container)"@en;
+	rdfs:comment		"Een conversie is een optreden waarbij RDB data wordt geconverteerd naar linked data. Een conversie behoort aangesproken te worden vanaf een \convert-URI (net zoals bij een container en een \container-URI)"@nl;
+.
+elmo:tripleMap		a	owl:ObjectProperty;
+	rdfs:label			"triple map"@en;
+	rdfs:label			"triple map"@nl;
+	rdfs:comment		"Defines a triple map that will be used as part of the conversion"@en;
+	rdfs:comment		"Definieert een triple map die gebruikt wordt als onderdeel van de conversie"@nl;
+.
+elmo:database		a	owl:ObjectProperty;
+	rdfs:label			"database"@en;
+	rdfs:label			"database"@nl;
+	rdfs:comment		"Defines the database from which the data is fetched."@en;
+	rdfs:comment		"Definieert de database waaruit de data wordt gehaald"@nl;
+.
+
+### MORPH vocabulary
+morph:Database		a	owl:Class;
+	rdfs:label			"Database"@en;
+	rdfs:label			"Database"@nl;
+	rdfs:comment		"The database that is used."@en;
+	rdfs:comment		"De database die wordt gebruikt."@nl;
+.
+morph:PostgresqlDatabase	a	owl:Class;
+	rdfs:label			"Postgresql database"@en;
+	rdfs:label			"Postgresql database"@nl;
+	rdfs:comment		"A postgresql database"@en;
+	rdfs:comment		"Een postgresql database"@nl;
+.
+
+<http://bp4mc2.org/morph/def/shape/Database#> a	sh:Shape;
+	sh:scopeClass	morph:Database;
+	sh:property		DatabaseShape:name; # database.name
+	sh:property		DatabaseShape:url; # database.url
+	sh:property		DatabaseShape:username; # database.user
+	sh:property		DatabaseShape:password; # database.pwd
+	sh:property		DatabaseShape:uri-encode; # uri.encode
+	sh:property		DatabaseShape:uri-transform; # uri.transform
+.
+DatabaseShape:name	a	sh:PropertyConstraint;
+	sh:predicate	morph:name;
+	sh:nodeKind		sh:Literal;
+.
+DatabaseShape:url	a	sh:PropertyConstraint;
+	sh:predicate	morph:url;
+	sh:nodeKind		sh:Literal;
+.
+DatabaseShape:username	a	sh:PropertyConstraint;
+	sh:predicate	morph:username;
+	sh:nodeKind		sh:Literal;
+.
+DatabaseShape:password	a	sh:PropertyConstraint;
+	sh:predicate	morph:password;
+	sh:nodeKind		sh:Literal;
+.
+DatabaseShape:uri-encode	a	sh:PropertyConstraint;
+	sh:predicate	morph:uri-encode;
+	sh:nodeKind		sh:Literal;
+.
+DatabaseShape:uri-transform	a	sh:PropertyConstraint;
+	sh:predicate	morph:uri-transform;
+	sh:nodeKind		sh:Literal;
+.

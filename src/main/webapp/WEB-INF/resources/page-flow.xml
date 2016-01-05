@@ -1,0 +1,58 @@
+<!--
+
+    NAME     page-flow.xml
+    VERSION  1.5.0
+    DATE     2016-01-05
+
+    Copyright 2012-2016
+
+    This file is part of the Linked Data Theatre.
+
+    The Linked Data Theatre is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    The Linked Data Theatre is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with the Linked Data Theatre.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!--
+    DESCRIPTION
+	Orbeon master page-flow, altered to control basic file requests and redirect to ldt for all other calls
+
+    This file is a copy of the original page-flow.xml that is contained within the orbeon.war
+    It is altered to transfer control to the ldt app within orbeon (no other apps will be used)
+-->
+<controller xmlns="http://www.orbeon.com/oxf/controller" matcher="regexp">
+
+	<!-- Files in config directory, direct pass-through -->
+	<files path="/config/([^ ]*)"/>
+	
+	<!-- Images, javascript, stylesheets andd fonts, direct pass-throught (NB: apps directory of orbeon resources!!) -->
+	<files path="/images/([^ ]*)"/>
+	<files path="/js/([^ ]*)"/>
+	<files path="/css/([^ ]*)"/>
+	<files path="/fonts/([^ ]*)"/>
+
+	<!-- Override redirect to ldt -->
+	<page path="/.*" model="apps/ldt/page-flow.xml" public-methods="#all"/>
+	
+    <!-- ==== Epilogue and handlers ================================================================================ -->
+
+    <page id="not-found"    path="/not-found"    model="/apps/ldt/pipelines/not-found.xpl"/>
+    <page id="unauthorized" path="/unauthorized" view="/apps/ldt/pipelines/unauthorized.xpl"/>
+    <page id="error"        path="/error"        model="/apps/ldt/pipelines/error.xpl"/>
+
+    <not-found-handler      page="not-found"/>
+    <unauthorized-handler   page="unauthorized"/>
+    <error-handler          page="error"/>
+
+    <epilogue url="/config/epilogue.xpl"/>
+
+</controller>

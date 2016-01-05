@@ -1,0 +1,119 @@
+/**
+ * NAME     ldt-theme.css
+ * VERSION  1.5.0
+ * DATE     2016-01-05
+ *
+ * Copyright 2012-2016
+ *
+ * This file is part of the Linked Data Theatre.
+ *
+ * The Linked Data Theatre is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Linked Data Theatre is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Linked Data Theatre.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/**
+ * DESCRIPTION 
+ * CSS with styling for the Linked Data Theatre
+ *
+ **/
+@media (min-width: 1280px) {
+  .container {
+    width: 97%;
+  }
+}
+
+.carousel-indicators {
+	margin-bottom: -10px !important;
+	bottom: 0px !important;
+}
+.carousel-indicators li {
+	border-color: #337ab7 !important;
+}
+.carousel-indicators .active {
+	background-color: #337ab7 !important;
+}
+
+.htmlapp table tr td{
+	border-color: #A0A0A0 !important;
+	border-width: 1px;
+	border-style: solid;
+	padding: 2px;
+}
+
+.leaflet-label {
+	color: #111;
+	display: block;
+	font: "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font-size: 10px !important;
+	font-weight: normal;
+	padding: 0px;
+	position: absolute;
+}
+
+
+
+.leaflet-bar button,
+.leaflet-bar button:hover {
+  background-color: #fff;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  width: 26px;
+  height: 26px;
+  line-height: 26px;
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  color: black;
+}
+
+.leaflet-bar button {
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  overflow: hidden;
+  display: block;
+}
+
+.leaflet-bar button:hover {
+  background-color: #f4f4f4;
+}
+
+.leaflet-bar button:first-of-type {
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+
+.leaflet-bar button:last-of-type {
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border-bottom: none;
+}
+
+.leaflet-bar.disabled,
+.leaflet-bar button.disabled {
+  cursor: default;
+  pointer-events: none;
+  opacity: .4;
+}
+
+.easy-button-button .button-state{
+  display: block;
+  width: 100%;
+  heigth: 100%;
+  position: relative;
+}
+
+
+.leaflet-touch .leaflet-bar button {
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+}

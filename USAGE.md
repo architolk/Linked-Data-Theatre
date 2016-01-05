@@ -140,8 +140,6 @@ It is quite common to only show data of one resource. You can use a CONSTRUCT qu
 
 ## Linked Data Theatre vocabulary
 ### Classes
-#### Representation
-The representation of some data
 #### Appearance
 The appearance for a particular representation. You should only use the predefined appearances of the Linked Data Theatre:
 
@@ -163,8 +161,43 @@ The appearance for a particular representation. You should only use the predefin
 - ImageAppearance;
 - ChartAppearance.
 
+#### Constraint
+A constraint places on a fragment.
+
+#### Container
+A regular container. Updates to this container will be places in the graph with the same URI as the container.
+
+#### VersionContainer
+A versioned container. Updates to this container will be places in the graph with the URI of the container, concatenated with a hash ('#') and a timestamp. Updates will also be placed in the graph with the same URI as the container, including a dcterms:hasVersion statement.
+
+#### Form
+A form to be used when a mandatory URL parameter is not set.
+
 #### Fragment
 A part of a representation that defines how a fragment of a representation is presented.
+
+#### Layer
+The layer at which a representation is located. Three layers are defined:
+
+- BottomLayer;
+- DefaultLayer;
+- TopLayer.
+
+If no specific layer is defined, the DefaulLayer is used. Only representations located at the highest avaiable layer will be used.
+
+#### Representation
+The representation of some data
+
+#### Style
+The style of a fragment.
+
+#### Translator
+The translator used to translate non-RDF data into RDF data. Three translators are defined at this moment (these correspond with the filenames in the /translators folder).
+
+- GenericExcelTranslator;
+- SimpleExcelTranslator;
+- SimpleTranslator;
+- XMI21Translator.
 
 ### Properties
 

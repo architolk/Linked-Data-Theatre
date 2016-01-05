@@ -1,0 +1,6 @@
+#Ignore alle files
+*
+#Except this one, the README.md and the pom.xml
+!.gitignore
+!README.md
+!pom.xml

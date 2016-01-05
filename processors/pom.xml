@@ -1,0 +1,91 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>nl.architolk.ldt</groupId>
+	<artifactId>processors</artifactId>
+	<packaging>jar</packaging>
+	<version>1.5.0</version>
+	<name>processors</name>
+	<properties>
+		<license-maven-plugin.version>2.11</license-maven-plugin.version>
+		<license.failIfMissing>false</license.failIfMissing>
+	</properties>
+	<dependencies>
+		<!-- Dependency for testing -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- Dependency for all processors -->
+		<!-- The orbeon.jar dependency doesnt exist in the central Maven repository -->
+		<!-- You should put the orbeon.jar (version 4.7.0) in your local maven repository: -->
+		<!-- mvn install:install-file -Dfile=<REPLACE WITH PATH TO JAR>orbeon.jar -DgroupId=orbeon -DartifactId=orbeon -Dversion=4.7.0 -Dpackaging=jar -DgeneratePom=true -->
+		<dependency>
+			<groupId>orbeon</groupId>
+			<artifactId>orbeon</artifactId>
+			<version>4.10.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+			<scope>compile</scope>
+		</dependency>
+		<!-- Dependencies XMLFOProcessor -->
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>fop</artifactId>
+			<version>1.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<!-- Dependencies ExcelSerializer, WordSerializer and ExcelConverter -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.10.1</version>
+			<scope>compile</scope>
+		</dependency>
+		<!-- Dependencies RDBSerializer -->
+		<dependency>
+			<groupId>morphrdb</groupId>
+			<artifactId>morphrdb</artifactId>
+			<version>3.5.15</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>${license-maven-plugin.version}</version>
+				<configuration>
+					<header>src/etc/license/ldt.txt</header>
+					<excludes>
+						<exclude>**/*.md</exclude>
+						<exclude>**/*.bat</exclude>
+						<exclude>pom.xml</exclude>
+						<exclude>src/test/**</exclude>
+						<exclude>src/main/resources/**</exclude>
+					</excludes>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>nl.architolk.ldt</groupId>
+						<artifactId>license-builder</artifactId>
+						<version>${license-maven-plugin.version}</version>
+					</dependency>
+				</dependencies>
+				<executions>
+					<execution>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

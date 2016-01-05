@@ -1,0 +1,192 @@
+<!--
+
+    NAME     page-flow.xml
+    VERSION  1.5.0
+    DATE     2016-01-05
+
+    Copyright 2012-2016
+
+    This file is part of the Linked Data Theatre.
+
+    The Linked Data Theatre is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    The Linked Data Theatre is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with the Linked Data Theatre.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!--
+    DESCRIPTION 
+    Page-flow, controls the linked data theatre configuration
+	
+-->
+<controller xmlns="http://www.orbeon.com/oxf/controller" matcher="regexp">
+
+	<!-- Test rdb2rdf processor -->
+	<!-- <page path="/test" model="pipelines/test.xpl" default-submission="defaults.xml" public-methods="#all"/> -->
+	
+	<!-- Favicon -->
+	<page path="/favicon.ico" model="pipelines/favicon.xpl" default-submission="defaults.xml" public-methods="#all"/>
+
+	<!-- Login, error and exit -->
+	<page path="/login" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
+		<setvalue ref="submission/representation">rep://elmo.localhost/login</setvalue>
+	</page>
+	<page path="/login-error" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
+		<setvalue ref="submission/representation">rep://elmo.localhost/login-error</setvalue>
+	</page>
+	<page path="/exit" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
+		<setvalue ref="submission/representation">rep://elmo.localhost/exit</setvalue>
+	</page>
+	
+	<!-- Page to save svg that is send to the server -->
+	<page path="(((?!print-graph).)*)/print-graph" model="pipelines/svg2document.xpl" default-submission="defaults.xml" public-methods="#all">
+		<setvalue ref="submission/subdomain" matcher-group="1"/>
+	</page>
+
+	<!-- Request header information (for debugging purposes in production) -->
+	<page path="(((?!header).)*)/header" model="pipelines/header.xpl" default-submission="defaults.xml" public-methods="#all"/>
+	<page path="(((?!header).)*)/header.json" model="pipelines/jsonheader.xpl" default-submission="defaults.xml" public-methods="#all"/>
+	<page path="/admin/header" model="pipelines/header.xpl" default-submission="defaults.xml" public-methods="#all"/>
+
+	<!-- Version header information (for debugging purposes) -->
+	<page path="(((?!version).)*)/version" model="pipelines/version.xpl" default-submission="defaults.xml" public-methods="#all">
+		<setvalue ref="submission/subdomain" matcher-group="1"/>
+		<setvalue ref="submission/format" parameter="format"/>
+		<setvalue ref="submission/subject" parameter="subject"/>
+	</page>
+	<page path="/admin/version" model="pipelines/version.xpl" default-submission="defaults.xml" public-methods="#all"/>
+	
+	<!-- query -->
+	<page path="(((?!query).)*)/query/([^\.]*)\.([^ ]*)" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
+		<setvalue ref="submission/subdomain" matcher-group="1"/>
+		<!-- <setvalue ref="submission/query" matcher-group="3"/> -->
+		<setvalue ref="submission/format" matcher-group="4"/>
+		<setvalue ref="submission/subject" parameter="subject"/>
+	</page>
+	<page path="(((?!query).)*)/query/([^ ]*)" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
+		<setvalue ref="submission/subdomain" matcher-group="1"/>
+		<!-- <setvalue ref="submission/query" matcher-group="3"/> -->
+		<setvalue ref="submission/format" parameter="format"/>
+		<setvalue ref="submission/subject" parameter="subject"/>
+	</page>
+	
+	<!-- container -->
+	<page path="(((?!container).)*)/container/([^ ]*)" model="pipelines/container.xpl" default-submission="defaults.xml" public-methods="#all">
+		<setvalue ref="submission/subdomain" matcher-group="1"/>
+	</page>
+
+	<!-- conversion -->
+	<page path="(((?!conversion).)*)/conversion/([^ ]*)" model="pipelines/conversion.xpl" default-submission="defaults.xml" public-methods="#all">
+		<setvalue ref="submission/subdomain" matcher-group="1"/>
+	</page>
+	
+	<!-- id uri (deferenceable URI) -->
+	<page path="(((?!id).)*)/id/([^ ]*)" model="pipelines/redirect.xpl" default-submission="defaults.xml" public-methods="#all"/>
+	
+	<!-- doc uri (give some information about a URI) -->
+	<page path="(((?!doc).)*)/doc/([^ ]*)" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
+		<setvalue ref="submission/subdomain" matcher-group="1"/>
+		<!-- <setvalue ref="submission/query">resource</setvalue> -->
+		<setvalue ref="submission/subject" parameter="subject"/>
+		<setvalue ref="submission/format" parameter="format"/>
+	</page>
+	
+	<!-- def uri (give some information about a hash URI) -->
+	<page path="(((?!def).)*)/def(/[^ ]*)*" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
+		<setvalue ref="submission/subdomain" matcher-group="1"/>
+		<!-- <setvalue ref="submission/query">vocabulary</setvalue> -->
+		<setvalue ref="submission/subject" parameter="subject"/>
+	</page>
+	
+	<!-- resource API (give some information about a URI, assigned to the subject parameter -->
+	<page path="(((?!resource).)*)/resource\.([^ ]*)" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
+		<setvalue ref="submission/subdomain" matcher-group="1"/>
+		<!-- <setvalue ref="submission/query">resource</setvalue> -->
+		<setvalue ref="submission/format" matcher-group="3"/>
+		<setvalue ref="submission/subject" parameter="subject"/>
+		<setvalue ref="submission/representation" parameter="representation"/>
+	</page>
+	<page path="(((?!resource).)*)/resource" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
+		<setvalue ref="submission/subdomain" matcher-group="1"/>
+		<!-- <setvalue ref="submission/query">resource</setvalue> -->
+		<setvalue ref="submission/format" parameter="format"/>
+		<setvalue ref="submission/subject" parameter="subject"/>
+		<setvalue ref="submission/representation" parameter="representation"/>
+	</page>
+	
+	<!-- default resource -->
+	<page path="(((?!resourcex).)*)/resourcex\.([^ ]*)" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
+		<setvalue ref="submission/subdomain" matcher-group="1"/>
+		<!-- <setvalue ref="submission/query">resource</setvalue> -->
+		<setvalue ref="submission/format" matcher-group="3"/>
+		<setvalue ref="submission/subject" parameter="subject"/>
+		<setvalue ref="submission/representation">rep://elmo.localhost/resource</setvalue>
+	</page>
+	<page path="(((?!resourcex).)*)/resourcex" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
+		<setvalue ref="submission/subdomain" matcher-group="1"/>
+		<!-- <setvalue ref="submission/query">resource</setvalue> -->
+		<setvalue ref="submission/format" parameter="format"/>
+		<setvalue ref="submission/subject" parameter="subject"/>
+		<setvalue ref="submission/representation">rep://elmo.localhost/resource</setvalue>
+	</page>
+	
+	<!-- Text search -->
+	<page path="(((?!textsearch).)*)/textsearch\.([^ ]*)" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
+		<setvalue ref="submission/query">rep://elmo.localhost/textsearch</setvalue>
+		<setvalue ref="submission/format" matcher-group="3"/>
+		<setvalue ref="submission/term" parameter="term"/>
+	</page>
+	<page path="(((?!textsearch).)*)/textsearch" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
+		<setvalue ref="submission/query">rep://elmo.localhost/textsearch</setvalue>
+		<setvalue ref="submission/format" parameter="format"/>
+		<setvalue ref="submission/term" parameter="term"/>
+	</page>
+	<page path="(((?!document).)*)/document\.([^ ]*)" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
+		<setvalue ref="submission/query">rep://elmo.localhost/document</setvalue>
+		<setvalue ref="submission/format" matcher-group="3"/>
+		<setvalue ref="submission/subject" parameter="subject"/>
+	</page>
+	<page path="(((?!document).)*)/document" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
+		<setvalue ref="submission/query">rep://elmo.localhost/document</setvalue>
+		<setvalue ref="submission/format" parameter="format"/>
+		<setvalue ref="submission/subject" parameter="subject"/>
+	</page>
+	
+	<!-- XMI export -->
+	<page path="/xmi" model="pipelines/xmi.xpl" default-submission="defaults.xml" public-methods="#all">
+		<setvalue ref="submission/subject" parameter="subject"/>
+	</page>
+	
+	<!-- Administrator pages -->
+	<!-- Failsafe, always show a admin page -->
+	<page path="/admin(/[^ ]*)?" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
+		<setvalue ref="submission/query">admin</setvalue>
+		<setvalue ref="submission/format" parameter="format"/>
+	</page>
+	
+	<!-- Default indexpage -->
+	<page path="/([^/]*)" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
+		<!-- <setvalue ref="submission/query">index</setvalue> -->
+		<setvalue ref="submission/format" parameter="format"/>
+		<setvalue ref="submission/subdomain" matcher-group="1"/>
+	</page>
+
+	<!-- info page -->
+	<page path="/info" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
+		<setvalue ref="submission/representation">rep://elmo.localhost/info</setvalue>
+		<setvalue ref="submission/format" parameter="format"/>
+	</page>
+	<page path="/info\.([^ ]*)" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
+		<setvalue ref="submission/representation">rep://elmo.localhost/info</setvalue>
+		<setvalue ref="submission/format" matcher-group="1"/>
+	</page>
+	
+</controller>
