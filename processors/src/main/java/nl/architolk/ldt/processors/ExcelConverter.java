@@ -1,7 +1,7 @@
 /**
  * NAME     ExcelConverter.java
- * VERSION  1.5.0
- * DATE     2016-01-03
+ * VERSION  1.5.1-SNAPSHOT
+ * DATE     2016-01-12
  *
  * Copyright 2012-2016
  *
@@ -91,7 +91,7 @@ public class ExcelConverter extends SimpleProcessor {
 									String cellvalue = formatter.formatCellValue(cell,evaluator);
 									if (cellvalue!="") {
 										AttributesImpl columnAttr = new AttributesImpl();
-										columnAttr.addAttribute("", "id", "id", "CDATA", Integer.toString(c));
+										columnAttr.addAttribute("", "id", "id", "CDATA", Integer.toString(cell.getColumnIndex()));
 										contentHandler.startElement("", "column", "column", columnAttr);
 										contentHandler.characters(cellvalue.toCharArray(), 0, cellvalue.length());
 										contentHandler.endElement("", "column", "column");

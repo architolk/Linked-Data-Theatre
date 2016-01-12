@@ -1,8 +1,8 @@
 <!--
 
     NAME     container.xpl
-    VERSION  1.5.0
-    DATE     2016-01-05
+    VERSION  1.5.1-SNAPSHOT
+    DATE     2016-01-12
 
     Copyright 2012-2016
 
@@ -293,7 +293,7 @@
 							</p:choose>
 						</p:when>
 						<!-- Upload of file, excel -->
-						<p:when test="context/parameters/parameter[name='file']/content-type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'">
+						<p:when test="ends-with(context/parameters/parameter[name='file']/filename,'.xlsx') or context/parameters/parameter[name='file']/content-type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'">
 							<!-- Fetch file -->
 							<p:processor name="oxf:url-generator">
 								<p:input name="config" transform="oxf:xslt" href="#context">

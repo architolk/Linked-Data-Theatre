@@ -3,11 +3,12 @@
 	<groupId>nl.architolk.ldt</groupId>
 	<artifactId>processors</artifactId>
 	<packaging>jar</packaging>
-	<version>1.5.0</version>
+	<version>1.5.1-SNAPSHOT</version>
 	<name>processors</name>
 	<properties>
 		<license-maven-plugin.version>2.11</license-maven-plugin.version>
 		<license.failIfMissing>false</license.failIfMissing>
+		<license.version>1.5.0</license.version>
 	</properties>
 	<dependencies>
 		<!-- Dependency for testing -->

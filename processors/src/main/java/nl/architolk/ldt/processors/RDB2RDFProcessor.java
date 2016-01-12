@@ -28,7 +28,7 @@
  * Usage:
  * - The config input contains the configuration, including the file that is used and the file that is created
  * - There is no data input
- * - The data output contains simple "42", should be something more meaningful...
+ * - The data output contains an errorMessage in case of an error, otherwise a successMessage.
  *
  */
 package nl.architolk.ldt.processors;
@@ -54,6 +54,7 @@ public class RDB2RDFProcessor extends SimpleProcessor {
 
 	//In the orbeon processors, a xsd is used, but haven't figured out how this works, so commented-out for now.
 	//public static final String RDB2RDF_PROCESSOR_CONFIG_NAMESPACE_URI = "http://orbeon.org/oxf/xml/rdb2rdf-processor-config";
+	public static final String MSG_SUCCESS = "Converted";
 
     public RDB2RDFProcessor() {
         //addInputInfo(new ProcessorInputOutputInfo(INPUT_CONFIG, RDB2RDF_PROCESSOR_CONFIG_NAMESPACE_URI));
@@ -157,12 +158,22 @@ public class RDB2RDFProcessor extends SimpleProcessor {
 		properties.readConfigurationFile();
 		
 		// Runner aanmaken op basis van properties en uitvoeren
-		MorphRDBRunnerFactory runnerFactory = new MorphRDBRunnerFactory();
-		MorphBaseRunner runner = runnerFactory.createRunner(properties);
-		runner.run();
 
-		// Closing the outputFile (bug in MorphRDB??)
-		runner.outputStream().close();
+		String resultMessage = MSG_SUCCESS;
+		try {
+			MorphRDBRunnerFactory runnerFactory = new MorphRDBRunnerFactory();
+			MorphBaseRunner runner = runnerFactory.createRunner(properties);
+			try {
+				runner.run();
+			}
+			finally {
+				// Closing the outputFile (bug in MorphRDB??)
+				runner.outputStream().close();
+			}
+		}
+		catch (Exception e) {
+			resultMessage = e.getMessage();
+		}
 		
 		// Create output (returns the mapping document and the output file)
 		String mappingDocument = config.getMappingDocument();
@@ -177,6 +188,17 @@ public class RDB2RDFProcessor extends SimpleProcessor {
         contentHandler.startElement("", "outputFile", "outputFile", new AttributesImpl());
         contentHandler.characters(outputFile.toCharArray(), 0, outputFile.length());
         contentHandler.endElement("", "outputFile", "outputFile");
+		
+		if (resultMessage == MSG_SUCCESS) {
+			contentHandler.startElement("", "successMessage", "successMessage", new AttributesImpl());
+			contentHandler.characters(resultMessage.toCharArray(), 0, resultMessage.length());
+			contentHandler.endElement("", "successMessage", "successMessage");
+		}
+		else {
+			contentHandler.startElement("", "errorMessage", "errorMessage", new AttributesImpl());
+			contentHandler.characters(resultMessage.toCharArray(), 0, resultMessage.length());
+			contentHandler.endElement("", "errorMessage", "errorMessage");
+		}
 		
 		contentHandler.endElement("", "result", "result");
         contentHandler.endDocument();

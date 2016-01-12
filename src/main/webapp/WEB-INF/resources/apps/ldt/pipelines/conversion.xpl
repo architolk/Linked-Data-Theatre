@@ -1,8 +1,8 @@
 <!--
 
     NAME     conversion.xpl
-    VERSION  1.5.0
-    DATE     2016-01-05
+    VERSION  1.5.1-SNAPSHOT
+    DATE     2016-01-12
 
     Copyright 2012-2016
 
@@ -176,26 +176,38 @@
 				<p:output name="data" id="output"/>
 			</p:processor>
 			
-			<!-- Upload file via stored procedure in Virtuoso -->
-			<!-- REMARK: autorisatie in virtuoso.ini has to be set: -->
-			<!--         DirsAllowed			= ., ../vad, ../../Tomcat/temp -->
-			<p:processor name="oxf:sql">
-				<p:input name="data" href="aggregate('root',#ttlfile,#results,#output)"/> <!-- Inclusion of output is technical: otherwise output is a result of this branche... -->
-				<p:input name="config">
-					<sql:config>
-						<response>Bestand is ingeladen</response>
-						<sql:connection>
-							<sql:datasource>virtuoso</sql:datasource>
-							<sql:execute>
-								<sql:call>
-									{call ldt.upload_rdf(<sql:param type="xs:string" select="concat(substring-after(root/url,'file:/'),'_')"/>,<sql:param type="xs:string" select="root/results/conversion"/>,'del','ttl')}
-								</sql:call>
-							</sql:execute>
-						</sql:connection>
-					</sql:config>
-				</p:input>
-				<p:output name="data" id="result"/>
-			</p:processor>
+			<!-- Check if conversion is succesfull -->
+			<p:choose href="#output">
+				<p:when test="exists(result/successMessage)">
+					<!-- Upload file via stored procedure in Virtuoso -->
+					<!-- REMARK: autorisatie in virtuoso.ini has to be set: -->
+					<!--         DirsAllowed			= ., ../vad, ../../Tomcat/temp -->
+					<p:processor name="oxf:sql">
+						<p:input name="data" href="aggregate('root',#ttlfile,#results,#output)"/> <!-- Inclusion of output is technical: otherwise output is a result of this branche... -->
+						<p:input name="config">
+							<sql:config>
+								<response>Bestand is ingeladen</response>
+								<sql:connection>
+									<sql:datasource>virtuoso</sql:datasource>
+									<sql:execute>
+										<sql:call>
+											{call ldt.upload_rdf(<sql:param type="xs:string" select="concat(substring-after(root/url,'file:/'),'_')"/>,<sql:param type="xs:string" select="root/results/conversion"/>,'del','ttl')}
+										</sql:call>
+									</sql:execute>
+								</sql:connection>
+							</sql:config>
+						</p:input>
+						<p:output name="data" id="result"/>
+					</p:processor>
+				</p:when>
+				<p:otherwise>
+					<!-- Some error occured - show error -->
+					<p:processor name="oxf:identity">
+						<p:input name="data" href="#output"/>
+						<p:output name="data" id="result"/>
+					</p:processor>
+				</p:otherwise>
+			</p:choose>
 		</p:when>
 		<p:otherwise>
 			<!-- Conversion doesn't exists - show error -->
