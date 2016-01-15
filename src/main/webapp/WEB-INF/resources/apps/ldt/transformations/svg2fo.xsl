@@ -1,8 +1,8 @@
 <!--
 
     NAME     svg2fo.xsl
-    VERSION  1.5.0
-    DATE     2016-01-05
+    VERSION  1.5.1-SNAPSHOT
+    DATE     2016-01-13
 
     Copyright 2012-2016
 
@@ -79,9 +79,9 @@
 									<xsl:for-each select="/root/xhtml:div/xhtml:div">
 										<xsl:variable name="left"><xsl:value-of select="substring-before(substring-after(@style,'left: '),'px; ')"/></xsl:variable>
 										<xsl:variable name="top"><xsl:value-of select="substring-before(substring-after(@style,'top: '),'px; ')"/></xsl:variable>
-										<svg:text x="{18+$left}px" y="{-15+$top}px" fill="black" font-size="18">
+										<svg:text x="{18+$left}px" y="{-18+$top}px" fill="black" font-size="14">
 											<xsl:for-each select="tokenize(replace(concat(normalize-space(.),' '),'(.{0,10}) ','$1&#xA;'),'&#xA;')">
-												<svg:tspan x="{18+$left}px" dy="20px"><xsl:value-of select="."/></svg:tspan>
+												<svg:tspan x="{18+$left}px" dy="16px"><xsl:value-of select="."/></svg:tspan>
 											</xsl:for-each>
 										</svg:text>
 									</xsl:for-each>
