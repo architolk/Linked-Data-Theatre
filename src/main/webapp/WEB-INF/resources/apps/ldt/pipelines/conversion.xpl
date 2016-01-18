@@ -186,12 +186,12 @@
 						<p:input name="data" href="aggregate('root',#ttlfile,#results,#output)"/> <!-- Inclusion of output is technical: otherwise output is a result of this branche... -->
 						<p:input name="config">
 							<sql:config>
-								<response>Bestand is ingeladen</response>
+								<response>Conversie succesvol uitgevoerd</response>
 								<sql:connection>
 									<sql:datasource>virtuoso</sql:datasource>
 									<sql:execute>
 										<sql:call>
-											{call ldt.upload_rdf(<sql:param type="xs:string" select="concat(substring-after(root/url,'file:/'),'_')"/>,<sql:param type="xs:string" select="root/results/conversion"/>,'del','ttl')}
+											{call ldt.upload_rdf(<sql:param type="xs:string" select="concat(substring-after(root/url,'file:/'),'_')"/>,<sql:param type="xs:string" select="root/results/graph"/>,'del','ttl')}
 										</sql:call>
 									</sql:execute>
 								</sql:connection>
@@ -220,13 +220,40 @@
 		</p:otherwise>
 	</p:choose>
 
-	<!-- Return some results -->
-	<p:processor name="oxf:xml-serializer">
+	<!-- TODO: It's better to use the same subpipeline for query, container and conversion!! -->
+	
+	<!-- Transform result to annotated rdf -->
+	<p:processor name="oxf:xslt">
+		<p:input name="data" href="aggregate('root',#context,#result)"/>
+		<p:input name="config" href="../transformations/result2rdfa.xsl"/>
+		<p:output name="data" id="rdfa"/>
+	</p:processor>
+
+	<!-- Transform -->
+	<p:processor name="oxf:xslt">
+		<p:input name="data" href="#rdfa"/>
+		<p:input name="config" href="../transformations/rdf2html.xsl"/>
+		<p:output name="data" id="html"/>
+	</p:processor>
+	<!-- Convert XML result to HTML -->
+	<p:processor name="oxf:html-converter">
 		<p:input name="config">
 			<config>
+				<encoding>utf-8</encoding>
+				<public-doctype>-//W3C//DTD XHTML 1.0 Strict//EN</public-doctype>
 			</config>
 		</p:input>
-		<p:input name="data" href="#result"/>
+		<p:input name="data" href="#html" />
+		<p:output name="data" id="converted" />
+	</p:processor>
+	<!-- Serialize -->
+	<p:processor name="oxf:http-serializer">
+		<p:input name="config">
+			<config>
+				<cache-control><use-local-cache>false</use-local-cache></cache-control>
+			</config>
+		</p:input>
+		<p:input name="data" href="#converted"/>
 	</p:processor>
 
 </p:config>

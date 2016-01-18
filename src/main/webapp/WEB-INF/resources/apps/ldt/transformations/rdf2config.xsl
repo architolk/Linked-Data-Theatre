@@ -60,6 +60,10 @@
 	<results>
 		<xsl:for-each select="rdf:RDF/rdf:Description[rdf:type/@rdf:resource='http://bp4mc2.org/elmo/def#Conversion'][1]">
 			<conversion><xsl:value-of select="@rdf:about"/></conversion>
+			<graph>
+				<xsl:value-of select="elmo:replaces/@rdf:resource"/>
+				<xsl:if test="not(elmo:replaces/@rdf:resource!='')"><xsl:value-of select="@rdf:about"/></xsl:if>
+			</graph>
 			<xsl:for-each select="elmo:database[1]">
 				<xsl:choose>
 					<xsl:when test="exists(@rdf:nodeID)"><xsl:apply-templates select="key('bnode',@rdf:nodeID)" mode="database"/></xsl:when>
