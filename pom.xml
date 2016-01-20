@@ -10,6 +10,8 @@
 		<buildTimestamp>${maven.build.timestamp}</buildTimestamp>
 		<license-maven-plugin.version>2.11</license-maven-plugin.version>
 		<license.failIfMissing>false</license.failIfMissing>
+		<release.version>1.5.0</release.version>
+		<release.date>2016-01-05</release.date>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -73,6 +75,10 @@
 						<xpl>XML_STYLE</xpl>
 						<ttl>SCRIPT_STYLE</ttl>
 					</mapping>
+					<properties>
+						<release.version>${release.version}</release.version>
+						<release.date>${release.date}</release.date>
+					</properties>
 					<excludes>
 						<exclude>examples/**</exclude>
 						<exclude>ext-resources/**</exclude>
