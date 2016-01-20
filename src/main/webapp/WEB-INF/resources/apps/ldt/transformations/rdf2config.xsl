@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2config.xsl
-    VERSION  1.5.0
-    DATE     2016-01-05
+    VERSION  1.5.1-SNAPSHOT
+    DATE     2016-01-20
 
     Copyright 2012-2016
 
@@ -24,7 +24,7 @@
 -->
 <!--
     DESCRIPTION
-    Transformation of RDF document to a RDF document with mark-up annotations
+    Extracts the config for morph-rdb from the rdf
 	
 -->
 <xsl:stylesheet version="2.0"

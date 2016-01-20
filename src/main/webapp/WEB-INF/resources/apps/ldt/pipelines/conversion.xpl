@@ -2,7 +2,7 @@
 
     NAME     conversion.xpl
     VERSION  1.5.1-SNAPSHOT
-    DATE     2016-01-19
+    DATE     2016-01-20
 
     Copyright 2012-2016
 
@@ -245,7 +245,9 @@
 			<!-- Conversion doesn't exists - show error -->
 			<p:processor name="oxf:identity">
 				<p:input name="data">
-					<error>No conversion found</error>
+					<result>
+						<errorMessage>No conversion found</errorMessage>
+					</result>
 				</p:input>
 				<p:output name="data" id="result"/>
 			</p:processor>
