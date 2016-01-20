@@ -1,8 +1,8 @@
 <!--
 
     NAME     defaults.xml
-    VERSION  1.5.0
-    DATE     2016-01-05
+    VERSION  1.5.1-SNAPSHOT
+    DATE     2016-01-19
 
     Copyright 2012-2016
 
@@ -29,13 +29,14 @@
     You should configure defaults.xml to your local settings:
     - configuration-endpoint: the SPARQL endpoint which contains the configurations of the Linked Data Theatre
     - local-endpoint: the SPARQL endpoint that is used as the default endpoint to fetch data
+    - the tempdir, if any: the absolute path to the directory to be used by the linked data theatre for temporary files (default is the tomcat temp dir)
     - the representation-graph sets the graph that contains the configuration. Should be set for every domainname that is servered by the LDT
       - site: the domainname for this configuration
 	  - uri: the uri of the named graph that contains the configuration
   	  - icon: (optional) the favicon.ico that is visible for this domain
 	  - docroot: (optional) use the docroot if the LDT is serving only a subdirectory (for example: http://mydomain.org/linkeddatatheatre/...)
 -->
-<submission configuration-endpoint="http://127.0.0.1:8890/sparql" local-endpoint="http://127.0.0.1:8890/sparql" version="${project.version}">
+<submission configuration-endpoint="http://127.0.0.1:8890/sparql" local-endpoint="http://127.0.0.1:8890/sparql">
 	<representation-graph site="localhost" uri="config:localhost"/>
 	<subdomain/>
 	<query/>

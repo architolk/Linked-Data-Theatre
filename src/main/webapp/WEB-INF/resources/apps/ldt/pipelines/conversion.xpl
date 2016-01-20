@@ -2,7 +2,7 @@
 
     NAME     conversion.xpl
     VERSION  1.5.1-SNAPSHOT
-    DATE     2016-01-12
+    DATE     2016-01-19
 
     Copyright 2012-2016
 
@@ -147,15 +147,47 @@
 				<p:input name="data" href="#ttl"/>
 				<p:output name="data" id="ttldoc"/>
 			</p:processor>
-			<p:processor name="oxf:file-serializer">
-				<p:input name="data" href="#ttldoc"/>
-				<p:input name="config">
-					<config>
-						<scope>session</scope>
-					</config>
-				</p:input>
-				<p:output name="data" id="ttlfile"/>
-			</p:processor>
+			<p:choose href="#instance">
+				<p:when test="exists(submission/@tempdir)">
+					<p:processor name="oxf:unsafe-xslt">
+						<p:input name="config">
+							<xsl:stylesheet version="2.0">
+								<xsl:template match="/">
+									<xsl:variable name="uuid" xmlns:uuid="java.util.UUID" select="uuid:randomUUID()"/>
+									<url>file:/<xsl:value-of select="submission/@tempdir"/>/<xsl:value-of select="$uuid"/>.tmp</url>
+								</xsl:template>
+							</xsl:stylesheet>
+						</p:input>
+						<p:input name="data" href="#instance"/>
+						<p:output name="data" id="filename"/>
+					</p:processor>
+					<p:processor name="oxf:file-serializer">
+						<p:input name="data" href="#ttldoc"/>
+						<p:input name="config" transform="oxf:xslt" href="#filename">
+							<config xsl:version="2.0">
+								<url><xsl:value-of select="url"/></url>
+								<make-directories>true</make-directories>
+								<append>false</append>
+							</config>
+						</p:input>
+					</p:processor>
+					<p:processor name="oxf:identity">
+						<p:input name="data" href="#filename"/>
+						<p:output name="data" id="ttlfile"/>
+					</p:processor>
+				</p:when>
+				<p:otherwise>
+					<p:processor name="oxf:file-serializer">
+						<p:input name="data" href="#ttldoc"/>
+						<p:input name="config">
+							<config>
+								<scope>session</scope>
+							</config>
+						</p:input>
+						<p:output name="data" id="ttlfile"/>
+					</p:processor>
+				</p:otherwise>
+			</p:choose>
 
 			<!-- Start working on the conversion -->
 			<p:processor name="oxf:rdb2rdf-processor">
