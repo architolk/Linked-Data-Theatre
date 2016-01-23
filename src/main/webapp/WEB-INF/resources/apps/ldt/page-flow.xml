@@ -1,8 +1,8 @@
 <!--
 
     NAME     page-flow.xml
-    VERSION  1.5.0
-    DATE     2016-01-05
+    VERSION  1.5.1-SNAPSHOT
+    DATE     2016-01-23
 
     Copyright 2012-2016
 
@@ -29,9 +29,6 @@
 -->
 <controller xmlns="http://www.orbeon.com/oxf/controller" matcher="regexp">
 
-	<!-- Test rdb2rdf processor -->
-	<!-- <page path="/test" model="pipelines/test.xpl" default-submission="defaults.xml" public-methods="#all"/> -->
-	
 	<!-- Favicon -->
 	<page path="/favicon.ico" model="pipelines/favicon.xpl" default-submission="defaults.xml" public-methods="#all"/>
 
