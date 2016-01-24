@@ -6,9 +6,12 @@
 	<version>1.5.1-SNAPSHOT</version>
 	<name>processors</name>
 	<properties>
+		<maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
+		<buildTimestamp>${maven.build.timestamp}</buildTimestamp>
 		<license-maven-plugin.version>2.11</license-maven-plugin.version>
 		<license.failIfMissing>false</license.failIfMissing>
-		<license.version>1.5.0</license.version>
+		<release.version>1.5.0</release.version>
+		<release.date>2016-01-03</release.date>
 	</properties>
 	<dependencies>
 		<!-- Dependency for testing -->
@@ -64,6 +67,10 @@
 				<version>${license-maven-plugin.version}</version>
 				<configuration>
 					<header>src/etc/license/ldt.txt</header>
+					<properties>
+						<release.version>${release.version}</release.version>
+						<release.date>${release.date}</release.date>
+					</properties>
 					<excludes>
 						<exclude>**/*.md</exclude>
 						<exclude>**/*.bat</exclude>

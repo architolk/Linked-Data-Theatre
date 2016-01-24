@@ -2,7 +2,7 @@
 
     NAME     conversion.xpl
     VERSION  1.5.1-SNAPSHOT
-    DATE     2016-01-20
+    DATE     2016-01-24
 
     Copyright 2012-2016
 
@@ -25,7 +25,10 @@
 <!--
     DESCRIPTION
     Pipeline to manage the conversion of an RDB datasource to Linked Data
-  
+
+	Both asynchronous and synchronous execution is supported. Please look at line 209
+	Asynchronous execution will not return any error codes, just "in progress".
+	Upload will be part of the RDB2RDF processor in case of asynchronous execution, just the same as the oxf:sql execution
 -->
 <p:config xmlns:p="http://www.orbeon.com/oxf/pipeline"
 		  xmlns:xforms="http://www.w3.org/2002/xforms"
@@ -203,6 +206,8 @@
 						<type><xsl:value-of select="root/results/config/type"/></type>
 						<uriEncode><xsl:value-of select="root/results/config/uriEncode"/></uriEncode>
 						<uriTransform><xsl:value-of select="root/results/config/uriTransform"/></uriTransform>
+						<mode>synchronous</mode> <!-- asynchronous or synchronous -->
+						<graph><xsl:value-of select="root/results/graph"/></graph>
 					</config>
 				</p:input>
 				<p:output name="data" id="output"/>
@@ -233,7 +238,7 @@
 					</p:processor>
 				</p:when>
 				<p:otherwise>
-					<!-- Some error occured - show error -->
+					<!-- Asynchronous execution or some error occured - show message -->
 					<p:processor name="oxf:identity">
 						<p:input name="data" href="#output"/>
 						<p:output name="data" id="result"/>

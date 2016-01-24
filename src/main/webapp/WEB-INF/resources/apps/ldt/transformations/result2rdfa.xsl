@@ -2,7 +2,7 @@
 
     NAME     result2rdfa.xsl
     VERSION  1.5.1-SNAPSHOT
-    DATE     2016-01-20
+    DATE     2016-01-24
 
     Copyright 2012-2016
 
@@ -45,13 +45,16 @@
 		</context>
 		<rdf:RDF elmo:appearance="http://bp4mc2.org/elmo/def#HtmlAppearance">
 			<rdf:Description rdf:nodeID="b1">
-				<rdfs:label>Result</rdfs:label>
+				<rdfs:label>Resultaat</rdfs:label>
 				<xsl:choose>
 					<xsl:when test="exists(response)">
 						<elmo:html><xsl:value-of select="response"/></elmo:html>
 					</xsl:when>
 					<xsl:when test="exists(result/errorMessage)">
 						<elmo:html>ERROR: <xsl:value-of select="result/errorMessage"/></elmo:html>
+					</xsl:when>
+					<xsl:when test="exists(result/startMessage)">
+						<elmo:html>Conversie gestart</elmo:html>
 					</xsl:when>
 					<xsl:otherwise>
 						<elmo:html>Something went wrong</elmo:html>
