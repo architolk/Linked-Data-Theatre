@@ -1,5 +1,5 @@
 /**
- * NAME     RDB2RDFConstants.java
+ * NAME     RDB2RDFExecutor.java
  * VERSION  1.5.1-SNAPSHOT
  * DATE     2016-01-24
  *
@@ -22,16 +22,33 @@
  */
 /**
  * DESCRIPTION
- * Class of constants for the RDB2RDFProcessor
+ * Executor of the RDB2RDF Thread. To be used as a singleton and a JNDI resource
+ * This enforces that only one conversion is active at a certain moment in time
  */
 package nl.architolk.ldt.processors;
 
-public class RDB2RDFConstants {
+import es.upm.fi.dia.oeg.morph.base.MorphProperties;
 
-	public static final String MSG_SUCCESS = "Converted";
-	public static final String MSG_STARTED = "Started";
-	public static final String MSG_ACTIVE = "Converting";
-	public static final String MODE_SYNCHRONOUS = "synchronous";
-	public static final String MODE_ASYNCHRONOUS = "asynchronous";
+public class RDB2RDFExecutor {
 
+	private RDB2RDFThread runThread;
+
+	public String start(MorphProperties properties) {
+		if (runThread==null) {
+			//No thread started
+			runThread = new RDB2RDFThread(properties);
+			runThread.start();
+			return RDB2RDFConstants.MSG_STARTED;
+		} else {
+			if (runThread.isAlive()) {
+				return RDB2RDFConstants.MSG_ACTIVE;
+			} else {
+				//Thread has terminated, start a new one
+				runThread = new RDB2RDFThread(properties);
+				runThread.start();
+				return RDB2RDFConstants.MSG_STARTED;
+			}
+		}
+	}
+	
 }

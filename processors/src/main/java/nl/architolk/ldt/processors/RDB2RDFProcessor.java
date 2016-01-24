@@ -47,6 +47,9 @@ import java.io.IOException;
 
 import es.upm.fi.dia.oeg.morph.base.MorphProperties;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+
 import org.apache.log4j.Logger;
 
 public class RDB2RDFProcessor extends SimpleProcessor {
@@ -151,9 +154,19 @@ public class RDB2RDFProcessor extends SimpleProcessor {
 	}
 	
 	private void runAsynchronous() {
+		/*
 		resultMessage = RDB2RDFConstants.MSG_STARTED;
 		RDB2RDFThread runThread = new RDB2RDFThread(this.properties);
 		runThread.start();
+		*/
+		try {
+			Context ctx = new InitialContext();
+			RDB2RDFExecutor ex = (RDB2RDFExecutor) ctx.lookup("java:/comp/env/ldt/converter");
+			resultMessage = ex.start(this.properties);
+		}
+		catch (Exception e) {
+			resultMessage = e.getMessage();
+		}
 	}
 		
     public void generateData(PipelineContext context, ContentHandler contentHandler) throws SAXException, IOException {
