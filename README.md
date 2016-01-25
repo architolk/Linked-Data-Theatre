@@ -9,4 +9,4 @@ If you want to create a new release of the ldt, please look into [BUILD-LICENSE.
 
 To deploy the Linked Data Theatre in a tomcat container, follow the instructions in [DEPLOY.md](DEPLOY.md).
 
-The Linked Data Theatre uses a configuration graph containing all the triples that make up the LDT configuration. Instructions and examples how to create such a configuration can be found in [USAGE.md](USAGE.md).
+The Linked Data Theatre uses a configuration graph containing all the triples that make up the LDT configuration. Instructions and examples how to create such a configuration can be found at the [wiki](wiki).
