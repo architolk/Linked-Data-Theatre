@@ -61,6 +61,7 @@
 							<include>WEB-INF/resources/apps/js/**</include>
 							<include>WEB-INF/resources/apps/css/**</include>
 							<include>WEB-INF/resources/apps/fonts/**</include>
+							<include>WEB-INF/lib/**</include>
 						</resource>
 					</webResources>
 				</configuration>

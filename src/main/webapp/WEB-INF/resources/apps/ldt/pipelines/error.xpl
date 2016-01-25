@@ -1,8 +1,8 @@
 <!--
 
     NAME     error.xpl
-    VERSION  1.5.0
-    DATE     2016-01-05
+    VERSION  1.5.1-SNAPSHOT
+    DATE     2016-01-25
 
     Copyright 2012-2016
 
@@ -60,7 +60,7 @@
 		<p:output name="data" id="errortext"/>
 	</p:processor>
 	<p:processor name="oxf:xslt">
-		<p:input name="data" href="aggregate('results',#errortext,#exception)"/>
+		<p:input name="data" href="aggregate('results',#instance,#errortext,#exception)"/>
 		<p:input name="config" href="../transformations/error2html.xsl"/>
 		<p:output name="data" id="html"/>
 	</p:processor>

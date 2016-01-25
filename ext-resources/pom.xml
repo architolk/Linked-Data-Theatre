@@ -215,6 +215,28 @@
 							<outputDirectory>zips</outputDirectory>
 						</configuration>
 					</execution>
+					<execution>
+						<id>get-virtuoso-jdbc3</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>http://opldownload.s3.amazonaws.com/uda/virtuoso/7.2/jdbc/virtjdbc3.jar</url>
+							<unpack>false</unpack>
+							<outputDirectory>WEB-INF/lib</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>get-virtuoso-jdbc4</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>http://opldownload.s3.amazonaws.com/uda/virtuoso/7.2/jdbc/virtjdbc4.jar</url>
+							<unpack>false</unpack>
+							<outputDirectory>WEB-INF/lib</outputDirectory>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>
