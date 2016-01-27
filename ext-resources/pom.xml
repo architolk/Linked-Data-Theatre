@@ -148,7 +148,7 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>http://cdn.leafletjs.com/leaflet/v1.0.0-beta.2/leaflet.js</url>
+							<url>http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js</url>
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
 						</configuration>
 					</execution>
@@ -158,7 +158,7 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>http://cdn.leafletjs.com/leaflet/v1.0.0-beta.2/leaflet.css</url>
+							<url>http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css</url>
 							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
 						</configuration>
 					</execution>

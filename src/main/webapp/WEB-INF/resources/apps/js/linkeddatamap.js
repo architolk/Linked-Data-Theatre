@@ -341,9 +341,18 @@ function onEachFeature(feature, layer) {
 
 function pointToLayer(feature, latlng) {
 	if (feature.radius) {
-		return L.circle(latlng,feature.radius)
+		return L.circleMarker(latlng,{radius: res[0]*feature.radius/res[map.getZoom()]})
 	} else {
 		return L.marker(latlng);
+	}
+}
+
+function resizeCircle(e) {
+	for(i = 0; i < listOfGeoObjects.length; ++i) {
+		var layer = listOfGeoObjects[i].getLayers()[0];
+		if (layer instanceof L.CircleMarker) {
+			layer.setStyle({radius: res[0]*layer.feature.geometry.radius/res[map.getZoom()]});
+		}
 	}
 }
 
@@ -527,6 +536,10 @@ function initMap(docroot, latCor, longCor, backMap, imageMapURL, contURL, left, 
 		//Add tile layer to map
 		map.addLayer(osm);
 	}
+
+	//Zoom option for circlemarkers
+	map.on('zoomend',resizeCircle);
+	
 	map.invalidateSize();
 }
 
