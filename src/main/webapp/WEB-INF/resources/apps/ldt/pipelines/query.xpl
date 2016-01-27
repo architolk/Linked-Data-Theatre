@@ -1,8 +1,8 @@
 <!--
 
     NAME     query.xpl
-    VERSION  1.5.0
-    DATE     2016-01-05
+    VERSION  1.5.1-SNAPSHOT
+    DATE     2016-01-27
 
     Copyright 2012-2016
 
@@ -110,8 +110,6 @@
 									OPTIONAL {?rep elmo:layer ?layer}
 								}
 								{
-									{?rep elmo:applies-to <]]><xsl:value-of select="context/subject"/><![CDATA[>}
-									UNION
 									{
 										?rep elmo:url-pattern ?pattern.
 										FILTER regex("]]><xsl:value-of select="context/url"/><![CDATA[",?pattern)
@@ -120,14 +118,16 @@
 									{
 										?rep elmo:uri-pattern ?pattern.
 										FILTER regex("]]><xsl:value-of select="context/subject"/><![CDATA[",?pattern)
-									}
+									}]]><xsl:if test="not(contains(context/subject,' '))"><![CDATA[
+									UNION
+									{?rep elmo:applies-to <]]><xsl:value-of select="context/subject"/><![CDATA[>}
 									UNION
 									{
 										?rep elmo:applies-to ?profile.
 										?profile ?predicate ?object.
 										<]]><xsl:value-of select="context/subject"/><![CDATA[> ?predicate ?object
 										FILTER isBlank(?profile)
-									}
+									}]]></xsl:if><![CDATA[
 								}
 							}
 						]]>
@@ -253,7 +253,7 @@
 		<p:input name="request" href="#defquerytext"/>
 		<p:output name="response" id="defquery"/>
 	</p:processor>
-	
+							
 	<!-- Query from graph representation -->
 	<p:processor name="oxf:xslt">
 		<p:input name="config">

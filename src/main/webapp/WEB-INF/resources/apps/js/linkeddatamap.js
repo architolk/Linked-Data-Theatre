@@ -1,7 +1,7 @@
 /*
  * NAME     linkeddatamap.js
- * VERSION  1.5.0
- * DATE     2016-01-05
+ * VERSION  1.5.1-SNAPSHOT
+ * DATE     2016-01-27
  *
  * Copyright 2012-2016
  *
