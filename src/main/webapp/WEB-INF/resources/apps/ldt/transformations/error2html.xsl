@@ -2,7 +2,7 @@
 
     NAME     error2html.xsl
     VERSION  1.5.1-SNAPSHOT
-    DATE     2016-01-25
+    DATE     2016-01-29
 
     Copyright 2012-2016
 
@@ -77,7 +77,13 @@
 								</div>
 							</div>
 						</div>
-						<div class="row hidden">
+						<xsl:variable name="divclass">
+							<xsl:choose>
+								<xsl:when test="results/submission/@env='dev'">row</xsl:when>
+								<xsl:otherwise>row hidden</xsl:otherwise>
+							</xsl:choose>
+						</xsl:variable>
+						<div class="{$divclass}">
 							<script type="text/javascript" charset="utf-8">
 								$(document).ready(function() {$('#errortable').dataTable(elmo_language);} );
 							</script>

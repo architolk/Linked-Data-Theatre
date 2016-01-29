@@ -2,7 +2,7 @@
 
     NAME     error.xpl
     VERSION  1.5.1-SNAPSHOT
-    DATE     2016-01-25
+    DATE     2016-01-29
 
     Copyright 2012-2016
 
@@ -36,6 +36,17 @@
 	<!-- Configuration> -->
 	<p:param type="input" name="instance"/>
 
+	<!-- Defaults won't be part of the configuration, so explicit loading -->
+	<p:processor name="oxf:url-generator">
+		<p:input name="config">
+			<config>
+				<url>../defaults.xml</url>
+				<content-type>application/xml</content-type>
+			</config>
+		</p:input>
+		<p:output name="data" id="defaults"/>
+	</p:processor>
+	
 	<!-- Get all the error information -->
 	<p:processor name="oxf:exception">
 		<p:output name="data" id="exception"/>
@@ -46,7 +57,7 @@
 	<p:input name="config">
 		<config/>
 	</p:input>
-	<p:input name="data" href="#exception"/>
+	<p:input name="data" href="#defaults"/>
 </p:processor>
 -->
 
@@ -60,7 +71,7 @@
 		<p:output name="data" id="errortext"/>
 	</p:processor>
 	<p:processor name="oxf:xslt">
-		<p:input name="data" href="aggregate('results',#instance,#errortext,#exception)"/>
+		<p:input name="data" href="aggregate('results',#defaults,#errortext,#exception)"/>
 		<p:input name="config" href="../transformations/error2html.xsl"/>
 		<p:output name="data" id="html"/>
 	</p:processor>

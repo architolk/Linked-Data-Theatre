@@ -2,7 +2,7 @@
 
     NAME     defaults.xml
     VERSION  1.5.1-SNAPSHOT
-    DATE     2016-01-19
+    DATE     2016-01-29
 
     Copyright 2012-2016
 
@@ -27,6 +27,7 @@
     Default submission, will be overriden by specific setvalue parameters in page-flow.xml
  
     You should configure defaults.xml to your local settings:
+	- env: the environment (prod, test, dev). Only in dev will runtime errors be visible. Default = prod
     - configuration-endpoint: the SPARQL endpoint which contains the configurations of the Linked Data Theatre
     - local-endpoint: the SPARQL endpoint that is used as the default endpoint to fetch data
     - the tempdir, if any: the absolute path to the directory to be used by the linked data theatre for temporary files (default is the tomcat temp dir)
@@ -36,7 +37,7 @@
   	  - icon: (optional) the favicon.ico that is visible for this domain
 	  - docroot: (optional) use the docroot if the LDT is serving only a subdirectory (for example: http://mydomain.org/linkeddatatheatre/...)
 -->
-<submission configuration-endpoint="http://127.0.0.1:8890/sparql" local-endpoint="http://127.0.0.1:8890/sparql">
+<submission env="prod" configuration-endpoint="http://127.0.0.1:8890/sparql" local-endpoint="http://127.0.0.1:8890/sparql">
 	<representation-graph site="localhost" uri="config:localhost"/>
 	<subdomain/>
 	<query/>
