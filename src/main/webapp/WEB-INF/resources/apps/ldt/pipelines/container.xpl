@@ -2,7 +2,7 @@
 
     NAME     container.xpl
     VERSION  1.5.1-SNAPSHOT
-    DATE     2016-01-12
+    DATE     2016-01-29
 
     Copyright 2012-2016
 
@@ -25,7 +25,62 @@
 <!--
     DESCRIPTION
     Pipeline to manage updating an inserting triples into a container
-  
+
+	TWO Problems at this moment:
+	1) Error handling from stored procedure isn't nice: default error page. Errors should be handled before any stored procedure call is made
+	2) When a zip contains multiple files, only the last file will get into the container!
+	
+	Structure of this pipeline:
+	1. Process the http request, results in context and containercontext pipes
+	2. Check if a container exists in the configuration, if not: return 404 (resource not found)
+	3. Check if authorization is required, and if so, check authorization. If not authorized: return 403.
+	4. Check situation: (A) new data has been uploaded, or (B) the container itself is request
+	|
+	+~~~A. (New data is uploaded)
+	|	1. Check the file or form:
+	|	+~~~A. (It's a zip)
+	|	|	Unpack zip and return references to files in filelist pipe
+	|	+~~~B. (It's not a zip, but a simple file)
+	|	|	Put reference to file into filelist pipe
+	|	+~~~C. (It's a form)
+	|	|	Dump content into file, and put reference of file into filelist pipe
+	|	+~~~D. (Otherwise)
+	|		Create an empty filelist
+	|
+	|	2. For each filename in the filelist pipe, do:
+	|		1. Check if a translator is defined (A), a form has been used (B), or not (C)
+	|		+~~~A. (Translator is defined)
+	|		|	1. Check format of file
+	|		|	+~~~A. (Excel format)
+	|		|	|	Load excel document, Convert into XML format, put it in xmldata pipe
+	|		|	|
+	|		|	+~~~B. (CSV format)
+	|		|	|	Load CSV document, convert into XML format, put it in xmldata pipe
+	|		|	|
+	|		|	+~~~C. (XML format)
+	|		|	|	Load XML document, put in xmldata pipe
+	|		|	|
+	|		|	+~~~D. (Other formats)
+	|		|		Put empty xml document in xmldata pipe
+	|		|
+	|		|	2. Load translator and translate xmldata, save it to disc and put reference into rdffile pipe
+	|		|
+	|		+~~~B. (No translator is defined)
+	|			1. Put reference into rdffile pipe
+	|
+	|		2. Check the format of the rdffile (A: XML, B: TTL, C: Something else)
+	|		+~~~A. (XML format)
+	|		|	Upload XML format to triplestore, store message in results pipe
+	|		+~~~B. (TTL format)
+	|		|	Upload TTL format to triplestore, store message in results pipe
+	|		+~~~C. (Something else)
+	|			Store error message in results pipe
+	|
+	|	3. Show messages from results pipe to user (html or json)
+	|
+	+~~~B. (Container itself is request)
+		Check what the request wants: html or json, and return appropriate result.
+	
 -->
 <p:config xmlns:p="http://www.orbeon.com/oxf/pipeline"
 		  xmlns:xforms="http://www.w3.org/2002/xforms"
@@ -146,10 +201,11 @@
 		<p:input name="data" href="#container"/>
 		<p:output name="data" id="containercontext"/>
 	</p:processor>
+	
 	<p:choose href="#containercontext">
-	
+		<!-- Container should exist in configuration, or return 404 -->
 		<p:when test="exists(container/url)">
-	
+			<!-- Container exists -->
 			<p:choose href="aggregate('root',#context,#containercontext)">
 				<!-- When a user-role is defined, the user should have that role -->
 				<p:when test="root/container/user-role!='' and root/context/user-role!=root/container/user-role">
@@ -184,213 +240,45 @@
 						<p:input name="data" href="#htmlres"/>
 					</p:processor>
 				</p:when>
-				<!-- Submission of new data -->
+				<!-- Submission of new data, result of this branche = new data is uploaded -->
 				<p:when test="root/context/parameters/parameter[name='container']/value=root/context/subject">
-<!--
-<p:processor name="oxf:xml-serializer">
-	<p:input name="config">
-		<config/>
-	</p:input>
-	<p:input name="data" href="#containercontext"/>
-</p:processor>
--->
 					<p:choose href="#context">
-						<!-- Upload file, xml -->
-						<p:when test="context/parameters/parameter[name='file']/content-type='text/xml'">
-							<p:choose href="#containercontext">
-								<!-- non-rdf XML, use translator to convert to rdf/xml -->
-								<p:when test="container/translator!=''">
-									<!-- Fetch file -->
-									<p:processor name="oxf:url-generator">
-										<p:input name="config" transform="oxf:xslt" href="#context">
-											<config xsl:version="2.0">
-												<url><xsl:value-of select="context/parameters/parameter[name='file']/value"/></url>
-												<content-type>application/xml</content-type>
-											</config>
-										</p:input>
-										<p:output name="data" id="xmldata"/>
-									</p:processor>
-									<!-- Fetch translator -->
-									<p:processor name="oxf:url-generator">
-										<p:input name="config" transform="oxf:xslt" href="#containercontext">
-											<config xsl:version="2.0">
-												<url>../translators/<xsl:value-of select="substring-after(/container/translator,'http://bp4mc2.org/elmo/def#')"/>.xsl</url>
-												<content-type>application/xml</content-type>
-											</config>
-										</p:input>
-										<p:output name="data" id="translator"/>
-									</p:processor>
-									<!-- Translate -->
-									<p:processor name="oxf:xslt">
-										<p:input name="config" href="#translator"/>
-										<p:input name="data" href="#xmldata"/>
-										<p:output name="data" id="rdfdata"/>
-									</p:processor>
-									<!-- Convert to xml document -->
-									<p:processor name="oxf:xml-converter">
-										<p:input name="config">
-											<config>
-												<encoding>utf-8</encoding>
-											</config>
-										</p:input>
-										<p:input name="data" href="#rdfdata"/>
-										<p:output name="data" id="xmldoc"/>
-									</p:processor>
-									<!-- Store translation in temporary file -->
-									<p:processor name="oxf:file-serializer">
-										<p:input name="config">
-											<config>
-												<scope>session</scope>
-											</config>
-										</p:input>
-										<p:input name="data" href="#xmldoc"/>
-										<p:output name="data" id="url-written"/>
-									</p:processor>
-									<!-- Verwerken bestand: via aanroep van stored procedure in Virtuoso -->
-									<!-- Let op: autorisatie in virtuoso.ini moet goed staan: -->
-									<!--         DirsAllowed			= ., ../vad, ../../Tomcat/temp -->
-									<p:processor name="oxf:sql">
-										<p:input name="data" href="aggregate('root',#url-written,#containercontext)"/>
-										<p:input name="config">
-											<sql:config>
-												<response>Bestand is ingeladen</response>
-												<sql:connection>
-													<sql:datasource>virtuoso</sql:datasource>
-													<sql:execute>
-														<sql:call>
-															{call ldt.update_container(<sql:param type="xs:string" select="substring-after(root/url,'file:/')"/>,'xml',<sql:param type="xs:string" select="root/container/url"/>,<sql:param type="xs:string" select="root/container/version-url"/>,<sql:param type="xs:string" select="root/container/target-graph"/>,<sql:param type="xs:string" select="root/container/target-graph/@action"/>,<sql:param type="xs:string" select="root/container/postquery"/>)}
-														</sql:call>
-													</sql:execute>
-												</sql:connection>
-											</sql:config>
-										</p:input>
-										<p:output name="data" id="result"/>
-									</p:processor>
-								</p:when>
-								<!-- Upload of file, asume rdf/xml -->
-								<p:otherwise>
-									<!-- Verwerken bestand: via aanroep van stored procedure in Virtuoso -->
-									<!-- Let op: autorisatie in virtuoso.ini moet goed staan: -->
-									<!--         DirsAllowed			= ., ../vad, ../../Tomcat/temp -->
-									<p:processor name="oxf:sql">
-										<p:input name="data" href="aggregate('root',#context,#containercontext)"/>
-										<p:input name="config">
-											<sql:config>
-												<response>Bestand is ingeladen</response>
-												<sql:connection>
-													<sql:datasource>virtuoso</sql:datasource>
-													<sql:execute>
-														<sql:call>
-															{call ldt.update_container(<sql:param type="xs:string" select="substring-after(root/context/parameters/parameter[name='file']/value,'file:/')"/>,'xml',<sql:param type="xs:string" select="root/container/url"/>,<sql:param type="xs:string" select="root/container/version-url"/>,<sql:param type="xs:string" select="root/container/target-graph"/>,<sql:param type="xs:string" select="root/container/target-graph/@action"/>,<sql:param type="xs:string" select="root/container/postquery"/>)}
-														</sql:call>
-													</sql:execute>
-												</sql:connection>
-											</sql:config>
-										</p:input>
-										<p:output name="data" id="result"/>
-									</p:processor>
-								</p:otherwise>
-							</p:choose>
-						</p:when>
-						<!-- Upload of file, excel -->
-						<p:when test="ends-with(context/parameters/parameter[name='file']/filename,'.xlsx') or context/parameters/parameter[name='file']/content-type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'">
-							<!-- Fetch file -->
+						<!-- Upload file, zip -->
+						<p:when test="ends-with(context/parameters/parameter[name='file']/filename,'.zip') or context/parameters/parameter[name='file']/content-type='multipart/x-zip'">
+							<!-- Fetch zipfile -->
 							<p:processor name="oxf:url-generator">
 								<p:input name="config" transform="oxf:xslt" href="#context">
 									<config xsl:version="2.0">
 										<url><xsl:value-of select="context/parameters/parameter[name='file']/value"/></url>
-										<mode>binary</mode>
+										<content-type>multipart/x-zip</content-type>
 									</config>
 								</p:input>
-								<p:output name="data" id="xlsxdata"/>
+								<p:output name="data" id="zip"/>
 							</p:processor>
-							<!-- Transform -->
-							<p:processor name="oxf:excel-converter">
-								<p:input name="data" href="#xlsxdata"/>
-								<p:output name="data" id="xmldata"/>
-							</p:processor>
-							<!-- Fetch translator -->
-							<p:processor name="oxf:url-generator">
-								<p:input name="config" transform="oxf:xslt" href="#containercontext">
-									<config xsl:version="2.0">
-										<url>../translators/<xsl:value-of select="substring-after(/container/translator,'http://bp4mc2.org/elmo/def#')"/>.xsl</url>
-										<content-type>application/xml</content-type>
-									</config>
-								</p:input>
-								<p:output name="data" id="translator"/>
-							</p:processor>
-							<!-- Translate -->
-							<p:processor name="oxf:xslt">
-								<p:input name="config" href="#translator"/>
-								<p:input name="data" href="aggregate('root',#containercontext,#xmldata)"/>
-								<p:output name="data" id="rdfdata"/>
-							</p:processor>
-							<!-- Convert to xml document -->
-							<p:processor name="oxf:xml-converter">
-								<p:input name="config">
-									<config>
-										<encoding>utf-8</encoding>
-									</config>
-								</p:input>
-								<p:input name="data" href="#rdfdata"/>
-								<p:output name="data" id="xmldoc"/>
-							</p:processor>
-							<!-- Store translation in temporary file -->
-							<p:processor name="oxf:file-serializer">
-								<p:input name="config">
-									<config>
-										<scope>session</scope>
-									</config>
-								</p:input>
-								<p:input name="data" href="#xmldoc"/>
-								<p:output name="data" id="url-written"/>
-							</p:processor>
-							<!-- Verwerken bestand: via aanroep van stored procedure in Virtuoso -->
-							<!-- Let op: autorisatie in virtuoso.ini moet goed staan: -->
-							<!--         DirsAllowed			= ., ../vad, ../../Tomcat/temp -->
-							<p:processor name="oxf:sql">
-								<p:input name="data" href="aggregate('root',#url-written,#containercontext)"/>
-								<p:input name="config">
-									<sql:config>
-										<response>Bestand is ingeladen</response>
-										<sql:connection>
-											<sql:datasource>virtuoso</sql:datasource>
-											<sql:execute>
-												<sql:call>
-													{call ldt.update_container(<sql:param type="xs:string" select="substring-after(root/url,'file:/')"/>,'xml',<sql:param type="xs:string" select="root/container/url"/>,<sql:param type="xs:string" select="root/container/version-url"/>,<sql:param type="xs:string" select="root/container/target-graph"/>,<sql:param type="xs:string" select="root/container/target-graph/@action"/>,<sql:param type="xs:string" select="root/container/postquery"/>)}
-												</sql:call>
-											</sql:execute>
-										</sql:connection>
-									</sql:config>
-								</p:input>
-								<p:output name="data" id="result"/>
+							<p:processor name="oxf:unzip">
+								<p:input name="data" href="#zip"/>
+								<p:output name="data" id="filelist"/>
 							</p:processor>
 						</p:when>
-						<!-- Upload of file, asume ttl -->
+						<!-- Upload file, not a zip -->
 						<p:when test="context/parameters/parameter[name='file']/filename!=''">
-							<!-- Verwerken bestand: via aanroep van stored procedure in Virtuoso -->
-							<!-- Let op: autorisatie in virtuoso.ini moet goed staan: -->
-							<!--         DirsAllowed			= ., ../vad, ../../Tomcat/temp -->
-							<p:processor name="oxf:sql">
-								<p:input name="data" href="aggregate('root',#context,#containercontext)"/>
+							<!-- Put filename in filelist -->
+							<p:processor name="oxf:xslt">
 								<p:input name="config">
-									<sql:config>
-										<response>Bestand is ingeladen</response>
-										<sql:connection>
-											<sql:datasource>virtuoso</sql:datasource>
-											<sql:execute>
-												<sql:call>
-													{call ldt.update_container(<sql:param type="xs:string" select="substring-after(root/context/parameters/parameter[name='file']/value,'file:/')"/>,'ttl',<sql:param type="xs:string" select="root/container/url"/>,<sql:param type="xs:string" select="root/container/version-url"/>,<sql:param type="xs:string" select="root/container/target-graph"/>,<sql:param type="xs:string" select="root/container/target-graph/@action"/>,<sql:param type="xs:string" select="root/container/postquery"/>)}
-												</sql:call>
-											</sql:execute>
-										</sql:connection>
-									</sql:config>
+									<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+										<xsl:template match="/">
+											<files>
+												<file name="{context/parameters/parameter[name='file']/filename}"><xsl:value-of select="context/parameters/parameter[name='file']/value"/></file>
+											</files>
+										</xsl:template>
+									</xsl:stylesheet>
 								</p:input>
-								<p:output name="data" id="result"/>
+								<p:input name="data" href="#context"/>
+								<p:output name="data" id="filelist"/>
 							</p:processor>
 						</p:when>
-						<!-- Content inline in text block -->
-						<p:otherwise>
+						<!-- Upload form -->
+						<p:when test="exists(context/parameters/parameter[name='content']/value)">
 							<p:processor name="oxf:xslt">
 								<p:input name="config">
 									<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -418,7 +306,6 @@
 								<p:input name="data" href="#turtle" />
 								<p:output name="data" id="converted" />
 							</p:processor>
-							
 							<p:processor name="oxf:file-serializer">
 								<p:input name="config">
 									<config>
@@ -428,44 +315,222 @@
 								<p:input name="data" href="#converted"/>
 								<p:output name="data" id="urlfile"/>
 							</p:processor>
-							<!-- Verwerken bestand: via aanroep van stored procedure in Virtuoso -->
-							<!-- Let op: autorisatie in virtuoso.ini moet goed staan: -->
-							<!--         DirsAllowed			= ., ../vad, ../../Tomcat/temp -->
-							<p:processor name="oxf:sql">
-								<p:input name="data" href="aggregate('root',#urlfile,#context,#containercontext)"/>
+							<!-- Put filename in filelist -->
+							<p:processor name="oxf:xslt">
 								<p:input name="config">
-									<sql:config>
-										<response>Bestand is ingeladen</response>
-										<sql:connection>
-											<sql:datasource>virtuoso</sql:datasource>
-											<sql:execute>
-												<sql:call>
-													{call ldt.update_container(<sql:param type="xs:string" select="substring-after(root/url,'file:/')"/>,'ttl',<sql:param type="xs:string" select="root/container/url"/>,<sql:param type="xs:string" select="root/container/version-url"/>,<sql:param type="xs:string" select="root/container/target-graph"/>,<sql:param type="xs:string" select="root/container/target-graph/@action"/>,<sql:param type="xs:string" select="root/container/postquery"/>)}
-												</sql:call>
-											</sql:execute>
-										</sql:connection>
-									</sql:config>
+									<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+										<xsl:template match="/">
+											<files>
+												<file name="content.ttl"><xsl:value-of select="url"/></file>
+											</files>
+										</xsl:template>
+									</xsl:stylesheet>
 								</p:input>
-								<p:output name="data" id="result"/>
+								<p:input name="data" href="#urlfile"/>
+								<p:output name="data" id="filelist"/>
+							</p:processor>
+						</p:when>
+						<!-- Something else, just create an empty filelist -->
+						<p:otherwise>
+							<p:processor name="oxf:identity">
+								<p:input name="data">
+									<files />
+								</p:input>
+								<p:output name="data" id="filelist"/>
 							</p:processor>
 						</p:otherwise>
 					</p:choose>
-
 <!--
 <p:processor name="oxf:xml-serializer">
 	<p:input name="config">
 		<config/>
 	</p:input>
-	<p:input name="data" href="#result"/>
+	<p:input name="data" href="#filelist"/>
 </p:processor>
 -->
+					<p:for-each href="#filelist" select="/files/file" root="results" id="result">
+						<p:choose href="#context">
+							<!-- Translator is used -->
+							<p:when test="container/translator!=''">
+								<p:choose href="current()">
+									<!-- Upload excel file -->
+									<p:when test="ends-with(file/@name,'.xlsx')">
+										<!-- Fetch file -->
+										<p:processor name="oxf:url-generator">
+											<p:input name="config" transform="oxf:xslt" href="current()">
+												<config xsl:version="2.0">
+													<url><xsl:value-of select="file"/></url>
+													<mode>binary</mode>
+												</config>
+											</p:input>
+											<p:output name="data" id="xlsxdata"/>
+										</p:processor>
+										<!-- Transform -->
+										<p:processor name="oxf:excel-converter">
+											<p:input name="data" href="#xlsxdata"/>
+											<p:output name="data" id="xmldata"/>
+										</p:processor>
+									</p:when>
+									<!-- Upload CSV file -->
+									<p:when test="ends-with(file/@name,'.csv')">
+										<!-- Fetch file -->
+										<p:processor name="oxf:url-generator">
+											<p:input name="config" transform="oxf:xslt" href="current()">
+												<config xsl:version="2.0">
+													<url><xsl:value-of select="file"/></url>
+													<content-type>text/csv</content-type>
+												</config>
+											</p:input>
+											<p:output name="data" id="csvdata"/>
+										</p:processor>
+										<!-- CSV to XML transformation -->
+										<p:processor name="oxf:xslt">
+											<p:input name="config" href="../transformations/csv2xml.xsl"/>
+											<p:input name="data" href="#csvdata"/>
+											<p:output name="data" id="xmldata"/>
+										</p:processor>
+									</p:when>
+									<!-- Upload XML file -->
+									<p:when test="ends-with(file/@name,'.xml')">
+										<!-- Fetch file -->
+										<p:processor name="oxf:url-generator">
+											<p:input name="config" transform="oxf:xslt" href="current()">
+												<config xsl:version="2.0">
+													<url><xsl:value-of select="file"/></url>
+													<content-type>application/xml</content-type>
+												</config>
+											</p:input>
+											<p:output name="data" id="xmldata"/>
+										</p:processor>
+									</p:when>
+									<!-- Something else -->
+									<p:otherwise>
+										<p:processor name="oxf:identity">
+											<p:input name="data">
+												<empty />
+											</p:input>
+											<p:output name="data" id="xmldata"/>
+										</p:processor>
+									</p:otherwise>
+								</p:choose>
+								<!-- Fetch translator -->
+								<p:processor name="oxf:url-generator">
+									<p:input name="config" transform="oxf:xslt" href="#containercontext">
+										<config xsl:version="2.0">
+											<url>../translators/<xsl:value-of select="substring-after(/container/translator,'http://bp4mc2.org/elmo/def#')"/>.xsl</url>
+											<content-type>application/xml</content-type>
+										</config>
+									</p:input>
+									<p:output name="data" id="translator"/>
+								</p:processor>
+								<!-- Translate -->
+								<p:processor name="oxf:xslt">
+									<p:input name="config" href="#translator"/>
+									<p:input name="data" href="#xmldata"/>
+									<p:output name="data" id="rdfdata"/>
+								</p:processor>
+								<!-- Convert to xml document -->
+								<p:processor name="oxf:xml-converter">
+									<p:input name="config">
+										<config>
+											<encoding>utf-8</encoding>
+										</config>
+									</p:input>
+									<p:input name="data" href="#rdfdata"/>
+									<p:output name="data" id="xmldoc"/>
+								</p:processor>
+								<!-- Store translation in temporary file -->
+								<p:processor name="oxf:file-serializer">
+									<p:input name="config">
+										<config>
+											<scope>session</scope>
+										</config>
+									</p:input>
+									<p:input name="data" href="#xmldoc"/>
+									<p:output name="data" id="url-written"/>
+								</p:processor>
+								<!-- Merge temporary file with file description -->
+								<p:processor name="oxf:xslt">
+									<p:input name="config">
+										<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+											<xsl:template match="/">
+												<file name="conversion.xml"><xsl:value-of select="url"/></file>
+											</xsl:template>
+										</xsl:stylesheet>
+									</p:input>
+									<p:input name="data" href="#url-written"/>
+									<p:output name="data" id="rdffile"/>
+								</p:processor>
+							</p:when>
+							<!-- No translator is used (file extension should be xml or ttl) -->
+							<p:otherwise>
+								<p:processor name="oxf:identity">
+									<p:input name="data" href="current()"/>
+									<p:output name="data" id="rdffile"/>
+								</p:processor>
+							</p:otherwise>
+						</p:choose>
+						<!-- Upload of file: via Virtuoso stored procedure -->
+						<!-- Please change authorization in virtuoso.ini: -->
+						<!--         DirsAllowed			= ., ../vad, ../../Tomcat/temp -->
+						
+						<!-- Check if extension is xml or ttl, return error if not -->
+						<p:choose href="#rdffile">
+							<p:when test="ends-with(file/@name,'.xml')">
+								<p:processor name="oxf:sql">
+									<p:input name="data" href="aggregate('root',#rdffile,#containercontext)"/>
+									<p:input name="config">
+										<sql:config>
+											<response>Bestand is ingeladen</response>
+											<sql:connection>
+												<sql:datasource>virtuoso</sql:datasource>
+												<sql:execute>
+													<sql:call>
+														{call ldt.update_container(<sql:param type="xs:string" select="substring-after(root/file,'file:/')"/>,'xml',<sql:param type="xs:string" select="root/container/url"/>,<sql:param type="xs:string" select="root/container/version-url"/>,<sql:param type="xs:string" select="root/container/target-graph"/>,<sql:param type="xs:string" select="root/container/target-graph/@action"/>,<sql:param type="xs:string" select="root/container/postquery"/>)}
+													</sql:call>
+												</sql:execute>
+											</sql:connection>
+										</sql:config>
+									</p:input>
+									<p:output name="data" ref="result"/>
+								</p:processor>
+							</p:when>
+							<p:when test="ends-with(file/@name,'.ttl')">
+								<p:processor name="oxf:sql">
+									<p:input name="data" href="aggregate('root',#rdffile,#containercontext)"/>
+									<p:input name="config">
+										<sql:config>
+											<response>Bestand is ingeladen</response>
+											<sql:connection>
+												<sql:datasource>virtuoso</sql:datasource>
+												<sql:execute>
+													<sql:call>
+														{call ldt.update_container(<sql:param type="xs:string" select="substring-after(root/file,'file:/')"/>,'ttl',<sql:param type="xs:string" select="root/container/url"/>,<sql:param type="xs:string" select="root/container/version-url"/>,<sql:param type="xs:string" select="root/container/target-graph"/>,<sql:param type="xs:string" select="root/container/target-graph/@action"/>,<sql:param type="xs:string" select="root/container/postquery"/>)}
+													</sql:call>
+												</sql:execute>
+											</sql:connection>
+										</sql:config>
+									</p:input>
+									<p:output name="data" ref="result"/>
+								</p:processor>
+							</p:when>
+							<p:otherwise>
+								<p:processor name="oxf:identity">
+									<p:input name="data">
+										<response>Unknown format (use xml or ttl)</response>
+									</p:input>
+									<p:output name="data" ref="result"/>
+								</p:processor>
+							</p:otherwise>
+						</p:choose>
+					</p:for-each>
 					<!-- Cool URI implementation: respond with HTML or with JSON -->
 					<p:choose href="#context">
 						<p:when test="context/format='application/json'">
 							<p:processor name="oxf:xslt">
 								<p:input name="config">
 									<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-										<xsl:template match="/">{"response":"<xsl:value-of select="root/response"/>"}</xsl:template>
+										<xsl:template match="/">{"response":"<xsl:value-of select="root/results/response"/>"}</xsl:template>
 									</xsl:stylesheet>
 								</p:input>
 								<p:input name="data" href="aggregate('root',#context,#result)"/>
@@ -503,7 +568,7 @@
 								<p:input name="data" transform="oxf:xslt" href="aggregate('root',#context,#result)">
 									<html xsl:version="2.0">
 										<meta http-equiv="refresh" content="0;URL={root/context/subject}" />
-										<body><p><xsl:value-of select="root/response"/></p></body>
+										<body><p><xsl:value-of select="root/results/response"/></p></body>
 									</html>
 								</p:input>
 								<p:output name="data" id="htmlres" />
@@ -568,14 +633,6 @@
 						<p:input name="config" href="../transformations/ttl2rdfaform.xsl"/>
 						<p:output name="data" id="rdfa"/>
 					</p:processor>
-<!--
-<p:processor name="oxf:xml-serializer">
-	<p:input name="config">
-		<config/>
-	</p:input>
-	<p:input name="data" href="#sparql"/>
-</p:processor>
--->
 					<!-- Transform rdfa to html -->
 					<p:processor name="oxf:xslt">
 						<p:input name="data" href="#rdfa"/>
