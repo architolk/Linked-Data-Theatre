@@ -2,7 +2,7 @@
 
     NAME     container.xpl
     VERSION  1.5.1-SNAPSHOT
-    DATE     2016-01-29
+    DATE     2016-01-31
 
     Copyright 2012-2016
 
@@ -349,7 +349,7 @@
 </p:processor>
 -->
 					<p:for-each href="#filelist" select="/files/file" root="results" id="result">
-						<p:choose href="#context">
+						<p:choose href="#containercontext">
 							<!-- Translator is used -->
 							<p:when test="container/translator!=''">
 								<p:choose href="current()">
@@ -426,7 +426,7 @@
 								<!-- Translate -->
 								<p:processor name="oxf:xslt">
 									<p:input name="config" href="#translator"/>
-									<p:input name="data" href="#xmldata"/>
+									<p:input name="data" href="aggregate('root',#xmldata,#containercontext)"/>
 									<p:output name="data" id="rdfdata"/>
 								</p:processor>
 								<!-- Convert to xml document -->

@@ -1,8 +1,8 @@
 <!--
 
     NAME     GenericExcelTranslator.xsl
-    VERSION  1.5.0
-    DATE     2016-01-05
+    VERSION  1.5.1-SNAPSHOT
+    DATE     2016-01-31
 
     Copyright 2012-2016
 
@@ -24,41 +24,66 @@
 -->
 <!--
     DESCRIPTION
-	Generic translator for excel files. Translates an excel file to a SPARQL result set
+	Generic translator for excel files.
+	Translates a excel file to the W3C recommendation for tabular data on the web (http://www.w3.org/TR/csv2rdf)
 	
 -->
 <xsl:stylesheet version="2.0" 
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:csvw="http://www.w3.org/ns/csvw#"
+	
+	xmlns:fn="fn" exclude-result-prefixes="fn"
 >
+	
+	<xsl:function name="fn:qname">
+		<xsl:param name="name"/>
+		<xsl:param name="alt"/>
+		
+		<xsl:variable name="uname">
+			<xsl:choose>
+				<xsl:when test="$name!=''"><xsl:value-of select="$name"/></xsl:when>
+				<xsl:when test="$alt!=''"><xsl:value-of select="$alt"/></xsl:when>
+				<xsl:otherwise>property</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<xsl:value-of select="translate($uname,' /\','_--')"/>
+	</xsl:function>
+
 	<xsl:template match="/">
-		<xsl:for-each select="root/workbook">
-			<rdf:Description rdf:nodeID="rset" xmlns:res="http://www.w3.org/2005/sparql-results#">
-				<rdf:type rdf:resource="http://www.w3.org/2005/sparql-results#ResultSet"/>
-				<res:resultVariable>s</res:resultVariable>
-				<res:resultVariable>r</res:resultVariable>
-				<xsl:for-each-group select="sheet/row/column" group-by="@id">
-					<res:resultVariable>c<xsl:value-of select="@id"/></res:resultVariable>
-				</xsl:for-each-group>
-				<xsl:for-each select="sheet/row">
-					<res:solution rdf:nodeID="r{@id}">
-						<res:binding rdf:nodeID="r{@id}c">
-							<res:variable>s</res:variable>
-							<res:value><xsl:value-of select="../@name"/></res:value>
-						</res:binding>
-						<res:binding rdf:nodeID="r{@id}c">
-							<res:variable>r</res:variable>
-							<res:value><xsl:value-of select="@id"/></res:value>
-						</res:binding>
-						<xsl:for-each select="column">
-							<res:binding rdf:nodeID="r{../@id}c{@id}">
-								<res:variable>c<xsl:value-of select="@id"/></res:variable>
-								<res:value><xsl:value-of select="."/></res:value>
-							</res:binding>
-						</xsl:for-each>
-					</res:solution>
-				</xsl:for-each>
-			</rdf:Description>
-		</xsl:for-each>
+		<rdf:RDF>
+			<xsl:variable name="container" select="/root/container/url"/>
+			<xsl:namespace name="container"><xsl:value-of select="$container"/>/</xsl:namespace>
+			<xsl:namespace name="containerdef"><xsl:value-of select="$container"/>#</xsl:namespace>
+			<xsl:for-each select="root/workbook">
+				<csvw:TableGroup rdf:about="{$container}/workbook">
+					<xsl:for-each select="sheet">
+						<csvw:table>
+							<csvw:Table rdf:about="{$container}/s{@name}">
+								<xsl:variable name="head" select="row[1]"/>
+								<xsl:for-each select="row[position()&gt;1]">
+									<xsl:variable name="pos" select="@id"/>
+									<csvw:row>
+										<csvw:Row rdf:about="{$container}/r{$pos}">
+											<csvw:rownum><xsl:value-of select="$pos"/></csvw:rownum>
+											<csvw:describes>
+												<rdf:Description rdf:about="{$container}/r{$pos}s">
+													<xsl:for-each select="column">
+														<xsl:variable name="id" select="@id"/>
+														<xsl:if test=".!=''">
+															<xsl:element name="{fn:qname($head/column[@id=$id],concat('c',$id))}" namespace="{$container}#"><xsl:value-of select="."/></xsl:element>
+														</xsl:if>
+													</xsl:for-each>
+												</rdf:Description>
+											</csvw:describes>
+										</csvw:Row>
+									</csvw:row>
+								</xsl:for-each>
+							</csvw:Table>
+						</csvw:table>
+					</xsl:for-each>
+				</csvw:TableGroup>
+			</xsl:for-each>
+		</rdf:RDF>
 	</xsl:template>
 </xsl:stylesheet>
