@@ -1,7 +1,7 @@
 --
 -- NAME     create_procedures.sql
--- VERSION  1.5.0
--- DATE     2016-01-05
+-- VERSION  1.5.1-SNAPSHOT
+-- DATE     2016-02-02
 --
 -- Copyright 2012-2016
 --
@@ -53,6 +53,7 @@ create procedure LDT.UPLOAD_NQ (in fname varchar)
 	log_enable(3,1);
 	call DB.DBA.TTLP_MT(file_to_string_output(fname),'','http://localhost:8890/default-graph',512);
 }
+-- Depricated: using MULTI_UPDATE_CONTAINER
 drop procedure LDT.UPDATE_CONTAINER;
 create procedure LDT.UPDATE_CONTAINER (in fname varchar, in ftype varchar, in pgraph varchar, in cgraph varchar, in targetgraph varchar, in action varchar, in postquery varchar)
 {
@@ -82,4 +83,47 @@ create procedure LDT.UPDATE_CONTAINER (in fname varchar, in ftype varchar, in pg
 	if (postquery<>'') {
 		exec(concat('sparql ',postquery));
 	}
+}
+drop procedure LDT.MULTI_UPDATE_CONTAINER;
+create procedure LDT.MULTI_UPDATE_CONTAINER  (in flist varchar, in ftype varchar, in pgraph varchar, in cgraph varchar, in targetgraph varchar, in action varchar, in postquery varchar)
+{
+	declare message varchar;
+	message := 'succes';
+	declare exit handler for sqlexception message := __SQL_MESSAGE;
+	{
+		if (action = 'part') {
+			exec(concat('sparql delete from <',targetgraph,'> {?s?p?o} where { graph <',cgraph,'> {?s?p?o}}'));
+		}
+		if (action = 'replace') {
+			exec(concat('sparql clear graph <',targetgraph,'>'));
+		}
+		exec(concat('sparql clear graph<',cgraph,'>'));
+		
+		declare fvector any;
+		fvector := split_and_decode(flist,0,'\0\0,');
+		foreach (varchar fname in fvector) do {
+			if (ftype = 'ttl') {
+				call DB.DBA.TTLP_MT(file_to_string_output(fname),'',cgraph);
+			}
+			if (ftype = 'xml') {
+				call DB.DBA.RDF_LOAD_RDFXML_MT(file_to_string_output(fname),'',cgraph);
+			}
+		}
+		
+		if (action = 'part' or action = 'replace') {
+			exec(concat('sparql insert into <',targetgraph,'> {?s?p?o} where { graph <',cgraph,'> {?s?p?o}}'));
+		}
+		if (action='update') {
+			exec(concat('sparql delete from <',targetgraph,'> {?s?p?x} where { graph <',targetgraph,'> {?s?p?x} graph <',cgraph,'> {?s?p?o}}'));
+			exec(concat('sparql insert into <',targetgraph,'> {?s?p?o} where { graph <',cgraph,'> {?s?p?o}}'));
+		}
+		if (pgraph<>cgraph) {
+			exec(concat('sparql insert into <',pgraph,'> {<',pgraph,'> <http://purl.org/dc/terms/hasVersion> <',cgraph,'>}'));
+		}
+		if (postquery<>'') {
+			exec(concat('sparql ',postquery));
+		}
+	}
+	result_names (message);
+	result (message);
 }

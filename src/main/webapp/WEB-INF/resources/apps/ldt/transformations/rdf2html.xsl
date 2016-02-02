@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2html.xsl
-    VERSION  1.5.0
-    DATE     2016-01-05
+    VERSION  1.5.1-SNAPSHOT
+    DATE     2016-02-2
 
     Copyright 2012-2016
 
@@ -1241,6 +1241,11 @@ var substringMatcher = function(strs) {
 				<script src="{$docroot}/js/proj4-compressed.js"></script>
 				<script src="{$docroot}/js/proj4leaflet.js"></script>
 				<!-- <script src="{$docroot}/js/leaflet.label.js"></script> -->
+				<!-- Clickable map form -->
+				<form id="clickform" method="get" action="">
+					<input type="hidden" id="lat" name="lat" value=""/>
+					<input type="hidden" id="long" name="long" value=""/>
+				</form>
 			</xsl:otherwise>
 		</xsl:choose>
 		<script src="{$docroot}/js/linkeddatamap.js"></script>
@@ -1251,8 +1256,10 @@ var substringMatcher = function(strs) {
 			<xsl:if test="not($latlocator!='')"><xsl:value-of select="rdf:Description[1]/geo:lat"/></xsl:if>
 		</xsl:variable>
 		<xsl:variable name="lat">
-			<xsl:value-of select="$latdata"/>
-			<xsl:if test="not($latdata!='')">52</xsl:if>
+			<xsl:choose>
+				<xsl:when test="not($latdata!='') or contains($latdata,'@')">52.155</xsl:when>
+				<xsl:otherwise><xsl:value-of select="$latdata"/></xsl:otherwise>
+			</xsl:choose>
 		</xsl:variable>
 		<xsl:variable name="longlocator" select="rdf:Description[rdf:type/@rdf:resource='http://bp4mc2.org/elmo/def#GeoLocator'][1]/geo:long"/>
 		<xsl:variable name="longdata">
@@ -1260,8 +1267,10 @@ var substringMatcher = function(strs) {
 			<xsl:if test="not($longlocator!='')"><xsl:value-of select="rdf:Description[1]/geo:long"/></xsl:if>
 		</xsl:variable>
 		<xsl:variable name="long">
-			<xsl:value-of select="$longdata"/>
-			<xsl:if test="not($longdata!='')">6</xsl:if>
+			<xsl:choose>
+				<xsl:when test="not($longdata!='') or contains($longdata,'@')">5.38</xsl:when>
+				<xsl:otherwise><xsl:value-of select="$longdata"/></xsl:otherwise>
+			</xsl:choose>
 		</xsl:variable>
 		<xsl:variable name="doZoom">
 			<xsl:choose>

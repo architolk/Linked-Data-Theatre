@@ -2,7 +2,7 @@
 
     NAME     container.xpl
     VERSION  1.5.1-SNAPSHOT
-    DATE     2016-01-31
+    DATE     2016-02-02
 
     Copyright 2012-2016
 
@@ -26,10 +26,6 @@
     DESCRIPTION
     Pipeline to manage updating an inserting triples into a container
 
-	TWO Problems at this moment:
-	1) Error handling from stored procedure isn't nice: default error page. Errors should be handled before any stored procedure call is made
-	2) When a zip contains multiple files, only the last file will get into the container!
-	
 	Structure of this pipeline:
 	1. Process the http request, results in context and containercontext pipes
 	2. Check if a container exists in the configuration, if not: return 404 (resource not found)
@@ -68,15 +64,13 @@
 	|		+~~~B. (No translator is defined)
 	|			1. Put reference into rdffile pipe
 	|
-	|		2. Check the format of the rdffile (A: XML, B: TTL, C: Something else)
-	|		+~~~A. (XML format)
-	|		|	Upload XML format to triplestore, store message in results pipe
-	|		+~~~B. (TTL format)
-	|		|	Upload TTL format to triplestore, store message in results pipe
-	|		+~~~C. (Something else)
-	|			Store error message in results pipe
+	|	3. Check the format of the rdffile (A: XML or : TTL, B: Something else)
+	|	+~~~A. (XML format)
+	|	|	Upload XML/TTL format to triplestore, store (error)message in results pipe
+	|	+~~~B. (Something else)
+	|		Store error message in results pipe
 	|
-	|	3. Show messages from results pipe to user (html or json)
+	|	4. Show messages from results pipe to user (html or json). Redirect to container when there's no error
 	|
 	+~~~B. (Container itself is request)
 		Check what the request wants: html or json, and return appropriate result.
@@ -348,7 +342,7 @@
 	<p:input name="data" href="#filelist"/>
 </p:processor>
 -->
-					<p:for-each href="#filelist" select="/files/file" root="results" id="result">
+					<p:for-each href="#filelist" select="/files/file" root="results" id="rdffile">
 						<p:choose href="#containercontext">
 							<!-- Translator is used -->
 							<p:when test="container/translator!=''">
@@ -426,7 +420,7 @@
 								<!-- Translate -->
 								<p:processor name="oxf:xslt">
 									<p:input name="config" href="#translator"/>
-									<p:input name="data" href="aggregate('root',#xmldata,#containercontext)"/>
+									<p:input name="data" href="aggregate('root',#xmldata,#containercontext,current())"/>
 									<p:output name="data" id="rdfdata"/>
 								</p:processor>
 								<!-- Convert to xml document -->
@@ -459,78 +453,97 @@
 										</xsl:stylesheet>
 									</p:input>
 									<p:input name="data" href="#url-written"/>
-									<p:output name="data" id="rdffile"/>
+									<p:output name="data" ref="rdffile"/>
 								</p:processor>
 							</p:when>
 							<!-- No translator is used (file extension should be xml or ttl) -->
 							<p:otherwise>
 								<p:processor name="oxf:identity">
 									<p:input name="data" href="current()"/>
-									<p:output name="data" id="rdffile"/>
-								</p:processor>
-							</p:otherwise>
-						</p:choose>
-						<!-- Upload of file: via Virtuoso stored procedure -->
-						<!-- Please change authorization in virtuoso.ini: -->
-						<!--         DirsAllowed			= ., ../vad, ../../Tomcat/temp -->
-						
-						<!-- Check if extension is xml or ttl, return error if not -->
-						<p:choose href="#rdffile">
-							<p:when test="ends-with(file/@name,'.xml')">
-								<p:processor name="oxf:sql">
-									<p:input name="data" href="aggregate('root',#rdffile,#containercontext)"/>
-									<p:input name="config">
-										<sql:config>
-											<response>Bestand is ingeladen</response>
-											<sql:connection>
-												<sql:datasource>virtuoso</sql:datasource>
-												<sql:execute>
-													<sql:call>
-														{call ldt.update_container(<sql:param type="xs:string" select="substring-after(root/file,'file:/')"/>,'xml',<sql:param type="xs:string" select="root/container/url"/>,<sql:param type="xs:string" select="root/container/version-url"/>,<sql:param type="xs:string" select="root/container/target-graph"/>,<sql:param type="xs:string" select="root/container/target-graph/@action"/>,<sql:param type="xs:string" select="root/container/postquery"/>)}
-													</sql:call>
-												</sql:execute>
-											</sql:connection>
-										</sql:config>
-									</p:input>
-									<p:output name="data" ref="result"/>
-								</p:processor>
-							</p:when>
-							<p:when test="ends-with(file/@name,'.ttl')">
-								<p:processor name="oxf:sql">
-									<p:input name="data" href="aggregate('root',#rdffile,#containercontext)"/>
-									<p:input name="config">
-										<sql:config>
-											<response>Bestand is ingeladen</response>
-											<sql:connection>
-												<sql:datasource>virtuoso</sql:datasource>
-												<sql:execute>
-													<sql:call>
-														{call ldt.update_container(<sql:param type="xs:string" select="substring-after(root/file,'file:/')"/>,'ttl',<sql:param type="xs:string" select="root/container/url"/>,<sql:param type="xs:string" select="root/container/version-url"/>,<sql:param type="xs:string" select="root/container/target-graph"/>,<sql:param type="xs:string" select="root/container/target-graph/@action"/>,<sql:param type="xs:string" select="root/container/postquery"/>)}
-													</sql:call>
-												</sql:execute>
-											</sql:connection>
-										</sql:config>
-									</p:input>
-									<p:output name="data" ref="result"/>
-								</p:processor>
-							</p:when>
-							<p:otherwise>
-								<p:processor name="oxf:identity">
-									<p:input name="data">
-										<response>Unknown format (use xml or ttl)</response>
-									</p:input>
-									<p:output name="data" ref="result"/>
+									<p:output name="data" ref="rdffile"/>
 								</p:processor>
 							</p:otherwise>
 						</p:choose>
 					</p:for-each>
+					<!-- Put rdffiles in one string -->
+					<p:processor name="oxf:xslt">
+						<p:input name="config">
+							<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+								<xsl:template match="/">
+									<filelist>
+										<firstformat><xsl:value-of select="replace(results/file[1]/@name,'.*\.([^\.]+)$','$1')"/></firstformat>
+										<list>
+											<xsl:for-each select="results/file">
+												<xsl:if test="position()!=1">,</xsl:if>
+												<xsl:value-of select="substring-after(.,'file:/')"/>
+											</xsl:for-each>
+										</list>
+									</filelist>
+								</xsl:template>
+							</xsl:stylesheet>
+						</p:input>
+						<p:input name="data" href="#rdffile"/>
+						<p:output name="data" id="rdffilelist"/>
+					</p:processor>
+					<!-- Upload of file: via Virtuoso stored procedure -->
+					<!-- Please change authorization in virtuoso.ini: -->
+					<!--         DirsAllowed			= ., ../vad, ../../Tomcat/temp -->
+					
+					<!-- Check if extension is xml or ttl, return error if not -->
+					<p:choose href="#rdffilelist">
+						<p:when test="filelist/firstformat='xml' or filelist/firstformat='ttl'">
+							<p:processor name="oxf:sql">
+								<p:input name="data" href="aggregate('root',#rdffilelist,#containercontext)"/>
+								<p:input name="config">
+									<sql:config>
+										<!-- <response>Bestand is ingeladen</response> -->
+										<sql:connection>
+											<sql:datasource>virtuoso</sql:datasource>
+											<sql:execute>
+												<sql:call>
+													{call ldt.multi_update_container(<sql:param type="xs:string" select="root/filelist/list"/>,<sql:param type="xs:string" select="root/filelist/firstformat"/>,<sql:param type="xs:string" select="root/container/url"/>,<sql:param type="xs:string" select="root/container/version-url"/>,<sql:param type="xs:string" select="root/container/target-graph"/>,<sql:param type="xs:string" select="root/container/target-graph/@action"/>,<sql:param type="xs:string" select="root/container/postquery"/>)}
+												</sql:call>
+												<sql:result-set>
+													<response>
+														<sql:row-iterator>
+															<sql:get-column-value type="xs:string" column="message"/>
+														</sql:row-iterator>
+													</response>
+												</sql:result-set>
+												<sql:no-results>
+													<response>No results</response>
+												</sql:no-results>
+											</sql:execute>
+										</sql:connection>
+									</sql:config>
+								</p:input>
+								<p:output name="data" id="result"/>
+							</p:processor>
+						</p:when>
+						<p:otherwise>
+							<p:processor name="oxf:identity">
+								<p:input name="data">
+									<response>Unknown format (use xml or ttl)</response>
+								</p:input>
+								<p:output name="data" id="result"/>
+							</p:processor>
+						</p:otherwise>
+					</p:choose>
+<!--
+<p:processor name="oxf:xml-serializer">
+	<p:input name="config">
+		<config/>
+	</p:input>
+	<p:input name="data" href="#result"/>
+</p:processor>
+-->
 					<!-- Cool URI implementation: respond with HTML or with JSON -->
 					<p:choose href="#context">
 						<p:when test="context/format='application/json'">
 							<p:processor name="oxf:xslt">
 								<p:input name="config">
 									<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-										<xsl:template match="/">{"response":"<xsl:value-of select="root/results/response"/>"}</xsl:template>
+										<xsl:template match="/">{"response":"<xsl:value-of select="root/response"/>"}</xsl:template>
 									</xsl:stylesheet>
 								</p:input>
 								<p:input name="data" href="aggregate('root',#context,#result)"/>
@@ -567,8 +580,10 @@
 								</p:input>
 								<p:input name="data" transform="oxf:xslt" href="aggregate('root',#context,#result)">
 									<html xsl:version="2.0">
-										<meta http-equiv="refresh" content="0;URL={root/context/subject}" />
-										<body><p><xsl:value-of select="root/results/response"/></p></body>
+										<xsl:if test="root/response='succes'">
+											<meta http-equiv="refresh" content="0;URL={root/context/subject}" />
+										</xsl:if>
+										<body><p><xsl:value-of select="root/response"/></p></body>
 									</html>
 								</p:input>
 								<p:output name="data" id="htmlres" />

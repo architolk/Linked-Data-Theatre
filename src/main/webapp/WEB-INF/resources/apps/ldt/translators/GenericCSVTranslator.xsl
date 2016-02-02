@@ -31,27 +31,32 @@
 <xsl:stylesheet version="2.0" 
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 	xmlns:csvw="http://www.w3.org/ns/csvw#"
 >
 	<xsl:template match="/">
 		<rdf:RDF>
-			<xsl:variable name="container" select="/root/container/url"/>
+			<xsl:variable name="container" select="replace(/root/container/url,'container','id')"/>
+			<xsl:variable name="containerdef" select="replace(/root/container/url,'container','def')"/>
+			<xsl:variable name="csvname" select="replace(/root/file/@name,'(.*)\.[^\.]+$','$1')"/>
 			<xsl:namespace name="container"><xsl:value-of select="$container"/>/</xsl:namespace>
-			<xsl:namespace name="containerdef"><xsl:value-of select="$container"/>#</xsl:namespace>
+			<xsl:namespace name="containerdef"><xsl:value-of select="$containerdef"/>#</xsl:namespace>
 			<xsl:for-each select="/root/csv">
-				<csvw:TableGroup rdf:about="{$container}/csv">
+				<csvw:TableGroup rdf:about="{$container}/{$csvname}/csv">
 					<csvw:table>
-						<csvw:Table rdf:about="{$container}/csvtable">
+						<csvw:Table rdf:about="{$container}/{$csvname}/table">
+							<csvw:url><xsl:value-of select="/root/file/@name"/></csvw:url>
+							<rdfs:label><xsl:value-of select="$csvname"/></rdfs:label>
 							<xsl:for-each select="row">
 								<xsl:variable name="pos" select="position()"/>
 								<csvw:row>
-									<csvw:Row rdf:about="{$container}/r{$pos}">
+									<csvw:Row rdf:about="{$container}/{$csvname}/r{$pos}">
 										<csvw:rownum><xsl:value-of select="$pos"/></csvw:rownum>
 										<csvw:describes>
-											<rdf:Description rdf:about="{$container}/r{$pos}s">
+											<rdf:Description rdf:about="{$container}/{$csvname}/r{$pos}s">
 												<xsl:for-each select="column">
 													<xsl:if test=".!=''">
-														<xsl:element name="{@name}" namespace="{$container}#"><xsl:value-of select="."/></xsl:element>
+														<xsl:element name="{@name}" namespace="{$containerdef}#"><xsl:value-of select="."/></xsl:element>
 													</xsl:if>
 												</xsl:for-each>
 											</rdf:Description>

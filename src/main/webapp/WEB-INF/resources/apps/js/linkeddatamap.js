@@ -1,7 +1,7 @@
 /*
  * NAME     linkeddatamap.js
  * VERSION  1.5.1-SNAPSHOT
- * DATE     2016-01-27
+ * DATE     2016-02-01
  *
  * Copyright 2012-2016
  *
@@ -476,6 +476,13 @@ function printMap() {
 	form.submit();
 }
 
+function mapClicked(e) {
+	var form = document.getElementById("clickform");
+	form['lat'].value = e.latlng.lat;
+	form['long'].value = e.latlng.lng;
+	form.submit();
+}
+
 function initMap(docroot, latCor, longCor, backMap, imageMapURL, contURL, left, top, width, height)
 {
 	// Pad naar de icons goedmaken
@@ -539,7 +546,7 @@ function initMap(docroot, latCor, longCor, backMap, imageMapURL, contURL, left, 
 
 	//Zoom option for circlemarkers
 	map.on('zoomend',resizeCircle);
-	
+
 	map.invalidateSize();
 }
 
@@ -560,8 +567,14 @@ function showLocations(doZoom)
 	for(i = 0; i < listOfLocations.length; ++i)
 		listOfLocations[i].addTo(map);
 
-	if (doZoom==1 && !(lastPolygon.getLayers()[0] instanceof L.CircleMarker)) {
+	if (doZoom==1 && (lastPolygon) && !(lastPolygon.getLayers()[0] instanceof L.CircleMarker)) {
 		map.fitBounds(lastPolygon.getBounds());
 	}
 
+	//No locations, show crosshair and register event
+	if (!(lastPolygon)) {
+		map.on('click',mapClicked);
+		document.getElementById('map').style.cursor = 'crosshair';
+	}
+	
 }
