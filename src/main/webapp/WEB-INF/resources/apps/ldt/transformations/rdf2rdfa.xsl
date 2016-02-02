@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2rdfa.xsl
-    VERSION  1.5.0
-    DATE     2016-01-05
+    VERSION  1.5.1-SNAPSHOT
+    DATE     2016-02-02
 
     Copyright 2012-2016
 
@@ -35,6 +35,7 @@
 	xmlns:elmo="http://bp4mc2.org/elmo/def#"
 	xmlns:html="http://www.w3.org/1999/xhtml/vocab#"
 	xmlns:dcterms="http://purl.org/dc/terms/"
+	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
 >
 
 <!-- bnodes and resources from all queries, this is not perfectly right, because it should be local to the specific query (more than one rdf:RDF is possible) -->
@@ -203,6 +204,7 @@
 	</xsl:variable>
 	<xsl:variable name="appearance">
 		<xsl:choose>
+			<xsl:when test="queryForm/@satisfied!='' and queryForm/@geo='yes'">http://bp4mc2.org/elmo/def#GeoAppearance</xsl:when>
 			<xsl:when test="queryForm/@satisfied!=''">http://bp4mc2.org/elmo/def#FormAppearance</xsl:when>
 			<xsl:when test="$appearance1='http://bp4mc2.org/elmo/def#ContentAppearance' and /root/results/rdf:RDF[position()=$index]/rdf:Description[@rdf:nodeID='rset']/rdf:type/@rdf:resource='http://www.w3.org/2005/sparql-results#ResultSet'">http://bp4mc2.org/elmo/def#TableAppearance</xsl:when>
 			<xsl:otherwise><xsl:value-of select="$appearance1"/></xsl:otherwise>
@@ -211,6 +213,12 @@
 	<rdf:RDF elmo:appearance="{$appearance}" elmo:query="{$representation-uri}">
 		<xsl:if test="exists(@container)"><xsl:attribute name="elmo:container"><xsl:value-of select="@container"/></xsl:attribute></xsl:if>
 		<xsl:choose>
+			<xsl:when test="$appearance='http://bp4mc2.org/elmo/def#GeoAppearance' and queryForm/@satisfied!=''">
+				<rdf:Description rdf:about="locator">
+					<geo:long>5.387197444102625</geo:long>
+					<geo:lat>52.15516475286759</geo:lat>
+				</rdf:Description>
+			</xsl:when>
 			<xsl:when test="$appearance='http://bp4mc2.org/elmo/def#ContentAppearance' or $appearance='http://bp4mc2.org/elmo/def#CarouselAppearance'">
 				<xsl:variable name="fragments" select="fragment"/>
 				<xsl:for-each-group select="/root/results/rdf:RDF[position()=$index]/rdf:Description" group-by="@rdf:about">

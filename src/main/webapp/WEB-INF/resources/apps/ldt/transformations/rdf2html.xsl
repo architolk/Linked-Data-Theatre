@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.5.1-SNAPSHOT
-    DATE     2016-02-2
+    DATE     2016-02-02
 
     Copyright 2012-2016
 

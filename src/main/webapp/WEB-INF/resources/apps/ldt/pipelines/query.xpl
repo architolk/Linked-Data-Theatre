@@ -2,7 +2,7 @@
 
     NAME     query.xpl
     VERSION  1.5.1-SNAPSHOT
-    DATE     2016-01-27
+    DATE     2016-02-02
 
     Copyright 2012-2016
 
@@ -276,6 +276,27 @@
 						</fragment>
 					</xsl:if>
 				</xsl:template>
+				<xsl:template match="elmo:queryForm[@rdf:resource='http://bp4mc2.org/elmo/def#GeoForm']">
+					<xsl:variable name="satisfied">
+						<xsl:if test="not(key('parameters','long')/value!='')">N</xsl:if>
+						<xsl:if test="not(key('parameters','lat')/value!='')">N</xsl:if>
+					</xsl:variable>
+					<queryForm satisfied="{$satisfied}" geo="yes">
+						<rdfs:label>TEST</rdfs:label>
+						<elmo:fragment>
+							<rdf:Description>
+								<elmo:applies-to>long</elmo:applies-to>
+								<elmo:constraint rdf:resource="http://bp4mc2.org/elmo/def#MandatoryConstraint"/>
+							</rdf:Description>
+						</elmo:fragment>
+						<elmo:fragment>
+							<rdf:Description>
+								<elmo:applies-to>lat</elmo:applies-to>
+								<elmo:constraint rdf:resource="http://bp4mc2.org/elmo/def#MandatoryConstraint"/>
+							</rdf:Description>
+						</elmo:fragment>
+					</queryForm>
+				</xsl:template>
 				<xsl:template match="elmo:queryForm">
 					<xsl:for-each select="key('resources',@rdf:resource)">
 						<xsl:variable name="satisfied">
@@ -387,6 +408,15 @@
 		<p:input name="data" href="aggregate('root',#defquery,#context)"/>
 		<p:output name="data" id="querytext"/>
 	</p:processor>
+
+<!--
+<p:processor name="oxf:xml-serializer">
+	<p:input name="config">
+		<config/>
+	</p:input>
+	<p:input name="data" href="#defquery"/>
+</p:processor>
+-->
 
 	<!-- More than one query is possible -->
 	<p:for-each href="#querytext" select="/view/representation[not(exists(service))]" root="results" id="sparql">
