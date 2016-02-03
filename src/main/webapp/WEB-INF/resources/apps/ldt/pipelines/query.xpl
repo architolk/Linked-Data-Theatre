@@ -2,7 +2,7 @@
 
     NAME     query.xpl
     VERSION  1.5.1-SNAPSHOT
-    DATE     2016-02-02
+    DATE     2016-02-03
 
     Copyright 2012-2016
 
@@ -97,7 +97,7 @@
 				</p:input>
 				<p:input name="request" transform="oxf:xslt" href="#context">
 					<parameters xsl:version="2.0">
-						<query> <!-- Query is nog niet helemaal goed: er zit nog geen graph om de union heen. Hierdoor KAN de definitie uit te veel graphs komen! -->
+						<query>
 						<![CDATA[
 							PREFIX elmo: <http://bp4mc2.org/elmo/def#>
 							CONSTRUCT {
@@ -109,7 +109,7 @@
 									?rep rdf:type elmo:Representation
 									OPTIONAL {?rep elmo:layer ?layer}
 								}
-								{
+								GRAPH <]]><xsl:value-of select="context/representation-graph/@uri"/><![CDATA[> {
 									{
 										?rep elmo:url-pattern ?pattern.
 										FILTER regex("]]><xsl:value-of select="context/url"/><![CDATA[",?pattern)

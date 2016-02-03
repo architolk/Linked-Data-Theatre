@@ -2,7 +2,7 @@
 
     NAME     rdf2rdfa.xsl
     VERSION  1.5.1-SNAPSHOT
-    DATE     2016-02-02
+    DATE     2016-02-03
 
     Copyright 2012-2016
 
@@ -213,7 +213,7 @@
 	<rdf:RDF elmo:appearance="{$appearance}" elmo:query="{$representation-uri}">
 		<xsl:if test="exists(@container)"><xsl:attribute name="elmo:container"><xsl:value-of select="@container"/></xsl:attribute></xsl:if>
 		<xsl:choose>
-			<xsl:when test="$appearance='http://bp4mc2.org/elmo/def#GeoAppearance' and queryForm/@satisfied!=''">
+			<xsl:when test="queryForm/@satisfied!='' and queryForm/@geo='yes'">
 				<rdf:Description rdf:about="locator">
 					<geo:long>5.387197444102625</geo:long>
 					<geo:lat>52.15516475286759</geo:lat>

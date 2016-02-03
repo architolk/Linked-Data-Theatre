@@ -1,0 +1,17 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+@prefix void: <http://rdfs.org/ns/void#>.
+
+elmo:LoginErrorRepresentation	a	elmo:Representation;
+	elmo:appearance elmo:LoginAppearance;
+	elmo:data [
+		html:h2 "Please sign in"@en;
+		html:h2 "Aanmelden"@nl;
+		html:button "Sign in"@en;
+		html:button "Aanmelden"@nl;
+		html:alert "Sign in failed"@en;
+		html:alert "Aanmelden mislukt"@nl;
+	]
+.

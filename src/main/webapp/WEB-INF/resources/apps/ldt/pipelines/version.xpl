@@ -1,8 +1,8 @@
 <!--
 
     NAME     version.xpl
-    VERSION  1.5.0
-    DATE     2016-01-05
+    VERSION  1.5.1-SNAPSHOT
+    DATE     2016-02-03
 
     Copyright 2012-2016
 
@@ -62,9 +62,21 @@
 		<p:output name="data" id="request"/>
 	</p:processor>
 
+	<!-- Get credentials and user roles -->
+	<p:processor name="oxf:request-security">
+		<p:input name="config" transform="oxf:xslt" href="#instance">        
+			<config xsl:version="2.0">
+				<xsl:for-each select="submission/roles/role">
+					<role><xsl:value-of select="."/></role>
+				</xsl:for-each>
+			</config>    
+		</p:input>
+		<p:output name="data" id="roles"/>
+	</p:processor>
+	
 	<!-- Create context -->
 	<p:processor name="oxf:xslt">
-		<p:input name="data" href="aggregate('root',#instance,#request,#version)"/>
+		<p:input name="data" href="aggregate('root',#instance,#request,#roles,#version)"/>
 		<p:input name="config" href="../transformations/context.xsl"/>
 		<p:output name="data" id="context"/>
 	</p:processor>

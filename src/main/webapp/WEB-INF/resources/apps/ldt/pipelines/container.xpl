@@ -2,7 +2,7 @@
 
     NAME     container.xpl
     VERSION  1.5.1-SNAPSHOT
-    DATE     2016-02-02
+    DATE     2016-02-03
 
     Copyright 2012-2016
 
@@ -104,16 +104,18 @@
 		<p:output name="data" id="request"/>
 	</p:processor>
 
-	<!-- To have access, you need to be an editor -->
+	<!-- Get credentials and user roles -->
 	<p:processor name="oxf:request-security">
-		<p:input name="config">        
-			<config>
-				<role>editor</role>
+		<p:input name="config" transform="oxf:xslt" href="#instance">        
+			<config xsl:version="2.0">
+				<xsl:for-each select="submission/roles/role">
+					<role><xsl:value-of select="."/></role>
+				</xsl:for-each>
 			</config>    
 		</p:input>
 		<p:output name="data" id="roles"/>
 	</p:processor>
-	
+
 	<!-- Create context -->
 	<p:processor name="oxf:xslt">
 		<p:input name="data" href="aggregate('croot',#instance,#request,#roles)"/>
@@ -202,13 +204,15 @@
 			<!-- Container exists -->
 			<p:choose href="aggregate('root',#context,#containercontext)">
 				<!-- When a user-role is defined, the user should have that role -->
-				<p:when test="root/container/user-role!='' and root/context/user-role!=root/container/user-role">
+				<p:when test="root/container/user-role!='' and not(contains(root/context/user-role,root/container/user-role))">
 					<!-- User-role incorrect: 403 return code -->
 					<p:processor name="oxf:xslt">
 						<p:input name="data">
-							<parameters>
-								<error>Forbidden.</error>
-							</parameters>
+							<results>
+								<parameters>
+									<error>Forbidden.</error>
+								</parameters>
+							</results>
 						</p:input>
 						<p:input name="config" href="../transformations/error2html.xsl"/>
 						<p:output name="data" id="html"/>
@@ -681,9 +685,11 @@
 			<!-- Container doesn't exist in definition: 404 return code -->
 			<p:processor name="oxf:xslt">
 				<p:input name="data">
-					<parameters>
-						<error>Resource niet gevonden.</error>
-					</parameters>
+					<results>
+						<parameters>
+							<error>Resource niet gevonden.</error>
+						</parameters>
+					</results>
 				</p:input>
 				<p:input name="config" href="../transformations/error2html.xsl"/>
 				<p:output name="data" id="html"/>

@@ -7,6 +7,8 @@ See [BUILD.md](BUILD.md) for instructions to build the Linked Data Theatre. You 
 
 If you want to create a new release of the ldt, please look into [BUILD-LICENSE.md](BUILD-LICENSE.md) for instructions to create the approriate license headers.
 
-To deploy the Linked Data Theatre in a tomcat container, follow the instructions in [DEPLOY.md](DEPLOY.md).
+To deploy the Linked Data Theatre in a tomcat container, follow the instructions in [DEPLOY.md](DEPLOY.md). You can also opt for a docker installation, see [DOCKER.md](DOCKER.md).
 
 The Linked Data Theatre uses a configuration graph containing all the triples that make up the LDT configuration. Instructions and examples how to create such a configuration can be found at the [wiki](https://github.com/architolk/Linked-Data-Theatre/wiki).
+
+To add security to the Linked Data Theatre, follow the instructions in [SECURE.md](SECURE.md).
