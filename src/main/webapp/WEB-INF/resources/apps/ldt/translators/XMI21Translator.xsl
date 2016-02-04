@@ -1,8 +1,8 @@
 <!--
 
     NAME     XMI21Translator.xsl
-    VERSION  1.5.0
-    DATE     2016-01-05
+    VERSION  1.5.1-SNAPSHOT
+    DATE     2016-02-03
 
     Copyright 2012-2016
 
@@ -240,16 +240,13 @@
 	</xsl:for-each>
 </xsl:template>
 
-<xsl:template match="/xmi:XMI">
-	<rdf:RDF xmlns:elmoview="http://xmlns.org/2012/02/26/elmoview#">
-		<elmoview:View rdf:about="http://www.kenniskluis.nl/Views/UML211#Class">
-			<rdfs:label>Classview</rdfs:label>
-			<elmoview:viewpointOf rdf:resource="http://schema.omg.org/spec/UML/2.1.1#Class"/>
-			<elmoview:query>uml211/uml-class</elmoview:query>
-		</elmoview:View>
-		<xsl:apply-templates select="*[exists(@xmi:type)]"/>
-		<xsl:apply-templates select="*[exists(@base_Class)]"/>
-		<xsl:apply-templates select="xmi:Extension"/>
+<xsl:template match="/root">
+	<rdf:RDF>
+		<xsl:for-each select="xmi:XMI">
+			<xsl:apply-templates select="*[exists(@xmi:type)]"/>
+			<xsl:apply-templates select="*[exists(@base_Class)]"/>
+			<xsl:apply-templates select="xmi:Extension"/>
+		</xsl:for-each>
 	</rdf:RDF>
 </xsl:template>
 

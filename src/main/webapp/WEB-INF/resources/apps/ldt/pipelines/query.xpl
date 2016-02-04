@@ -2,7 +2,7 @@
 
     NAME     query.xpl
     VERSION  1.5.1-SNAPSHOT
-    DATE     2016-02-03
+    DATE     2016-02-04
 
     Copyright 2012-2016
 
@@ -109,24 +109,36 @@
 									?rep rdf:type elmo:Representation
 									OPTIONAL {?rep elmo:layer ?layer}
 								}
-								GRAPH <]]><xsl:value-of select="context/representation-graph/@uri"/><![CDATA[> {
+								{
 									{
-										?rep elmo:url-pattern ?pattern.
-										FILTER regex("]]><xsl:value-of select="context/url"/><![CDATA[",?pattern)
+										GRAPH <]]><xsl:value-of select="context/representation-graph/@uri"/><![CDATA[> {
+											?rep elmo:url-pattern ?pattern.
+											FILTER regex("]]><xsl:value-of select="context/url"/><![CDATA[",?pattern)
+										}
 									}
 									UNION
 									{
-										?rep elmo:uri-pattern ?pattern.
-										FILTER regex("]]><xsl:value-of select="context/subject"/><![CDATA[",?pattern)
+										GRAPH <]]><xsl:value-of select="context/representation-graph/@uri"/><![CDATA[> {
+											?rep elmo:uri-pattern ?pattern.
+											FILTER regex("]]><xsl:value-of select="context/subject"/><![CDATA[",?pattern)
+										}
 									}]]><xsl:if test="not(contains(context/subject,' '))"><![CDATA[
 									UNION
-									{?rep elmo:applies-to <]]><xsl:value-of select="context/subject"/><![CDATA[>}
+									{
+										GRAPH <]]><xsl:value-of select="context/representation-graph/@uri"/><![CDATA[> {
+											?rep elmo:applies-to <]]><xsl:value-of select="context/subject"/><![CDATA[>
+										}
+									}
 									UNION
 									{
-										?rep elmo:applies-to ?profile.
-										?profile ?predicate ?object.
-										<]]><xsl:value-of select="context/subject"/><![CDATA[> ?predicate ?object
-										FILTER isBlank(?profile)
+										GRAPH <]]><xsl:value-of select="context/representation-graph/@uri"/><![CDATA[> {
+											?rep elmo:applies-to ?profile.
+											?profile ?predicate ?object.
+											FILTER isBlank(?profile)
+										}
+										{
+											<]]><xsl:value-of select="context/subject"/><![CDATA[> ?predicate ?object
+										}
 									}]]></xsl:if><![CDATA[
 								}
 							}
@@ -408,16 +420,14 @@
 		<p:input name="data" href="aggregate('root',#defquery,#context)"/>
 		<p:output name="data" id="querytext"/>
 	</p:processor>
-
 <!--
 <p:processor name="oxf:xml-serializer">
 	<p:input name="config">
 		<config/>
 	</p:input>
-	<p:input name="data" href="#defquery"/>
+	<p:input name="data" href="#representations"/>
 </p:processor>
 -->
-
 	<!-- More than one query is possible -->
 	<p:for-each href="#querytext" select="/view/representation[not(exists(service))]" root="results" id="sparql">
 	
