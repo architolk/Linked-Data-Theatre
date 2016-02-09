@@ -3,15 +3,15 @@
 	<groupId>nl.architolk.ldt</groupId>
 	<artifactId>processors</artifactId>
 	<packaging>jar</packaging>
-	<version>1.5.1-SNAPSHOT</version>
+	<version>1.5.1</version>
 	<name>processors</name>
 	<properties>
 		<maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
 		<buildTimestamp>${maven.build.timestamp}</buildTimestamp>
 		<license-maven-plugin.version>2.11</license-maven-plugin.version>
 		<license.failIfMissing>false</license.failIfMissing>
-		<release.version>1.5.0</release.version>
-		<release.date>2016-01-03</release.date>
+		<release.version>1.5.1</release.version>
+		<release.date>2016-02-09</release.date>
 	</properties>
 	<dependencies>
 		<!-- Dependency for testing -->

@@ -1,8 +1,8 @@
 <!--
 
     NAME     svg2document.xpl
-    VERSION  1.5.0
-    DATE     2016-01-05
+    VERSION  1.5.1
+    DATE     2016-02-09
 
     Copyright 2012-2016
 

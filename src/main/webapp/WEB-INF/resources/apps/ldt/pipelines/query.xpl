@@ -1,8 +1,8 @@
 <!--
 
     NAME     query.xpl
-    VERSION  1.5.1-SNAPSHOT
-    DATE     2016-02-04
+    VERSION  1.5.1
+    DATE     2016-02-09
 
     Copyright 2012-2016
 
@@ -137,8 +137,9 @@
 											FILTER isBlank(?profile)
 										}
 										{
-											<]]><xsl:value-of select="context/subject"/><![CDATA[> ?predicate ?object
+											<]]><xsl:value-of select="context/subject"/><![CDATA[> ?predicate ?bobject
 										}
+										FILTER (str(?object)=str(?bobject))
 									}]]></xsl:if><![CDATA[
 								}
 							}

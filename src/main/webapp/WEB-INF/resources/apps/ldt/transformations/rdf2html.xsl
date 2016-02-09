@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2html.xsl
-    VERSION  1.5.1-SNAPSHOT
-    DATE     2016-02-02
+    VERSION  1.5.1
+    DATE     2016-02-09
 
     Copyright 2012-2016
 
@@ -570,10 +570,22 @@
 <xsl:template match="rdf:RDF" mode="TableAppearance">
 	<xsl:param name="paging"/>
 	<!-- Link for other formats -->
+	<!-- Original, changed
 	<xsl:variable name="original-link">
 		<xsl:value-of select="$docroot"/>
 		<xsl:text>/resource?subject=</xsl:text><xsl:value-of select="encode-for-uri(../context/subject)"/>
 		<xsl:text>&amp;representation=</xsl:text><xsl:value-of select="encode-for-uri(@elmo:query)"/>
+		<xsl:text>&amp;format=</xsl:text>
+	</xsl:variable>
+	-->
+	<xsl:variable name="original-link">
+		<xsl:value-of select="../context/url"/>
+		<xsl:text>?</xsl:text>
+		<xsl:for-each select="../context/parameters/parameter"> <!-- This doesn't work if the subject is given as a parameter! -->
+			<xsl:value-of select="name"/>=<xsl:value-of select="encode-for-uri(value)"/>
+			<xsl:text>&amp;</xsl:text>
+		</xsl:for-each>
+		<xsl:text>representation=</xsl:text><xsl:value-of select="encode-for-uri(@elmo:query)"/>
 		<xsl:text>&amp;format=</xsl:text>
 	</xsl:variable>
 	<!-- A select query will have @rdf:nodeID elements, with id 'rset' -->

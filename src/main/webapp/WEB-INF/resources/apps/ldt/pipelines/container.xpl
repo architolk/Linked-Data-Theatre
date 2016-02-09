@@ -1,8 +1,8 @@
 <!--
 
     NAME     container.xpl
-    VERSION  1.5.1-SNAPSHOT
-    DATE     2016-02-03
+    VERSION  1.5.1
+    DATE     2016-02-09
 
     Copyright 2012-2016
 

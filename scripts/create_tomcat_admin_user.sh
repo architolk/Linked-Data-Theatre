@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #
 # NAME     create_tomcat_admin_user.sh
-# VERSION  1.5.1-SNAPSHOT
-# DATE     2016-01-20
+# VERSION  1.5.1
+# DATE     2016-02-09
 #
 # Copyright 2012-2016
 #
