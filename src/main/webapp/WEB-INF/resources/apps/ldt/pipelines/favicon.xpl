@@ -1,8 +1,8 @@
 <!--
 
     NAME     favicon.xpl
-    VERSION  1.5.1
-    DATE     2016-02-09
+    VERSION  1.5.1-SNAPSHOT
+    DATE     2016-02-14
 
     Copyright 2012-2016
 
@@ -77,7 +77,7 @@
 	<p:processor name="oxf:url-generator">
 		<p:input name="config" transform="oxf:xslt" href="#icon">
 			<config xsl:version="2.0">
-				<url>../images/<xsl:value-of select="icon"/></url>
+				<url>../../images/<xsl:value-of select="icon"/></url>
 				<mode>binary</mode>
 			</config>
 		</p:input>

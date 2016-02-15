@@ -1330,7 +1330,7 @@ var substringMatcher = function(strs) {
 							</xsl:when>
 							<xsl:otherwise>
 								.leaflet-container {
-									height: 300px;
+									height: 500px;
 									width: 100%;
 								}
 							</xsl:otherwise>

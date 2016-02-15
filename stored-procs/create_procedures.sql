@@ -52,7 +52,7 @@ create procedure LDT.UPLOAD_NQ (in fname varchar)
 {
 	log_enable(3,1);
 	call DB.DBA.TTLP_MT(file_to_string_output(fname),'','http://localhost:8890/default-graph',512);
-}
+};
 -- Depricated: using MULTI_UPDATE_CONTAINER
 drop procedure LDT.UPDATE_CONTAINER;
 create procedure LDT.UPDATE_CONTAINER (in fname varchar, in ftype varchar, in pgraph varchar, in cgraph varchar, in targetgraph varchar, in action varchar, in postquery varchar)
@@ -83,7 +83,7 @@ create procedure LDT.UPDATE_CONTAINER (in fname varchar, in ftype varchar, in pg
 	if (postquery<>'') {
 		exec(concat('sparql ',postquery));
 	}
-}
+};
 drop procedure LDT.MULTI_UPDATE_CONTAINER;
 create procedure LDT.MULTI_UPDATE_CONTAINER  (in flist varchar, in ftype varchar, in pgraph varchar, in cgraph varchar, in targetgraph varchar, in action varchar, in postquery varchar)
 {
@@ -126,4 +126,23 @@ create procedure LDT.MULTI_UPDATE_CONTAINER  (in flist varchar, in ftype varchar
 	}
 	result_names (message);
 	result (message);
-}
+};
+drop procedure CamelCase;
+create procedure CamelCase (in istr varchar)
+{
+	declare svector any;
+	declare res varchar;
+	res := '';
+	svector := split_and_decode(istr,0,'\0\0 ');
+	foreach (varchar prt in svector) do {
+		if (length(prt)=1) {
+			res := concat(res,ucase(prt));
+		} else {
+			if (length(prt)>1) {
+				res := concat(res,ucase(substring(prt,1,1)),substring(prt,2,255));
+			}
+		}
+	}
+	return (res);
+};
+grant execute on CamelCase to public;
