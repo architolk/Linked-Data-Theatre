@@ -1,8 +1,8 @@
 <!--
 
     NAME     svg2fo.xsl
-    VERSION  1.5.1
-    DATE     2016-02-09
+    VERSION  1.5.2-SNAPSHOT
+    DATE     2016-02-17
 
     Copyright 2012-2016
 
@@ -76,6 +76,7 @@
 							<svg:svg width="{$imgwidth}" height="{$imgheight}">
 								<svg:g>
 									<xsl:copy-of select="svg:g/*"/>
+									<!--
 									<xsl:for-each select="/root/xhtml:div/xhtml:div">
 										<xsl:variable name="left"><xsl:value-of select="substring-before(substring-after(@style,'left: '),'px; ')"/></xsl:variable>
 										<xsl:variable name="top"><xsl:value-of select="substring-before(substring-after(@style,'top: '),'px; ')"/></xsl:variable>
@@ -85,6 +86,7 @@
 											</xsl:for-each>
 										</svg:text>
 									</xsl:for-each>
+									-->
 								</svg:g>
 							</svg:svg>
 						</fo:instream-foreign-object>

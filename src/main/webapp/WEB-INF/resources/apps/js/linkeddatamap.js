@@ -1,7 +1,7 @@
 /*
  * NAME     linkeddatamap.js
- * VERSION  1.5.1
- * DATE     2016-02-09
+ * VERSION  1.5.2-SNAPSHOT
+ * DATE     2016-02-17
  *
  * Copyright 2012-2016
  *
@@ -318,6 +318,9 @@ function setChangeColors() {
 
 function circleMove(e) {
 	movedItem.setLatLng(e.latlng);
+	if (movedItem.label) {	
+		movedItem.label.setLatLng(movedItem._latlng);
+	}
 	setChangeColors();
 	//Onderstaande is nog niet echt heel netjes, nog verbeteren
 	if (movedItem.edge!=undefined) {
