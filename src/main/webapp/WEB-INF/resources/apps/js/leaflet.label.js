@@ -1,7 +1,7 @@
 /*
  * NAME     leaflet.label.js
  * VERSION  1.5.2-SNAPSHOT
- * DATE     2016-02-17
+ * DATE     2016-02-18
  *
  * Copyright 2012-2016
  *
@@ -134,10 +134,10 @@ L.Label = (L.Layer ? L.Layer : L.Class).extend({
 				zoomSize = 6;
 				break;
 			case 2:
-				zoomSize = 12;
+				zoomSize = 11;
 				break;
 			case 3:
-				zoomSize = 18;
+				zoomSize = 16;
 				break;
 			default:
 				zoomSize = 30;

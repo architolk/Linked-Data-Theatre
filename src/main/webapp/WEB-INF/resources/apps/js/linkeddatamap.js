@@ -1,7 +1,7 @@
 /*
  * NAME     linkeddatamap.js
  * VERSION  1.5.2-SNAPSHOT
- * DATE     2016-02-17
+ * DATE     2016-02-18
  *
  * Copyright 2012-2016
  *
@@ -37,6 +37,9 @@ var movedItem;
 
 // Resolutions (pixels per meter) of the zoom levels:
 var res = [3440.640, 1720.320, 860.160, 430.080, 215.040, 107.520, 53.760, 26.880, 13.440, 6.720, 3.360, 1.680, 0.840, 0.420];
+
+// Relative sizing of circles
+var circleQuotient = 0.7;
 
 var numberRegexp = /^[-+]?([0-9]*\.[0-9]+|[0-9]+)([eE][-+]?[0-9]+)?/;
 
@@ -157,7 +160,7 @@ function parse(_) {
         if (!$(/^(\))/)) return null;
         return {
             type: 'Point',
-			radius: parseFloat(c[1]),
+			radius: circleQuotient*parseFloat(c[1]),
             coordinates: c[0]
         };
 	}
@@ -372,10 +375,25 @@ function addWKT(uri, wkt, text, url, styleclass)
 	}
 	lastPolygon = L.geoJson(wktObject,{style: style,onEachFeature: onEachFeature,pointToLayer: pointToLayer}).addTo(map)
 						.bindPopup(html);
-	//Only if bindLabel is available
 	//TESTTESTTEST
 	lastPolygon.uri = uri;
 	//TESTTESTTEST
+	//Only if bindLabel is available
+
+	//Stukje hieronder plaatst een text svg in de tekst!
+	if (lastPolygon.bindLabel2!=undefined) {
+		var layer = lastPolygon.getLayers()[0];
+		var pos = map.latLngToLayerPoint(layer._latlng);
+		var labelPoint = map.layerPointToContainerPoint(pos);
+		
+		var tsvg = document.createElementNS("http://www.w3.org/2000/svg","text");
+		tsvg.setAttribute("x",labelPoint.x);
+		tsvg.setAttribute("y",labelPoint.y);
+		var thtm = document.createTextNode("test");
+		tsvg.appendChild(thtm);
+		layer._path.parentNode.appendChild(tsvg);
+	}
+	
 	if (lastPolygon.bindLabel!=undefined) {
 		lastPolygon.bindLabel(text,{noHide:true, offset: [0,0]});
 		lastPolygon.showLabel();
@@ -549,7 +567,6 @@ function initMap(docroot, latCor, longCor, backMap, imageMapURL, contURL, left, 
 
 	//Zoom option for circlemarkers
 	map.on('zoomend',resizeCircle);
-
 	map.invalidateSize();
 }
 
