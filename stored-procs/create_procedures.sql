@@ -1,7 +1,7 @@
 --
 -- NAME     create_procedures.sql
 -- VERSION  1.5.2-SNAPSHOT
--- DATE     2016-02-17
+-- DATE     2016-02-19
 --
 -- Copyright 2012-2016
 --
@@ -127,6 +127,7 @@ create procedure LDT.MULTI_UPDATE_CONTAINER  (in flist varchar, in ftype varchar
 	result_names (message);
 	result (message);
 };
+
 drop procedure CamelCase;
 create procedure CamelCase (in istr varchar)
 {
@@ -146,3 +147,10 @@ create procedure CamelCase (in istr varchar)
 	return (res);
 };
 grant execute on CamelCase to public;
+
+drop procedure StrDateDiff;
+create procedure StrDateDiff (in dstr varchar)
+{
+	return datediff('day',now(),stringdate(left(dstr,10)));
+};
+grant execute on StrDateDiff to public;
