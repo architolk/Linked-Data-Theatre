@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.5.2-SNAPSHOT
-    DATE     2016-02-17
+    DATE     2016-02-28
 
     Copyright 2012-2016
 
@@ -155,6 +155,10 @@
 
 <xsl:template match="*" mode="object">
 	<xsl:choose>
+		<!-- Image -->
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance'">
+			<img src="@rdf:resource"/>
+		</xsl:when>
 		<!-- Reference to another resource, without a label -->
 		<xsl:when test="exists(@rdf:resource)">
 			<xsl:variable name="resource-uri">
