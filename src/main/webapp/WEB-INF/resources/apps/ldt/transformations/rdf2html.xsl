@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.5.2-SNAPSHOT
-    DATE     2016-02-28
+    DATE     2016-02-29
 
     Copyright 2012-2016
 
@@ -156,8 +156,8 @@
 <xsl:template match="*" mode="object">
 	<xsl:choose>
 		<!-- Image -->
-		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance'">
-			<img src="@rdf:resource"/>
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#ImageAppearance'">
+			<img src="{@rdf:resource}"/>
 		</xsl:when>
 		<!-- Reference to another resource, without a label -->
 		<xsl:when test="exists(@rdf:resource)">
@@ -618,15 +618,37 @@
 						</tr>
 					</thead>
 					<tbody>
-						<xsl:for-each select="res:solution">
-							<tr>
-								<xsl:variable name="binding" select="res:binding"/>
-								<xsl:for-each select="../res:resultVariable[not(matches(.,'[^_]*_(label|details|count|uri)'))]">
-									<xsl:variable name="var" select="."/>
-									<td><xsl:apply-templates select="$binding[res:variable=$var]" mode="tableobject"/></td>
+						<xsl:choose>
+							<xsl:when test="exists(res:resultVariable[@elmo:name='SUBJECT'])">
+								<xsl:variable name="key" select="res:resultVariable[@elmo:name='SUBJECT'][1]"/>
+								<xsl:for-each-group select="res:solution" group-by="res:binding[res:variable=$key]/res:value/@rdf:resource">
+									<tr>
+										<xsl:variable name="group" select="current-group()"/>
+										<xsl:for-each select="../res:resultVariable[not(matches(.,'[^_]*_(label|details|count|uri)'))]">
+											<xsl:variable name="var" select="."/>
+											<td>
+												<!-- Remove duplicates, so still a for-each-group -->
+												<xsl:for-each-group select="$group/res:binding[res:variable=$var]" group-by="concat(res:value,res:value/@rdf:resource)">
+													<xsl:if test="position()!=1">, </xsl:if>
+													<xsl:apply-templates select="." mode="tableobject"/>
+												</xsl:for-each-group>
+											</td>
+										</xsl:for-each>
+									</tr>
+								</xsl:for-each-group>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:for-each select="res:solution">
+									<tr>
+										<xsl:variable name="binding" select="res:binding"/>
+										<xsl:for-each select="../res:resultVariable[not(matches(.,'[^_]*_(label|details|count|uri)'))]">
+											<xsl:variable name="var" select="."/>
+											<td><xsl:apply-templates select="$binding[res:variable=$var]" mode="tableobject"/></td>
+										</xsl:for-each>
+									</tr>
 								</xsl:for-each>
-							</tr>
-						</xsl:for-each>
+							</xsl:otherwise>
+						</xsl:choose>
 					</tbody>
 				</table>
 				<a href="{$original-link}xlsx">Excel</a>
