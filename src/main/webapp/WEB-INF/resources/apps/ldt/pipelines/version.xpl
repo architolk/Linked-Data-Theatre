@@ -1,8 +1,8 @@
 <!--
 
     NAME     version.xpl
-    VERSION  1.5.1
-    DATE     2016-02-09
+    VERSION  1.5.2-SNAPSHOT
+    DATE     2016-03-01
 
     Copyright 2012-2016
 
@@ -66,7 +66,7 @@
 	<p:processor name="oxf:request-security">
 		<p:input name="config" transform="oxf:xslt" href="#instance">        
 			<config xsl:version="2.0">
-				<xsl:for-each select="submission/roles/role">
+				<xsl:for-each select="theatre/roles/role">
 					<role><xsl:value-of select="."/></role>
 				</xsl:for-each>
 			</config>    

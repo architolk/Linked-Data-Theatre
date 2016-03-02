@@ -1,8 +1,8 @@
 <!--
 
     NAME     error.xpl
-    VERSION  1.5.1
-    DATE     2016-02-09
+    VERSION  1.5.2-SNAPSHOT
+    DATE     2016-03-02
 
     Copyright 2012-2016
 
@@ -36,11 +36,11 @@
 	<!-- Configuration> -->
 	<p:param type="input" name="instance"/>
 
-	<!-- Defaults won't be part of the configuration, so explicit loading -->
+	<!-- Config won't be part of the configuration, so explicit loading -->
 	<p:processor name="oxf:url-generator">
 		<p:input name="config">
 			<config>
-				<url>../defaults.xml</url>
+				<url>../config.xml</url>
 				<content-type>application/xml</content-type>
 			</config>
 		</p:input>

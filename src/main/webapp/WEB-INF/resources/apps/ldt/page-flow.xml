@@ -1,8 +1,8 @@
 <!--
 
     NAME     page-flow.xml
-    VERSION  1.5.1
-    DATE     2016-02-09
+    VERSION  1.5.2-SNAPSHOT
+    DATE     2016-03-02
 
     Copyright 2012-2016
 
@@ -30,161 +30,156 @@
 <controller xmlns="http://www.orbeon.com/oxf/controller" matcher="regexp">
 
 	<!-- Favicon -->
-	<page path="/favicon.ico" model="pipelines/favicon.xpl" default-submission="defaults.xml" public-methods="#all"/>
+	<page path="/favicon.ico" model="pipelines/favicon.xpl" default-submission="config.xml" public-methods="#all"/>
 
 	<!-- Login, error and exit -->
-	<page path="/login" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
-		<setvalue ref="submission/representation">http://bp4mc2.org/elmo/def#LoginRepresentation</setvalue>
+	<page path="/login" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/representation">http://bp4mc2.org/elmo/def#LoginRepresentation</setvalue>
 	</page>
-	<page path="/login-error" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
-		<setvalue ref="submission/representation">http://bp4mc2.org/elmo/def#LoginErrorRepresentation</setvalue>
+	<page path="/login-error" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/representation">http://bp4mc2.org/elmo/def#LoginErrorRepresentation</setvalue>
 	</page>
-	<page path="/exit" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
-		<setvalue ref="submission/representation">http://bp4mc2.org/elmo/def#ExitRepresentation</setvalue>
+	<page path="/exit" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/representation">http://bp4mc2.org/elmo/def#ExitRepresentation</setvalue>
+	</page>
+
+	<!-- Backstage -->
+	<page path="/backstage" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/representation">http://bp4mc2.org/elmo/def#BackstageRepresentation</setvalue>
+	</page>
+	<page path="/backstage/rep" model="pipelines/container.xpl" default-submission="config.xml" public-methods="#all">
 	</page>
 	
 	<!-- Page to save svg that is send to the server -->
-	<page path="(((?!print-graph).)*)/print-graph" model="pipelines/svg2document.xpl" default-submission="defaults.xml" public-methods="#all">
-		<setvalue ref="submission/subdomain" matcher-group="1"/>
+	<page path="(((?!print-graph).)*)/print-graph" model="pipelines/svg2document.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 	</page>
 
 	<!-- Request header information (for debugging purposes in production) -->
-	<page path="(((?!header).)*)/header" model="pipelines/header.xpl" default-submission="defaults.xml" public-methods="#all"/>
-	<page path="(((?!header).)*)/header.json" model="pipelines/jsonheader.xpl" default-submission="defaults.xml" public-methods="#all"/>
-	<!-- <page path="/admin/header" model="pipelines/header.xpl" default-submission="defaults.xml" public-methods="#all"/> -->
+	<page path="(((?!header).)*)/header" model="pipelines/header.xpl" default-submission="config.xml" public-methods="#all"/>
+	<page path="(((?!header).)*)/header.json" model="pipelines/jsonheader.xpl" default-submission="config.xml" public-methods="#all"/>
+	<!-- <page path="/admin/header" model="pipelines/header.xpl" default-submission="config.xml" public-methods="#all"/> -->
 
 	<!-- Version header information (for debugging purposes) -->
-	<page path="(((?!version).)*)/version" model="pipelines/version.xpl" default-submission="defaults.xml" public-methods="#all">
-		<setvalue ref="submission/subdomain" matcher-group="1"/>
-		<setvalue ref="submission/format" parameter="format"/>
-		<setvalue ref="submission/subject" parameter="subject"/>
+	<page path="(((?!version).)*)/version" model="pipelines/version.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
+		<setvalue ref="theatre/format" parameter="format"/>
+		<setvalue ref="theatre/subject" parameter="subject"/>
 	</page>
-	<!-- <page path="/admin/version" model="pipelines/version.xpl" default-submission="defaults.xml" public-methods="#all"/> -->
+	<!-- <page path="/admin/version" model="pipelines/version.xpl" default-submission="config.xml" public-methods="#all"/> -->
 	
 	<!-- query -->
-	<page path="(((?!query).)*)/query/([^\.]*)\.([^ ]*)" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
-		<setvalue ref="submission/subdomain" matcher-group="1"/>
+	<page path="(((?!query).)*)/query/([^\.]*)\.([^ ]*)" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 		<!-- <setvalue ref="submission/query" matcher-group="3"/> -->
-		<setvalue ref="submission/format" matcher-group="4"/>
-		<setvalue ref="submission/subject" parameter="subject"/>
+		<setvalue ref="theatre/format" matcher-group="4"/>
+		<setvalue ref="theatre/subject" parameter="subject"/>
 	</page>
-	<page path="(((?!query).)*)/query/([^ ]*)" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
-		<setvalue ref="submission/subdomain" matcher-group="1"/>
+	<page path="(((?!query).)*)/query/([^ ]*)" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 		<!-- <setvalue ref="submission/query" matcher-group="3"/> -->
-		<setvalue ref="submission/format" parameter="format"/>
-		<setvalue ref="submission/subject" parameter="subject"/>
-		<setvalue ref="submission/representation" parameter="representation"/>
+		<setvalue ref="theatre/format" parameter="format"/>
+		<setvalue ref="theatre/subject" parameter="subject"/>
+		<setvalue ref="theatre/representation" parameter="representation"/>
 	</page>
 	
 	<!-- container -->
-	<page path="(((?!container).)*)/container/([^ ]*)" model="pipelines/container.xpl" default-submission="defaults.xml" public-methods="#all">
-		<setvalue ref="submission/subdomain" matcher-group="1"/>
+	<page path="(((?!container).)*)/container/([^ ]*)" model="pipelines/container.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 	</page>
 
 	<!-- conversion -->
-	<page path="(((?!conversion).)*)/conversion/([^ ]*)" model="pipelines/conversion.xpl" default-submission="defaults.xml" public-methods="#all">
-		<setvalue ref="submission/subdomain" matcher-group="1"/>
+	<page path="(((?!conversion).)*)/conversion/([^ ]*)" model="pipelines/conversion.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 	</page>
 	
 	<!-- id uri (deferenceable URI) -->
-	<page path="(((?!id).)*)/id/([^ ]*)" model="pipelines/redirect.xpl" default-submission="defaults.xml" public-methods="#all"/>
+	<page path="(((?!id).)*)/id/([^ ]*)" model="pipelines/redirect.xpl" default-submission="config.xml" public-methods="#all"/>
 	
 	<!-- doc uri (give some information about a URI) -->
-	<page path="(((?!doc).)*)/doc/([^ ]*)" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
-		<setvalue ref="submission/subdomain" matcher-group="1"/>
+	<page path="(((?!doc).)*)/doc/([^ ]*)" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 		<!-- <setvalue ref="submission/query">resource</setvalue> -->
-		<setvalue ref="submission/subject" parameter="subject"/>
-		<setvalue ref="submission/format" parameter="format"/>
+		<setvalue ref="theatre/subject" parameter="subject"/>
+		<setvalue ref="theatre/format" parameter="format"/>
 	</page>
 	
 	<!-- def uri (give some information about a hash URI) -->
-	<page path="(((?!def).)*)/def(/[^ ]*)*" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
-		<setvalue ref="submission/subdomain" matcher-group="1"/>
+	<page path="(((?!def).)*)/def(/[^ ]*)*" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 		<!-- <setvalue ref="submission/query">vocabulary</setvalue> -->
-		<setvalue ref="submission/subject" parameter="subject"/>
+		<setvalue ref="theatre/subject" parameter="subject"/>
 	</page>
 	
 	<!-- resource API (give some information about a URI, assigned to the subject parameter -->
-	<page path="(((?!resource).)*)/resource\.([^ ]*)" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
-		<setvalue ref="submission/subdomain" matcher-group="1"/>
+	<page path="(((?!resource).)*)/resource\.([^ ]*)" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 		<!-- <setvalue ref="submission/query">resource</setvalue> -->
-		<setvalue ref="submission/format" matcher-group="3"/>
-		<setvalue ref="submission/subject" parameter="subject"/>
-		<setvalue ref="submission/representation" parameter="representation"/>
+		<setvalue ref="theatre/format" matcher-group="3"/>
+		<setvalue ref="theatre/subject" parameter="subject"/>
+		<setvalue ref="theatre/representation" parameter="representation"/>
 	</page>
-	<page path="(((?!resource).)*)/resource" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
-		<setvalue ref="submission/subdomain" matcher-group="1"/>
+	<page path="(((?!resource).)*)/resource" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 		<!-- <setvalue ref="submission/query">resource</setvalue> -->
-		<setvalue ref="submission/format" parameter="format"/>
-		<setvalue ref="submission/subject" parameter="subject"/>
-		<setvalue ref="submission/representation" parameter="representation"/>
+		<setvalue ref="theatre/format" parameter="format"/>
+		<setvalue ref="theatre/subject" parameter="subject"/>
+		<setvalue ref="theatre/representation" parameter="representation"/>
 	</page>
 	
 	<!-- default resource -->
-	<page path="(((?!resourcex).)*)/resourcex\.([^ ]*)" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
-		<setvalue ref="submission/subdomain" matcher-group="1"/>
+	<page path="(((?!resourcex).)*)/resourcex\.([^ ]*)" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 		<!-- <setvalue ref="submission/query">resource</setvalue> -->
-		<setvalue ref="submission/format" matcher-group="3"/>
-		<setvalue ref="submission/subject" parameter="subject"/>
-		<setvalue ref="submission/representation">rep://elmo.localhost/resource</setvalue>
+		<setvalue ref="theatre/format" matcher-group="3"/>
+		<setvalue ref="theatre/subject" parameter="subject"/>
+		<setvalue ref="theatre/representation">rep://elmo.localhost/resource</setvalue>
 	</page>
-	<page path="(((?!resourcex).)*)/resourcex" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
-		<setvalue ref="submission/subdomain" matcher-group="1"/>
+	<page path="(((?!resourcex).)*)/resourcex" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 		<!-- <setvalue ref="submission/query">resource</setvalue> -->
-		<setvalue ref="submission/format" parameter="format"/>
-		<setvalue ref="submission/subject" parameter="subject"/>
-		<setvalue ref="submission/representation">rep://elmo.localhost/resource</setvalue>
+		<setvalue ref="theatre/format" parameter="format"/>
+		<setvalue ref="theatre/subject" parameter="subject"/>
+		<setvalue ref="theatre/representation">rep://elmo.localhost/resource</setvalue>
 	</page>
 	
 	<!-- Text search -->
-	<page path="(((?!textsearch).)*)/textsearch\.([^ ]*)" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
-		<setvalue ref="submission/query">rep://elmo.localhost/textsearch</setvalue>
-		<setvalue ref="submission/format" matcher-group="3"/>
-		<setvalue ref="submission/term" parameter="term"/>
+	<page path="(((?!textsearch).)*)/textsearch\.([^ ]*)" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
+		<setvalue ref="theatre/query">rep://elmo.localhost/textsearch</setvalue>
+		<setvalue ref="theatre/format" matcher-group="3"/>
+		<setvalue ref="theatre/term" parameter="term"/>
 	</page>
-	<page path="(((?!textsearch).)*)/textsearch" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
-		<setvalue ref="submission/query">rep://elmo.localhost/textsearch</setvalue>
-		<setvalue ref="submission/format" parameter="format"/>
-		<setvalue ref="submission/term" parameter="term"/>
+	<page path="(((?!textsearch).)*)/textsearch" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
+		<setvalue ref="theatre/query">rep://elmo.localhost/textsearch</setvalue>
+		<setvalue ref="theatre/format" parameter="format"/>
+		<setvalue ref="theatre/term" parameter="term"/>
 	</page>
-	<page path="(((?!document).)*)/document\.([^ ]*)" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
-		<setvalue ref="submission/query">rep://elmo.localhost/document</setvalue>
-		<setvalue ref="submission/format" matcher-group="3"/>
-		<setvalue ref="submission/subject" parameter="subject"/>
+	<page path="(((?!document).)*)/document\.([^ ]*)" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
+		<setvalue ref="theatre/query">rep://elmo.localhost/document</setvalue>
+		<setvalue ref="theatre/format" matcher-group="3"/>
+		<setvalue ref="theatre/subject" parameter="subject"/>
 	</page>
-	<page path="(((?!document).)*)/document" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
-		<setvalue ref="submission/query">rep://elmo.localhost/document</setvalue>
-		<setvalue ref="submission/format" parameter="format"/>
-		<setvalue ref="submission/subject" parameter="subject"/>
-	</page>
-	
-	<!-- XMI export -->
-	<page path="/xmi" model="pipelines/xmi.xpl" default-submission="defaults.xml" public-methods="#all">
-		<setvalue ref="submission/subject" parameter="subject"/>
+	<page path="(((?!document).)*)/document" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/query">rep://elmo.localhost/document</setvalue>
+		<setvalue ref="theatre/format" parameter="format"/>
+		<setvalue ref="theatre/subject" parameter="subject"/>
 	</page>
 	
 	<!-- Administrator pages -->
 	<!-- Failsafe, always show a admin page -->
-	<page path="/admin(/[^ ]*)?" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
-		<setvalue ref="submission/query">admin</setvalue>
-		<setvalue ref="submission/format" parameter="format"/>
+	<page path="/admin(/[^ ]*)?" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/query">admin</setvalue>
+		<setvalue ref="theatre/format" parameter="format"/>
 	</page>
 	
 	<!-- Default indexpage -->
-	<page path="/([^/]*)" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
+	<page path="/([^/]*)" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
 		<!-- <setvalue ref="submission/query">index</setvalue> -->
-		<setvalue ref="submission/format" parameter="format"/>
-		<setvalue ref="submission/subdomain" matcher-group="1"/>
+		<setvalue ref="theatre/format" parameter="format"/>
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 	</page>
 
-	<!-- info page -->
-	<page path="/info" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
-		<setvalue ref="submission/representation">rep://elmo.localhost/info</setvalue>
-		<setvalue ref="submission/format" parameter="format"/>
-	</page>
-	<page path="/info\.([^ ]*)" model="pipelines/query.xpl" default-submission="defaults.xml" public-methods="#all">
-		<setvalue ref="submission/representation">rep://elmo.localhost/info</setvalue>
-		<setvalue ref="submission/format" matcher-group="1"/>
-	</page>
-	
 </controller>

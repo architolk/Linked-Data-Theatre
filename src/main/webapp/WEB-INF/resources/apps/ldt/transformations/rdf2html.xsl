@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.5.2-SNAPSHOT
-    DATE     2016-02-29
+    DATE     2016-03-02
 
     Copyright 2012-2016
 
@@ -222,7 +222,11 @@
 				<xsl:with-param name="appearance" select="@elmo:appearance"/>
 			</xsl:apply-templates>
 		</xsl:when>
-		<!-- Literal -->
+		<!-- HTML -->
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#HtmlAppearance'">
+			<xsl:variable name="html">&lt;div&gt;<xsl:value-of select="."/>&lt;/div&gt;</xsl:variable>
+			<xsl:copy-of select="saxon:parse($html)" xmlns:saxon="http://saxon.sf.net/"/>
+		</xsl:when>
 		<xsl:otherwise>
 			<!-- If new lines are included, include them in resulting html -->
 			<xsl:for-each select="tokenize(replace(.,'\n+$',''),'\n')">
@@ -1154,6 +1158,12 @@ var substringMatcher = function(strs) {
 					<xsl:if test="exists(rdf:Description/elmo:valueDatatype[@rdf:resource='http://purl.org/dc/dcmitype/Dataset'])">
 						<xsl:attribute name="enctype">multipart/form-data</xsl:attribute>
 					</xsl:if>
+					<xsl:variable name="editorID" select="rdf:Description[elmo:appearance/@rdf:resource='http://bp4mc2.org/elmo/def#TurtleEditor']/elmo:applies-to"/>
+					<xsl:if test="$editorID!=''">
+						<link rel="stylesheet" href="{$docroot}/css/codemirror.css"/>
+						<script src="{$docroot}/js/codemirror.js"/>
+						<script src="{$docroot}/js/turtle.js"/>
+					</xsl:if>
 					<xsl:for-each select="rdf:Description[exists(elmo:applies-to)]"><xsl:sort select="elmo:index"/>
 						<xsl:variable name="applies-to" select="elmo:applies-to"/>
 						<div class="form-group">
@@ -1218,6 +1228,9 @@ var substringMatcher = function(strs) {
 						</div>
 					</xsl:for-each>
 					<script>$('.datepicker').datepicker({language: '<xsl:value-of select="/results/context/language"/>'});</script>
+					<xsl:if test="$editorID!=''">
+						<script>var editor = CodeMirror.fromTextArea(document.getElementById("<xsl:value-of select="$editorID"/>"), {mode: "text/turtle",matchBrackets: true});</script>
+					</xsl:if>
 				</form>
 			</div>
 		</div>

@@ -1,8 +1,8 @@
 <!--
 
     NAME     ttl2rdfaform.xsl
-    VERSION  1.5.1
-    DATE     2016-02-09
+    VERSION  1.5.2-SNAPSHOT
+    DATE     2016-03-02
 
     Copyright 2012-2016
 
@@ -63,6 +63,7 @@
 					<rdfs:label>Content</rdfs:label>
 					<elmo:applies-to>content</elmo:applies-to>
 					<elmo:valueDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#String"/>
+					<elmo:appearance rdf:resource="http://bp4mc2.org/elmo/def#TurtleEditor"/>
 					<rdf:value><xsl:value-of select="root/turtle"/></rdf:value>
 				</rdf:Description>
 			</xsl:if>

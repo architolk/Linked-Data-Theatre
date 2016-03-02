@@ -1,7 +1,7 @@
 --
 -- NAME     create_procedures.sql
 -- VERSION  1.5.2-SNAPSHOT
--- DATE     2016-02-19
+-- DATE     2016-03-03
 --
 -- Copyright 2012-2016
 --
@@ -75,6 +75,10 @@ create procedure LDT.UPDATE_CONTAINER (in fname varchar, in ftype varchar, in pg
 	}
 	if (action='update') {
 		exec(concat('sparql delete from <',targetgraph,'> {?s?p?x} where { graph <',targetgraph,'> {?s?p?x} graph <',cgraph,'> {?s?p?o}}'));
+		--Some garbage collection of blank nodes is necessary, three times just to be sure (this deletes nested blank nodes to the third degree)
+		exec(concat('sparql delete from <',targetgraph,'> {?bs?bp?bo} where { graph <',targetgraph,'> {?bs?bp?bo FILTER(isblank(?bs)) FILTER NOT EXISTS {?s?p?bs}}}'));
+		exec(concat('sparql delete from <',targetgraph,'> {?bs?bp?bo} where { graph <',targetgraph,'> {?bs?bp?bo FILTER(isblank(?bs)) FILTER NOT EXISTS {?s?p?bs}}}'));
+		exec(concat('sparql delete from <',targetgraph,'> {?bs?bp?bo} where { graph <',targetgraph,'> {?bs?bp?bo FILTER(isblank(?bs)) FILTER NOT EXISTS {?s?p?bs}}}'));
 		exec(concat('sparql insert into <',targetgraph,'> {?s?p?o} where { graph <',cgraph,'> {?s?p?o}}'));
 	}
 	if (pgraph<>cgraph) {

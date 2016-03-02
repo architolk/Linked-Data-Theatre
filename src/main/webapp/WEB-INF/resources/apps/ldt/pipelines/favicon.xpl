@@ -2,7 +2,7 @@
 
     NAME     favicon.xpl
     VERSION  1.5.2-SNAPSHOT
-    DATE     2016-02-17
+    DATE     2016-03-01
 
     Copyright 2012-2016
 
@@ -53,7 +53,7 @@
 				<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="no"/>
 				<xsl:template match="/root">
 					<xsl:variable name="host" select="request/headers/header[name='host']/value"/>
-					<xsl:variable name="hosticon"><xsl:value-of select="submission/representation-graph[@site=$host]/@icon"/></xsl:variable>
+					<xsl:variable name="hosticon"><xsl:value-of select="theatre/site[@domain=$host]/@icon"/></xsl:variable>
 					<icon>
 						<xsl:value-of select="$hosticon"/>
 						<xsl:if test="$hosticon=''">favicon.ico</xsl:if>

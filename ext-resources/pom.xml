@@ -192,18 +192,17 @@
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
 						</configuration>
 					</execution>
-					<!-- Leaflet.label has been changed: see src folder
 					<execution>
-						<id>get-leafletlabel</id>
+						<id>get-codemirror</id>
 						<goals>
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>https://github.com/Leaflet/Leaflet.label/raw/master/dist/leaflet.label.js</url>
-							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
+							<url>http://codemirror.net/codemirror.zip</url>
+							<unpack>true</unpack>
+							<outputDirectory>zips</outputDirectory>
 						</configuration>
 					</execution>
-					-->
 					<execution>
 						<id>get-proj4leaflet</id>
 						<goals>
@@ -297,6 +296,18 @@
 									<directory>zips/Proj4Leaflet-0.7.2/lib</directory>
 									<includes>
 										<include>proj4-compressed.js</include>
+									</includes>
+								</resource>
+								<resource>
+									<directory>zips/codemirror-5.12/lib</directory>
+									<includes>
+										<include>codemirror.js</include>
+									</includes>
+								</resource>
+								<resource>
+									<directory>zips/codemirror-5.12/mode/turtle</directory>
+									<includes>
+										<include>turtle.js</include>
 									</includes>
 								</resource>
 							</resources>              

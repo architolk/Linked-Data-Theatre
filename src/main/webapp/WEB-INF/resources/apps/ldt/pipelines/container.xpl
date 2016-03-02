@@ -1,8 +1,8 @@
 <!--
 
     NAME     container.xpl
-    VERSION  1.5.1
-    DATE     2016-02-09
+    VERSION  1.5.2-SNAPSHOT
+    DATE     2016-03-02
 
     Copyright 2012-2016
 
@@ -108,7 +108,7 @@
 	<p:processor name="oxf:request-security">
 		<p:input name="config" transform="oxf:xslt" href="#instance">        
 			<config xsl:version="2.0">
-				<xsl:for-each select="submission/roles/role">
+				<xsl:for-each select="theatre/roles/role">
 					<role><xsl:value-of select="."/></role>
 				</xsl:for-each>
 			</config>    
@@ -123,81 +123,152 @@
 		<p:output name="data" id="context"/>
 	</p:processor>
 
-	<!-- Look for container definition in configuration -->
-	<p:processor name="oxf:xforms-submission">
-		<p:input name="submission" transform="oxf:xslt" href="#context">
-			<xforms:submission method="get" xsl:version="2.0" action="{context/configuration-endpoint}">
-				<xforms:header>
-					<xforms:name>Accept</xforms:name>
-					<xforms:value>application/rdf+xml</xforms:value>
-				</xforms:header>
-				<xforms:setvalue ev:event="xforms-submit-error" ref="error" value="event('response-body')"/>
-				<xforms:setvalue ev:event="xforms-submit-error" ref="error/@type" value="event('error-type')"/>
-			</xforms:submission>
-		</p:input>
-		<p:input name="request" transform="oxf:xslt" href="#context">
-			<parameters xsl:version="2.0">
-				<query>
-				<![CDATA[
-					PREFIX elmo: <http://bp4mc2.org/elmo/def#>
-					CONSTRUCT {
-						<]]><xsl:value-of select="context/subject"/><![CDATA[> rdf:type ?type.
-						<]]><xsl:value-of select="context/subject"/><![CDATA[> ?p ?s.
-					}
-					WHERE {
-						GRAPH <]]><xsl:value-of select="context/representation-graph/@uri"/><![CDATA[> {
-							<]]><xsl:value-of select="context/subject"/><![CDATA[> rdf:type ?type.
-							<]]><xsl:value-of select="context/subject"/><![CDATA[> ?p ?s.
-							FILTER (?type = elmo:Container or ?type = elmo:VersionContainer)
-						}
-					}
-				]]>
-				</query>
-				<default-graph-uri/>
-				<error type=""/>
-			</parameters>
-		</p:input>
-		<p:output name="response" id="container"/>
-	</p:processor>
+	<p:choose href="#context">
+		<p:when test="concat(substring-before(context/representation-graph/@uri,'stage'),'backstage/rep')=context/subject">
+			<!-- Special container: backstage! -->
+			<p:processor name="oxf:xslt">
+				<p:input name="config">
+					<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+						<xsl:template match="/">
+							<xsl:variable name="subject" select="context/parameters/parameter[name='SUBJECT']/value"/>
+							<container>
+								<label>Backstage of &lt;<xsl:value-of select="context/representation-graph/@uri"/>></label>
+								<url><xsl:value-of select="substring-before(context/subject,'/rep')"/></url>
+								<user-role/>
+								<translator/>
+								<version-url><xsl:value-of select="substring-before(context/subject,'/rep')"/></version-url>
+								<target-graph action="update"><xsl:value-of select="context/representation-graph/@uri"/></target-graph>
+								<representation/>
+								<postquery/>
+								<fetchquery>
+								<![CDATA[
+									CONSTRUCT {
+										<]]><xsl:value-of select="$subject"/><![CDATA[>?p?o.
+										?o?po?oo.
+										?oo?poo?ooo.
+										?ooo?pooo?oooo.
+									}
+									WHERE {
+										GRAPH <]]><xsl:value-of select="context/representation-graph/@uri"/><![CDATA[> {
+											<]]><xsl:value-of select="$subject"/><![CDATA[>?p?o
+											OPTIONAL {
+												?o?po?oo
+												OPTIONAL {
+													?oo?poo?ooo
+													OPTIONAL {
+														?ooo?pooo?oooo
+													}
+												}
+											}
+										}
+									}
+								]]>
+								</fetchquery>
+							</container>
+						</xsl:template>
+					</xsl:stylesheet>
+				</p:input>
+				<p:input name="data" href="#context"/>
+				<p:output name="data" id="containercontext"/>
+			</p:processor>
+		</p:when>
+		<p:otherwise>
+			<!-- Look for container definition in configuration -->
+			<p:processor name="oxf:xforms-submission">
+				<p:input name="submission" transform="oxf:xslt" href="#context">
+					<xforms:submission method="get" xsl:version="2.0" action="{context/configuration-endpoint}">
+						<xforms:header>
+							<xforms:name>Accept</xforms:name>
+							<xforms:value>application/rdf+xml</xforms:value>
+						</xforms:header>
+						<xforms:setvalue ev:event="xforms-submit-error" ref="error" value="event('response-body')"/>
+						<xforms:setvalue ev:event="xforms-submit-error" ref="error/@type" value="event('error-type')"/>
+					</xforms:submission>
+				</p:input>
+				<p:input name="request" transform="oxf:xslt" href="#context">
+					<parameters xsl:version="2.0">
+						<query>
+						<![CDATA[
+							PREFIX elmo: <http://bp4mc2.org/elmo/def#>
+							CONSTRUCT {
+								<]]><xsl:value-of select="context/subject"/><![CDATA[> rdf:type ?type.
+								<]]><xsl:value-of select="context/subject"/><![CDATA[> ?p ?s.
+							}
+							WHERE {
+								GRAPH <]]><xsl:value-of select="context/representation-graph/@uri"/><![CDATA[> {
+									<]]><xsl:value-of select="context/subject"/><![CDATA[> rdf:type ?type.
+									<]]><xsl:value-of select="context/subject"/><![CDATA[> ?p ?s.
+									FILTER (?type = elmo:Container or ?type = elmo:VersionContainer)
+								}
+							}
+						]]>
+						</query>
+						<default-graph-uri/>
+						<error type=""/>
+					</parameters>
+				</p:input>
+				<p:output name="response" id="container"/>
+			</p:processor>
 
-	<!-- Create container URL (subject or version-based) -->
-	<p:processor name="oxf:xslt">
-		<p:input name="config">
-			<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-				<xsl:variable name="returns"><xsl:text>&#10;&#13;</xsl:text></xsl:variable>
-				<xsl:variable name="noreturns">  </xsl:variable>
-				<xsl:template name="versionformat">
-					<xsl:param name="dt"/>
-					<xsl:value-of select="year-from-dateTime($dt)"/>-<xsl:value-of select="month-from-dateTime($dt)"/>-<xsl:value-of select="day-from-dateTime($dt)"/>-<xsl:value-of select="hours-from-dateTime($dt)"/>-<xsl:value-of select="minutes-from-dateTime($dt)"/>-<xsl:value-of select="seconds-from-dateTime($dt)"/>
-				</xsl:template>
-				<xsl:template match="/">
-					<container>
-						<xsl:for-each select="rdf:RDF/rdf:Description[1]">
-							<label><xsl:value-of select="rdfs:label"/></label>
-							<url><xsl:value-of select="@rdf:about"/></url>
-							<user-role><xsl:value-of select="elmo:user-role"/></user-role>
-							<translator><xsl:value-of select="elmo:translator/@rdf:resource"/></translator>
-							<version-url>
-								<xsl:value-of select="@rdf:about"/>
-								<xsl:if test="rdf:type/@rdf:resource='http://bp4mc2.org/elmo/def#VersionContainer'">#<xsl:call-template name="versionformat"><xsl:with-param name="dt" select="current-dateTime()"/></xsl:call-template></xsl:if>
-							</version-url>
-							<xsl:choose>
-								<xsl:when test="elmo:updates/@rdf:resource!=''"><target-graph action="update"><xsl:value-of select="elmo:updates/@rdf:resource"/></target-graph></xsl:when>
-								<xsl:when test="elmo:partOf/@rdf:resource!=''"><target-graph action="part"><xsl:value-of select="elmo:partOf/@rdf:resource"/></target-graph></xsl:when>
-								<xsl:when test="elmo:replaces/@rdf:resource!=''"><target-graph action="replace"><xsl:value-of select="elmo:replaces/@rdf:resource"/></target-graph></xsl:when>
-								<xsl:otherwise/>
-							</xsl:choose>
-							<representation><xsl:value-of select="elmo:representation/@rdf:resource"/></representation>
-							<postquery><xsl:value-of select="normalize-space(translate(elmo:query,$returns,$noreturns))"/></postquery>
-						</xsl:for-each>
-					</container>
-				</xsl:template>
-			</xsl:stylesheet>
-		</p:input>
-		<p:input name="data" href="#container"/>
-		<p:output name="data" id="containercontext"/>
-	</p:processor>
-	
+			<!-- Create container URL (subject or version-based) -->
+			<p:processor name="oxf:xslt">
+				<p:input name="config">
+					<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+						<xsl:variable name="returns"><xsl:text>&#10;&#13;</xsl:text></xsl:variable>
+						<xsl:variable name="noreturns">  </xsl:variable>
+						<xsl:template name="versionformat">
+							<xsl:param name="dt"/>
+							<xsl:value-of select="year-from-dateTime($dt)"/>-<xsl:value-of select="month-from-dateTime($dt)"/>-<xsl:value-of select="day-from-dateTime($dt)"/>-<xsl:value-of select="hours-from-dateTime($dt)"/>-<xsl:value-of select="minutes-from-dateTime($dt)"/>-<xsl:value-of select="seconds-from-dateTime($dt)"/>
+						</xsl:template>
+						<xsl:template match="/">
+							<container>
+								<xsl:for-each select="rdf:RDF/rdf:Description[1]">
+									<label><xsl:value-of select="rdfs:label"/></label>
+									<url><xsl:value-of select="@rdf:about"/></url>
+									<user-role><xsl:value-of select="elmo:user-role"/></user-role>
+									<translator><xsl:value-of select="elmo:translator/@rdf:resource"/></translator>
+									<version-url>
+										<xsl:value-of select="@rdf:about"/>
+										<xsl:if test="rdf:type/@rdf:resource='http://bp4mc2.org/elmo/def#VersionContainer'">#<xsl:call-template name="versionformat"><xsl:with-param name="dt" select="current-dateTime()"/></xsl:call-template></xsl:if>
+									</version-url>
+									<xsl:choose>
+										<xsl:when test="elmo:updates/@rdf:resource!=''"><target-graph action="update"><xsl:value-of select="elmo:updates/@rdf:resource"/></target-graph></xsl:when>
+										<xsl:when test="elmo:partOf/@rdf:resource!=''"><target-graph action="part"><xsl:value-of select="elmo:partOf/@rdf:resource"/></target-graph></xsl:when>
+										<xsl:when test="elmo:replaces/@rdf:resource!=''"><target-graph action="replace"><xsl:value-of select="elmo:replaces/@rdf:resource"/></target-graph></xsl:when>
+										<xsl:otherwise/>
+									</xsl:choose>
+									<representation><xsl:value-of select="elmo:representation/@rdf:resource"/></representation>
+									<postquery><xsl:value-of select="normalize-space(translate(elmo:query,$returns,$noreturns))"/></postquery>
+									<fetchquery>
+										<![CDATA[
+											CONSTRUCT {
+												?s?p?o
+											}
+											WHERE {
+												GRAPH <]]><xsl:value-of select="@rdf:about"/><![CDATA[> {
+													?s?p?o
+												}
+											}
+										]]>
+									</fetchquery>
+								</xsl:for-each>
+							</container>
+						</xsl:template>
+					</xsl:stylesheet>
+				</p:input>
+				<p:input name="data" href="#container"/>
+				<p:output name="data" id="containercontext"/>
+			</p:processor>
+		</p:otherwise>
+	</p:choose>
+<!--	
+<p:processor name="oxf:xml-serializer">
+	<p:input name="config">
+		<config/>
+	</p:input>
+	<p:input name="data" href="#containercontext"/>
+</p:processor>
+-->
 	<p:choose href="#containercontext">
 		<!-- Container should exist in configuration, or return 404 -->
 		<p:when test="exists(container/url)">
@@ -620,18 +691,7 @@
 						</p:input>
 						<p:input name="request" transform="oxf:xslt" href="#containercontext">
 							<parameters xsl:version="2.0">
-								<query>
-								<![CDATA[
-									CONSTRUCT {
-										?s?p?o
-									}
-									WHERE {
-										GRAPH <]]><xsl:value-of select="container/url"/><![CDATA[> {
-											?s?p?o
-										}
-									}
-								]]>
-								</query>
+								<query><xsl:value-of select="container/fetchquery"/></query>
 								<default-graph-uri/>
 								<error type=""/>
 							</parameters>

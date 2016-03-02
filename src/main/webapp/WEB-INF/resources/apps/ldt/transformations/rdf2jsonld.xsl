@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2jsonld.xsl
-    VERSION  1.5.1
-    DATE     2016-02-09
+    VERSION  1.5.2-SNAPSHOT
+    DATE     2016-03-02
 
     Copyright 2012-2016
 
@@ -27,13 +27,33 @@
     Transformation of RDF document to json-ld format
 	
 -->
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+<xsl:stylesheet version="2.0"
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:res="http://www.w3.org/2005/sparql-results#"
+>
 
 <xsl:variable name="dblquote"><xsl:text>"&#10;&#13;</xsl:text></xsl:variable>
 <xsl:variable name="quote">'  </xsl:variable>
 
 <xsl:key name="bnodes" match="/results/rdf:RDF[1]/rdf:Description" use="@rdf:nodeID"/>
 
+<!-- Select -->
+<xsl:template match="rdf:RDF[rdf:Description/@rdf:nodeID='rset']">
+{"@context":
+	{"graph":"@graph"<xsl:for-each-group select="rdf:Description[@rdf:nodeID='rset']/res:solution/res:binding[exists(res:value/@rdf:resource)]" group-by="res:variable">
+	,"<xsl:value-of select="res:variable"/>:{"@type":"@id"}</xsl:for-each-group>
+	}
+,"graph":
+[<xsl:for-each select="rdf:Description[@rdf:nodeID='rset']/res:solution"><xsl:if test="position()!=1">,</xsl:if>
+	{<xsl:for-each select="res:binding"><xsl:if test="position()!=1">
+	,</xsl:if>"<xsl:value-of select="res:variable"/>": "<xsl:value-of select="translate(res:value,$dblquote,$quote)"/><xsl:value-of select="res:value/@rdf:resource"/>"</xsl:for-each>
+	}</xsl:for-each>
+]
+}
+</xsl:template>
+
+<!-- Construct -->
 <xsl:template match="rdf:RDF">
 {"@context":
 	{"id":"@id"
