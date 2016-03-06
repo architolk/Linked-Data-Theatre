@@ -1158,11 +1158,18 @@ var substringMatcher = function(strs) {
 					<xsl:if test="exists(rdf:Description/elmo:valueDatatype[@rdf:resource='http://purl.org/dc/dcmitype/Dataset'])">
 						<xsl:attribute name="enctype">multipart/form-data</xsl:attribute>
 					</xsl:if>
-					<xsl:variable name="editorID" select="rdf:Description[elmo:appearance/@rdf:resource='http://bp4mc2.org/elmo/def#TurtleEditor']/elmo:applies-to"/>
-					<xsl:if test="$editorID!=''">
+					<xsl:variable name="turtleEditorID" select="rdf:Description[elmo:appearance/@rdf:resource='http://bp4mc2.org/elmo/def#TurtleEditor']/elmo:applies-to"/>
+					<xsl:variable name="sparqlEditorID" select="rdf:Description[elmo:appearance/@rdf:resource='http://bp4mc2.org/elmo/def#SparqlEditor']/elmo:applies-to"/>
+					<xsl:if test="$turtleEditorID!=''">
 						<link rel="stylesheet" href="{$docroot}/css/codemirror.css"/>
 						<script src="{$docroot}/js/codemirror.js"/>
 						<script src="{$docroot}/js/turtle.js"/>
+					</xsl:if>
+					<xsl:if test="$sparqlEditorID!=''">
+						<link rel="stylesheet" href="{$docroot}/css/codemirror.css"/>
+						<link rel="stylesheet" href="{$docroot}/css/yasqe.min.css"/>
+						<script src="{$docroot}/js/codemirror.js"/>
+						<script src="{$docroot}/js/yasqe.min.js"/>
 					</xsl:if>
 					<xsl:for-each select="rdf:Description[exists(elmo:applies-to)]"><xsl:sort select="elmo:index"/>
 						<xsl:variable name="applies-to" select="elmo:applies-to"/>
@@ -1229,8 +1236,11 @@ var substringMatcher = function(strs) {
 						</div>
 					</xsl:for-each>
 					<script>$('.datepicker').datepicker({language: '<xsl:value-of select="/results/context/language"/>'});</script>
-					<xsl:if test="$editorID!=''">
-						<script>var editor = CodeMirror.fromTextArea(document.getElementById("<xsl:value-of select="$editorID"/>"), {mode: "text/turtle",matchBrackets: true,lineNumbers:true});</script>
+					<xsl:if test="$turtleEditorID!=''">
+						<script>var editor = CodeMirror.fromTextArea(document.getElementById("<xsl:value-of select="$turtleEditorID"/>"), {mode: "text/turtle",matchBrackets: true,lineNumbers:true});</script>
+					</xsl:if>
+					<xsl:if test="$sparqlEditorID!=''">
+						<script>var editor = new YASQE.fromTextArea(document.getElementById("<xsl:value-of select="$sparqlEditorID"/>"));</script>
 					</xsl:if>
 				</form>
 			</div>

@@ -173,6 +173,17 @@
 						</configuration>
 					</execution>
 					<execution>
+						<id>get-yasqe</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>https://github.com/OpenTriply/YASGUI.YASQE/archive/v2.8.3.zip</url>
+							<unpack>true</unpack>
+							<outputDirectory>zips</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
 						<id>get-jquery</id>
 						<goals>
 							<goal>wget</goal>
@@ -282,7 +293,7 @@
 				<version>2.7</version>
 				<executions>
 					<execution>
-						<id>copy-resources</id>
+						<id>copy-js-resources</id>
 						<goals>
 							<goal>copy-resources</goal>
 						</goals>
@@ -310,8 +321,32 @@
 										<include>turtle.js</include>
 									</includes>
 								</resource>
+								<resource>
+									<directory>zips/YASGUI.YASQE-2.8.3/dist</directory>
+									<includes>
+										<include>yasqe.min.js</include>
+									</includes>
+								</resource>
 							</resources>              
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
+						</configuration>            
+					</execution>
+					<execution>
+						<id>copy-css-resources</id>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<phase>package</phase>
+						<configuration>
+							<resources>          
+								<resource>
+									<directory>zips/YASGUI.YASQE-2.8.3/dist</directory>
+									<includes>
+										<include>yasqe.min.css</include>
+									</includes>
+								</resource>
+							</resources>              
+							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
 						</configuration>            
 					</execution>
 				</executions>

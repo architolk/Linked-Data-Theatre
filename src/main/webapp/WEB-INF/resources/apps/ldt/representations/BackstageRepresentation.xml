@@ -27,7 +27,6 @@
 	Representation that is used when a user goes to the /backstage page.
 	
 -->
-<?xml version="1.0" encoding="utf-8"?>
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
          xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
          xmlns:elmo="http://bp4mc2.org/elmo/def#"
@@ -77,18 +76,25 @@
 			prefix html: <http://www.w3.org/1999/xhtml/vocab#>
 			prefix dcterms: <http://purl.org/dc/terms/>
 			construct {
+				<menu-item3> rdfs:label "Query".
+				<menu-item3> html:link ?query.
+				<menu-item3> elmo:index "3".
 				<menu-item2> rdfs:label "Add representation".
 				<menu-item2> html:link ?add.
+				<menu-item2> elmo:index "2".
 				<menu-item1> rdfs:label "Goto stage".
 				<menu-item1> html:link ?stage.
+				<menu-item1> elmo:index "1".
 				<menu> dcterms:title ?stagename.
-				<menu> elmo:data _:menu-item1.
-				<menu> elmo:data _:menu-item2.
+				<menu> elmo:data <menu-item1>.
+				<menu> elmo:data <menu-item2>.
+				<menu> elmo:data <menu-item3>.
 			}
 			where {
 				select	strbefore("@STAGE@","/stage") as ?stage
 						strafter(strbefore("@STAGE@","/stage"),"http://") as ?stagename
 						"@SUBJECT@/rep" as ?add
+						"@SUBJECT@/sparql" as ?query
 				where {
 					?x rdf:type elmo:Representation
 				}
