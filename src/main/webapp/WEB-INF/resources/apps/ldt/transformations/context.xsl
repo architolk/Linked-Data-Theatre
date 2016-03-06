@@ -2,7 +2,7 @@
 
     NAME     context.xsl
     VERSION  1.5.2-SNAPSHOT
-    DATE     2016-03-01
+    DATE     2016-03-06
 
     Copyright 2012-2016
 
@@ -34,14 +34,57 @@
 	<xsl:template match="/root|/croot">
 		<xsl:variable name="domain" select="request/headers/header[name='host']/value"/>
 		<xsl:variable name="docroot"><xsl:value-of select="theatre/site[@domain=$domain]/@docroot"/></xsl:variable>
-		<xsl:variable name="subdomain" select="substring-after(theatre/subdomain,$docroot)"/>
+		<xsl:variable name="subdomain1" select="substring-after(theatre/subdomain,$docroot)"/>
+		<xsl:variable name="subdomain">
+			<xsl:if test="matches($subdomain1,'^[^/]')">/</xsl:if>
+			<xsl:value-of select="$subdomain1"/>
+		</xsl:variable>
 		<xsl:variable name="stage" select="theatre/site[@domain=$domain]/stage[not(@name!='') or @name=substring($subdomain,2,string-length(@name))]"/>
+		<xsl:variable name="backstage" select="theatre/site[@backstage=$domain]/stage[not(@name!='') or @name=substring($subdomain,2,string-length(@name))]"/>
 		<xsl:variable name="config">
-			<xsl:if test="exists($stage)">
+			<xsl:choose>
+				<xsl:when test="exists($stage)">
+					<xsl:text>http://</xsl:text>
+					<xsl:value-of select="$domain"/>
+					<xsl:if test="$stage[1]/@name!=''">/<xsl:value-of select="$stage[1]/@name"/></xsl:if>
+					<xsl:text>/stage</xsl:text>
+				</xsl:when>
+				<xsl:when test="exists($backstage)">
+					<xsl:text>http://</xsl:text>
+					<xsl:value-of select="$domain"/>
+					<xsl:text>/stage</xsl:text>
+				</xsl:when>
+				<xsl:otherwise/>
+			</xsl:choose>
+		</xsl:variable>
+		<!-- This variable contains the stage for a particular backstage. Three situations can occur:
+			1. The backstage is not defined, the stage is requested. Backstage uses the same domain as the stage;
+			2. The backstage is defined, and the backstage is requested
+			3. The backstage is defined, and the stage is requested. In this case: the back-of-the-stage should not be available
+		-->
+		<xsl:variable name="back-of-stage">
+			<!-- Dit is vermoedelijk goed
+			<xsl:choose>
+				<xsl:when test="exists($stage) and not($stage/../@backstage!='')">
+					<xsl:text>http://</xsl:text>
+					<xsl:value-of select="$stage/../@domain"/>
+					<xsl:if test="$stage[1]/@name!=''">/<xsl:value-of select="$stage[1]/@name"/></xsl:if>
+					<xsl:text>/stage</xsl:text>
+				</xsl:when>
+				<xsl:when test="exists($backstage)">
+					<xsl:text>http://</xsl:text>
+					<xsl:value-of select="$backstage/../@domain"/>
+					<xsl:if test="$backstage[1]/@name!=''">/<xsl:value-of select="$backstage[1]/@name"/></xsl:if>
+					<xsl:text>/stage</xsl:text>
+				</xsl:when>
+				<xsl:otherwise/>
+			</xsl:choose>
+			-->
+			<xsl:if test="exists($backstage)">
 				<xsl:text>http://</xsl:text>
-				<xsl:value-of select="$domain"/>
+				<xsl:value-of select="$backstage/../@domain"/>
+				<xsl:if test="$backstage[1]/@name!=''">/<xsl:value-of select="$backstage[1]/@name"/></xsl:if>
 				<xsl:text>/stage</xsl:text>
-				<xsl:if test="$stage[1]/@name!=''">/<xsl:value-of select="$stage[1]/@name"/></xsl:if>
 			</xsl:if>
 		</xsl:variable>
 		
@@ -53,6 +96,7 @@
 			<subdomain><xsl:value-of select="$subdomain"/></subdomain>
 			<query><xsl:value-of select="theatre/query"/></query>
 			<representation-graph uri="{$config}"/>
+			<back-of-stage><xsl:value-of select="$back-of-stage"/></back-of-stage>
 			<language><xsl:value-of select="substring(request/headers/header[name='accept-language']/value,1,2)"/></language>
 			<user><xsl:value-of select="request/remote-user"/></user>
 			<user-role><xsl:value-of select="request-security/role"/></user-role>

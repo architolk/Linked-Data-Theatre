@@ -1,0 +1,114 @@
+<!--
+
+    NAME     BackstageRepresentation.xml
+    VERSION  1.5.2-SNAPSHOT
+    DATE     2016-03-06
+
+    Copyright 2012-2016
+
+    This file is part of the Linked Data Theatre.
+
+    The Linked Data Theatre is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    The Linked Data Theatre is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with the Linked Data Theatre.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!--
+    DESCRIPTION
+	Representation that is used when a user goes to the /backstage page.
+	
+-->
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:elmo="http://bp4mc2.org/elmo/def#"
+         xmlns:xhtml="http://www.w3.org/1999/xhtml/vocab#"
+>
+	<elmo:Representation rdf:about="http://bp4mc2.org/elmo/def#BackstageRepresentation"/>
+	<rdf:Description rdf:about="http://bp4mc2.org/elmo/def#BackstageRepresentation_Header">
+		<elmo:appearance rdf:resource="http://bp4mc2.org/elmo/def#HeaderAppearance"/>
+		<elmo:query>
+			<![CDATA[
+			prefix elmo: <http://bp4mc2.org/elmo/def#>
+			prefix html: <http://www.w3.org/1999/xhtml/vocab#>
+			construct {
+				<header> elmo:html "<img src='/images/ldt-logo.png'/>"
+			}
+			where {}
+			]]>
+		</elmo:query>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://bp4mc2.org/elmo/def#BackstageRepresentation_List">
+		<elmo:fragment rdf:nodeID="frep"/>
+		<elmo:fragment rdf:nodeID="furlpattern"/>
+		<elmo:fragment rdf:nodeID="fobject"/>
+		<elmo:index>1</elmo:index>
+		<elmo:query>
+			<![CDATA[
+			prefix elmo: <http://bp4mc2.org/elmo/def#>
+			select ?rep ?urlpattern ?object
+			where {
+				graph <@STAGE@> {
+					?rep rdf:type elmo:Representation.
+					OPTIONAL {?rep elmo:url-pattern ?urlpattern}
+					OPTIONAL {
+						?rep elmo:applies-to ?pattern.
+						?pattern rdf:type ?object.
+					}
+				}
+			}
+			]]>
+		</elmo:query>
+		</rdf:Description>
+		<rdf:Description rdf:about="http://bp4mc2.org/elmo/def#BackstageRepresentation_Nav">
+		<elmo:appearance rdf:resource="http://bp4mc2.org/elmo/def#NavbarAppearance"/>
+		<elmo:query>
+			<![CDATA[
+			prefix elmo: <http://bp4mc2.org/elmo/def#>
+			prefix html: <http://www.w3.org/1999/xhtml/vocab#>
+			prefix dcterms: <http://purl.org/dc/terms/>
+			construct {
+				<menu-item2> rdfs:label "Add representation".
+				<menu-item2> html:link ?add.
+				<menu-item1> rdfs:label "Goto stage".
+				<menu-item1> html:link ?stage.
+				<menu> dcterms:title ?stagename.
+				<menu> elmo:data _:menu-item1.
+				<menu> elmo:data _:menu-item2.
+			}
+			where {
+				select	strbefore("@STAGE@","/stage") as ?stage
+						strafter(strbefore("@STAGE@","/stage"),"http://") as ?stagename
+						"@SUBJECT@/rep" as ?add
+				where {
+					?x rdf:type elmo:Representation
+				}
+				limit 1
+			}
+			]]>
+		</elmo:query>
+	</rdf:Description>
+	<rdf:Description rdf:nodeID="frep">
+		<elmo:applies-to>rep</elmo:applies-to>
+		<rdfs:label>Representation</rdfs:label>
+		<xhtml:link>backstage/rep</xhtml:link>
+		<elmo:name>SUBJECT</elmo:name>
+	</rdf:Description>
+	<rdf:Description rdf:nodeID="furlpattern">
+		<elmo:applies-to>urlpattern</elmo:applies-to>
+		<rdfs:label>URL pattern</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:nodeID="fobject">
+		<elmo:applies-to>object</elmo:applies-to>
+		<rdfs:label>Resource type</rdfs:label>
+	</rdf:Description>
+</rdf:RDF>

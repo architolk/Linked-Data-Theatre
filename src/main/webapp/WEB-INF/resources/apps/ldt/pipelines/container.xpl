@@ -2,7 +2,7 @@
 
     NAME     container.xpl
     VERSION  1.5.2-SNAPSHOT
-    DATE     2016-03-02
+    DATE     2016-03-06
 
     Copyright 2012-2016
 
@@ -116,6 +116,17 @@
 		<p:output name="data" id="roles"/>
 	</p:processor>
 
+	<!-- Default namespaces -->
+	<p:processor name="oxf:url-generator">
+		<p:input name="config">
+			<config>
+				<url>../namespaces.xml</url>
+				<content-type>application/xml</content-type>
+			</config>
+		</p:input>
+		<p:output name="data" id="namespaces"/>
+	</p:processor>
+	
 	<!-- Create context -->
 	<p:processor name="oxf:xslt">
 		<p:input name="data" href="aggregate('croot',#instance,#request,#roles)"/>
@@ -124,7 +135,7 @@
 	</p:processor>
 
 	<p:choose href="#context">
-		<p:when test="concat(substring-before(context/representation-graph/@uri,'stage'),'backstage/rep')=context/subject">
+		<p:when test="matches(context/subject,'backstage/rep$') and context/back-of-stage!=''">
 			<!-- Special container: backstage! -->
 			<p:processor name="oxf:xslt">
 				<p:input name="config">
@@ -132,37 +143,47 @@
 						<xsl:template match="/">
 							<xsl:variable name="subject" select="context/parameters/parameter[name='SUBJECT']/value"/>
 							<container>
-								<label>Backstage of &lt;<xsl:value-of select="context/representation-graph/@uri"/>></label>
+								<label>Backstage of &lt;<xsl:value-of select="context/back-of-stage"/>></label>
 								<url><xsl:value-of select="substring-before(context/subject,'/rep')"/></url>
+								<stage><xsl:value-of select="context/back-of-stage"/></stage>
 								<user-role/>
 								<translator/>
 								<version-url><xsl:value-of select="substring-before(context/subject,'/rep')"/></version-url>
-								<target-graph action="update"><xsl:value-of select="context/representation-graph/@uri"/></target-graph>
+								<target-graph action="update"><xsl:value-of select="context/back-of-stage"/></target-graph>
 								<representation/>
 								<postquery/>
 								<fetchquery>
-								<![CDATA[
-									CONSTRUCT {
-										<]]><xsl:value-of select="$subject"/><![CDATA[>?p?o.
-										?o?po?oo.
-										?oo?poo?ooo.
-										?ooo?pooo?oooo.
-									}
-									WHERE {
-										GRAPH <]]><xsl:value-of select="context/representation-graph/@uri"/><![CDATA[> {
-											<]]><xsl:value-of select="$subject"/><![CDATA[>?p?o
-											OPTIONAL {
-												?o?po?oo
+									<xsl:choose>
+										<xsl:when test="$subject!=''">
+										<![CDATA[
+										CONSTRUCT {
+											<]]><xsl:value-of select="$subject"/><![CDATA[>?p?o.
+											?o?po?oo.
+											?oo?poo?ooo.
+											?ooo?pooo?oooo.
+											?oooo?poooo?ooooo.
+										}
+										WHERE {
+											GRAPH <]]><xsl:value-of select="context/back-of-stage"/><![CDATA[> {
+												<]]><xsl:value-of select="$subject"/><![CDATA[>?p?o
 												OPTIONAL {
-													?oo?poo?ooo
+													?o?po?oo
 													OPTIONAL {
-														?ooo?pooo?oooo
+														?oo?poo?ooo
+														OPTIONAL {
+															?ooo?pooo?oooo
+															OPTIONAL {
+																?oooo?poooo?ooooo
+															}
+														}
 													}
 												}
 											}
 										}
-									}
-								]]>
+										]]>
+										</xsl:when>
+										<xsl:otherwise>CONSTRUCT {?x?x?x} WHERE {?x?x?x}</xsl:otherwise>
+									</xsl:choose>
 								</fetchquery>
 							</container>
 						</xsl:template>
@@ -352,18 +373,16 @@
 								<p:input name="config">
 									<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 										<xsl:template match="/">
-											<!-- standaard prefixes -->
-											<!--
-											<xsl:text>@prefix elmo: &lt;http://bp4mc2.org/elmo/def#></xsl:text>
-											<xsl:text>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#></xsl:text>
-											<xsl:text>@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#></xsl:text>
-											<xsl:text>@prefix xhtml: &lt;http://www.w3.org/1999/xhtml/vocab#></xsl:text>
-											-->
-											<xsl:value-of select="context/parameters/parameter[name='content']/value"/>
+											<xsl:for-each select="root/namespaces/ns">
+												<xsl:text>@prefix </xsl:text>
+												<xsl:value-of select="@prefix"/>:&lt;<xsl:value-of select="."/>
+												<xsl:text>>. </xsl:text>
+											</xsl:for-each>
+											<xsl:value-of select="root/context/parameters/parameter[name='content']/value"/>
 										</xsl:template>
 									</xsl:stylesheet>
 								</p:input>
-								<p:input name="data" href="#context"/>
+								<p:input name="data" href="aggregate('root',#namespaces,#context)"/>
 								<p:output name="data" id="turtle"/>
 							</p:processor>
 							<p:processor name="oxf:text-converter">
@@ -609,7 +628,7 @@
 	<p:input name="config">
 		<config/>
 	</p:input>
-	<p:input name="data" href="#result"/>
+	<p:input name="data" href="#context"/>
 </p:processor>
 -->
 					<!-- Cool URI implementation: respond with HTML or with JSON -->
@@ -646,23 +665,73 @@
 							</p:processor>
 						</p:when>
 						<p:otherwise>
-							<p:processor name="oxf:html-converter">
-								<p:input name="config">
-									<config>
-										<encoding>utf-8</encoding>
-										<public-doctype>-//W3C//DTD XHTML 1.0 Strict//EN</public-doctype>
-									</config>
-								</p:input>
-								<p:input name="data" transform="oxf:xslt" href="aggregate('root',#context,#result)">
-									<html xsl:version="2.0">
-										<xsl:if test="root/response='succes'">
-											<meta http-equiv="refresh" content="0;URL={root/context/subject}" />
-										</xsl:if>
-										<body><p><xsl:value-of select="root/response"/></p></body>
-									</html>
-								</p:input>
-								<p:output name="data" id="htmlres" />
-							</p:processor>
+							<p:choose href="#result">
+								<p:when test="response='succes'">
+									<p:processor name="oxf:html-converter">
+										<p:input name="config">
+											<config>
+												<encoding>utf-8</encoding>
+												<public-doctype>-//W3C//DTD XHTML 1.0 Strict//EN</public-doctype>
+											</config>
+										</p:input>
+										<p:input name="data" transform="oxf:xslt" href="#context">
+											<html xsl:version="2.0">
+												<xsl:variable name="returnURL">
+													<xsl:choose>
+														<xsl:when test="matches(context/subject,'backstage/rep$') and context/back-of-stage!=''">
+															<xsl:value-of select="substring-before(context/subject,'/rep')"/>
+														</xsl:when>
+														<xsl:otherwise><xsl:value-of select="context/subject"/></xsl:otherwise>
+													</xsl:choose>
+												</xsl:variable>
+												<meta http-equiv="refresh" content="0;URL={$returnURL}" />
+												<body><p>Succes</p></body>
+											</html>
+										</p:input>
+										<p:output name="data" id="htmlres" />
+									</p:processor>
+								</p:when>
+								<p:otherwise>
+									<!-- Convert result to turtle -->
+									<p:processor name="oxf:xslt">
+										<p:input name="config">
+											<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+												<xsl:template match="/">
+													<turtle>
+														<xsl:value-of select="context/parameters/parameter[name='content']/value"/>
+													</turtle>
+												</xsl:template>
+											</xsl:stylesheet>
+										</p:input>
+										<p:input name="data" href="#context"/>
+										<p:output name="data" id="turtle"/>
+									</p:processor>
+
+									<!-- Convert turtle to rdfa -->
+									<p:processor name="oxf:xslt">
+										<p:input name="data" href="aggregate('root',#context,#turtle,#containercontext,#result)"/>
+										<p:input name="config" href="../transformations/ttl2rdfaform.xsl"/>
+										<p:output name="data" id="rdfa"/>
+									</p:processor>
+									<!-- Transform rdfa to html -->
+									<p:processor name="oxf:xslt">
+										<p:input name="data" href="#rdfa"/>
+										<p:input name="config" href="../transformations/rdf2html.xsl"/>
+										<p:output name="data" id="html"/>
+									</p:processor>
+									<!-- Convert XML result to HTML -->
+									<p:processor name="oxf:html-converter">
+										<p:input name="config">
+											<config>
+												<encoding>utf-8</encoding>
+												<public-doctype>-//W3C//DTD XHTML 1.0 Strict//EN</public-doctype>
+											</config>
+										</p:input>
+										<p:input name="data" href="#html" />
+										<p:output name="data" id="htmlres" />
+									</p:processor>
+								</p:otherwise>
+							</p:choose>
 							<!-- Serialize -->
 							<p:processor name="oxf:http-serializer">
 								<p:input name="config">

@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.5.2-SNAPSHOT
-    DATE     2016-03-02
+    DATE     2016-03-06
 
     Copyright 2012-2016
 
@@ -1209,6 +1209,7 @@ var substringMatcher = function(strs) {
 									</xsl:when>
 									<xsl:when test="elmo:valueDatatype/@rdf:resource='http://www.w3.org/2001/XMLSchema#String'">
 										<textarea type="text" class="form-control" id="{elmo:applies-to}" name="{elmo:applies-to}" rows="30">
+											<xsl:if test="html:stylesheet!=''"><xsl:attribute name="style"><xsl:value-of select="html:stylesheet"/></xsl:attribute></xsl:if>
 											<xsl:value-of select="rdf:value"/>
 										</textarea>
 									</xsl:when>
@@ -1229,7 +1230,7 @@ var substringMatcher = function(strs) {
 					</xsl:for-each>
 					<script>$('.datepicker').datepicker({language: '<xsl:value-of select="/results/context/language"/>'});</script>
 					<xsl:if test="$editorID!=''">
-						<script>var editor = CodeMirror.fromTextArea(document.getElementById("<xsl:value-of select="$editorID"/>"), {mode: "text/turtle",matchBrackets: true});</script>
+						<script>var editor = CodeMirror.fromTextArea(document.getElementById("<xsl:value-of select="$editorID"/>"), {mode: "text/turtle",matchBrackets: true,lineNumbers:true});</script>
 					</xsl:if>
 				</form>
 			</div>

@@ -2,7 +2,7 @@
 
     NAME     ttl2rdfaform.xsl
     VERSION  1.5.2-SNAPSHOT
-    DATE     2016-03-02
+    DATE     2016-03-06
 
     Copyright 2012-2016
 
@@ -30,6 +30,7 @@
 <xsl:stylesheet version="2.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:html="http://www.w3.org/1999/xhtml/vocab#"
 	xmlns:elmo="http://bp4mc2.org/elmo/def#"
 	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 	xmlns:res="http://www.w3.org/2005/sparql-results#"
@@ -58,8 +59,17 @@
 				<elmo:applies-to>file</elmo:applies-to>
 				<elmo:valueDatatype rdf:resource="http://purl.org/dc/dcmitype/Dataset"/>
 			</rdf:Description>
-			<xsl:if test="root/container/representation!='http://bp4mc2.org/elmo/def#UploadRepresentation'">
+			<xsl:if test="exists(root/response)">
 				<rdf:Description rdf:nodeID="f2">
+					<rdfs:label>Error</rdfs:label>
+					<elmo:applies-to>error</elmo:applies-to>
+					<elmo:valueDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#String"/>
+					<rdf:value><xsl:value-of select="root/response"/></rdf:value>
+					<html:stylesheet>height:40px; background:red; color:white;</html:stylesheet>
+				</rdf:Description>
+			</xsl:if>
+			<xsl:if test="root/container/representation!='http://bp4mc2.org/elmo/def#UploadRepresentation'">
+				<rdf:Description rdf:nodeID="f3">
 					<rdfs:label>Content</rdfs:label>
 					<elmo:applies-to>content</elmo:applies-to>
 					<elmo:valueDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#String"/>
@@ -67,7 +77,7 @@
 					<rdf:value><xsl:value-of select="root/turtle"/></rdf:value>
 				</rdf:Description>
 			</xsl:if>
-			<rdf:Description rdf:nodeID="f3">
+			<rdf:Description rdf:nodeID="f4">
 				<xsl:choose>
 					<xsl:when test="root/container/representation='http://bp4mc2.org/elmo/def#UploadRepresentation'">
 						<rdfs:label>Upload</rdfs:label>

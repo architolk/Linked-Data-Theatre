@@ -1,8 +1,8 @@
 <!--
 
     NAME     query.xpl
-    VERSION  1.5.1
-    DATE     2016-02-09
+    VERSION  1.5.2-SNAPSHOT
+    DATE     2016-03-06
 
     Copyright 2012-2016
 
@@ -154,118 +154,134 @@
 		</p:otherwise>
 	</p:choose>
 	
-	<!-- Create query -->
-	<p:processor name="oxf:xslt">
-		<p:input name="config">
-			<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:func="func" exclude-result-prefixes="func">
-				<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="no"/>
-				<xsl:function name="func:order">
-					<xsl:param name="layer"/>
-					<xsl:choose>
-						<xsl:when test="$layer='http://bp4mc2.org/elmo/def#TopLayer'">1</xsl:when>
-						<xsl:when test="$layer='http://bp4mc2.org/elmo/def#DefaultLayer'">2</xsl:when>
-						<xsl:when test="$layer='http://bp4mc2.org/elmo/def#BottomLayer'">3</xsl:when>
-						<xsl:otherwise>9</xsl:otherwise>
-					</xsl:choose>
-				</xsl:function>
-				<xsl:template match="/">
-					<!-- First, find the right layer -->
-					<xsl:variable name="layer1">
-						<xsl:for-each select="/root/rdf:RDF/rdf:Description/elmo:layer"><xsl:sort select="func:order(@rdf:resource)"/>
-							<xsl:if test="position()=1"><xsl:value-of select="@rdf:resource"/></xsl:if>
-						</xsl:for-each>
-					</xsl:variable>
-					<xsl:variable name="layer">
-						<xsl:choose>
-							<xsl:when test="exists(/root/rdf:RDF/rdf:Description[not(exists(elmo:layer))])">
-								<xsl:choose>
-									<xsl:when test="$layer1='http://bp4mc2.org/elmo/def#TopLayer'"><xsl:value-of select="$layer1"/></xsl:when>
-									<xsl:otherwise>http://bp4mc2.org/elmo/def#DefaultLayer</xsl:otherwise> <!-- No explicit layer means: defaultlayer (2) -->
-								</xsl:choose>
-							</xsl:when>
-							<xsl:when test="$layer1=''">http://bp4mc2.org/elmo/def#DefaultLayer</xsl:when> <!-- No layer whatsoever means: defaultlayer (2) -->
-							<xsl:otherwise><xsl:value-of select="$layer1"/></xsl:otherwise>
-						</xsl:choose>
-					</xsl:variable>
-					<xsl:variable name="representations">
-						<xsl:choose>
-							<!-- Show default representation if non exists -->
-							<xsl:when test="root/context/query='' and not(exists(root/rdf:RDF/rdf:Description[elmo:layer/@rdf:resource=$layer or (not(exists(elmo:layer)) and $layer='http://bp4mc2.org/elmo/def#DefaultLayer')]))">
-								<rep>&lt;rep://elmo.localhost/resource&gt;</rep>
-							</xsl:when>
-							<!-- Representations on the right layer -->
-							<xsl:otherwise>
-								<xsl:for-each select="root/rdf:RDF/rdf:Description[elmo:layer/@rdf:resource=$layer or (not(exists(elmo:layer)) and $layer='http://bp4mc2.org/elmo/def#DefaultLayer')]">
-									<rep>&lt;<xsl:value-of select="@rdf:about"/>&gt;</rep>
+	<p:choose href="#context">
+		<!-- Use predefined representation from LDT for elmo-representations -->
+		<p:when test="substring-after(context/representation,'http://bp4mc2.org/elmo/def#')!=''">
+			<p:processor name="oxf:url-generator">
+				<p:input name="config" transform="oxf:xslt" href="#context">
+					<config xsl:version="2.0">
+						<url>../representations/<xsl:value-of select="substring-after(context/representation,'http://bp4mc2.org/elmo/def#')"/>.xml</url>
+						<content-type>application/xml</content-type>
+					</config>
+				</p:input>
+				<p:output name="data" id="defquery"/>
+			</p:processor>
+		</p:when>
+		<p:otherwise>
+			<!-- Create query -->
+			<p:processor name="oxf:xslt">
+				<p:input name="config">
+					<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:func="func" exclude-result-prefixes="func">
+						<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="no"/>
+						<xsl:function name="func:order">
+							<xsl:param name="layer"/>
+							<xsl:choose>
+								<xsl:when test="$layer='http://bp4mc2.org/elmo/def#TopLayer'">1</xsl:when>
+								<xsl:when test="$layer='http://bp4mc2.org/elmo/def#DefaultLayer'">2</xsl:when>
+								<xsl:when test="$layer='http://bp4mc2.org/elmo/def#BottomLayer'">3</xsl:when>
+								<xsl:otherwise>9</xsl:otherwise>
+							</xsl:choose>
+						</xsl:function>
+						<xsl:template match="/">
+							<!-- First, find the right layer -->
+							<xsl:variable name="layer1">
+								<xsl:for-each select="/root/rdf:RDF/rdf:Description/elmo:layer"><xsl:sort select="func:order(@rdf:resource)"/>
+									<xsl:if test="position()=1"><xsl:value-of select="@rdf:resource"/></xsl:if>
 								</xsl:for-each>
-							</xsl:otherwise>
-						</xsl:choose>
-						<!-- Include explicitly included representations -->
-						<xsl:for-each select="root/context/query[.!='']">
-							<rep>&lt;<xsl:value-of select="."/>&gt;</rep>
-						</xsl:for-each>
-					</xsl:variable>
-					<parameters layer="{$layer}">
-						<query>
-							<![CDATA[
-							PREFIX elmo: <http://bp4mc2.org/elmo/def#>
-							CONSTRUCT {
-								?rep ?repp ?repo.
-								?fragment ?fragmentp ?fragmento.
-								?repchild ?repchildp ?repchildo.
-								?fragmentchild ?fragmentchildp ?fragmentchildo.
-								?form ?formp ?formo.
-								?ff ?ffp ?ffo.
-							}
-							WHERE {
-								GRAPH <]]><xsl:value-of select="root/context/representation-graph/@uri"/><![CDATA[>{
-								]]><xsl:for-each select="$representations/rep">
-									<xsl:if test="position()!=1">UNION</xsl:if>
-									<![CDATA[{
+							</xsl:variable>
+							<xsl:variable name="layer">
+								<xsl:choose>
+									<xsl:when test="exists(/root/rdf:RDF/rdf:Description[not(exists(elmo:layer))])">
+										<xsl:choose>
+											<xsl:when test="$layer1='http://bp4mc2.org/elmo/def#TopLayer'"><xsl:value-of select="$layer1"/></xsl:when>
+											<xsl:otherwise>http://bp4mc2.org/elmo/def#DefaultLayer</xsl:otherwise> <!-- No explicit layer means: defaultlayer (2) -->
+										</xsl:choose>
+									</xsl:when>
+									<xsl:when test="$layer1=''">http://bp4mc2.org/elmo/def#DefaultLayer</xsl:when> <!-- No layer whatsoever means: defaultlayer (2) -->
+									<xsl:otherwise><xsl:value-of select="$layer1"/></xsl:otherwise>
+								</xsl:choose>
+							</xsl:variable>
+							<xsl:variable name="representations">
+								<xsl:choose>
+									<!-- Show default representation if non exists -->
+									<xsl:when test="root/context/query='' and not(exists(root/rdf:RDF/rdf:Description[elmo:layer/@rdf:resource=$layer or (not(exists(elmo:layer)) and $layer='http://bp4mc2.org/elmo/def#DefaultLayer')]))">
+										<rep>&lt;rep://elmo.localhost/resource&gt;</rep>
+									</xsl:when>
+									<!-- Representations on the right layer -->
+									<xsl:otherwise>
+										<xsl:for-each select="root/rdf:RDF/rdf:Description[elmo:layer/@rdf:resource=$layer or (not(exists(elmo:layer)) and $layer='http://bp4mc2.org/elmo/def#DefaultLayer')]">
+											<rep>&lt;<xsl:value-of select="@rdf:about"/>&gt;</rep>
+										</xsl:for-each>
+									</xsl:otherwise>
+								</xsl:choose>
+								<!-- Include explicitly included representations -->
+								<xsl:for-each select="root/context/query[.!='']">
+									<rep>&lt;<xsl:value-of select="."/>&gt;</rep>
+								</xsl:for-each>
+							</xsl:variable>
+							<parameters layer="{$layer}">
+								<query>
+									<![CDATA[
+									PREFIX elmo: <http://bp4mc2.org/elmo/def#>
+									CONSTRUCT {
 										?rep ?repp ?repo.
-										FILTER (?rep=]]><xsl:value-of select="."/><![CDATA[)
-										OPTIONAL { ?rep elmo:fragment ?fragment. ?fragment ?fragmentp ?fragmento }
-										OPTIONAL {
-											?rep elmo:contains ?repchild.
-											?repchild ?repchildp ?repchildo.
-											OPTIONAL { ?repchild elmo:fragment ?fragmentchild. ?fragmentchild ?fragmentchildp ?fragmentchildo } 
+										?fragment ?fragmentp ?fragmento.
+										?repchild ?repchildp ?repchildo.
+										?fragmentchild ?fragmentchildp ?fragmentchildo.
+										?form ?formp ?formo.
+										?ff ?ffp ?ffo.
+									}
+									WHERE {
+										GRAPH <]]><xsl:value-of select="root/context/representation-graph/@uri"/><![CDATA[>{
+										]]><xsl:for-each select="$representations/rep">
+											<xsl:if test="position()!=1">UNION</xsl:if>
+											<![CDATA[{
+												?rep ?repp ?repo.
+												FILTER (?rep=]]><xsl:value-of select="."/><![CDATA[)
+												OPTIONAL { ?rep elmo:fragment ?fragment. ?fragment ?fragmentp ?fragmento }
+												OPTIONAL {
+													?rep elmo:contains ?repchild.
+													?repchild ?repchildp ?repchildo.
+													OPTIONAL { ?repchild elmo:fragment ?fragmentchild. ?fragmentchild ?fragmentchildp ?fragmentchildo } 
+												}
+												OPTIONAL {
+													?rep elmo:queryForm ?form.
+													?form ?formp ?formo.
+													?form elmo:fragment ?ff.
+													?ff ?ffp ?ffo.
+												}
+											}]]></xsl:for-each><![CDATA[
 										}
-										OPTIONAL {
-											?rep elmo:queryForm ?form.
-											?form ?formp ?formo.
-											?form elmo:fragment ?ff.
-											?ff ?ffp ?ffo.
-										}
-									}]]></xsl:for-each><![CDATA[
-								}
-							}
-							]]>
-						</query>
-						<default-graph-uri/>
-						<error type=""/>
-					</parameters>
-				</xsl:template>
-			</xsl:stylesheet>
-		</p:input>
-		<p:input name="data" href="aggregate('root',#context,#representations)"/>
-		<p:output name="data" id="defquerytext"/>
-	</p:processor>
-	
-	<!-- Fetch query definition(s) -->
-	<p:processor name="oxf:xforms-submission">
-		<p:input name="submission" transform="oxf:xslt" href="#context">
-			<xforms:submission method="get" xsl:version="2.0" action="{context/configuration-endpoint}">
-				<xforms:header>
-					<xforms:name>Accept</xforms:name>
-					<xforms:value>application/rdf+xml</xforms:value>
-				</xforms:header>
-				<xforms:setvalue ev:event="xforms-submit-error" ref="error" value="event('response-body')"/>
-				<xforms:setvalue ev:event="xforms-submit-error" ref="error/@type" value="event('error-type')"/>
-			</xforms:submission>
-		</p:input>
-		<p:input name="request" href="#defquerytext"/>
-		<p:output name="response" id="defquery"/>
-	</p:processor>
+									}
+									]]>
+								</query>
+								<default-graph-uri/>
+								<error type=""/>
+							</parameters>
+						</xsl:template>
+					</xsl:stylesheet>
+				</p:input>
+				<p:input name="data" href="aggregate('root',#context,#representations)"/>
+				<p:output name="data" id="defquerytext"/>
+			</p:processor>
+			
+			<!-- Fetch query definition(s) -->
+			<p:processor name="oxf:xforms-submission">
+				<p:input name="submission" transform="oxf:xslt" href="#context">
+					<xforms:submission method="get" xsl:version="2.0" action="{context/configuration-endpoint}">
+						<xforms:header>
+							<xforms:name>Accept</xforms:name>
+							<xforms:value>application/rdf+xml</xforms:value>
+						</xforms:header>
+						<xforms:setvalue ev:event="xforms-submit-error" ref="error" value="event('response-body')"/>
+						<xforms:setvalue ev:event="xforms-submit-error" ref="error/@type" value="event('error-type')"/>
+					</xforms:submission>
+				</p:input>
+				<p:input name="request" href="#defquerytext"/>
+				<p:output name="response" id="defquery"/>
+			</p:processor>
+		</p:otherwise>
+	</p:choose>
 							
 	<!-- Query from graph representation -->
 	<p:processor name="oxf:xslt">
@@ -426,7 +442,7 @@
 	<p:input name="config">
 		<config/>
 	</p:input>
-	<p:input name="data" href="#representations"/>
+	<p:input name="data" href="#querytext"/>
 </p:processor>
 -->
 	<!-- More than one query is possible -->
@@ -585,7 +601,8 @@
 									<xsl:variable name="query2" select="replace($query1,'@LANGUAGE@',/root/context/language)"/>
 									<xsl:variable name="query3" select="replace($query2,'@USER@',/root/context/user)"/>
 									<xsl:variable name="query4" select="replace($query3,'@CURRENTMOMENT@',format-dateTime($currentmoment,'[Y0001]/[M01]/[D01]/[H01]/[m01]/[s01]'))"/>
-									<query><xsl:value-of select="replace($query4,'@SUBJECT@',/root/context/subject)"/></query>
+									<xsl:variable name="query5" select="replace($query4,'@STAGE@',/root/context/back-of-stage)"/>
+									<query><xsl:value-of select="replace($query5,'@SUBJECT@',/root/context/subject)"/></query>
 									<default-graph-uri />
 									<error type=""/>
 								</parameters>

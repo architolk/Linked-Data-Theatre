@@ -1,0 +1,67 @@
+<!--
+
+    NAME     namespaces.xml
+    VERSION  1.5.2-SNAPSHOT
+    DATE     2016-03-06
+
+    Copyright 2012-2016
+
+    This file is part of the Linked Data Theatre.
+
+    The Linked Data Theatre is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    The Linked Data Theatre is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with the Linked Data Theatre.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!--
+    DESCRIPTION
+	Default namespaces. These namespaces will be added to any container.
+-->
+<namespaces>
+	<ns prefix="dbpedia">http://dbpedia.org/resource/</ns>
+	<ns prefix="dbpprop">http://dbpedia.org/property/</ns>
+	<ns prefix="dc">http://purl.org/dc/elements/1.1/</ns>
+	<ns prefix="elmo">http://bp4mc2.org/elmo/def#</ns>
+	<ns prefix="fn">http://www.w3.org/2005/xpath-functions/#</ns>
+	<ns prefix="foaf">http://xmlns.com/foaf/0.1/</ns>
+	<ns prefix="geo">http://www.w3.org/2003/01/geo/wgs84_pos#</ns>
+	<ns prefix="go">http://purl.org/obo/owl/GO#</ns>
+	<ns prefix="ldp">http://www.w3.org/ns/ldp#</ns>
+	<ns prefix="math">http://www.w3.org/2000/10/swap/math#</ns>
+	<ns prefix="mesh">http://purl.org/commons/record/mesh/</ns>
+	<ns prefix="mf">http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#</ns>
+	<ns prefix="nci">http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#</ns>
+	<ns prefix="obo">http://www.geneontology.org/formats/oboInOwl#</ns>
+	<ns prefix="ogc">http://www.opengis.net/</ns>
+	<ns prefix="ogcgml">http://www.opengis.net/ont/gml#</ns>
+	<ns prefix="ogcgs">http://www.opengis.net/ont/geosparql#</ns>
+	<ns prefix="ogcgsf">http://www.opengis.net/def/function/geosparql/</ns>
+	<ns prefix="ogcgsr">http://www.opengis.net/def/rule/geosparql/</ns>
+	<ns prefix="ogcsf">http://www.opengis.net/ont/sf#</ns>
+	<ns prefix="owl">http://www.w3.org/2002/07/owl#</ns>
+	<ns prefix="rdf">http://www.w3.org/1999/02/22-rdf-syntax-ns#</ns>
+	<ns prefix="rdfa">http://www.w3.org/ns/rdfa#</ns>
+	<ns prefix="rdfs">http://www.w3.org/2000/01/rdf-schema#</ns>
+	<ns prefix="sd">http://www.w3.org/ns/sparql-service-description#</ns>
+	<ns prefix="sioc">http://rdfs.org/sioc/ns#</ns>
+	<ns prefix="skos">http://www.w3.org/2004/02/skos/core#</ns>
+	<ns prefix="vcard">http://www.w3.org/2001/vcard-rdf/3.0#</ns>
+	<ns prefix="vcard2006">http://www.w3.org/2006/vcard/ns#</ns>
+	<ns prefix="virtcxml">http://www.openlinksw.com/schemas/virtcxml#</ns>
+	<ns prefix="virtrdf">http://www.openlinksw.com/schemas/virtrdf#</ns>
+	<ns prefix="void">http://rdfs.org/ns/void#</ns>
+	<ns prefix="xf">http://www.w3.org/2004/07/xpath-functions</ns>
+	<ns prefix="xhtml">http://www.w3.org/1999/xhtml/vocab#</ns>
+	<ns prefix="xml">http://www.w3.org/XML/1998/namespace</ns>
+	<ns prefix="xsd">http://www.w3.org/2001/XMLSchema#</ns>
+	<ns prefix="yago">http://dbpedia.org/class/yago/</ns>
+</namespaces>

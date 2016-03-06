@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2ttl.xsl
-    VERSION  1.5.1
-    DATE     2016-02-09
+    VERSION  1.5.2-SNAPSHOT
+    DATE     2016-03-06
 
     Copyright 2012-2016
 
@@ -39,10 +39,19 @@
 
 <xsl:variable name="prefix">
 	<!-- Default prefixes -->
-	<xsl:for-each select="xmlresult/container/url">
-		<prefix name="container"><xsl:value-of select="."/>/</prefix>
-		<!-- <xsl:if test="../target-graph/@action='replace'"><prefix name="dcterms">http://purl.org/dc/terms/</prefix></xsl:if> -->
-	</xsl:for-each>
+	<xsl:choose>
+		<xsl:when test="exists(xmlresult/container/stage)">
+			<xsl:for-each select="xmlresult/container/stage">
+				<prefix name="stage"><xsl:value-of select="."/>#</prefix>
+				<prefix name="elmo">http://bp4mc2.org/elmo/def#</prefix>
+			</xsl:for-each>
+		</xsl:when>
+		<xsl:otherwise>
+			<xsl:for-each select="xmlresult/container/url">
+				<prefix name="container"><xsl:value-of select="."/>/</prefix>
+			</xsl:for-each>
+		</xsl:otherwise>
+	</xsl:choose>
 	<!-- Prefixes used in properties -->
 	<xsl:for-each-group select="results/rdf:RDF[1]/rdf:Description/*|xmlresult/rdf:RDF[1]/rdf:Description/*" group-by="substring-before(name(),':')">
 		<prefix name="{substring-before(name(),':')}"><xsl:value-of select="namespace-uri()"/></prefix>
@@ -78,8 +87,8 @@
 <xsl:for-each-group select="$prefix/prefix" group-by=".">@prefix <xsl:value-of select="@name"/>: &lt;<xsl:value-of select="."/>>.
 </xsl:for-each-group>
 <xsl:for-each-group select="rdf:Description" group-by="@rdf:about">
-<xsl:apply-templates select="@rdf:about" mode="uri"/><xsl:for-each select="current-group()/*"><xsl:if test="position()!=1">;
-    </xsl:if><xsl:text> </xsl:text><xsl:apply-templates select="." mode="triple"><xsl:with-param name="tab">9</xsl:with-param></xsl:apply-templates></xsl:for-each>
+<xsl:apply-templates select="@rdf:about" mode="uri"/><xsl:for-each select="current-group()/*"><xsl:choose><xsl:when test="position()!=1">;
+    </xsl:when><xsl:otherwise><xsl:text> </xsl:text></xsl:otherwise></xsl:choose><xsl:apply-templates select="." mode="triple"><xsl:with-param name="tab">8</xsl:with-param></xsl:apply-templates></xsl:for-each>
 .
 </xsl:for-each-group>
 </xsl:template>

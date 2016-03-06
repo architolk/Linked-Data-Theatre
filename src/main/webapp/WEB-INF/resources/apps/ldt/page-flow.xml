@@ -2,7 +2,7 @@
 
     NAME     page-flow.xml
     VERSION  1.5.2-SNAPSHOT
-    DATE     2016-03-02
+    DATE     2016-03-06
 
     Copyright 2012-2016
 
@@ -44,10 +44,12 @@
 	</page>
 
 	<!-- Backstage -->
-	<page path="/backstage" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
+	<page path="(((?!backstage).)*)/backstage" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
 		<setvalue ref="theatre/representation">http://bp4mc2.org/elmo/def#BackstageRepresentation</setvalue>
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 	</page>
-	<page path="/backstage/rep" model="pipelines/container.xpl" default-submission="config.xml" public-methods="#all">
+	<page path="(((?!backstage).)*)/backstage/rep" model="pipelines/container.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 	</page>
 	
 	<!-- Page to save svg that is send to the server -->

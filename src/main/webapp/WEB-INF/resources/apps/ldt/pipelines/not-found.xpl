@@ -1,8 +1,8 @@
 <!--
 
     NAME     not-found.xpl
-    VERSION  1.5.1
-    DATE     2016-02-09
+    VERSION  1.5.2-SNAPSHOT
+    DATE     2016-03-06
 
     Copyright 2012-2016
 
@@ -40,9 +40,11 @@
 	<!-- Transform error message to HTML -->
 	<p:processor name="oxf:xslt">
 		<p:input name="data">
-			<parameters>
-				<error>Resource niet gevonden.</error>
-			</parameters>
+			<results>
+				<parameters>
+					<error>Het antwoord op uw verzoek kan niet worden gevonden.</error>
+				</parameters>
+			</results>
 		</p:input>
 		<p:input name="config" href="../transformations/error2html.xsl"/>
 		<p:output name="data" id="html"/>

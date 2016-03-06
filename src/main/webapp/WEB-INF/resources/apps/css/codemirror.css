@@ -1,7 +1,7 @@
 /**
  * NAME     codemirror.css
  * VERSION  1.5.2-SNAPSHOT
- * DATE     2016-03-02
+ * DATE     2016-03-06
  *
  * Copyright 2012-2016
  *
@@ -31,7 +31,7 @@
 .CodeMirror {
   /* Set height, width, borders, and global font properties here */
   font-family: monospace;
-  height: 300px;
+  height: 500px;
   color: black;
   border: 1px solid #c0c0c0;
   border-radius: 4px;
