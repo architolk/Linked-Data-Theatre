@@ -2,7 +2,7 @@
 
     NAME     sparql.xpl
     VERSION  1.5.2-SNAPSHOT
-    DATE     2016-03-06
+    DATE     2016-03-08
 
     Copyright 2012-2016
 
@@ -76,13 +76,17 @@
 
 	<p:choose href="#context">
 		<!--backstage should be available, or else - show 404 -->
-		<p:when test="context/back-of-stage!=''">
+		<p:when test="(context/back-of-stage!='' and matches(context/url,'backstage/sparql$')) or (context/@sparql='yes' and matches(context/url,'/sparql$'))">
 	
 			<p:choose href="#context">
 				<p:when test="context/parameters/parameter[name='query']/value!=''">
 					<p:processor name="oxf:xforms-submission">
 						<p:input name="submission" transform="oxf:xslt" href="#context">
 							<xforms:submission method="get" xsl:version="2.0" action="{context/configuration-endpoint}">
+								<xforms:header>
+									<xforms:name>Accept</xforms:name>
+									<xforms:value>application/sparql-results+xml</xforms:value>
+								</xforms:header>
 								<xforms:header>
 									<xforms:name>Accept</xforms:name>
 									<xforms:value>application/rdf+xml</xforms:value>
@@ -152,7 +156,7 @@
 				<p:input name="data">
 					<results>
 						<parameters>
-							<error>Resource niet gevonden.</error>
+							<error>Het antwoord op uw verzoek kan niet worden gevonden.</error>
 						</parameters>
 					</results>
 				</p:input>

@@ -2,7 +2,7 @@
 
     NAME     config.xml
     VERSION  1.5.2-SNAPSHOT
-    DATE     2016-03-03
+    DATE     2016-03-07
 
     Copyright 2012-2016
 
@@ -34,6 +34,7 @@
     - configuration-endpoint: the SPARQL endpoint which contains the configurations of the Linked Data Theatre
     - local-endpoint: the SPARQL endpoint that is used as the default endpoint to fetch data
     - the tempdir, if any: the absolute path to the directory to be used by the linked data theatre for temporary files (default is the tomcat temp dir)
+	- sparql: states if a public sparql endpoint should be available at /sparql. "yes" means: make a public endpoint available.
     - the <site> node contains the configuration for every domainname that is served by the LDT
       - domain: the domainname for this configuration
   	  - icon: (optional) the favicon.ico that is visible for this domain
@@ -56,7 +57,7 @@
 	A user with the backstage-role can look into the stage configuration using the following URL:
 		http://{domain}/backstage/{stage name}
 -->
-<theatre env="prod" configuration-endpoint="http://127.0.0.1:8890/sparql" local-endpoint="http://127.0.0.1:8890/sparql">
+<theatre env="prod" configuration-endpoint="http://127.0.0.1:8890/sparql" local-endpoint="http://127.0.0.1:8890/sparql" sparql="no">
 	<site domain="localhost" icon="favicon.ico">
 		<stage/>
 	</site>

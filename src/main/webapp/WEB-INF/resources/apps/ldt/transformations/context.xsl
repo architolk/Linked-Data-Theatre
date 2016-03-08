@@ -2,7 +2,7 @@
 
     NAME     context.xsl
     VERSION  1.5.2-SNAPSHOT
-    DATE     2016-03-06
+    DATE     2016-03-07
 
     Copyright 2012-2016
 
@@ -88,7 +88,7 @@
 			</xsl:if>
 		</xsl:variable>
 		
-		<context docroot="{$docroot}" version="{version/number}" timestamp="{version/timestamp}">
+		<context docroot="{$docroot}" version="{version/number}" timestamp="{version/timestamp}" sparql="{theatre/@sparql}">
 			<configuration-endpoint><xsl:value-of select="theatre/@configuration-endpoint"/></configuration-endpoint>
 			<local-endpoint><xsl:value-of select="theatre/@local-endpoint"/></local-endpoint>
 			<url><xsl:value-of select="request/request-url"/></url>

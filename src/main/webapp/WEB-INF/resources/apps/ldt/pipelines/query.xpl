@@ -2,7 +2,7 @@
 
     NAME     query.xpl
     VERSION  1.5.2-SNAPSHOT
-    DATE     2016-03-06
+    DATE     2016-03-08
 
     Copyright 2012-2016
 
@@ -638,6 +638,10 @@
 						<xforms:submission method="post" xsl:version="2.0" action="{endpoint}" serialization="application/x-www-form-urlencoded">
 							<xforms:header>
 								<xforms:name>Accept</xforms:name>
+								<xforms:value>application/sparql-results+xml</xforms:value>
+							</xforms:header>
+							<xforms:header>
+								<xforms:name>Accept</xforms:name>
 								<xforms:value>application/rdf+xml</xforms:value>
 							</xforms:header>
 							<xforms:setvalue ev:event="xforms-submit-error" ref="error" value="event('response-body')"/>
@@ -645,7 +649,13 @@
 						</xforms:submission>
 					</p:input>
 					<p:input name="request" href="#query"/>
-					<p:output name="response" ref="sparql"/>
+					<p:output name="response" id="sparqlres"/>
+				</p:processor>
+				<!-- Transform SPARQL to RDF -->
+				<p:processor name="oxf:xslt">
+					<p:input name="data" href="aggregate('root',#context,current(),#sparqlres)"/>
+					<p:input name="config" href="../transformations/sparql2rdfa.xsl"/>
+					<p:output name="data" ref="sparql"/>
 				</p:processor>
 			</p:otherwise>
 		</p:choose>

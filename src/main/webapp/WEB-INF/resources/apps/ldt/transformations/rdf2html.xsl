@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.5.2-SNAPSHOT
-    DATE     2016-03-06
+    DATE     2016-03-08
 
     Copyright 2012-2016
 
@@ -1240,7 +1240,7 @@ var substringMatcher = function(strs) {
 						<script>var editor = CodeMirror.fromTextArea(document.getElementById("<xsl:value-of select="$turtleEditorID"/>"), {mode: "text/turtle",matchBrackets: true,lineNumbers:true});</script>
 					</xsl:if>
 					<xsl:if test="$sparqlEditorID!=''">
-						<script>var editor = new YASQE.fromTextArea(document.getElementById("<xsl:value-of select="$sparqlEditorID"/>"));</script>
+						<script>var editor = new YASQE.fromTextArea(document.getElementById("<xsl:value-of select="$sparqlEditorID"/>"), {persistent: null});</script>
 					</xsl:if>
 				</form>
 			</div>
