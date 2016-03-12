@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.5.2-SNAPSHOT
-    DATE     2016-03-08
+    DATE     2016-03-11
 
     Copyright 2012-2016
 
@@ -1286,11 +1286,10 @@ var substringMatcher = function(strs) {
 				<script src="{$docroot}/js/leaflet.label.js"></script>
 				<script src="{$docroot}/js/easy-button.js"></script>
 				<!-- Probeersel om zaken te printen -->
-				<form id="svgform" method="post" action="{$subdomain}/print-graph">
+				<form id="svgform" method="post" action="{$subdomain}/print-graph" enctype="multipart/form-data">
 					<input type="hidden" id="type" name="type" value=""/>
 					<input type="hidden" id="data" name="data" value=""/>
-					<input type="hidden" id="imgwidth" name="imgwidth" value=""/>
-					<input type="hidden" id="imgheight" name="imgheight" value=""/>
+					<input type="hidden" id="dimensions" name="dimensions" value=""/>
 					<input type="hidden" id="imgsrc" name="imgsrc" value=""/>
 				</form>
 				<!-- TOT HIER -->

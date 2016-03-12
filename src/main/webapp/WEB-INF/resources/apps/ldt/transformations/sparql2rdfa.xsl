@@ -2,7 +2,7 @@
 
     NAME     sparql2rdfa.xsl
     VERSION  1.5.2-SNAPSHOT
-    DATE     2016-03-08
+    DATE     2016-03-09
 
     Copyright 2012-2016
 
@@ -101,6 +101,7 @@
 				<res:value>
 					<xsl:if test="exists(res:uri)"><xsl:attribute name="rdf:resource"><xsl:value-of select="res:uri"/></xsl:attribute></xsl:if>
 					<xsl:if test="exists(res:literal)"><xsl:attribute name="datatype"><xsl:value-of select="res:literal/@datatype"/></xsl:attribute><xsl:value-of select="res:literal"/></xsl:if>
+					<xsl:if test="exists(res:bnode)"><xsl:attribute name="rdf:nodeID"><xsl:value-of select="res:bnode"/></xsl:attribute></xsl:if>
 				</res:value>
 			</res:binding>
 			<!-- Extra binding -->
@@ -141,8 +142,12 @@
 
 <xsl:template match="/root">
 	<xsl:choose>
-		<!-- When the requested format is xml, don't do any annotations -->
+		<!-- Sparql returned something unusual, maybe error, just return input -->
+		<xsl:when test="not(exists(rdf:RDF|res:sparql))"><xsl:copy-of select="*"/></xsl:when>
+		<!-- When the requested format is xml or json, don't do any annotations -->
 		<xsl:when test="context/format='application/xml'"><xsl:copy-of select="rdf:RDF|res:sparql"/></xsl:when>
+		<xsl:when test="context/format='application/rdf+xml'"><xsl:copy-of select="rdf:RDF|res:sparql"/></xsl:when>
+		<xsl:when test="context/format='application/json'"><xsl:copy-of select="rdf:RDF|res:sparql"/></xsl:when>
 		<xsl:otherwise><xsl:apply-templates select="rdf:RDF|res:sparql"/></xsl:otherwise>
 	</xsl:choose>
 </xsl:template>

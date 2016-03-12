@@ -1,0 +1,51 @@
+<!--
+
+    NAME     LoginRepresentation.xml
+    VERSION  1.5.2-SNAPSHOT
+    DATE     2016-03-09
+
+    Copyright 2012-2016
+
+    This file is part of the Linked Data Theatre.
+
+    The Linked Data Theatre is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    The Linked Data Theatre is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with the Linked Data Theatre.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!--
+    DESCRIPTION
+	Representation that is used when a user goes to the /login page
+	
+-->
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:elmo="http://bp4mc2.org/elmo/def#"
+         xmlns:xhtml="http://www.w3.org/1999/xhtml/vocab#"
+>
+	<rdf:Description rdf:about="http://bp4mc2.org/elmo/def#LoginRepresentation">
+		<elmo:appearance rdf:resource="http://bp4mc2.org/elmo/def#LoginAppearance"/>
+		<elmo:query>
+			<![CDATA[
+			prefix elmo: <http://bp4mc2.org/elmo/def#>
+			prefix html: <http://www.w3.org/1999/xhtml/vocab#>
+			construct {
+				<content> html:h2 "Please sign in"@en.
+				<content> html:h2 "Aanmelden"@nl.
+				<content> html:button "Sign in"@en.
+				<content> html:button "Aanmelden"@nl.
+			}
+			where {}
+			]]>
+		</elmo:query>
+	</rdf:Description>
+</rdf:RDF>

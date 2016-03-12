@@ -2,7 +2,7 @@
 
     NAME     query.xpl
     VERSION  1.5.2-SNAPSHOT
-    DATE     2016-03-08
+    DATE     2016-03-11
 
     Copyright 2012-2016
 
@@ -29,15 +29,18 @@
 -->
 <p:config xmlns:p="http://www.orbeon.com/oxf/pipeline"
 		  xmlns:xforms="http://www.w3.org/2002/xforms"
+		  xmlns:xxforms="http://orbeon.org/oxf/xml/xforms"
           xmlns:oxf="http://www.orbeon.com/oxf/processors"
 		  xmlns:ev="http://www.w3.org/2001/xml-events"
 		  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 		  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 		  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 		  xmlns:html="http://www.w3.org/1999/xhtml/vocab#"
-        xmlns:sql="http://orbeon.org/oxf/xml/sql"
-        xmlns:xs="http://www.w3.org/2001/XMLSchema"
-		  xmlns:elmo="http://bp4mc2.org/elmo/def#">
+		  xmlns:res="http://www.w3.org/2005/sparql-results#"
+          xmlns:sql="http://orbeon.org/oxf/xml/sql"
+          xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		  xmlns:elmo="http://bp4mc2.org/elmo/def#"
+>
 
 	<!-- Configuration> -->
 	<p:param type="input" name="instance"/>
@@ -618,15 +621,21 @@
 					<p:input name="config">
 						<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 							<xsl:template match="/root">
-								<xsl:variable name="endpoint"><xsl:value-of select="representation/@endpoint"/></xsl:variable>
+								<xsl:variable name="endpoint">
+									<xsl:value-of select="representation/@endpoint"/>
+									<xsl:if test="not(representation/@endpoint!='')"><xsl:value-of select="context/local-endpoint"/></xsl:if>
+								</xsl:variable>
 								<endpoint>
-									<xsl:value-of select="$endpoint"/>
-									<xsl:if test="$endpoint=''"><xsl:value-of select="context/local-endpoint"/></xsl:if>
+									<url><xsl:value-of select="$endpoint"/></url>
+									<xsl:for-each select="theatre/endpoint[@url=$endpoint]">
+										<xsl:if test="exists(username)"><username><xsl:value-of select="username"/></username></xsl:if>
+										<xsl:if test="exists(password)"><password><xsl:value-of select="password"/></password></xsl:if>
+									</xsl:for-each>
 								</endpoint>
 							</xsl:template>
 						</xsl:stylesheet>
 					</p:input>
-					<p:input name="data" href="aggregate('root',current(),#context)"/>
+					<p:input name="data" href="aggregate('root',current(),#context,#instance)"/>
 					<p:output name="data" id="endpoint"/>
 				</p:processor>
 
@@ -635,7 +644,9 @@
 				<!-- No simple solution available :-( :-( :-( -->
 				<p:processor name="oxf:xforms-submission">
 					<p:input name="submission" transform="oxf:xslt" href="#endpoint">
-						<xforms:submission method="post" xsl:version="2.0" action="{endpoint}" serialization="application/x-www-form-urlencoded">
+						<xforms:submission method="post" xsl:version="2.0" action="{endpoint/url}" serialization="application/x-www-form-urlencoded">
+							<xsl:if test="endpoint/username!=''"><xsl:attribute name="xxforms:username"><xsl:value-of select="endpoint/username"/></xsl:attribute></xsl:if>
+							<xsl:if test="endpoint/password!=''"><xsl:attribute name="xxforms:password"><xsl:value-of select="endpoint/password"/></xsl:attribute></xsl:if>
 							<xforms:header>
 								<xforms:name>Accept</xforms:name>
 								<xforms:value>application/sparql-results+xml</xforms:value>
@@ -777,7 +788,7 @@
 						<p:input name="config">
 							<config/>
 						</p:input>
-						<p:input name="data" href="#sparql#xpointer(/results/rdf:RDF[1])"/>
+						<p:input name="data" href="#sparql#xpointer((/results/res:sparql|/results/rdf:RDF)[1])"/>
 					</p:processor>
 				</p:when>
 				<!-- Show query instead of the result -->

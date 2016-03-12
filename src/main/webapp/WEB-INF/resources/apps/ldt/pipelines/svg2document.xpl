@@ -1,8 +1,8 @@
 <!--
 
     NAME     svg2document.xpl
-    VERSION  1.5.1
-    DATE     2016-02-09
+    VERSION  1.5.2-SNAPSHOT
+    DATE     2016-03-11
 
     Copyright 2012-2016
 
@@ -71,15 +71,7 @@
         <p:input name="config" href="../transformations/svg2fo.xsl"/>
         <p:output name="data" id="fo"/>
     </p:processor>
-<!--
-<p:processor name="oxf:xml-serializer">
-	<p:input name="config">
-		<config>
-		</config>
-	</p:input>
-	<p:input name="data" href="#svgdoc"/>
-</p:processor>
--->
+
 	<p:processor name="oxf:xmlfo-processor">    
 		<p:input name="config" transform="oxf:xslt" href="#request">
 			<config xsl:version="2.0">
@@ -94,7 +86,15 @@
 		<p:input name="data" href="#fo"/>
 		<p:output name="data" id="document"/>
 	</p:processor>
-
+<!--
+<p:processor name="oxf:xml-serializer">
+	<p:input name="config">
+		<config>
+		</config>
+	</p:input>
+	<p:input name="data" href="#fo"/>
+</p:processor>
+-->
 	<p:processor name="oxf:http-serializer">
 	   <p:input name="config" transform="oxf:xslt" href="#request">
 			<config xsl:version="2.0">

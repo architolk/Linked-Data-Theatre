@@ -2,7 +2,7 @@
 
     NAME     svg2fo.xsl
     VERSION  1.5.2-SNAPSHOT
-    DATE     2016-02-17
+    DATE     2016-03-12
 
     Copyright 2012-2016
 
@@ -33,14 +33,32 @@
 			xmlns:error="http://apache.org/cocoon/sparql/1.0" 
 			xmlns:svg="http://www.w3.org/2000/svg" 
 			xmlns:fo="http://www.w3.org/1999/XSL/Format"
+			xmlns:xs="http://www.w3.org/2001/XMLSchema"
 			xmlns:xhtml="http://www.w3.org/1999/xhtml"
 >
 
 <xsl:key name="nodes" match="data/nodes/node" use="@id"/>
 
 <xsl:template match="/root">
-<xsl:variable name="imgwidth" select="/root/request/parameters/parameter[name='imgwidth']/value"/>
-<xsl:variable name="imgheight" select="/root/request/parameters/parameter[name='imgheight']/value"/>
+<xsl:variable name="dimensions" select="tokenize(/root/request/parameters/parameter[name='dimensions']/value,'\|')"/>
+<!--
+	1: img-left
+	2: img-top
+	3: svg-left
+	4: svg-top
+	5: img-width
+	6: img-height
+	7: svg-width
+	8: svg-height
+-->
+<xsl:variable name="imgleft" select="xs:decimal($dimensions[1])" as="xs:decimal"/>
+<xsl:variable name="imgtop" select="xs:decimal($dimensions[2])" as="xs:decimal"/>
+<xsl:variable name="svgleft" select="xs:decimal($dimensions[3])" as="xs:decimal"/>
+<xsl:variable name="svgtop" select="xs:decimal($dimensions[4])" as="xs:decimal"/>
+<xsl:variable name="imgwidth" select="xs:decimal($dimensions[5])" as="xs:decimal"/>
+<xsl:variable name="imgheight" select="xs:decimal($dimensions[6])" as="xs:decimal"/>
+<xsl:variable name="svgwidth" select="xs:decimal($dimensions[7])" as="xs:decimal"/>
+<xsl:variable name="svgheight" select="xs:decimal($dimensions[8])" as="xs:decimal"/>
 <xsl:variable name="imgsrc" select="/root/request/parameters/parameter[name='imgsrc']/value"/>
 <xsl:for-each select="xhtml:div/svg:svg">
 	<fo:root>
@@ -48,45 +66,28 @@
 			<fo:simple-page-master	master-name="simple"
 									page-height="{$imgheight}px"
 									page-width="{$imgwidth}px"
-									margin-top="0px"
-									margin-bottom="0px"
-									margin-left="0px"
-									margin-right="0px">
-				<fo:region-body margin-top="0px"/>
+									margin-top="0"
+									margin-bottom="0"
+									margin-left="0"
+									margin-right="0">
+				<fo:region-body margin-top="0"/>
 				<fo:region-before extent="3cm"/>
 				<fo:region-after extent="1.5cm"/>
 			</fo:simple-page-master>
 		</fo:layout-master-set>
 		<fo:page-sequence master-reference="simple">
 			<fo:flow flow-name="xsl-region-body">
-				<xsl:variable name="imgleft"><xsl:value-of select="substring-before(substring-after(../xhtml:img/@style,'left: '),'px;')"/></xsl:variable>
-				<xsl:variable name="imgtop"><xsl:value-of select="substring-before(substring-after(../xhtml:img/@style,'top: '),'px;')"/></xsl:variable>
-				<xsl:variable name="svgleft"><xsl:value-of select="substring-before(substring-after(@style,'left: '),'px;')"/></xsl:variable>
-				<xsl:variable name="svgtop"><xsl:value-of select="substring-before(substring-after(@style,'top: '),'px;')"/></xsl:variable>
-				<fo:block-container space-before.optimum="3pt" space-after.optimum="20pt" absolute-position="fixed" top="0" left="0">
+				<fo:block-container space-before.optimum="3pt" space-after.optimum="20pt" absolute-position="fixed" top="0px" left="0px">
 					<fo:block>
 						<fo:external-graphic src="{$imgsrc}" content-width="{$imgwidth}px" content-height="{$imgheight}px"/>
 					</fo:block>
 				</fo:block-container>
-				<!-- Hier wordt het niet slechter van, maar ook niet beter -->
-				<!-- Was: top="0", left="0" -->
-				<fo:block-container space-before.optimum="3pt" space-after.optimum="20pt" absolute-position="fixed" top="{$svgtop - $imgtop}" left="{$svgleft - $imgleft}">
+				<fo:block-container space-before.optimum="3pt" space-after.optimum="20pt" absolute-position="fixed" top="{-$imgtop}px" left="{-$imgleft}px">
 					<fo:block>
-						<fo:instream-foreign-object content-width="{$imgwidth}" content-height="{$imgheight}">
-							<svg:svg width="{$imgwidth}" height="{$imgheight}">
+						<fo:instream-foreign-object content-width="{$svgwidth}px" content-height="{$svgheight}px">
+							<svg:svg width="{$svgwidth}px" height="{$svgheight}px">
 								<svg:g>
 									<xsl:copy-of select="svg:g/*"/>
-									<!--
-									<xsl:for-each select="/root/xhtml:div/xhtml:div">
-										<xsl:variable name="left"><xsl:value-of select="substring-before(substring-after(@style,'left: '),'px; ')"/></xsl:variable>
-										<xsl:variable name="top"><xsl:value-of select="substring-before(substring-after(@style,'top: '),'px; ')"/></xsl:variable>
-										<svg:text x="{18+$left}px" y="{-18+$top}px" fill="black" font-size="14">
-											<xsl:for-each select="tokenize(replace(concat(normalize-space(.),' '),'(.{0,10}) ','$1&#xA;'),'&#xA;')">
-												<svg:tspan x="{18+$left}px" dy="16px"><xsl:value-of select="."/></svg:tspan>
-											</xsl:for-each>
-										</svg:text>
-									</xsl:for-each>
-									-->
 								</svg:g>
 							</svg:svg>
 						</fo:instream-foreign-object>

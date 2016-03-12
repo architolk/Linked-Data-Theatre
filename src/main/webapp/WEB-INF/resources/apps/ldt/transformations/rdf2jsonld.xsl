@@ -2,7 +2,7 @@
 
     NAME     rdf2jsonld.xsl
     VERSION  1.5.2-SNAPSHOT
-    DATE     2016-03-02
+    DATE     2016-03-09
 
     Copyright 2012-2016
 
@@ -39,15 +39,15 @@
 <xsl:key name="bnodes" match="/results/rdf:RDF[1]/rdf:Description" use="@rdf:nodeID"/>
 
 <!-- Select -->
-<xsl:template match="rdf:RDF[rdf:Description/@rdf:nodeID='rset']">
+<xsl:template match="res:sparql">
 {"@context":
-	{"graph":"@graph"<xsl:for-each-group select="rdf:Description[@rdf:nodeID='rset']/res:solution/res:binding[exists(res:value/@rdf:resource)]" group-by="res:variable">
-	,"<xsl:value-of select="res:variable"/>:{"@type":"@id"}</xsl:for-each-group>
+	{"graph":"@graph"<xsl:for-each-group select="res:results/res:result/res:binding[exists(res:uri)]" group-by="@name">
+	,"<xsl:value-of select="@name"/>":{"@type":"@id"}</xsl:for-each-group>
 	}
 ,"graph":
-[<xsl:for-each select="rdf:Description[@rdf:nodeID='rset']/res:solution"><xsl:if test="position()!=1">,</xsl:if>
+[<xsl:for-each select="res:results/res:result"><xsl:if test="position()!=1">,</xsl:if>
 	{<xsl:for-each select="res:binding"><xsl:if test="position()!=1">
-	,</xsl:if>"<xsl:value-of select="res:variable"/>": "<xsl:value-of select="translate(res:value,$dblquote,$quote)"/><xsl:value-of select="res:value/@rdf:resource"/>"</xsl:for-each>
+	,</xsl:if>"<xsl:value-of select="@name"/>": "<xsl:value-of select="translate(res:literal,$dblquote,$quote)"/><xsl:value-of select="res:uri"/>"</xsl:for-each>
 	}</xsl:for-each>
 ]
 }
@@ -85,7 +85,7 @@
 </xsl:template>
 
 <xsl:template match="/">
-	<xsl:apply-templates select="results/rdf:RDF[1]"/>
+	<xsl:apply-templates select="(results/res:sparql|results/rdf:RDF)[1]"/>
 </xsl:template>
 
 </xsl:stylesheet>

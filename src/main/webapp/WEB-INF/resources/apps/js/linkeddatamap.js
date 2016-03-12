@@ -1,7 +1,7 @@
 /*
  * NAME     linkeddatamap.js
  * VERSION  1.5.2-SNAPSHOT
- * DATE     2016-02-18
+ * DATE     2016-03-12
  *
  * Copyright 2012-2016
  *
@@ -491,9 +491,10 @@ function printMap() {
 	var form = document.getElementById("svgform");
 	form['data'].value = svg_xml;
 	form['type'].value = 'pdf'; //pdf and png are allowed values
-	form['imgwidth'].value = img.width;
-	form['imgheight'].value = img.height;
-	form['imgsrc'].value = img.src
+//	form['dimensions'].value = img.getBoundingClientRect().left+"|"+img.getBoundingClientRect().top+"|"+svg.getBoundingClientRect().left+"|"+svg.getBoundingClientRect().top+"|"+img.width+"|"+img.height+"|"+svg.width.baseVal.value+"|"+svg.height.baseVal.value;
+//	form['dimensions'].value = img.offsetLeft+"|"+img.offsetTop+"|"+svg.offsetLeft+"|"+svg.offsetTop+"|"+img.width+"|"+img.height+"|"+svg.width.baseVal.value+"|"+svg.height.baseVal.value;
+	form['dimensions'].value = img._leaflet_pos.x+"|"+img._leaflet_pos.y+"|"+svg._leaflet_pos.x+"|"+svg._leaflet_pos.y+"|"+img.width+"|"+img.height+"|"+svg.width.baseVal.value+"|"+svg.height.baseVal.value;
+	form['imgsrc'].value = img.src;
 	form.submit();
 }
 

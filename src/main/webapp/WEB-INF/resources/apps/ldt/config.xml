@@ -2,7 +2,7 @@
 
     NAME     config.xml
     VERSION  1.5.2-SNAPSHOT
-    DATE     2016-03-07
+    DATE     2016-03-11
 
     Copyright 2012-2016
 
@@ -46,6 +46,9 @@
 	  - the <stage> node contains the configuration for every stage within the specific domain. At least one stage should be present.
 		- name: (optional) the name of the stage
 		- backstage-role: (optional) the role for anybody that can enter the backstage (to update or view the stage configuration)
+	- the <endpoint> node(s) contain extra information uses for sparql-endpoint, currently only for basic-authentication:
+		- username: the username for the endpoint
+		- password: the password for the endpoint
 
 	For every stage, a named graph contains the detailed LDT configuration (the script of the production that is performed on the stage).
 	The URI for the named graph is created from the domain name and the stage name:
@@ -75,4 +78,11 @@
 		-->
 		<!-- End example -->
 	</roles>
+	<!-- Example endpoint -->
+	<!--
+	<endpoint url="http://some-secure-endpoint/sparql">
+		<username>john</username>
+		<password>somesecret</password>
+	</endpoint>
+	-->
 </theatre>

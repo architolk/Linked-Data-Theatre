@@ -2,7 +2,7 @@
 
     NAME     BackstageRepresentation.xml
     VERSION  1.5.2-SNAPSHOT
-    DATE     2016-03-06
+    DATE     2016-03-11
 
     Copyright 2012-2016
 
@@ -32,7 +32,6 @@
          xmlns:elmo="http://bp4mc2.org/elmo/def#"
          xmlns:xhtml="http://www.w3.org/1999/xhtml/vocab#"
 >
-	<elmo:Representation rdf:about="http://bp4mc2.org/elmo/def#BackstageRepresentation"/>
 	<rdf:Description rdf:about="http://bp4mc2.org/elmo/def#BackstageRepresentation_Header">
 		<elmo:appearance rdf:resource="http://bp4mc2.org/elmo/def#HeaderAppearance"/>
 		<elmo:query>
