@@ -19,9 +19,9 @@ Prebuild versions are available, you can also try to build virtuoso yourself.
 #### 1.1 Update stored procedures
 Execute `\stored-procs\install.bat`, located in your git repository. If you have only downloaded the war from the release, follow these steps:
 
-1. Download the file [create-procedures.sql](stored-procs/create-procedures.sql);
-2. Open your browser at `http://localhost:8890/conductor`, login as dba and navigate to the interactive SQL module;
-3. Paste the content of the create-procedures.sql file into the interactive SQL editor;
+1. Download the file [create_procedures.sql](stored-procs/create_procedures.sql);
+2. Open your browser at [http://localhost:8890/conductor](http://localhost:8890/conductor), login as dba and navigate to the interactive SQL module;
+3. Paste the content of the create_procedures.sql file into the interactive SQL editor;
 4. Click on the `Execute` button.
 
 ### 2. Install Tomcat
