@@ -15,7 +15,14 @@ The configuration of the LDT should be stored in a triple store. The LDT uses a 
 
 You can download Virtuoso from this location: [http://virtuoso.openlinksw.com/dataspace/doc/dav/wiki/Main](http://virtuoso.openlinksw.com/dataspace/doc/dav/wiki/Main).
 Prebuild versions are available, you can also try to build virtuoso yourself.
-Installing Virtuoso isn't necessary for the build process, but should be done as part of the installation.
+
+#### 1.1 Update stored procedures
+Execute `\stored-procs\install.bat`, located in your git repository. If you have only downloaded the war from the release, follow these steps:
+
+1. Download the file [create-procedures.sql](stored-procs/create-procedures.sql);
+2. Open your browser at `http://localhost:8890/conductor`, login as dba and navigate to the interactive SQL module;
+3. Paste the content of the create-procedures.sql file into the interactive SQL editor;
+4. Click on the `Execute` button.
 
 ### 2. Install Tomcat
 You need an installation of Tomcat to run Orbeon, and within Orbeon the Linked Data Theatre.
