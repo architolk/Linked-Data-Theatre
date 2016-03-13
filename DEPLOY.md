@@ -32,7 +32,7 @@ All system configurations are stored in `\webapps\ROOT\WEB-INF\resources\apps\ld
 Go to `http://localhost/version` and check if the Linked Data Theatre runs correctly. You should receive something that looks like this:
 
 	<?xml version="1.0" encoding="UTF-8"?>
-	<context sparql="no" timestamp="2016-03-13 09:26:22" version="1.6.0" docroot="">
+	<context sparql="no" timestamp="2016-03-13 16:24:38" version="1.6.0" docroot="">
 		<configuration-endpoint>http://127.0.0.1:8890/sparql</configuration-endpoint>
 		<local-endpoint>http://127.0.0.1:8890/sparql</local-endpoint>
 		<url>http://localhost/version</url>
