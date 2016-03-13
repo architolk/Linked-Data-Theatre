@@ -10,18 +10,42 @@ You could follow two approaches:
 ### Prerequisites
 You should have a working version of the Java Runtime Environment.
 
-### Install virtuoso
+### 1. Install a triple store
+The configuration of the LDT should be stored in a triple store. The LDT uses a SPARQL endpoint to query for the configuration. And, naturally, the LDT uses one or more triple stores to fetch the data that is presented by the LDT. The LDT can use any SPARQL 1.1 endpoint, but is optimized for use with Virtuoso.
+
 You can download Virtuoso from this location: [http://virtuoso.openlinksw.com/dataspace/doc/dav/wiki/Main](http://virtuoso.openlinksw.com/dataspace/doc/dav/wiki/Main).
-Prebuild versions are avaiable, you can also try to build virtuoso yourself.
+Prebuild versions are available, you can also try to build virtuoso yourself.
 Installing Virtuoso isn't necessary for the build process, but should be done as part of the installation.
 
-### Install Tomcat
+### 2. Install Tomcat
 You need an installation of Tomcat to run Orbeon, and within Orbeon the Linked Data Theatre.
 You can download Tomcat from this location: [https://tomcat.apache.org/](https://tomcat.apache.org/).
 The LDT is tested with Tomcat version 7.0.33.
 
-### Install the Linked Data Theatre
+### 3. Install the Linked Data Theatre
 Stop your Tomcat service. Delete all files in the \webapps\ROOT directory and unpack the LDT.war into the \webapps\ROOT directory. Restart your Tomcat service.
 
-### Test your version of the Linked Data Theatre
-Go to `http://localhost/version` and check if the Linked Data Theatre runs correctly. 
+### 4. Change the configuration file
+All system configurations are stored in `\webapps\ROOT\WEB-INF\resources\apps\ldt\config.xml`. The default configuration works OK for development purposes: installation on your localhost with a virtuoso endpoint on the same machine. Change it if you have a different configuration. (See the wiki for more information).
+
+### 5. Test your version of the Linked Data Theatre
+Go to `http://localhost/version` and check if the Linked Data Theatre runs correctly. You should receive something that looks like this:
+
+	<?xml version="1.0" encoding="UTF-8"?>
+	<context sparql="no" timestamp="2016-03-13 09:26:22" version="1.6.0" docroot="">
+		<configuration-endpoint>http://127.0.0.1:8890/sparql</configuration-endpoint>
+		<local-endpoint>http://127.0.0.1:8890/sparql</local-endpoint>
+		<url>http://localhost/version</url>
+		<domain>localhost</domain>
+		<subdomain/>
+		<query/>
+		<representation-graph uri="http://localhost/stage"/>
+		<back-of-stage>http://localhost/stage</back-of-stage>
+		<language>nl</language>
+		<user/>
+		<user-role/>
+		<representation/>
+		<format>text/html</format>
+		<subject>http://localhost/version</subject>
+		<parameters/>
+	</context> 

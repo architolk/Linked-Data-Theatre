@@ -14,7 +14,7 @@ The Linked Data Theatre depends on a couple of open source components:
 2. Orbeon, a portal implementation. The LDT uses Orbeon only for the MVC framework within an XPL context
 3. Tomcat, the web application service used to deploy Orbeon and the LDT itself
 4. Bootstrap, the responsive UI framework
-5. A couple of javascript libraries (mainly: jQuery, D3.js and Leaflet.js)
+5. A couple of javascript libraries (mainly: jQuery, D3.js, Leaflet.js and Yasqe.js)
 
 ### Virtuoso
 You can download Virtuoso from this location: [http://virtuoso.openlinksw.com/dataspace/doc/dav/wiki/Main](http://virtuoso.openlinksw.com/dataspace/doc/dav/wiki/Main).

@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.5.2-SNAPSHOT
-    DATE     2016-03-11
+    DATE     2016-03-13
 
     Copyright 2012-2016
 
@@ -116,7 +116,7 @@
 	<xsl:param name="stylesheet"/>
 	<xsl:param name="appearance"/>
 	<xsl:variable name="termlist" select="key('rdf',$glossary)"/>
-	<!-- Tokenizer bestaat uit alle woorden die gekozen kunnen worden, conform de syntax van de replace functie -->
+	<!-- Tokenizer consists of all the words that can be chosen, conform the syntax of the replace function -->
 	<xsl:variable name="tokenizer">
 		<xsl:for-each select="$termlist/rdf:Description"><xsl:sort select="string-length(elmo:name[1])" order="descending"/>
 			<xsl:if test="not($appearance='http://bp4mc2.org/elmo/def#FilteredGlossaryAppearance') or exists(*[@rdf:resource=$uri])">
@@ -169,7 +169,6 @@
 			</xsl:variable>
 			<a href="{$resource-uri}">
 				<xsl:choose>
-					<!-- <xsl:when test="exists(key('resource',@rdf:resource)/rdfs:label)"><xsl:value-of select="key('resource',@rdf:resource)/rdfs:label"/></xsl:when> -->
 					<xsl:when test="@rdfs:label!=''"><xsl:value-of select="@rdfs:label"/></xsl:when>
 					<xsl:otherwise><xsl:value-of select="@rdf:resource"/></xsl:otherwise>
 				</xsl:choose>
@@ -285,11 +284,11 @@
 						<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#FormAppearance'">
 							<xsl:apply-templates select="." mode="FormAppearance"/>
 						</xsl:when>
-						<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#GeoAppearance'">
-							<xsl:apply-templates select="." mode="GeoAppearance"><xsl:with-param name="backmap">brt</xsl:with-param></xsl:apply-templates>
+						<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#GeoAppearance' or @elmo:appearance='http://bp4mc2.org/elmo/def#GeoSelectAppearance'">
+							<xsl:apply-templates select="." mode="GeoAppearance"><xsl:with-param name="backmap">brt</xsl:with-param><xsl:with-param name="appearance" select="substring-after(@elmo:appearance,'http://bp4mc2.org/elmo/def#')"/></xsl:apply-templates>
 						</xsl:when>
 						<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#ImageAppearance'">
-							<xsl:apply-templates select="." mode="GeoAppearance"><xsl:with-param name="backmap">image</xsl:with-param></xsl:apply-templates>
+							<xsl:apply-templates select="." mode="GeoAppearance"><xsl:with-param name="backmap">image</xsl:with-param><xsl:with-param name="appearance">ImageAppearance</xsl:with-param></xsl:apply-templates>
 						</xsl:when>
 						<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#ChartAppearance'">
 							<xsl:apply-templates select="." mode="ChartAppearance"/>
@@ -343,12 +342,6 @@
 
 		<xsl:apply-templates select="context" mode="datatable-languageset"/>
 		
-		<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-		<!--[if lt IE 9]>
-		  <script src="/js/html5shiv.min.js"></script>
-		  <script src="/js/respond.min.js"></script>
-		<![endif]-->
 	</head>
 </xsl:template>
 
@@ -1274,18 +1267,17 @@ var substringMatcher = function(strs) {
 
 <xsl:template match="rdf:RDF" mode="GeoAppearance">
 	<xsl:param name="backmap"/>
+	<xsl:param name="appearance"/>
 
 	<xsl:if test="exists(rdf:Description/@rdf:about)">
 
 		<xsl:choose>
 			<xsl:when test="$backmap='image'">
-				<!-- Er zit een bug in versie 0.7 van leaflet waardoor cirkels niet goed worden gesized, vandaar versie 1.0.0 -->
-				<!-- We gebruiken nu sowieso 1.0.0-b2 -->
 				<link href="{$docroot}/css/leaflet.css" rel="stylesheet"/>
 				<script src="{$docroot}/js/leaflet.js"></script>
 				<script src="{$docroot}/js/leaflet.label.js"></script>
 				<script src="{$docroot}/js/easy-button.js"></script>
-				<!-- Probeersel om zaken te printen -->
+				<!-- Print form -->
 				<form id="svgform" method="post" action="{$subdomain}/print-graph" enctype="multipart/form-data">
 					<input type="hidden" id="type" name="type" value=""/>
 					<input type="hidden" id="data" name="data" value=""/>
@@ -1295,13 +1287,10 @@ var substringMatcher = function(strs) {
 				<!-- TOT HIER -->
 			</xsl:when>
 			<xsl:otherwise>
-				<!-- Versie 1.0.0 van leaflet en proj4leaflet werken niet goed samen, dus hier de oude 0.7 versie -->
-				<!-- Lijkt nu opgelost, we gebruiken standaard 1.0.0-b2 -->
 				<link href="{$docroot}/css/leaflet.css" rel="stylesheet"/>
 				<script src="{$docroot}/js/leaflet.js"></script>
 				<script src="{$docroot}/js/proj4-compressed.js"></script>
 				<script src="{$docroot}/js/proj4leaflet.js"></script>
-				<!-- <script src="{$docroot}/js/leaflet.label.js"></script> -->
 				<!-- Clickable map form -->
 				<form id="clickform" method="get" action="">
 					<input type="hidden" id="lat" name="lat" value=""/>
@@ -1421,7 +1410,7 @@ var substringMatcher = function(strs) {
 							addEdge('<xsl:value-of select="../@rdf:about"/>','<xsl:value-of select="name()"/>','<xsl:value-of select="@rdf:resource"/>');
 						</xsl:for-each>
 						
-						showLocations(<xsl:value-of select="$doZoom"/>);
+						showLocations(<xsl:value-of select="$doZoom"/>,'<xsl:value-of select="$appearance"/>');
 					</script>
 				</div>
 			</div>

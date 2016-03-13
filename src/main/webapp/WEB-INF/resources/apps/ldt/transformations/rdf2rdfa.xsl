@@ -2,7 +2,7 @@
 
     NAME     rdf2rdfa.xsl
     VERSION  1.5.2-SNAPSHOT
-    DATE     2016-03-08
+    DATE     2016-03-13
 
     Copyright 2012-2016
 
@@ -46,8 +46,6 @@
 
 <xsl:template match="*" mode="property">
 	<xsl:param name="fragments"/>
-	
-	<!-- <xsl:copy-of select="$fragments"/> -->
 	
 	<xsl:element name="{name()}" namespace="{namespace-uri()}">
 		<!-- full uri of the property -->
@@ -145,7 +143,7 @@
 	</xsl:variable>
 	<xsl:variable name="appearance">
 		<xsl:choose>
-			<xsl:when test="queryForm/@satisfied!='' and queryForm/@geo='yes'">http://bp4mc2.org/elmo/def#GeoAppearance</xsl:when>
+			<xsl:when test="queryForm/@satisfied!='' and queryForm/@geo='yes'">http://bp4mc2.org/elmo/def#GeoSelectAppearance</xsl:when>
 			<xsl:when test="queryForm/@satisfied!=''">http://bp4mc2.org/elmo/def#FormAppearance</xsl:when>
 			<xsl:when test="$appearance1='http://bp4mc2.org/elmo/def#ContentAppearance' and /root/results/rdf:RDF[position()=$index]/rdf:Description[@rdf:nodeID='rset']/rdf:type/@rdf:resource='http://www.w3.org/2005/sparql-results#ResultSet'">http://bp4mc2.org/elmo/def#TableAppearance</xsl:when>
 			<xsl:otherwise><xsl:value-of select="$appearance1"/></xsl:otherwise>
@@ -155,6 +153,7 @@
 		<xsl:if test="exists(@container)"><xsl:attribute name="elmo:container"><xsl:value-of select="@container"/></xsl:attribute></xsl:if>
 		<xsl:choose>
 			<xsl:when test="queryForm/@satisfied!='' and queryForm/@geo='yes'">
+				<!-- If nothing is available, show center of the map (Netherlands, RD Amersfoort) -->
 				<rdf:Description rdf:about="locator">
 					<geo:long>5.387197444102625</geo:long>
 					<geo:lat>52.15516475286759</geo:lat>
@@ -199,7 +198,13 @@
 					</rdf:Description>
 				</xsl:for-each>
 			</xsl:when>
-			<xsl:when test="$appearance='http://bp4mc2.org/elmo/def#GeoAppearance' or $appearance='http://bp4mc2.org/elmo/def#ImageAppearance'">
+			<xsl:when test="$appearance='http://bp4mc2.org/elmo/def#GeoSelectAppearance' or $appearance='http://bp4mc2.org/elmo/def#GeoAppearance' or $appearance='http://bp4mc2.org/elmo/def#ImageAppearance'">
+				<xsl:if test="$appearance='http://bp4mc2.org/elmo/def#GeoSelectAppearance' and not(exists(/root/results/rdf:RDF[position()=$index]/*))">
+				<rdf:Description rdf:about="locator">
+					<geo:long><xsl:value-of select="/root/context/parameters/parameter[name='long']/value"/></geo:long>
+					<geo:lat><xsl:value-of select="/root/context/parameters/parameter[name='lat']/value"/></geo:lat>
+				</rdf:Description>
+				</xsl:if>
 				<xsl:copy-of select="/root/results/rdf:RDF[position()=$index]/*"/>
 				<xsl:for-each select="fragment">
 					<rdf:Description rdf:nodeID="f{position()}">

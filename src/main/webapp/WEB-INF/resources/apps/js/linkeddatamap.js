@@ -1,7 +1,7 @@
 /*
  * NAME     linkeddatamap.js
  * VERSION  1.5.2-SNAPSHOT
- * DATE     2016-03-12
+ * DATE     2016-03-13
  *
  * Copyright 2012-2016
  *
@@ -293,7 +293,6 @@ function resetHighlight(e) {
 
 function circleMoveStart(e) {
 	movedItem = e.target;
-	//map.removeEventListener('mousemove');
 	map.on('mousemove',circleMove);
 	map.on('mouseup',circleMoveEnd);
 }
@@ -399,8 +398,6 @@ function addWKT(uri, wkt, text, url, styleclass)
 		lastPolygon.showLabel();
 	}
 
-	//lastPolygon.setStyle('');
-	
 	//Add to list
 	listOfGeoObjects.push(lastPolygon);
 }
@@ -427,21 +424,12 @@ function updateMap() {
 		updateTTL += "<" + listOfMarkers[i].feature.geometry.url + '> geo:geometry "CIRCLE(' + listOfMarkers[i].getLatLng().lng + ' ' + listOfMarkers[i].getLatLng().lat + ',2)". ';
 	}
 	for(i = 0; i < listOfGeoObjects.length; ++i) {
-		//listOfGeoObjects[i].setStyle({fillColor: '#0000FF', color: '#0000FF'});
 		layer = listOfGeoObjects[i].getLayers()[0];
 		if (layer.feature.geometry.styleclass!="shidden-object") {
 			layer._path.setAttribute("class","leaflet-interactive "+layer.feature.geometry.styleclass);
 		}
 	}
 	if (listOfMarkers.length>0) {
-		//alert(updateTTL);
-		//updateTTL = "blub";
-		
-		//Perform the update via an ajax call
-		//$.ajax({method: "POST", url: "/header.json", data: {para1: "Blub"}})
-		//	.done(function(msg) {alert(msg.hoi)});
-		
-		//$.post("/header.json", {para1: updateTTL}, function(data) {alert(JSON.stringify(data.request.parameters))},'json');
 		$.post(containerURL, {container: containerURL,content: updateTTL}, function(data) {alert(data.response)},'json');
 		
 		listOfMarkers = [];
@@ -479,7 +467,6 @@ function printMap() {
 	//Zoom should be 1:1
 	//Styleclass declarations can not be exported: copy styleclass values to style attributes
 	for(i = 0; i < listOfGeoObjects.length; ++i) {
-		//var pathStyle = getComputedStyle(svg.childNodes[0].childNodes[0]);
 		var pathStyle = getComputedStyle(listOfGeoObjects[i].getLayers()[0]._path);
 		listOfGeoObjects[i].setStyle({color: pathStyle.getPropertyValue("stroke"), fillColor: pathStyle.getPropertyValue("fill"), fillOpacity: pathStyle.getPropertyValue("fill-opacity")});
 	}
@@ -569,7 +556,7 @@ function initMap(docroot, latCor, longCor, backMap, imageMapURL, contURL, left, 
 	map.invalidateSize();
 }
 
-function showLocations(doZoom)
+function showLocations(doZoom, appearance)
 {
 	d3.select(map.getPanes().overlayPane).selectAll("g").append('marker')
 	.attr('id'          , 'ArrowHead')
@@ -586,12 +573,15 @@ function showLocations(doZoom)
 	for(i = 0; i < listOfLocations.length; ++i)
 		listOfLocations[i].addTo(map);
 
-	if (doZoom==1 && (lastPolygon) && !(lastPolygon.getLayers()[0] instanceof L.CircleMarker)) {
-		map.fitBounds(lastPolygon.getBounds());
+	if (listOfGeoObjects.length!=0) {
+		var firstPolygon = listOfGeoObjects[0];
+		if (doZoom==1 && (firstPolygon) && !(firstPolygon.getLayers()[0] instanceof L.CircleMarker)) {
+			map.fitBounds(firstPolygon.getBounds());
+		}
 	}
 
 	//No locations, show crosshair and register event
-	if (!(lastPolygon)) {
+	if (!(lastPolygon) || appearance=='GeoSelectAppearance') {
 		map.on('click',mapClicked);
 		document.getElementById('map').style.cursor = 'crosshair';
 	}
