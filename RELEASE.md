@@ -23,18 +23,24 @@ All license-headers should have the release version includes. This means that al
 
 	mvn license:format
 
+You should perform this step twice, just to be sure that every file header has the correct file date.
+
 ##3. Create the war package
 You're now ready to create the war:
 
 	mvn clean package
 
-##4. Commit changes to github and create release tag
+##4. Test the package
+You should perform a regression test. A regression test is currently not part of the build procedure. 
+
+##5. Commit changes to github and create release tag
+For example (refering to release 1.6.0):
 
 	git add *
 	git commit -m "Release 1.6.0"
 	git tag -a v1.6.0 -m "Release 1.6.0"
 	git push origin v1.6.0
 
-##5. Add war to github release
+##6. Add war to github release
 Goto github: [https://github.com/architolk/Linked-Data-Theatre/tags](https://github.com/architolk/Linked-Data-Theatre/tags). Look for the correct tag (should be the topmost) and navigate to "Add release notes" and update the documentation for the release notes. Upload the war using the user interface of github.
    

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #
 # NAME     run.sh
-# VERSION  1.5.1
-# DATE     2016-02-09
+# VERSION  1.6.0
+# DATE     2016-03-13
 #
 # Copyright 2012-2016
 #
