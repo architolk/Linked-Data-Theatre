@@ -236,72 +236,89 @@
 	</xsl:choose>
 </xsl:template>
 
+<xsl:template match="rdf:RDF" mode="present">
+	<xsl:choose>
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance'"/> <!-- Hidden, dus niet tonen -->
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#HeaderAppearance'"/> <!-- Al gedaan -->
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarAppearance'"/> <!-- Al gedaan -->
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarSearchAppearance'"/> <!-- Al gedaan -->
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#TreeAppearance'"/> <!-- Al gedaan -->
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#LoginAppearance'">
+			<xsl:apply-templates select="." mode="LoginAppearance"/>
+		</xsl:when>
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#CarouselAppearance'">
+			<xsl:apply-templates select="." mode="CarouselAppearance"/>
+		</xsl:when>
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#ShortTableAppearance'">
+			<xsl:apply-templates select="." mode="TableAppearance"><xsl:with-param name="paging">false</xsl:with-param></xsl:apply-templates>
+		</xsl:when>
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#TableAppearance' or @elmo:appearance='http://bp4mc2.org/elmo/def#TextSearchAppearance'">
+			<xsl:apply-templates select="." mode="TableAppearance"><xsl:with-param name="paging">true</xsl:with-param></xsl:apply-templates>
+		</xsl:when>
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#IndexAppearance'">
+			<xsl:apply-templates select="." mode="IndexAppearance"/>
+		</xsl:when>
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#HtmlAppearance'">
+			<xsl:apply-templates select="." mode="HtmlAppearance"/>
+		</xsl:when>
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#GraphAppearance'">
+			<xsl:apply-templates select="." mode="GraphAppearance"/>
+		</xsl:when>
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#TextAppearance'">
+			<xsl:apply-templates select="." mode="TextAppearance"/>
+		</xsl:when>
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#FormAppearance'">
+			<xsl:apply-templates select="." mode="FormAppearance"/>
+		</xsl:when>
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#GeoAppearance' or @elmo:appearance='http://bp4mc2.org/elmo/def#GeoSelectAppearance'">
+			<xsl:apply-templates select="." mode="GeoAppearance"><xsl:with-param name="backmap">brt</xsl:with-param><xsl:with-param name="appearance" select="substring-after(@elmo:appearance,'http://bp4mc2.org/elmo/def#')"/></xsl:apply-templates>
+		</xsl:when>
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#ImageAppearance'">
+			<xsl:apply-templates select="." mode="GeoAppearance"><xsl:with-param name="backmap">image</xsl:with-param><xsl:with-param name="appearance">ImageAppearance</xsl:with-param></xsl:apply-templates>
+		</xsl:when>
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#ChartAppearance'">
+			<xsl:apply-templates select="." mode="ChartAppearance"/>
+		</xsl:when>
+		<xsl:otherwise>
+			<!-- No, or an unknown appearance, use the data to select a suitable appearance -->
+			<xsl:apply-templates select="." mode="ContentAppearance"/>
+		</xsl:otherwise>
+	</xsl:choose>
+</xsl:template>
+
 <xsl:template match="/">
 	<xsl:for-each select="results">
 		<html lang="{context/language}">
 			<xsl:apply-templates select="." mode="html-head"/>
 			<body>
-			<div id="page">
-			<!-- Meerdere queries zijn mogelijk -->
-			<!-- Eerst de headerstuf -->
-			<!-- Meer dan 1 navbar leid tot niet-gedefinieerd gedrag -->
-			<xsl:apply-templates select="rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#HeaderAppearance']" mode="HeaderAppearance"/>
-			<xsl:apply-templates select="rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarAppearance']" mode="NavbarAppearance"/>
-			<xsl:apply-templates select="rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarSearchAppearance']" mode="NavbarSearchAppearance"/>
-			<!-- Dan de echte inhoud -->
-			<div class="content">
-			<div class="container">
-				<xsl:for-each select="rdf:RDF">
-					<xsl:choose>
-						<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance'"/> <!-- Hidden, dus niet tonen -->
-						<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#HeaderAppearance'"/> <!-- Al gedaan -->
-						<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarAppearance'"/> <!-- Al gedaan -->
-						<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarSearchAppearance'"/> <!-- Al gedaan -->
-						<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#LoginAppearance'">
-							<xsl:apply-templates select="." mode="LoginAppearance"/>
-						</xsl:when>
-						<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#CarouselAppearance'">
-							<xsl:apply-templates select="." mode="CarouselAppearance"/>
-						</xsl:when>
-						<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#ShortTableAppearance'">
-							<xsl:apply-templates select="." mode="TableAppearance"><xsl:with-param name="paging">false</xsl:with-param></xsl:apply-templates>
-						</xsl:when>
-						<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#TableAppearance' or @elmo:appearance='http://bp4mc2.org/elmo/def#TextSearchAppearance'">
-							<xsl:apply-templates select="." mode="TableAppearance"><xsl:with-param name="paging">true</xsl:with-param></xsl:apply-templates>
-						</xsl:when>
-						<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#IndexAppearance'">
-							<xsl:apply-templates select="." mode="IndexAppearance"/>
-						</xsl:when>
-						<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#HtmlAppearance'">
-							<xsl:apply-templates select="." mode="HtmlAppearance"/>
-						</xsl:when>
-						<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#GraphAppearance'">
-							<xsl:apply-templates select="." mode="GraphAppearance"/>
-						</xsl:when>
-						<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#TextAppearance'">
-							<xsl:apply-templates select="." mode="TextAppearance"/>
-						</xsl:when>
-						<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#FormAppearance'">
-							<xsl:apply-templates select="." mode="FormAppearance"/>
-						</xsl:when>
-						<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#GeoAppearance' or @elmo:appearance='http://bp4mc2.org/elmo/def#GeoSelectAppearance'">
-							<xsl:apply-templates select="." mode="GeoAppearance"><xsl:with-param name="backmap">brt</xsl:with-param><xsl:with-param name="appearance" select="substring-after(@elmo:appearance,'http://bp4mc2.org/elmo/def#')"/></xsl:apply-templates>
-						</xsl:when>
-						<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#ImageAppearance'">
-							<xsl:apply-templates select="." mode="GeoAppearance"><xsl:with-param name="backmap">image</xsl:with-param><xsl:with-param name="appearance">ImageAppearance</xsl:with-param></xsl:apply-templates>
-						</xsl:when>
-						<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#ChartAppearance'">
-							<xsl:apply-templates select="." mode="ChartAppearance"/>
-						</xsl:when>
-						<xsl:otherwise>
-							<!-- No, or an unknown appearance, use the data to select a suitable appearance -->
-							<xsl:apply-templates select="." mode="ContentAppearance"/>
-						</xsl:otherwise>
-					</xsl:choose>
-				</xsl:for-each>
-			</div>
-			</div>
-			</div>
+				<div id="page">
+					<!-- Meerdere queries zijn mogelijk -->
+					<!-- Eerst de headerstuf -->
+					<!-- Meer dan 1 navbar leid tot niet-gedefinieerd gedrag -->
+					<xsl:apply-templates select="rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#HeaderAppearance']" mode="HeaderAppearance"/>
+					<xsl:apply-templates select="rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarAppearance']" mode="NavbarAppearance"/>
+					<xsl:apply-templates select="rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarSearchAppearance']" mode="NavbarSearchAppearance"/>
+					<!-- Dan de echte inhoud -->
+					<div class="content">
+						<div class="container">
+							<xsl:choose>
+								<xsl:when test="exists(rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#TreeAppearance'])">
+									<div class="row">
+										<div class="col-md-4">
+											<xsl:apply-templates select="rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#TreeAppearance']" mode="TreeAppearance"/>
+										</div>
+										<div class="col-md-8">
+											<xsl:apply-templates select="rdf:RDF" mode="present"/>
+										</div>
+									</div>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:apply-templates select="rdf:RDF" mode="present"/>
+								</xsl:otherwise>
+							</xsl:choose>
+						</div>
+					</div>
+				</div>
 			</body>
 		</html>
 	</xsl:for-each>
@@ -1496,6 +1513,70 @@ var substringMatcher = function(strs) {
 			  .attr("height", function(d) { return height - y(d.value); })
 			  .attr("width", x.rangeBand());
 	</script>
+</xsl:template>
+
+<xsl:template match="rdf:Description" mode="makeTree">
+	<!-- To avoid cycles, a resource can be present only ones -->
+	<xsl:param name="done"/>
+	<xsl:variable name="uri" select="@rdf:about"/>
+	<xsl:variable name="resource-uri">
+		<xsl:call-template name="resource-uri">
+			<xsl:with-param name="uri" select="$uri"/>
+			<xsl:with-param name="var" select=".."/> <!-- Was rdf:Description, maar dit lijkt beter -->
+		</xsl:call-template>
+	</xsl:variable>
+	<li>
+		<a href="{$resource-uri}">
+			<xsl:choose>
+				<xsl:when test="rdfs:label!=''"><xsl:value-of select="rdfs:label"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="@rdf:about"/></xsl:otherwise>
+			</xsl:choose>
+			<xsl:call-template name="cross-site-marker">
+				<xsl:with-param name="url" select="$resource-uri"/>
+			</xsl:call-template>
+		</a>
+		<xsl:variable name="new">
+			<xsl:for-each select="../rdf:Description[*/@rdf:resource=$uri]">
+				<xsl:variable name="about" select="@rdf:about"/>
+				<xsl:if test="not(exists($done[uri=$about]))">
+					<uri><xsl:value-of select="."/></uri>
+				</xsl:if>
+			</xsl:for-each>
+		</xsl:variable>
+		<xsl:if test="exists($new/uri)">
+			<ul style="display: none"> <!-- Default: collapsed tree -->
+				<xsl:for-each select="../rdf:Description[*/@rdf:resource=$uri]">
+					<xsl:variable name="about" select="@rdf:about"/>
+					<xsl:if test="not(exists($done[uri=$about]))">
+						<xsl:apply-templates select="." mode="makeTree">
+							<xsl:with-param name="done">
+								<xsl:copy-of select="$done"/>
+								<xsl:copy-of select="$new"/>
+							</xsl:with-param>
+						</xsl:apply-templates>
+					</xsl:if>
+				</xsl:for-each>
+			</ul>
+		</xsl:if>
+	</li>
+</xsl:template>
+
+<xsl:template match="rdf:RDF" mode="TreeAppearance">
+	<!--<div class="panel panel-primary">
+		<div class="panel-heading"/>
+		<div class="panel-body tree">--><div class="tree">
+			<ul>
+				<xsl:variable name="done">
+					<xsl:for-each select="rdf:Description[not(exists(*/@rdf:resource))]/@rdf:about">
+						<uri><xsl:value-of select="."/></uri>
+					</xsl:for-each>
+				</xsl:variable>
+				<xsl:apply-templates select="rdf:Description[not(exists(*/@rdf:resource))]" mode="makeTree"><xsl:with-param name="done" select="$done"/></xsl:apply-templates>
+			</ul></div><!--
+		</div>
+	</div>-->
+	<link rel="stylesheet" href="{$docroot}/css/treestyle.css"/>
+	<script src="{$docroot}/js/MultiNestedList.js"></script>
 </xsl:template>
 
 </xsl:stylesheet>

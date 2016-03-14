@@ -18,7 +18,7 @@ Set the project version for any new release. But set only the release version fo
 (This example shows only the relevant lines from the pom.xml. This example refers to a release with version 1.6.0 and release data march 13, 2016).
 
 ##2. Check if all license headers are set correctly
-All license-headers should have the release version includes. This means that all files should have the same date (the release date).
+All license-headers should have the release version included. This means that all files should have the same date for major and minor releases (the release date). A patch release leaves the version header of unchanged files to the version of the major/minor release.
 
 	mvn license:format
 
