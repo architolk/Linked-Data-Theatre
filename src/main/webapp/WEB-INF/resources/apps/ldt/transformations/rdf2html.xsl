@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2html.xsl
-    VERSION  1.6.1
-    DATE     2016-03-14
+    VERSION  1.6.2-SNAPSHOT
+    DATE     2016-03-15
 
     Copyright 2012-2016
 
@@ -95,6 +95,7 @@
 		<xsl:when test="$urlpart=''"><xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource?subject=<xsl:value-of select="encode-for-uri($uri)"/></xsl:when> <!-- Make non-dereferenceable uri's locally dereferenceable -->
 		<xsl:when test="$var/@elmo:appearance='http://bp4mc2.org/elmo/def#GlobalLink'"><xsl:value-of select="$uri"/></xsl:when> <!-- Global link, so plain uri -->
 		<xsl:when test="$domain!=$serverdomain"><xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource?subject=<xsl:value-of select="encode-for-uri($uri)"/></xsl:when> <!-- External uri's are treated as non-dereferenceable -->
+		<xsl:when test="matches($uri,'#')"><xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource?subject=<xsl:value-of select="encode-for-uri($uri)"/></xsl:when> <!-- Hash uri's are treated as non-dereferenceable (to avoid losing the part after the hash) -->
 		<xsl:otherwise><xsl:value-of select="$uri"/></xsl:otherwise> <!--Plain URI -->
 	</xsl:choose>
 </xsl:template>
