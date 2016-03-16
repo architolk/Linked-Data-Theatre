@@ -12,7 +12,7 @@
 		<license.failIfMissing>false</license.failIfMissing>
 		<release.version>1.6.0</release.version>
 		<release.date>2016-03-13</release.date>
-		<patch.date>2016-03-14</patch.date>
+		<patch.date>2016-03-16</patch.date>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -80,6 +80,7 @@
 					<properties>
 						<release.version>${release.version}</release.version>
 						<release.date>${release.date}</release.date>
+						<patch.date>${patch.date}</patch.date>
 					</properties>
 					<excludes>
 						<exclude>examples/**</exclude>

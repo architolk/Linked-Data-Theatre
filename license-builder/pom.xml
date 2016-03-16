@@ -19,5 +19,10 @@
 			<artifactId>license-maven-plugin</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jgit</groupId>
+			<artifactId>org.eclipse.jgit</artifactId>
+			<version>4.2.0.201601211800-r</version>
+		</dependency>
 	</dependencies>
 </project>

@@ -6,13 +6,14 @@ The Linked Data Theatre uses [semantic versioning](http://semver.org).
 
 If you make any changes to the LDT, you should include a `-SNAPSHOT` postfix to the project version, like any maven project. *A release version should never have such a postfix.*
 
-Set the project version for any new release. But set only the release version for a major or minor release. **Don't set the release version (or release date) for a patch version!** Change this in the `\pom.xml` maven project file:
+Set the project version for any new release. But set only the release version for a major or minor release. **Don't set the release version (or release date) for a patch version!**. Always set the patch date. Change this in the `\pom.xml` maven project file:
 
 	<project>
 		<version>1.6.0</version>
 		<properties>
 			<release.version>1.6.0</release.version>
 			<release.date>2016-03-13</release.date>
+			<patch.date>2016-03-13</release.date>
 		</properties>
 
 (This example shows only the relevant lines from the pom.xml. This example refers to a release with version 1.6.0 and release data march 13, 2016).

@@ -3,6 +3,8 @@ package nl.architolk.ldt.license;
 import com.mycila.maven.plugin.license.PropertiesProvider;
 import com.mycila.maven.plugin.license.document.Document;
 import com.mycila.maven.plugin.license.AbstractLicenseMojo;
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
 import java.util.HashMap;
@@ -15,6 +17,8 @@ public class LicenseProvider implements PropertiesProvider {
 	public static final String FILE_TIMESTAMP = "file.date";
 	public static final String FILE_VERSION = "file.version";
 
+	private volatile GitLookUp gitLookUp;
+	
 	public LicenseProvider() {
 		super();
 	}
@@ -27,15 +31,23 @@ public class LicenseProvider implements PropertiesProvider {
 			Date timestamp = new Date(document.getFile().lastModified());
 			String fileDate = dt.format(timestamp);
 			result.put(FILE_TIMESTAMP, fileDate);
-			//Set file version to project version OR release version if document date is release date
+			//Get git information
+			String commitVersion = getGitLookUp(document.getFile()).getCommitMessage(document.getFile());
+			//mojo.warn("COMMIT: %s",commitVersion);
+			//Set file version to project version OR release version if document date is release date OR commit version if document date is not after patch date
 			String projectVersion = properties.getProperty("project.version");
 			String releaseVersion = mojo.properties.get("release.version");
 			String releaseDate = properties.getProperty("release.date");
+			String patchDate = properties.getProperty("patch.date");
 			if (fileDate.equals(releaseDate)) {
 				result.put(FILE_VERSION,releaseVersion);
 			}
 			else {
-				result.put(FILE_VERSION,projectVersion);
+				if (fileDate.compareTo(patchDate)<=0) {
+					result.put(FILE_VERSION,commitVersion);
+				} else {
+					result.put(FILE_VERSION,projectVersion);
+				}
 			}
             return Collections.unmodifiableMap(result);
 		} catch (Exception e) {
@@ -43,4 +55,15 @@ public class LicenseProvider implements PropertiesProvider {
 		}
 	}
 
+	private GitLookUp getGitLookUp(File file) throws IOException {
+		if (gitLookUp == null) {
+			synchronized (this) {
+				if (gitLookUp == null) {
+					gitLookUp = new GitLookUp(file);
+				}
+			}
+		}
+		return gitLookUp;
+	}
+	
 }
