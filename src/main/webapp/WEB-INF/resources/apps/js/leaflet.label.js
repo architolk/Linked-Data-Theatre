@@ -1,7 +1,7 @@
 /*
  * NAME     leaflet.label.js
- * VERSION  1.6.0
- * DATE     2016-03-13
+ * VERSION  1.6.2-SNAPSHOT
+ * DATE     2016-03-16
  *
  * Copyright 2012-2016
  *
@@ -103,7 +103,7 @@ L.Label = (L.Layer ? L.Layer : L.Class).extend({
 
 	_updatePosition: function () {
 		var pos = this._map.latLngToLayerPoint(this._latlng);
-		this._setPosition(pos);
+		this._setPosition(pos,this._map.getZoom());
 	},
 
 	_update: function () {
@@ -117,7 +117,7 @@ L.Label = (L.Layer ? L.Layer : L.Class).extend({
 
 	_zoomAnimation: function (opt) {
 		var pos = this._map._latLngToNewLayerPoint(this._latlng, opt.zoom, opt.center).round();
-		this._setPosition(pos);
+		this._setPosition(pos,opt.zoom);
 	},
 
 	_onViewReset: function (e) {
@@ -127,9 +127,9 @@ L.Label = (L.Layer ? L.Layer : L.Class).extend({
 		}
 	},
 
-	_setPosition: function (pos) {
+	_setPosition: function (pos,zoom) {
 		// Not very pretty, but it works...
-		switch (this._map.getZoom()) {
+		switch (zoom) {
 			case 1:
 				zoomSize = 6;
 				break;

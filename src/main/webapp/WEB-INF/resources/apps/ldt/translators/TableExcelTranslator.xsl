@@ -1,8 +1,8 @@
 <!--
 
     NAME     TableExcelTranslator.xsl
-    VERSION  1.6.0
-    DATE     2016-03-13
+    VERSION  1.6.2-SNAPSHOT
+    DATE     2016-03-16
 
     Copyright 2012-2016
 
@@ -180,7 +180,6 @@
 						</xsl:choose>
 					</xsl:for-each>
 				</xsl:variable>
-				<xsl:copy-of select="$conditions"/>
 				<!-- Parse all rows in value sheet -->
 				<!-- <xsl:variable name="uri-schema" select="column[@id='3']"/> -->
 				<xsl:for-each select="/root/workbook/sheet[@name=$valuesheet]/row[position()!=1]">
@@ -226,6 +225,7 @@
 											</xsl:call-template>
 										</xsl:when>
 										<xsl:otherwise />
+									</xsl:choose>
 								</xsl:variable>
 								<xsl:if test="exists($columns[@id=$column])">
 									<xsl:variable name="prefix" select="replace(@uri,'(/|#|\\)[0-9A-Za-z-._~()@]+$','$1')"/>

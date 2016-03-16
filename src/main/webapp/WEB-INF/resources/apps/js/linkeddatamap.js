@@ -1,7 +1,7 @@
 /*
  * NAME     linkeddatamap.js
- * VERSION  1.6.0
- * DATE     2016-03-13
+ * VERSION  1.6.2-SNAPSHOT
+ * DATE     2016-03-16
  *
  * Copyright 2012-2016
  *
@@ -459,7 +459,8 @@ function addPoint(latCor, longCor, text, url)
 
 function printMap() {
 
-	map.setZoom(3,{animate:false});
+	//Set zoom to level 1: everything should be visible
+	map.setZoom(1,{animate:false});
 	var img = document.getElementsByClassName("leaflet-image-layer")[0]; //Dit mag beter: er zijn mogelijk meerdere img met deze classname
 
 	//Size of the container should be the size of the image (don't know how to do this :-(
