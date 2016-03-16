@@ -1,8 +1,8 @@
 <!--
 
     NAME     svg2fo.xsl
-    VERSION  1.6.0
-    DATE     2016-03-13
+    VERSION  1.6.2-SNAPSHOT
+    DATE     2016-03-16
 
     Copyright 2012-2016
 
@@ -87,7 +87,9 @@
 						<fo:instream-foreign-object content-width="{$svgwidth}px" content-height="{$svgheight}px">
 							<svg:svg width="{$svgwidth}px" height="{$svgheight}px">
 								<svg:g>
-									<xsl:copy-of select="svg:g/*"/>
+									<xsl:for-each select="svg:g">
+										<xsl:apply-templates select="*" mode="svg"/>
+									</xsl:for-each>
 								</svg:g>
 							</svg:svg>
 						</fo:instream-foreign-object>
@@ -98,5 +100,20 @@
 	</fo:root>
 </xsl:for-each>
 </xsl:template>
+
+<xsl:template match="svg:path" mode="svg">
+	<xsl:if test="@class!='shidden-object leaflet-clickable'">
+		<svg:path fill="{@fill}" marker-end="{@marker-end}" stroke="{@stroke}" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.5" stroke-width="1" d="{@d}"/>
+	</xsl:if>
+</xsl:template>
+
+<xsl:template match="svg:text" mode="svg">
+	<xsl:copy-of select="."/>
+</xsl:template>
+
+<xsl:template match="svg:marker" mode="svg">
+	<xsl:copy-of select="."/>
+</xsl:template>
+
 
 </xsl:stylesheet>

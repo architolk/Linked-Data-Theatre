@@ -412,7 +412,10 @@ function addEdge(subject,predicate,object) {
 		latlngs.push(sSub.getLayers()[0].getLatLng());
 		latlngs.push(sObj.getLayers()[0].getLatLng());
 		var polyline = L.polyline(latlngs, {className: 'edgestyle'}).addTo(map);
-		d3.select(polyline._path).attr("marker-end","url(#ArrowHead)");
+		d3.select(polyline._path)
+			.attr("marker-end","url(#ArrowHead)")
+			.attr("stroke","#606060")
+		;
 		sSub.getLayers()[0].edge = polyline;
 	}
 
@@ -567,6 +570,9 @@ function showLocations(doZoom, appearance)
 	.attr('markerWidth' , 6)
 	.attr('markerHeight', 6)
 	.attr('orient'      , 'auto')
+	.attr('stroke'		, '#909090')
+	.attr('fill'		, 'none')
+	.attr('stroke-width', '2px')
   .append('path')
 	.attr('d', 'M0,-5L10,0L0,5');
 	
