@@ -1,8 +1,8 @@
 <!--
 
     NAME     context.xsl
-    VERSION  1.6.0
-    DATE     2016-03-13
+    VERSION  1.6.3-SNAPSHOT
+    DATE     2016-03-21
 
     Copyright 2012-2016
 
@@ -34,6 +34,7 @@
 	<xsl:template match="/root|/croot">
 		<xsl:variable name="domain" select="request/headers/header[name='host']/value"/>
 		<xsl:variable name="docroot"><xsl:value-of select="theatre/site[@domain=$domain]/@docroot"/></xsl:variable>
+		<xsl:variable name="stylesheet"><xsl:value-of select="theatre/site[@domain=$domain]/@css"/></xsl:variable>
 		<xsl:variable name="subdomain1" select="substring-after(theatre/subdomain,$docroot)"/>
 		<xsl:variable name="subdomain">
 			<xsl:if test="matches($subdomain1,'^[^/]')">/</xsl:if>
@@ -101,6 +102,7 @@
 			<user><xsl:value-of select="request/remote-user"/></user>
 			<user-role><xsl:value-of select="request-security/role"/></user-role>
 			<representation><xsl:value-of select="theatre/representation"/></representation>
+			<xsl:if test="$stylesheet!=''"><stylesheet href="{$docroot}/css/{$stylesheet}"/></xsl:if>
 			<format>
 				<xsl:choose>
 					<xsl:when test="theatre/format='graphml'">application/graphml+xml</xsl:when> <!-- No specific mime-type is available for graphml, this seems the most logical -->

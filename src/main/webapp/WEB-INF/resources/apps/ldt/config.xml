@@ -2,7 +2,7 @@
 
     NAME     config.xml
     VERSION  1.6.3-SNAPSHOT
-    DATE     2016-03-17
+    DATE     2016-03-21
 
     Copyright 2012-2016
 
@@ -38,6 +38,7 @@
     - the <site> node contains the configuration for every domainname that is served by the LDT
       - domain: the domainname for this configuration
   	  - icon: (optional) the favicon.ico that is visible for this domain
+	  - css: (optional) an alternative css stylesheet for this domain
 	  - docroot: (optional): use a docroot, if the LDT is not installed in the tomcat ROOT and is only serving a subdirectory
 			(for example: http://mydomain.org/linkeddatatheatre/...)
 			When using the docroot, all URI's will be made relative to this docroot and not the root itself
