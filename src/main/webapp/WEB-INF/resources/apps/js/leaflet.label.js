@@ -1,7 +1,7 @@
 /*
  * NAME     leaflet.label.js
- * VERSION  1.6.2
- * DATE     2016-03-16
+ * VERSION  1.6.3-SNAPSHOT
+ * DATE     2016-03-21
  *
  * Copyright 2012-2016
  *
@@ -63,15 +63,6 @@ L.Label = (L.Layer ? L.Layer : L.Class).extend({
 
 	setContent: function (content) {
 		this._content = content;
-		//this._updateContent();
-		
-		//DIT MOET ELDERS
-		/*
-		this._initLayout();
-		this._map = this._source._map;
-		*/
-		//TOT HIER
-
 		return this;
 	},
 
@@ -128,20 +119,8 @@ L.Label = (L.Layer ? L.Layer : L.Class).extend({
 	},
 
 	_setPosition: function (pos,zoom) {
-		// Not very pretty, but it works...
-		switch (zoom) {
-			case 1:
-				zoomSize = 6;
-				break;
-			case 2:
-				zoomSize = 11;
-				break;
-			case 3:
-				zoomSize = 16;
-				break;
-			default:
-				zoomSize = 30;
-		}
+		//sizing for labels is a power of two
+		var zoomSize = Math.pow(2,zoom+1);
 		this._container.setAttribute("x",pos.x+zoomSize);
 		this._container.setAttribute("y",pos.y-zoomSize);
 		this._container.style.fontSize = zoomSize+"px";

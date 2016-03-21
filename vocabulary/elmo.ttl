@@ -1,7 +1,7 @@
 #
 # NAME     elmo.ttl
-# VERSION  1.6.0
-# DATE     2016-03-13
+# VERSION  1.6.3-SNAPSHOT
+# DATE     2016-03-21
 #
 # Copyright 2012-2016
 #
@@ -570,8 +570,8 @@ elmo:Conversion		a	owl:Class;
 	rdfs:subClassOf		elmo:Performance;
 	rdfs:label			"conversion"@en;
 	rdfs:label			"conversie"@nl;
-	rdfs:comment		"A conversion is a performance that converts some RDB data into linked data. A conversion should be places after the \convert (like a container is always behind \container)"@en;
-	rdfs:comment		"Een conversie is een optreden waarbij RDB data wordt geconverteerd naar linked data. Een conversie behoort aangesproken te worden vanaf een \convert-URI (net zoals bij een container en een \container-URI)"@nl;
+	rdfs:comment		"A conversion is a performance that converts some RDB data into linked data. A conversion should be places after the /convert (like a container is always behind /container)"@en;
+	rdfs:comment		"Een conversie is een optreden waarbij RDB data wordt geconverteerd naar linked data. Een conversie behoort aangesproken te worden vanaf een /convert-URI (net zoals bij een container en een /container-URI)"@nl;
 .
 elmo:tripleMap		a	owl:ObjectProperty;
 	rdfs:label			"triple map"@en;
