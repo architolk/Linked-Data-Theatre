@@ -1,8 +1,8 @@
 <!--
 
     NAME     query.xpl
-    VERSION  1.6.0
-    DATE     2016-03-13
+    VERSION  1.6.3-SNAPSHOT
+    DATE     2016-03-21
 
     Copyright 2012-2016
 
@@ -388,7 +388,7 @@
 								</xsl:when>
 								<xsl:when test="exists(elmo:data[1])">
 									<!-- Als er letterlijke data wordt opgevraagd, dan deze straks ophalen via de query -->
-									<representation uri="{@rdf:about}" index="{position()}">
+									<representation uri="{@rdf:about}" index="{position()}" endpoint="{/root/context/configuration-endpoint}">
 										<xsl:if test="exists(elmo:appearance[1])"><xsl:attribute name="appearance"><xsl:value-of select="elmo:appearance[1]/@rdf:resource"/></xsl:attribute></xsl:if>
 										<xsl:if test="exists(elmo:operation[1])"><xsl:attribute name="operation"><xsl:value-of select="elmo:operation[1]/@rdf:resource"/></xsl:attribute></xsl:if>
 										<xsl:apply-templates select="elmo:queryForm"/>
