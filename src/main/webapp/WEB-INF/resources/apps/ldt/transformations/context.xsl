@@ -2,7 +2,7 @@
 
     NAME     context.xsl
     VERSION  1.6.3-SNAPSHOT
-    DATE     2016-03-21
+    DATE     2016-03-29
 
     Copyright 2012-2016
 
@@ -64,23 +64,6 @@
 			3. The backstage is defined, and the stage is requested. In this case: the back-of-the-stage should not be available
 		-->
 		<xsl:variable name="back-of-stage">
-			<!-- Dit is vermoedelijk goed
-			<xsl:choose>
-				<xsl:when test="exists($stage) and not($stage/../@backstage!='')">
-					<xsl:text>http://</xsl:text>
-					<xsl:value-of select="$stage/../@domain"/>
-					<xsl:if test="$stage[1]/@name!=''">/<xsl:value-of select="$stage[1]/@name"/></xsl:if>
-					<xsl:text>/stage</xsl:text>
-				</xsl:when>
-				<xsl:when test="exists($backstage)">
-					<xsl:text>http://</xsl:text>
-					<xsl:value-of select="$backstage/../@domain"/>
-					<xsl:if test="$backstage[1]/@name!=''">/<xsl:value-of select="$backstage[1]/@name"/></xsl:if>
-					<xsl:text>/stage</xsl:text>
-				</xsl:when>
-				<xsl:otherwise/>
-			</xsl:choose>
-			-->
 			<xsl:if test="exists($backstage)">
 				<xsl:text>http://</xsl:text>
 				<xsl:value-of select="$backstage/../@domain"/>
@@ -91,7 +74,12 @@
 		
 		<context docroot="{$docroot}" version="{version/number}" timestamp="{version/timestamp}" sparql="{theatre/@sparql}">
 			<configuration-endpoint><xsl:value-of select="theatre/@configuration-endpoint"/></configuration-endpoint>
-			<local-endpoint><xsl:value-of select="theatre/@local-endpoint"/></local-endpoint>
+			<local-endpoint>
+				<xsl:choose>
+					<xsl:when test="theatre/site[@domain=$domain]/@site-endpoint!=''"><xsl:value-of select="theatre/site[@domain=$domain]/@site-endpoint"/></xsl:when>
+					<xsl:otherwise><xsl:value-of select="theatre/@local-endpoint"/></xsl:otherwise>
+				</xsl:choose>
+			</local-endpoint>
 			<url><xsl:value-of select="request/request-url"/></url>
 			<domain><xsl:value-of select="$domain"/></domain>
 			<subdomain><xsl:value-of select="$subdomain"/></subdomain>

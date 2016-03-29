@@ -32,8 +32,20 @@ The LDT is tested with Tomcat version 7.0.33.
 ### 3. Install the Linked Data Theatre
 Stop your Tomcat service. Delete all files in the \webapps\ROOT directory and unpack the LDT.war into the \webapps\ROOT directory. Restart your Tomcat service.
 
+#### 3.1 Using an existing Tomcat installation
+If you want to use an existing tomcat installation, just unpack the war in the \webapps\ldt directory. Make sure you change the configuration file (section 4.1).
+
 ### 4. Change the configuration file
 All system configurations are stored in `\webapps\ROOT\WEB-INF\resources\apps\ldt\config.xml`. The default configuration works OK for development purposes: installation on your localhost with a virtuoso endpoint on the same machine. Change it if you have a different configuration. (See the wiki for more information).
+
+#### 4.1 In case of an existing Tomcat installation.
+If you have performed step 3.1, please add a `docroot` statement to the configuration file:
+
+	<site domain="localhost" icon="favicon.ico" docroot="/ldt">
+		<stage/>
+	</site>
+
+Without the docroot statement, the LDT won't be able to find the right stylesheets or javascript libraries.
 
 ### 5. Test your version of the Linked Data Theatre
 Go to `http://localhost/version` and check if the Linked Data Theatre runs correctly. You should receive something that looks like this:
