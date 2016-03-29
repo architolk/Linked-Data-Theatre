@@ -1,7 +1,7 @@
 /*
  * NAME     leaflet.label.js
- * VERSION  1.6.3-SNAPSHOT
- * DATE     2016-03-21
+ * VERSION  1.6.3
+ * DATE     2016-03-29
  *
  * Copyright 2012-2016
  *

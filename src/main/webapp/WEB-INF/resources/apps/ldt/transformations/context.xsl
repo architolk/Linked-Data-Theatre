@@ -1,7 +1,7 @@
 <!--
 
     NAME     context.xsl
-    VERSION  1.6.3-SNAPSHOT
+    VERSION  1.6.3
     DATE     2016-03-29
 
     Copyright 2012-2016
