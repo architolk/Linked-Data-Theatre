@@ -2,6 +2,7 @@
 If you are using the Linked Data Theatre behind a corporate firewall, changes are that the LInked Data Theatre cannot access a remote endpoint directly. Sometimes it is necessary to use a proxy server.
 
 The Linked Data Theatre is capable of using a proxy server via the proxy-access functionality of Orbeon.
+(see: [http://doc.orbeon.com/configuration/properties/index.html](http://doc.orbeon.com/configuration/properties/index.html))
 
 ## Steps
 Create the file `properties-local.xml` in the directory `\WEB-INF\resources\config`. This file should look something like:

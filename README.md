@@ -15,3 +15,5 @@ The Linked Data Theatre uses a configuration graph containing all the triples th
 To add security to the Linked Data Theatre, follow the instructions in [SECURE.md](SECURE.md).
 
 If you run the Linked Data Theatre behind a corporate firewall and access to the internet is restricted by a proxy, follow the instructions in [PROXY.md](PROXY.md).
+
+If you want to access a secure endpoint (https), but the certificate is untrusted, you have to setup a keystore, follow the instructions in [KEYSTORE.md](KEYSTORE.md).
