@@ -338,8 +338,7 @@
 		<link rel="stylesheet" type="text/css" href="{$docroot}/css/bootstrap-datepicker3.min.css"/>
 		<link rel="stylesheet" type="text/css" href="{$docroot}/css/ldt-theme.css"/>
 
-		<!-- Rijkshuisstijl -->
-		<!-- <link rel="stylesheet" type="text/css" href="{$docroot}/rhs/theme.css"/> -->
+		<!-- Alternatieve stijlen -->
 		<xsl:for-each select="context/stylesheet">
 			<link rel="stylesheet" type="text/css" href="{$docroot}{@href}"/>
 		</xsl:for-each>

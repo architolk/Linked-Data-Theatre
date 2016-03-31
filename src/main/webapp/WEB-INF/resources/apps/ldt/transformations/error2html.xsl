@@ -1,8 +1,8 @@
 <!--
 
     NAME     error2html.xsl
-    VERSION  1.6.0
-    DATE     2016-03-13
+    VERSION  1.6.4-SNAPSHOT
+    DATE     2016-03-31
 
     Copyright 2012-2016
 
@@ -44,6 +44,12 @@
 			<link rel="stylesheet" type="text/css" href="{$docroot}/css/bootstrap.min.css"/>
 			<link rel="stylesheet" type="text/css" href="{$docroot}/css/dataTables.bootstrap.min.css"/>
 			<link rel="stylesheet" type="text/css" href="{$docroot}/css/ldt-theme.css"/>
+
+			<!-- Alternatieve stijlen -->
+			<xsl:for-each select="results/context/stylesheet">
+				<link rel="stylesheet" type="text/css" href="{$docroot}{@href}"/>
+			</xsl:for-each>
+
 			<script type="text/javascript" language="javascript" src="{$docroot}/js/jquery-1.11.3.min.js"></script>
 			<script type="text/javascript" language="javascript" src="{$docroot}/js/jquery.dataTables.min.js"></script>
 			<script type="text/javascript" language="javascript" src="{$docroot}/js/dataTables.bootstrap.min.js"></script>
