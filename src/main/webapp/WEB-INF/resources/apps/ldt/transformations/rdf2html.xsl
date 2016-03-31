@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2html.xsl
-    VERSION  1.6.2
-    DATE     2016-03-16
+    VERSION  1.6.4-SNAPSHOT
+    DATE     2016-03-31
 
     Copyright 2012-2016
 
@@ -533,7 +533,7 @@
 				margin-top: 0px;
 			}
 		</style>
-		<div class="row">
+		<!-- <div class="row"> -->
 			<ul class="nav nav-tabs">
 				<xsl:for-each select="res:binding">
 					<li>
@@ -555,7 +555,7 @@
 					</li>
 				</xsl:for-each>
 			</ul>
-		</div>
+		<!-- </div> -->
 	</xsl:for-each>
 	<!-- IndexAppearance with static data -->
 	<xsl:for-each select="rdf:Description[exists(rdfs:label)][1]">
@@ -568,7 +568,7 @@
 				margin-top: 0px;
 			}
 		</style>
-		<div class="row">
+		<!-- <div class="row"> -->
 			<ul class="nav nav-tabs">
 				<xsl:variable name="value" select="tokenize(rdf:value,'\|')"/>
 				<xsl:variable name="link" select="html:link"/>
@@ -582,7 +582,7 @@
 					</li>
 				</xsl:for-each>
 			</ul>
-		</div>
+		<!-- </div> -->
 	</xsl:for-each>
 </xsl:template>
 
@@ -610,7 +610,7 @@
 	<!-- A select query will have @rdf:nodeID elements, with id 'rset' -->
 	<xsl:for-each select="rdf:Description[@rdf:nodeID='rset']">
 		<xsl:if test="$paging='true' or exists(res:solution)">
-			<div class="row">
+			<!-- <div class="row"> -->
 				<script type="text/javascript" charset="utf-8">
 					$(document).ready(function() {
 						elmo_language.paging = <xsl:value-of select="$paging"/>;
@@ -667,7 +667,7 @@
 					</tbody>
 				</table>
 				<a href="{$original-link}xlsx">Excel</a>
-			</div>
+			<!-- </div> -->
 		</xsl:if>
 	</xsl:for-each>
 </xsl:template>
@@ -676,15 +676,15 @@
 	<!-- A construct query will have @rdf:about elements -->
 	<xsl:if test="exists(rdf:Description/@rdf:about)">
 		<xsl:for-each select="rdf:Description">
-			<div class="row">
+			<!-- <div class="row"> -->
 				<xsl:apply-templates select="." mode="PropertyTable"/>
-			</div>
+			<!-- </div> -->
 		</xsl:for-each>
 	</xsl:if>
 </xsl:template>
 
 <xsl:template match="rdf:RDF" mode="HtmlAppearance">
-	<div class="row">
+	<!-- <div class="row"> -->
 		<div class="panel panel-primary">
 			<div class="panel-heading">
 				<h3 class="panel-title">
@@ -711,7 +711,7 @@
 				</xsl:if>
 			</div>
 		</div>
-	</div>
+	<!-- </div> -->
 </xsl:template>
 
 <xsl:template match="rdf:RDF" mode="HeaderAppearance">
@@ -890,7 +890,7 @@
 </xsl:template>
 
 <xsl:template match="rdf:RDF" mode="GraphAppearance">
-	<div class="row" style="position: relative">
+	<div style="position: relative">
 		<div class="panel panel-primary" style="position:absolute;right:20px;top:50px">
 			<div class="panel-heading"><span class="glyphicon glyphicon-off" style="position:absolute;right:5px;margin-top:2px;cursor:pointer" onclick="this.parentNode.parentNode.style.display='none'"/></div>	
 			<table style="margin-left:10px">
@@ -902,7 +902,7 @@
 				</xsl:for-each>
 			</table>
 		</div>
-		<div class="panel panel-primary">
+		<div class="panel panel-primary panel-secondary">
 			<div id="graphtitle" class="panel-heading"/>
 			<div id="graph" class="panel-body"/>
 		</div>
@@ -1075,7 +1075,7 @@ table.fragment tr td{
 	position: relative;
 }
 	</style>
-	<div class="row">
+	<!-- <div class="row"> -->
 		<div class="panel panel-primary">
 			<div id="graphtitle" class="panel-heading"><xsl:value-of select="xmldocs/xmldoc/document/*[1]/*[@class='title']"/></div>
 			<div id="graph" class="panel-body">
@@ -1095,7 +1095,7 @@ table.fragment tr td{
 				</xsl:for-each>
 			</div>
 		</div>
-	</div>
+	<!-- </div> -->
 </xsl:template>
 
 <xsl:template match="rdf:RDF" mode="FormAppearance">
@@ -1156,7 +1156,7 @@ var substringMatcher = function(strs) {
 			<xsl:text>};</xsl:text>
 		</xsl:for-each>
 	</script>
-	<div class="row">
+	<!-- <div class="row"> -->
 		<div class="panel panel-primary">
 			<div class="panel-heading">
 				<h3 class="panel-title">
@@ -1256,7 +1256,7 @@ var substringMatcher = function(strs) {
 				</form>
 			</div>
 		</div>
-	</div>
+	<!-- </div> -->
 	<script>
 		<xsl:for-each select="rdf:Description[exists(elmo:valuesFrom/@rdf:resource)]">
 			<xsl:variable name="id"><xsl:value-of select="elmo:applies-to"/></xsl:variable>
@@ -1358,7 +1358,7 @@ var substringMatcher = function(strs) {
 		<xsl:variable name="width"><xsl:value-of select="$htmlwidth"/><xsl:if test="not($htmlwidth!='')">1000</xsl:if></xsl:variable>
 		<xsl:variable name="height"><xsl:value-of select="$htmlheight"/><xsl:if test="not($htmlheight!='')">600</xsl:if></xsl:variable>
 		
-		<div class="row">
+		<!-- <div class="row"> -->
 			<div class="panel panel-primary">
 				<div class="panel-heading"/>
 				<div class="panel-body">
@@ -1432,19 +1432,19 @@ var substringMatcher = function(strs) {
 					</script>
 				</div>
 			</div>
-		</div>
+		<!-- </div> -->
 	</xsl:if>
 	
 </xsl:template>
 
 <xsl:template match="rdf:RDF" mode="ChartAppearance">
-	<div class="row">
+	<!-- <div class="row"> -->
 		<div class="panel panel-primary">
 			<div class="panel-heading"/>
 			<div id="blub" class="panel-body">
 			</div>
 		</div>
-	</div>
+	<!-- </div> -->
 	<style>
 		.bar {
 		  fill: steelblue;
