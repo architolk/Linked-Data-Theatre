@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.6.4-SNAPSHOT
-    DATE     2016-03-31
+    DATE     2016-04-04
 
     Copyright 2012-2016
 
@@ -621,7 +621,7 @@
 				<table id="datatable{generate-id()}" class="table table-striped table-bordered">
 					<thead>
 						<tr>
-							<xsl:for-each select="res:resultVariable[not(matches(.,'[^_]*_(label|details|count|uri)'))]">
+							<xsl:for-each select="res:resultVariable[not(@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance' or matches(.,'[^_]*_(label|details|count|uri)'))]">
 								<th>
 									<xsl:choose>
 										<xsl:when test="exists(@elmo:label)"><xsl:value-of select="@elmo:label"/></xsl:when>
@@ -638,7 +638,7 @@
 								<xsl:for-each-group select="res:solution" group-by="res:binding[res:variable=$key]/res:value/@rdf:resource">
 									<tr>
 										<xsl:variable name="group" select="current-group()"/>
-										<xsl:for-each select="../res:resultVariable[not(matches(.,'[^_]*_(label|details|count|uri)'))]">
+										<xsl:for-each select="../res:resultVariable[not(@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance' or matches(.,'[^_]*_(label|details|count|uri)'))]">
 											<xsl:variable name="var" select="."/>
 											<td>
 												<!-- Remove duplicates, so still a for-each-group -->
@@ -655,7 +655,7 @@
 								<xsl:for-each select="res:solution">
 									<tr>
 										<xsl:variable name="binding" select="res:binding"/>
-										<xsl:for-each select="../res:resultVariable[not(matches(.,'[^_]*_(label|details|count|uri)'))]">
+										<xsl:for-each select="../res:resultVariable[not(@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance' or matches(.,'[^_]*_(label|details|count|uri)'))]">
 											<xsl:variable name="var" select="."/>
 											<td><xsl:apply-templates select="$binding[res:variable=$var]" mode="tableobject"/></td>
 										</xsl:for-each>
@@ -1408,11 +1408,7 @@ var substringMatcher = function(strs) {
 								</xsl:choose>
 							</xsl:variable>
 							<xsl:variable name="resource-uri">
-								<!-- TIJDELIJK -->
-								<xsl:choose>
-									<xsl:when test="exists(html:link)"><xsl:value-of select="$link-uri"/></xsl:when>
-									<xsl:otherwise><xsl:call-template name="resource-uri"><xsl:with-param name="uri" select="$link-uri"/></xsl:call-template></xsl:otherwise>
-								</xsl:choose>
+								<xsl:call-template name="resource-uri"><xsl:with-param name="uri" select="$link-uri"/></xsl:call-template>
 							</xsl:variable>
 							<xsl:variable name="styleclass">
 								<xsl:choose>

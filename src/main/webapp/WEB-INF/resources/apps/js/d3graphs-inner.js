@@ -1,7 +1,7 @@
 /*
  * NAME     d3graphs-inner.js
- * VERSION  1.6.0
- * DATE     2016-03-13
+ * VERSION  1.6.4-SNAPSHOT
+ * DATE     2016-03-31
  *
  * Copyright 2012-2016
  *
@@ -125,9 +125,9 @@ function updateTitle(d) {
 	}
 	html += '</table><div class="button"><p id="expand" onclick="expand();">Uitbreiden</p></div>';
 	*/
-	var html = '<h3 class="panel-title"><a href="'+uriEndpoint+encodeURIComponent(d['@id'])+'"><span class="glyphicon glyphicon-new-window"/></a> '+d.label;
+	var html = '<h3 class="panel-title"><a style="font-size:16px" href="'+uriEndpoint+encodeURIComponent(d['@id'])+'"><span class="glyphicon glyphicon-new-window"/></a> '+d.label;
 	if (!d.expanded) {
-		html+=' <a onclick="expand();" class="badge">';
+		html+=' <a onclick="expand();" class="badge" style="font-size:12px">';
 		if (d.data['count']) {
 			html+=d.data['count']
 		};

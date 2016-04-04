@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2rdfa.xsl
-    VERSION  1.6.0
-    DATE     2016-03-13
+    VERSION  1.6.4-SNAPSHOT
+    DATE     2016-04-04
 
     Copyright 2012-2016
 
@@ -205,7 +205,11 @@
 					<geo:lat><xsl:value-of select="/root/context/parameters/parameter[name='lat']/value"/></geo:lat>
 				</rdf:Description>
 				</xsl:if>
-				<xsl:copy-of select="/root/results/rdf:RDF[position()=$index]/*"/>
+				<xsl:for-each-group select="/root/results/rdf:RDF[position()=$index]/rdf:Description" group-by="@rdf:about">
+					<rdf:Description rdf:about="{@rdf:about}">
+						<xsl:copy-of select="current-group()/*"/>
+					</rdf:Description>
+				</xsl:for-each-group>
 				<xsl:for-each select="fragment">
 					<rdf:Description rdf:nodeID="f{position()}">
 						<xsl:if test="@applies-to!=''"><elmo:applies-to><xsl:value-of select="@applies-to"/></elmo:applies-to></xsl:if>
