@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.6.4-SNAPSHOT
-    DATE     2016-04-04
+    DATE     2016-04-14
 
     Copyright 2012-2016
 
@@ -1363,13 +1363,13 @@ var substringMatcher = function(strs) {
 				<div class="panel-body">
 					<div id="map"></div>
 					<style>
-						<xsl:for-each select="rdf:Description[html:stylesheet!='' and elmo:applies-to!='' and elmo:applies-to!='http://bp4mc2.org/elmo/def#Appearance']">
-							.s<xsl:value-of select="elmo:applies-to"/> {
-							<xsl:value-of select="html:stylesheet"/>
-							}
 							.shidden-object {
 								display:none;
 								pointer-events: none;
+							}
+						<xsl:for-each select="rdf:Description[html:stylesheet!='' and elmo:applies-to!='' and not(matches(elmo:applies-to,'^http://bp4mc2.org/elmo/def'))]">
+							.s<xsl:value-of select="elmo:applies-to"/> {
+							<xsl:value-of select="html:stylesheet"/>
 							}
 							.edgestyle {
 								stroke: #606060;
@@ -1403,12 +1403,15 @@ var substringMatcher = function(strs) {
 							<!-- //<xsl:value-of select="string-length(geo:geometry[1])"/>-<xsl:value-of select="key('resource',elmo:style[1]/@rdf:resource)/elmo:name"/> -->
 							<xsl:variable name="link-uri">
 								<xsl:choose>
-									<xsl:when test="exists(html:link)"><xsl:value-of select="html:link/@rdf:resource"/></xsl:when>
-									<xsl:otherwise><xsl:value-of select="@rdf:about"/></xsl:otherwise>
+									<xsl:when test="exists(html:link)"><xsl:copy-of select="html:link"/></xsl:when>
+									<xsl:otherwise><html:link rdf:resource="{@rdf:about}"/></xsl:otherwise>
 								</xsl:choose>
 							</xsl:variable>
 							<xsl:variable name="resource-uri">
-								<xsl:call-template name="resource-uri"><xsl:with-param name="uri" select="$link-uri"/></xsl:call-template>
+								<xsl:call-template name="resource-uri">
+									<xsl:with-param name="uri" select="$link-uri/html:link/@rdf:resource"/>
+									<xsl:with-param name="var" select="$link-uri/html:link"/>
+								</xsl:call-template>
 							</xsl:variable>
 							<xsl:variable name="styleclass">
 								<xsl:choose>

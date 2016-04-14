@@ -2,7 +2,7 @@
 
     NAME     rdf2rdfa.xsl
     VERSION  1.6.4-SNAPSHOT
-    DATE     2016-04-04
+    DATE     2016-04-14
 
     Copyright 2012-2016
 
@@ -205,9 +205,34 @@
 					<geo:lat><xsl:value-of select="/root/context/parameters/parameter[name='lat']/value"/></geo:lat>
 				</rdf:Description>
 				</xsl:if>
+				<xsl:variable name="fragments" select="fragment"/>
 				<xsl:for-each-group select="/root/results/rdf:RDF[position()=$index]/rdf:Description" group-by="@rdf:about">
 					<rdf:Description rdf:about="{@rdf:about}">
-						<xsl:copy-of select="current-group()/*"/>
+						<xsl:for-each select="current-group()/*">
+							<xsl:element name="{name()}" namespace="{namespace-uri()}">
+								<!-- full uri of the property -->
+								<xsl:variable name="uri"><xsl:value-of select="namespace-uri()"/><xsl:value-of select="local-name()"/></xsl:variable>
+								<!-- Find an applicable fragment -->
+								<xsl:variable name="fragment" select="$fragments[@applies-to=$uri]"/>
+								<xsl:choose>
+									<xsl:when test="exists(@rdf:resource)">
+										<xsl:if test="exists($fragment/elmo:appearance)">
+											<xsl:attribute name="elmo:appearance"><xsl:value-of select="$fragment/elmo:appearance/@rdf:resource"/></xsl:attribute>
+										</xsl:if>
+										<xsl:attribute name="rdf:resource"><xsl:value-of select="@rdf:resource"/></xsl:attribute>
+									</xsl:when>
+									<xsl:when test="exists(@rdf:nodeID)">
+										<xsl:attribute name="rdf:nodeID"><xsl:value-of select="@rdf:nodeID"/></xsl:attribute>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:if test="exists(@xml:lang)">
+											<xsl:attribute name="xml:lang"><xsl:value-of select="@xml:lang"/></xsl:attribute>
+										</xsl:if>
+										<xsl:value-of select="."/>
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:element>
+						</xsl:for-each>
 					</rdf:Description>
 				</xsl:for-each-group>
 				<xsl:for-each select="fragment">
