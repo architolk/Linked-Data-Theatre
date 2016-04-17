@@ -1,8 +1,8 @@
 <!--
 
     NAME     context.xsl
-    VERSION  1.6.3
-    DATE     2016-03-29
+    VERSION  1.6.4-SNAPSHOT
+    DATE     2016-04-17
 
     Copyright 2012-2016
 
@@ -27,7 +27,7 @@
   Generates the context, used in the version.xpl, query.xpl and container.xpl pipelines
   
 -->
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="no"/>
 	
@@ -137,6 +137,13 @@
 					<xsl:copy-of select="."/>
 				</xsl:for-each>
 			</parameters>
+			<xsl:if test="request/body/@xsi:type='xs:anyURI'">
+				<xsl:choose>
+					<xsl:when test="request/method='POST'"><upload-file action='insert'><xsl:value-of select="request/body"/></upload-file></xsl:when>
+					<xsl:when test="request/method='PUT'"><upload-file action='put'><xsl:value-of select="request/body"/></upload-file></xsl:when>
+					<xsl:otherwise/>
+				</xsl:choose>
+			</xsl:if>
 		</context>
 	</xsl:template>
 </xsl:stylesheet>

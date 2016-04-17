@@ -1,7 +1,7 @@
 --
 -- NAME     create_procedures.sql
--- VERSION  1.6.0
--- DATE     2016-03-13
+-- VERSION  1.6.4-SNAPSHOT
+-- DATE     2016-04-17
 --
 -- Copyright 2012-2016
 --
@@ -63,7 +63,9 @@ create procedure LDT.UPDATE_CONTAINER (in fname varchar, in ftype varchar, in pg
 	if (action = 'replace') {
 		exec(concat('sparql clear graph <',targetgraph,'>'));
 	}
-	exec(concat('sparql clear graph<',cgraph,'>'));
+	if (action<>'insert') {
+		exec(concat('sparql clear graph<',cgraph,'>'));
+	}
 	if (ftype = 'ttl') {
 		call DB.DBA.TTLP_MT(file_to_string_output(fname),'',cgraph);
 	}
@@ -101,7 +103,9 @@ create procedure LDT.MULTI_UPDATE_CONTAINER  (in flist varchar, in ftype varchar
 		if (action = 'replace') {
 			exec(concat('sparql clear graph <',targetgraph,'>'));
 		}
-		exec(concat('sparql clear graph<',cgraph,'>'));
+		if (action<>'insert') {
+			exec(concat('sparql clear graph<',cgraph,'>'));
+		}
 		
 		declare fvector any;
 		fvector := split_and_decode(flist,0,'\0\0,');

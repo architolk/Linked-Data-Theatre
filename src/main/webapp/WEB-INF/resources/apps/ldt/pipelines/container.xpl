@@ -1,8 +1,8 @@
 <!--
 
     NAME     container.xpl
-    VERSION  1.6.0
-    DATE     2016-03-13
+    VERSION  1.6.4-SNAPSHOT
+    DATE     2016-04-17
 
     Copyright 2012-2016
 
@@ -99,6 +99,8 @@
 				<include>/request/request-url</include>
 				<include>/request/parameters/parameter</include>
 				<include>/request/remote-user</include>
+				<include>/request/body</include>
+				<include>/request/method</include>
 			</config>
 		</p:input>
 		<p:output name="data" id="request"/>
@@ -744,6 +746,54 @@
 							</p:processor>
 						</p:otherwise>
 					</p:choose>
+				</p:when>
+				<!-- Upload via REST service: separate routine (TODO: should be incorporated!) -->
+				<p:when test="exists(root/context/upload-file/@action)">
+					<p:processor name="oxf:sql">
+						<p:input name="data" href="#context"/>
+						<p:input name="config">
+							<sql:config>
+								<sql:connection>
+									<sql:datasource>virtuoso</sql:datasource>
+									<sql:execute>
+										<sql:call>
+											{call ldt.multi_update_container(<sql:param type="xs:string" select="substring-after(context/upload-file,'file:/')"/>,'ttl',<sql:param type="xs:string" select="context/back-of-stage"/>,<sql:param type="xs:string" select="context/back-of-stage"/>,<sql:param type="xs:string" select="context/back-of-stage"/>,<sql:param type="xs:string" select="context/upload-file/@action"/>,'')}
+										</sql:call>
+										<sql:result-set>
+											<response>
+												<sql:row-iterator>
+													<sql:get-column-value type="xs:string" column="message"/>
+												</sql:row-iterator>
+											</response>
+										</sql:result-set>
+										<sql:no-results>
+											<response>No results</response>
+										</sql:no-results>
+									</sql:execute>
+								</sql:connection>
+							</sql:config>
+						</p:input>
+						<p:output name="data" id="result"/>
+					</p:processor>
+					<!-- Convert XML result to plain text -->
+					<p:processor name="oxf:text-converter">
+						<p:input name="config">
+							<config>
+								<encoding>utf-8</encoding>
+							</config>
+						</p:input>
+						<p:input name="data" href="#result" />
+						<p:output name="data" id="converted" />
+					</p:processor>
+					<!-- Serialize -->
+					<p:processor name="oxf:http-serializer">
+						<p:input name="config">
+							<config>
+								<cache-control><use-local-cache>false</use-local-cache></cache-control>
+							</config>
+						</p:input>
+						<p:input name="data" href="#converted"/>
+					</p:processor>
 				</p:when>
 				<!-- Show old data -->
 				<p:otherwise>
