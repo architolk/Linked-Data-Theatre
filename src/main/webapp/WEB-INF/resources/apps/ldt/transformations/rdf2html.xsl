@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.6.4-SNAPSHOT
-    DATE     2016-04-14
+    DATE     2016-04-19
 
     Copyright 2012-2016
 
@@ -1195,7 +1195,14 @@ var substringMatcher = function(strs) {
 									<xsl:when test="elmo:valuesFrom/@rdf:resource!=''">
 										<xsl:choose>
 											<xsl:when test="count(key('rdf',elmo:valuesFrom/@rdf:resource)/rdf:Description)>2">
-												<input type="text" class="form-control typeahead" id="{elmo:applies-to}"/>
+												<div class="input-group">
+													<input type="text" class="form-control typeahead" id="{elmo:applies-to}"/>
+													<span class="input-group-btn">
+														<button class="btn btn-primary" type="button">
+															<span class="glyphicon glyphicon-triangle-bottom"/>
+														</button>
+													</span>
+												</div>
 												<input type="hidden" id="{elmo:applies-to}-value" name="{elmo:applies-to}"/>
 												<xsl:for-each-group select="key('rdf',elmo:valuesFrom/@rdf:resource)/rdf:Description/*[namespace-uri()='var:']" group-by="local-name()">
 													<input type="hidden" id="{local-name()}" name="{local-name()}"/>
@@ -1265,10 +1272,11 @@ var substringMatcher = function(strs) {
 				$('#<xsl:value-of select="elmo:applies-to"/>').typeahead({
 				  hint: true,
 				  highlight: true,
-				  minLength: 1
+				  minLength: 0
 				},
 				{
 				  name: 'vars',
+				  limit: 10,
 				  displayKey: 'value',
 				  source: substringMatcher(options<xsl:value-of select="$var"/>),
 				}).bind('typeahead:selected',function(obj,datum) {

@@ -99,13 +99,34 @@
 				<include>/request/request-url</include>
 				<include>/request/parameters/parameter</include>
 				<include>/request/remote-user</include>
-				<include>/request/body</include>
 				<include>/request/method</include>
 			</config>
 		</p:input>
 		<p:output name="data" id="request"/>
 	</p:processor>
 
+	<!-- /request/body can only be obtained when no parameters are serialized within the body! -->
+	<p:choose href="#request">
+		<p:when test="not(exists(/request/parameters))">
+			<p:processor name="oxf:request">
+				<p:input name="config">
+					<config stream-type="xs:anyURI">
+						<include>/request/body</include>
+					</config>
+				</p:input>
+				<p:output name="data" id="requestbody"/>
+			</p:processor>
+		</p:when>
+		<p:otherwise>
+			<p:processor name="oxf:identity">
+				<p:input name="data">
+					<request />
+				</p:input>
+				<p:output name="data" id="requestbody"/>
+			</p:processor>
+		</p:otherwise>
+	</p:choose>
+	
 	<!-- Get credentials and user roles -->
 	<p:processor name="oxf:request-security">
 		<p:input name="config" transform="oxf:xslt" href="#instance">        
@@ -131,10 +152,11 @@
 	
 	<!-- Create context -->
 	<p:processor name="oxf:xslt">
-		<p:input name="data" href="aggregate('croot',#instance,#request,#roles)"/>
+		<p:input name="data" href="aggregate('croot',#instance,#request,#requestbody,#roles)"/>
 		<p:input name="config" href="../transformations/context.xsl"/>
 		<p:output name="data" id="context"/>
 	</p:processor>
+
 
 	<p:choose href="#context">
 		<p:when test="matches(context/subject,'backstage/rep$') and context/back-of-stage!=''">
@@ -284,12 +306,12 @@
 			</p:processor>
 		</p:otherwise>
 	</p:choose>
-<!--	
+<!--
 <p:processor name="oxf:xml-serializer">
 	<p:input name="config">
 		<config/>
 	</p:input>
-	<p:input name="data" href="#containercontext"/>
+	<p:input name="data" href="#context"/>
 </p:processor>
 -->
 	<p:choose href="#containercontext">
