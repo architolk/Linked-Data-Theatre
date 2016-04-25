@@ -1,8 +1,8 @@
 <!--
 
     NAME     page-flow.xml
-    VERSION  1.6.3
-    DATE     2016-03-29
+    VERSION  1.6.4-SNAPSHOT
+    DATE     2016-04-25
 
     Copyright 2012-2016
 
@@ -181,9 +181,10 @@
 	
 	<!-- Administrator pages -->
 	<!-- Failsafe, always show a admin page -->
-	<page path="/admin(/[^ ]*)?" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
+	<page path="(((?!admin).)*)/admin(/[^ ]*)?" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
 		<setvalue ref="theatre/query">admin</setvalue>
 		<setvalue ref="theatre/format" parameter="format"/>
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 	</page>
 	
 	<!-- Default indexpage -->
