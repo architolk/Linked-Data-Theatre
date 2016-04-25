@@ -26,9 +26,10 @@ You need the orbeon.jar file to build some of the LDT components. And the orbeon
 The LDT is tested with version 4.7.0 of Orbeon. 
 
 Execute the following steps to download the required files and place them in the correct directories:
+
 1.	Fork and clone the Linked-Data-Theatre from https://github.com/architolk/Linked-Data-Theatre to a local directory.
-2.	In command prompt: cd <local directory>\Linked-Data-Theatre\orbeon
-3.	Execute: mvn package
+2.	In command prompt: `cd {local directory}\Linked-Data-Theatre\orbeon`
+3.	Execute: `mvn package`
 
 
 ### Tomcat
@@ -36,13 +37,13 @@ You need an installation of Tomcat to run Orbeon, and within Orbeon the Linked D
 You can download Tomcat from this location: [https://tomcat.apache.org/](https://tomcat.apache.org/).
 The LDT is tested with Tomcat version 7.0.33.
 
-1-	Download Tomcat from https://tomcat.apache.org/. The LDT is tested with Tomcat version 7.0.33.
-2-	Unpack the distribution so that it resides in its own directory
-3-	Create an environmental variable CATALINA_HOME and set it to the directory where the distribution of tomcat resides
-4-	In command prompt execute: cd %CATALINA_HOME%\bin
-5-	Run Tomcat bij executing the following command: startup.bat
-6-	Visit http://localhost:8080/ to check the default web application included with Tomcat. In case the web application cannot be reached go to the directory where Tomcat is installed and open RUNNING.txt. Possible solutions for not being able to visit the default web application can be found at the end of this document.
-7-	Close tomcat with the command: shutdown.bat
+1.	Download Tomcat from https://tomcat.apache.org/. The LDT is tested with Tomcat version 7.0.33.
+2.	Unpack the distribution so that it resides in its own directory
+3.	Create an environmental variable CATALINA_HOME and set it to the directory where the distribution of tomcat resides
+4.	In command prompt execute: `cd %CATALINA_HOME%\bin`
+5.	Run Tomcat bij executing the following command: `startup.bat`
+6.	Visit http://localhost:8080/ to check the default web application included with Tomcat. In case the web application cannot be reached go to the directory where Tomcat is installed and open RUNNING.txt. Possible solutions for not being able to visit the default web application can be found at the end of this document.
+7.	Close tomcat with the command: `shutdown.bat`
 
 ### Bootstrap and other javascript libraries
 The LDT uses a couple of javascript libraries. It is not needed to download these libraries: the build process will take care of this. Fetch all libraries by executing the command `mvn package` in the `ext-resources` directory.
@@ -56,19 +57,12 @@ The Linked Data Theatre consists of four different components:
 4. Orbeon app (mainly XPL and XSL source code)
 
 ### Build the java source code
-To build the java source code go to the `processors` directory and perform the following steps:
+To build the java source code perform the following steps (only ones):
 
-1.	(Only ones). Go to the processors directory and Install the orbeon.jar in your local maven repository by executing: maven-install-orbeon-jar.bat.
-2.	Go to C:\Users\NBakker\Documents\GitHub\Linked-Data-Theatre\morphrdb
-3.	>mvn package
-4.	C:\Users\NBakker\Documents\GitHub\Linked-Data-Theatre\processors
-5.	>maven-install-morphrdb.bat
-6.	>mvn clean install
-7.	C:\Users\NBakker\Documents\GitHub\Linked-Data-Theatre\license-builder
-8.	.mvn package
-9.	>mvn clean install
-10.	C:\Users\NBakker\Documents\GitHub\Linked-Data-Theatre\processors
-11.	Start the Maven build process: mvn clean install. This will create the processors.jar and installs the jar in the local Maven repository.
+1.	Go to \processors and install the orbeon.jar in your local maven repository by executing: `maven-install-orbeon-jar.bat`.
+2.	Go to \morphrdb and execute: `mvn package`
+3.	Go to \processors and execute `maven-install-morphrdb.bat` following by `mvn clean install`
+4.	Go to \license-builder and execute: `mvn clean install`
 
 ### Virtuoso stored procedures
 No build is needed for the virtuoso stored procedures.
@@ -79,5 +73,6 @@ No build is needed for the javascript sources.
 ### Orbeon app
 You should only perform this step after all other steps!
 To build the full orbeon app (including the orbeon code):
+
 1.	Go to the root directory of the Linked Data Theatre.
-2.	Execute mvn clean package. 
+2.	Execute: `mvn clean package`. 
