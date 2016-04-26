@@ -2,7 +2,7 @@
 
     NAME     container.xpl
     VERSION  1.6.4-SNAPSHOT
-    DATE     2016-04-17
+    DATE     2016-04-26
 
     Copyright 2012-2016
 
@@ -284,18 +284,25 @@
 									</xsl:choose>
 									<representation><xsl:value-of select="elmo:representation/@rdf:resource"/></representation>
 									<postquery><xsl:value-of select="normalize-space(translate(elmo:query,$returns,$noreturns))"/></postquery>
-									<fetchquery>
-										<![CDATA[
-											CONSTRUCT {
-												?s?p?o
-											}
-											WHERE {
-												GRAPH <]]><xsl:value-of select="@rdf:about"/><![CDATA[> {
-													?s?p?o
-												}
-											}
-										]]>
-									</fetchquery>
+									<xsl:choose>
+										<xsl:when test="elmo:representation/@rdf:resource='http://bp4mc2.org/elmo/def#UploadRepresentation'">
+											<fetchquery>CONSTRUCT {?x?x?x} WHERE {?x?x?x}</fetchquery>
+										</xsl:when>
+										<xsl:otherwise>
+											<fetchquery>
+												<![CDATA[
+													CONSTRUCT {
+														?s?p?o
+													}
+													WHERE {
+														GRAPH <]]><xsl:value-of select="@rdf:about"/><![CDATA[> {
+															?s?p?o
+														}
+													}
+												]]>
+											</fetchquery>
+										</xsl:otherwise>
+									</xsl:choose>
 								</xsl:for-each>
 							</container>
 						</xsl:template>

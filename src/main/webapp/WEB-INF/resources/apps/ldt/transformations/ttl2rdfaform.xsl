@@ -1,8 +1,8 @@
 <!--
 
     NAME     ttl2rdfaform.xsl
-    VERSION  1.6.0
-    DATE     2016-03-13
+    VERSION  1.6.4-SNAPSHOT
+    DATE     2016-04-26
 
     Copyright 2012-2016
 
@@ -41,6 +41,7 @@
 	<results>
 		<context>
 			<language>nl</language>
+			<xsl:copy-of select="root/context/stylesheet"/>
 		</context>
 		<rdf:RDF elmo:appearance="http://bp4mc2.org/elmo/def#FormAppearance">
 			<rdf:Description rdf:nodeID="form">
