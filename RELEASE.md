@@ -38,6 +38,7 @@ For example (refering to release 1.6.0):
 
 	git add *
 	git commit -m "Release 1.6.0"
+	git push origin
 	git tag -a v1.6.0 -m "Release 1.6.0"
 	git push origin v1.6.0
 
