@@ -1,8 +1,8 @@
 <!--
 
     NAME     query.xpl
-    VERSION  1.6.3
-    DATE     2016-03-29
+    VERSION  1.6.5-SNAPSHOT
+    DATE     2016-05-01
 
     Copyright 2012-2016
 
@@ -310,8 +310,8 @@
 				</xsl:template>
 				<xsl:template match="elmo:queryForm[@rdf:resource='http://bp4mc2.org/elmo/def#GeoForm']">
 					<xsl:variable name="satisfied">
-						<xsl:if test="not(key('parameters','long')/value!='')">N</xsl:if>
-						<xsl:if test="not(key('parameters','lat')/value!='')">N</xsl:if>
+						<xsl:if test="not(key('parameters','long')/value[1]!='')">N</xsl:if>
+						<xsl:if test="not(key('parameters','lat')/value[1]!='')">N</xsl:if>
 					</xsl:variable>
 					<queryForm satisfied="{$satisfied}" geo="yes">
 						<rdfs:label>TEST</rdfs:label>
@@ -335,7 +335,7 @@
 							<xsl:for-each select="elmo:fragment">
 								<xsl:variable name="fragment" select="key('bnodes',@rdf:nodeID)"/>
 								<xsl:if test="$fragment/elmo:constraint/@rdf:resource='http://bp4mc2.org/elmo/def#MandatoryConstraint'">
-									<xsl:if test="$fragment/elmo:applies-to!='' and not(key('parameters',$fragment/elmo:applies-to)/value!='')">N</xsl:if>
+									<xsl:if test="$fragment/elmo:applies-to!='' and not(key('parameters',$fragment/elmo:applies-to)/value[1]!='')">N</xsl:if>
 								</xsl:if>
 							</xsl:for-each>
 						</xsl:variable>
@@ -480,7 +480,7 @@
 					<p:input name="data" href="#instance"/>
 					<p:input name="config" transform="oxf:xslt" href="#context">
 						<sql:config xsl:version="2.0">
-							<xsl:variable name="term" select="context/parameters/parameter[name='term']/value"/>
+							<xsl:variable name="term" select="context/parameters/parameter[name='term']/value[1]"/>
 							<xsl:variable name="termvector">
 								<xsl:for-each select="tokenize($term,'\s+')">
 									<xsl:if test="position()!=1">','</xsl:if>
@@ -583,10 +583,10 @@
 								<xsl:choose>
 									<xsl:when test="exists(following-sibling::*[1])">
 										<xsl:variable name="query"><xsl:apply-templates select="following-sibling::*[1]" mode="replace"/></xsl:variable>
-										<xsl:value-of select="replace($query,concat('@',upper-case(name),'@'),value)"/>
+										<xsl:value-of select="replace($query,concat('@',upper-case(name),'@'),value[1])"/>
 									</xsl:when>
 									<xsl:otherwise>
-										<xsl:value-of select="replace(/root/representation/query,concat('@',upper-case(name),'@'),value)"/>
+										<xsl:value-of select="replace(/root/representation/query,concat('@',upper-case(name),'@'),value[1])"/>
 									</xsl:otherwise>
 								</xsl:choose>
 							</xsl:template>
@@ -594,8 +594,8 @@
 								<parameters>
 									<!-- Currentmoment kan nog beinvloed worden door de date-parameter, beetje raar, afkomstig uit andere implementatie -->
 									<xsl:variable name="currentmoment">
-										<xsl:value-of select="root/context/parameters/parameter[name='date']"/>
-										<xsl:value-of select="substring(xs:string(current-dateTime()),1+string-length(root/context/parameters/parameter[name='date']),255)"/>
+										<xsl:value-of select="root/context/parameters/parameter[name='date']/value[1]"/>
+										<xsl:value-of select="substring(xs:string(current-dateTime()),1+string-length(root/context/parameters/parameter[name='date']/value[1]),255)"/>
 									</xsl:variable>
 									<xsl:variable name="query1">
 										<xsl:apply-templates select="/root/context/parameters/parameter[1]" mode="replace"/>

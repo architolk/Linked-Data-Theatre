@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2ttl.xsl
-    VERSION  1.6.0
-    DATE     2016-03-13
+    VERSION  1.6.5-SNAPSHOT
+    DATE     2016-05-01
 
     Copyright 2012-2016
 
@@ -43,6 +43,7 @@
 		<xsl:when test="exists(xmlresult/container/stage)">
 			<xsl:for-each select="xmlresult/container/stage">
 				<prefix name="stage"><xsl:value-of select="."/>#</prefix>
+				<prefix name="container"><xsl:value-of select="substring-before(.,'stage')"/>container/</prefix>
 				<prefix name="elmo">http://bp4mc2.org/elmo/def#</prefix>
 			</xsl:for-each>
 		</xsl:when>

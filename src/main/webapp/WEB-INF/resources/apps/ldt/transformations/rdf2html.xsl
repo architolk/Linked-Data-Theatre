@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2html.xsl
-    VERSION  1.6.4
-    DATE     2016-04-27
+    VERSION  1.6.5-SNAPSHOT
+    DATE     2016-05-01
 
     Copyright 2012-2016
 
@@ -334,7 +334,6 @@
 
 		<link rel="stylesheet" type="text/css" href="{$docroot}/css/bootstrap.min.css"/>
 		<link rel="stylesheet" type="text/css" href="{$docroot}/css/dataTables.bootstrap.min.css"/>
-		<link rel="stylesheet" type="text/css" href="{$docroot}/css/typeaheadjs.css"/>
 		<link rel="stylesheet" type="text/css" href="{$docroot}/css/bootstrap-datepicker3.min.css"/>
 		<link rel="stylesheet" type="text/css" href="{$docroot}/css/ldt-theme.css"/>
 
@@ -352,7 +351,6 @@
 		<script type="text/javascript" language="javascript" src="{$docroot}/js/jquery.dataTables.min.js"></script>
 		<script type="text/javascript" language="javascript" src="{$docroot}/js/dataTables.bootstrap.min.js"></script>
 		<script type="text/javascript" language="javascript" src="{$docroot}/js/bootstrap.min.js"></script>
-		<script type="text/javascript" language="javascript" src="{$docroot}/js/typeahead.bundle.min.js"></script>
 		<script type="text/javascript" language="javascript" src="{$docroot}/js/bootstrap-datepicker.min.js"></script>
 		<script type="text/javascript" language="javascript" src="{$docroot}/js/locales/bootstrap-datepicker.nl.min.js"></script>
 		<script type="text/javascript" language="javascript" src="{$docroot}/js/d3.v3.min.js"></script>
@@ -545,7 +543,7 @@
 				<xsl:variable name="value" select="tokenize(rdf:value,'\|')"/>
 				<xsl:variable name="link" select="html:link"/>
 				<xsl:variable name="para" select="elmo:name"/>
-				<xsl:variable name="current" select="/results/context/parameters/parameter[name=$para]/value"/>
+				<xsl:variable name="current" select="/results/context/parameters/parameter[name=$para]/value[1]"/>
 				<xsl:for-each select="tokenize(rdfs:label,'\|')">
 					<xsl:variable name="pos" select="position()"/>
 					<li>
@@ -572,7 +570,7 @@
 				<xsl:variable name="value" select="tokenize(rdf:value,'\|')"/>
 				<xsl:variable name="link" select="html:link"/>
 				<xsl:variable name="para" select="elmo:name"/>
-				<xsl:variable name="current" select="/results/context/parameters/parameter[name=$para]/value"/>
+				<xsl:variable name="current" select="/results/context/parameters/parameter[name=$para]/value[1]"/>
 				<xsl:for-each select="tokenize(rdfs:label,'\|')">
 					<xsl:variable name="pos" select="position()"/>
 					<li>
@@ -600,7 +598,7 @@
 		<xsl:value-of select="../context/url"/>
 		<xsl:text>?</xsl:text>
 		<xsl:for-each select="../context/parameters/parameter"> <!-- This doesn't work if the subject is given as a parameter! -->
-			<xsl:value-of select="name"/>=<xsl:value-of select="encode-for-uri(value)"/>
+			<xsl:value-of select="name"/>=<xsl:value-of select="encode-for-uri(value[1])"/>
 			<xsl:text>&amp;</xsl:text>
 		</xsl:for-each>
 		<xsl:text>representation=</xsl:text><xsl:value-of select="encode-for-uri(@elmo:query)"/>
@@ -1098,63 +1096,8 @@ table.fragment tr td{
 </xsl:template>
 
 <xsl:template match="rdf:RDF" mode="FormAppearance">
-	<script>
-var substringMatcher = function(strs) {
-  return function findMatches(q, cb) {
-    var matches, substrRegex;
- 
-    // an array that will be populated with substring matches
-    matches = [];
- 
-    // regex used to determine if a string contains the substring `q`
-    substrRegex = new RegExp(q, 'i');
- 
-    // iterate through the pool of strings and for any string that
-    // contains the substring `q`, add it to the `matches` array
-    $.each(strs, function(i, str) {
-      if (substrRegex.test(str)) {
-        // the typeahead jQuery plugin expects suggestions to a
-        // JavaScript object, refer to typeahead docs for more info
-        matches.push({ value: str });
-      }
-    });
- 
-    cb(matches);
-  };
-};
-	</script>
-	<script>
-		<xsl:for-each select="key('rdf',rdf:Description/elmo:valuesFrom/@rdf:resource)">
-			<xsl:text>var options</xsl:text><xsl:value-of select="generate-id()"/>
-			<xsl:text>= [</xsl:text>
-			<xsl:for-each select="rdf:Description/rdfs:label">
-				<xsl:if test="position()!=1">,</xsl:if>
-				<xsl:text>'</xsl:text>
-				<xsl:value-of select="replace(.,'''','\\''')"/>
-				<xsl:text>'</xsl:text>
-			</xsl:for-each>
-			<xsl:text>];</xsl:text>
-			<xsl:text>var values</xsl:text><xsl:value-of select="generate-id()"/>
-			<xsl:text>= {</xsl:text>
-			<xsl:for-each select="rdf:Description">
-				<xsl:if test="position()!=1">,</xsl:if>
-				<xsl:text>'</xsl:text>
-				<xsl:value-of select="replace(rdfs:label[1],'''','\\''')"/>
-				<xsl:text>':{uri:'</xsl:text>
-				<xsl:value-of select="replace(@rdf:about,'''','\\''')"/>
-				<xsl:text>'</xsl:text>
-				<xsl:for-each select="*[namespace-uri()='var:']">
-					<xsl:text>,</xsl:text>
-					<xsl:value-of select="local-name()"/>
-					<xsl:text>:'</xsl:text>
-					<xsl:value-of select="."/>
-					<xsl:text>'</xsl:text>
-				</xsl:for-each>
-				<xsl:text>}</xsl:text>
-			</xsl:for-each>
-			<xsl:text>};</xsl:text>
-		</xsl:for-each>
-	</script>
+	<script type="text/javascript" language="javascript" src="{$docroot}/js/chosen.jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="{$docroot}/css/bootstrap-chosen.css"/>
 	<!-- <div class="row"> -->
 		<div class="panel panel-primary">
 			<div class="panel-heading">
@@ -1195,18 +1138,14 @@ var substringMatcher = function(strs) {
 									<xsl:when test="elmo:valuesFrom/@rdf:resource!=''">
 										<xsl:choose>
 											<xsl:when test="count(key('rdf',elmo:valuesFrom/@rdf:resource)/rdf:Description)>2">
-												<div class="input-group">
-													<input type="text" class="form-control typeahead" id="{elmo:applies-to}"/>
-													<span class="input-group-btn">
-														<button class="btn btn-primary" type="button">
-															<span class="glyphicon glyphicon-triangle-bottom"/>
-														</button>
-													</span>
+												<div class="input-group" style="width:100%;">
+													<select data-placeholder="Select..." class="chosen-select" multiple="multiple" id="{elmo:applies-to}" name="{elmo:applies-to}">
+														<xsl:for-each select="key('rdf',elmo:valuesFrom/@rdf:resource)/rdf:Description"><xsl:sort select="@rdf:about"/>
+															<option value="{@rdf:about}"><xsl:value-of select="rdfs:label"/></option>
+														</xsl:for-each>
+													</select>
+													<script>$('#<xsl:value-of select="elmo:applies-to"/>').chosen({max_selected_options: 1});</script>
 												</div>
-												<input type="hidden" id="{elmo:applies-to}-value" name="{elmo:applies-to}"/>
-												<xsl:for-each-group select="key('rdf',elmo:valuesFrom/@rdf:resource)/rdf:Description/*[namespace-uri()='var:']" group-by="local-name()">
-													<input type="hidden" id="{local-name()}" name="{local-name()}"/>
-												</xsl:for-each-group>
 											</xsl:when>
 											<xsl:otherwise>
 												<xsl:variable name="applies" select="elmo:applies-to"/>
@@ -1238,7 +1177,7 @@ var substringMatcher = function(strs) {
 										</textarea>
 									</xsl:when>
 									<xsl:otherwise>
-										<input type="text" class="form-control" id="{$applies-to}" name="{$applies-to}" value="{/results/context/parameters/parameter[name=$applies-to]/value}"/>
+										<input type="text" class="form-control" id="{$applies-to}" name="{$applies-to}" value="{/results/context/parameters/parameter[name=$applies-to]/value[1]}"/>
 									</xsl:otherwise>
 								</xsl:choose>
 							</div>
@@ -1263,31 +1202,6 @@ var substringMatcher = function(strs) {
 			</div>
 		</div>
 	<!-- </div> -->
-	<script>
-		<xsl:for-each select="rdf:Description[exists(elmo:valuesFrom/@rdf:resource)]">
-			<xsl:variable name="id"><xsl:value-of select="elmo:applies-to"/></xsl:variable>
-			<xsl:variable name="cnt" select="count(key('rdf',elmo:valuesFrom/@rdf:resource)/rdf:Description)"/>
-			<xsl:variable name="var"><xsl:value-of select="key('rdf',elmo:valuesFrom/@rdf:resource)/generate-id()"/></xsl:variable>
-			<xsl:if test="$id!='' and $var!='' and $cnt>2">
-				$('#<xsl:value-of select="elmo:applies-to"/>').typeahead({
-				  hint: true,
-				  highlight: true,
-				  minLength: 0
-				},
-				{
-				  name: 'vars',
-				  limit: 10,
-				  displayKey: 'value',
-				  source: substringMatcher(options<xsl:value-of select="$var"/>),
-				}).bind('typeahead:selected',function(obj,datum) {
-					$('#<xsl:value-of select="elmo:applies-to"/>-value').val(values<xsl:value-of select="$var"/>[datum.value].uri);
-					<xsl:for-each-group select="key('rdf',elmo:valuesFrom/@rdf:resource)/rdf:Description/*[namespace-uri()='var:']" group-by="local-name()">
-						$('#<xsl:value-of select="local-name()"/>').val(values<xsl:value-of select="$var"/>[datum.value].<xsl:value-of select="local-name()"/>);
-					</xsl:for-each-group>
-				});
-			</xsl:if>
-		</xsl:for-each>
-	</script>
 </xsl:template>
 
 <xsl:template match="rdf:RDF" mode="GeoAppearance">

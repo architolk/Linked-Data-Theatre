@@ -133,13 +133,35 @@
 						</configuration>
 					</execution>
 					<execution>
-						<id>get-typeahead-js</id>
+						<id>get-chosen</id>
 						<goals>
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>https://github.com/twitter/typeahead.js/raw/master/dist/typeahead.bundle.min.js</url>
-							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
+							<url>https://github.com/harvesthq/chosen/releases/download/v1.5.1/chosen_v1.5.1.zip</url>
+							<unpack>true</unpack>
+							<outputDirectory>zips/chosen</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>get-bootstrap-chosen-css</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>https://raw.githubusercontent.com/alxlit/bootstrap-chosen/master/bootstrap-chosen.css</url>
+							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>get-bootstrap-chosen</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>https://github.com/alxlit/bootstrap-chosen/archive/master.zip</url>
+							<unpack>true</unpack>
+							<outputDirectory>zips</outputDirectory>
 						</configuration>
 					</execution>
 					<execution>
@@ -327,6 +349,12 @@
 										<include>yasqe.min.js</include>
 									</includes>
 								</resource>
+								<resource>
+									<directory>zips/chosen</directory>
+									<includes>
+										<include>chosen.jquery.min.js</include>
+									</includes>
+								</resource>
 							</resources>              
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
 						</configuration>            
@@ -343,6 +371,14 @@
 									<directory>zips/YASGUI.YASQE-2.8.3/dist</directory>
 									<includes>
 										<include>yasqe.min.css</include>
+									</includes>
+								</resource>
+								<resource>
+									<directory>zips/bootstrap-chosen-master</directory>
+									<includes>
+										<include>bootstrap-chosen.css</include>
+										<include>chosen-sprite.png</include>
+										<include>chosen-sprite@2x.png</include>
 									</includes>
 								</resource>
 							</resources>              

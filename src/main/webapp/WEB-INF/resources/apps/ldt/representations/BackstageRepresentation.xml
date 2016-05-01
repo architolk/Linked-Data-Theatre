@@ -1,8 +1,8 @@
 <!--
 
     NAME     BackstageRepresentation.xml
-    VERSION  1.6.0
-    DATE     2016-03-13
+    VERSION  1.6.5-SNAPSHOT
+    DATE     2016-05-01
 
     Copyright 2012-2016
 
@@ -56,11 +56,19 @@
 			select ?rep ?urlpattern ?object
 			where {
 				graph <@STAGE@> {
-					?rep rdf:type elmo:Representation.
-					OPTIONAL {?rep elmo:url-pattern ?urlpattern}
-					OPTIONAL {
-						?rep elmo:applies-to ?pattern.
-						?pattern rdf:type ?object.
+					{
+						?rep rdf:type elmo:Representation.
+						OPTIONAL {?rep elmo:url-pattern ?urlpattern}
+						OPTIONAL {
+							?rep elmo:applies-to ?pattern.
+							?pattern rdf:type ?object.
+						}
+					}
+					UNION
+					{
+						?rep rdf:type ?type.
+						BIND(str(?rep) as ?urlpattern)
+						FILTER (?type = elmo:Container || ?type = elmo:VersionContainer)
 					}
 				}
 			}
