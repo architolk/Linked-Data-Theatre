@@ -1,8 +1,8 @@
 <!--
 
     NAME     TableExcelTranslator.xsl
-    VERSION  1.6.2
-    DATE     2016-03-16
+    VERSION  1.7.0
+    DATE     2016-05-02
 
     Copyright 2012-2016
 

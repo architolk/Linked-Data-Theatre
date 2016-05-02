@@ -1,7 +1,7 @@
 <!--
 
     NAME     query.xpl
-    VERSION  1.6.5-SNAPSHOT
+    VERSION  1.7.0
     DATE     2016-05-02
 
     Copyright 2012-2016

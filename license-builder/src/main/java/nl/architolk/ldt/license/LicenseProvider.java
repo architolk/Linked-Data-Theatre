@@ -40,12 +40,16 @@ public class LicenseProvider implements PropertiesProvider {
 			String releaseDate = properties.getProperty("release.date");
 			String patchDate = properties.getProperty("patch.date");
 			if (fileDate.equals(releaseDate)) {
+				//Filedate = releasedate, so the version should be the release version
 				result.put(FILE_VERSION,releaseVersion);
 			}
 			else {
-				if (fileDate.compareTo(patchDate)<=0) {
+				if ((fileDate.compareTo(patchDate)<=0) && (releaseDate.compareTo(patchDate)<0)) {
+					//File is older (or the same) as the patch date, so it's version should be the commit version of the file
+					//Except: when the patchdate is older than the release date, the patchdate should be ignored
 					result.put(FILE_VERSION,commitVersion);
 				} else {
+					//File has changed after patch, so version should be current project version
 					result.put(FILE_VERSION,projectVersion);
 				}
 			}
