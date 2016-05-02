@@ -1,8 +1,8 @@
 <!--
 
     NAME     processors-local.xml
-    VERSION  1.6.0
-    DATE     2016-03-13
+    VERSION  1.6.5-SNAPSHOT
+    DATE     2016-05-02
 
     Copyright 2012-2016
 
@@ -36,6 +36,6 @@
 		<class name="nl.architolk.ldt.processors.XMLFOProcessor"/>
 	</processor>
 	<processor name="oxf:rdb2rdf-processor">
-		<class name="nl.architolk.ldt.processors.RDB2RDFProcessor"/>
+		<class name="nl.architolk.ldt.rdbprocessors.RDB2RDFProcessor"/>
 	</processor>
 </processors>

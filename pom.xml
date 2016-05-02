@@ -37,18 +37,6 @@
 							<filtering>true</filtering>
 						</resource>
 						<resource>
-							<directory>morphrdb</directory>
-							<includes>
-								<include>WEB-INF/lib/**</include>
-							</includes>
-							<excludes>
-								<exclude>WEB-INF/lib/log4j-1.2.14.jar</exclude>
-								<exclude>WEB-INF/lib/scala-library.jar</exclude>
-								<exclude>WEB-INF/lib/slf4j-api-1.5.8.jar</exclude>
-								<exclude>WEB-INF/lib/slf4j-log4j12-1.5.8.jar</exclude>
-							</excludes>
-						</resource>
-						<resource>
 							<directory>orbeon</directory>
 							<includes>
 								<include>WEB-INF/*</include>

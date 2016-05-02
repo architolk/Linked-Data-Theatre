@@ -1,8 +1,8 @@
 <!--
 
     NAME     context.xml
-    VERSION  1.6.0
-    DATE     2016-03-13
+    VERSION  1.6.5-SNAPSHOT
+    DATE     2016-05-02
 
     Copyright 2012-2016
 
@@ -42,5 +42,5 @@
 			    charSet="UTF-8"
 			    url="jdbc:virtuoso://localhost:1111/"
 	/>
-	<Resource name="ldt/converter" auth="Container" type="nl.architolk.ldt.processors.RDB2RDFExecutor" factory="org.apache.naming.factory.BeanFactory"/>
+	<Resource name="ldt/converter" auth="Container" type="nl.architolk.ldt.rdbprocessors.RDB2RDFExecutor" factory="org.apache.naming.factory.BeanFactory"/>
 </Context>
