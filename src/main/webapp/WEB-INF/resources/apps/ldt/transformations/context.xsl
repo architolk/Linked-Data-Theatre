@@ -1,8 +1,8 @@
 <!--
 
     NAME     context.xsl
-    VERSION  1.6.4
-    DATE     2016-04-27
+    VERSION  1.6.5-SNAPSHOT
+    DATE     2016-05-02
 
     Copyright 2012-2016
 
@@ -127,6 +127,17 @@
 						<xsl:variable name="domain" select="substring-before(request/request-url,'/doc/')"/>
 						<xsl:variable name="term" select="substring-after(request/request-url,'/doc/')"/>
 						<xsl:value-of select="$domain"/>/id/<xsl:value-of select="$term"/>
+					</xsl:when>
+					<!-- Special case: /context/ to /def/ redirect -->
+					<xsl:when test="substring-before(request/request-url,'/context/')!=''">
+						<xsl:variable name="domain" select="substring-before(request/request-url,'/context/')"/>
+						<xsl:variable name="term" select="substring-after(request/request-url,'/context/')"/>
+						<xsl:value-of select="$domain"/>
+						<xsl:text>/def/</xsl:text>
+						<xsl:choose>
+							<xsl:when test="matches($term,'.json$')"><xsl:value-of select="substring-before($term,'.json')"/></xsl:when>
+							<xsl:otherwise><xsl:value-of select="$term"/></xsl:otherwise>
+						</xsl:choose>
 					</xsl:when>
 					<!-- Dereferenceable URI, other situations (such as def-URI's) -->
 					<xsl:otherwise><xsl:value-of select="request/request-url"/></xsl:otherwise>

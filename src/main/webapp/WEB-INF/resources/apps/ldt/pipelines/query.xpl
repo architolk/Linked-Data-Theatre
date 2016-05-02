@@ -2,7 +2,7 @@
 
     NAME     query.xpl
     VERSION  1.6.5-SNAPSHOT
-    DATE     2016-05-01
+    DATE     2016-05-02
 
     Copyright 2012-2016
 
@@ -850,6 +850,38 @@
 						<p:input name="config">
 							<config>
 								<cache-control><use-local-cache>false</use-local-cache></cache-control>
+							</config>
+						</p:input>
+						<p:input name="data" href="#converted"/>
+					</p:processor>
+				</p:when>
+				<!-- JSON (LD) - Special case: context -->
+				<p:when test="context/format='application/json' and substring-before(context/url,'/context/')!=''">
+					<!-- Transform -->
+					<p:processor name="oxf:xslt">
+						<p:input name="data" href="#sparql"/>
+						<p:input name="config" href="../transformations/rdf2jsonldcontext.xsl"/>
+						<p:output name="data" id="jsonld"/>
+					</p:processor>
+					<!-- Convert XML result to plain text -->
+					<p:processor name="oxf:text-converter">
+						<p:input name="config">
+							<config>
+								<encoding>utf-8</encoding>
+							</config>
+						</p:input>
+						<p:input name="data" href="#jsonld" />
+						<p:output name="data" id="converted" />
+					</p:processor>
+					<!-- Serialize -->
+					<p:processor name="oxf:http-serializer">
+						<p:input name="config">
+							<config>
+								<cache-control><use-local-cache>false</use-local-cache></cache-control>
+								<header>
+									<name>Access-Control-Allow-Origin</name>
+									<value>*</value>
+								</header>
 							</config>
 						</p:input>
 						<p:input name="data" href="#converted"/>
