@@ -57,6 +57,7 @@
 				<include>/request/request-url</include>
 				<include>/request/parameters/parameter</include>
 				<include>/request/remote-user</include>
+				<include>/request/request-path</include>
 			</config>
 		</p:input>
 		<p:output name="data" id="request"/>

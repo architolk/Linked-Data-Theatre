@@ -103,9 +103,9 @@ create procedure LDT.MULTI_UPDATE_CONTAINER  (in flist varchar, in ftype varchar
 		if (action = 'replace') {
 			exec(concat('sparql clear graph <',targetgraph,'>'));
 		}
-		if (action<>'insert') {
+--		if (action<>'insert') {
 			exec(concat('sparql clear graph<',cgraph,'>'));
-		}
+--		}
 		
 		declare fvector any;
 		fvector := split_and_decode(flist,0,'\0\0,');
@@ -166,3 +166,10 @@ create procedure StrDateDiff (in dstr varchar)
 	return datediff('day',now(),stringdate(left(dstr,10)));
 };
 grant execute on StrDateDiff to public;
+
+drop procedure GetMD5Hash;
+create procedure GetMD5Hash (in fragment varchar)
+{
+	return md5(fragment);
+};
+grant execute on GetMD5Hash to public;

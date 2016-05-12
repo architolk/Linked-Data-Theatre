@@ -1,8 +1,8 @@
 <!--
 
     NAME     context.xsl
-    VERSION  1.7.0
-    DATE     2016-05-02
+    VERSION  1.7.1-SNAPSHOT
+    DATE     2016-05-04
 
     Copyright 2012-2016
 
@@ -32,7 +32,11 @@
 	<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="no"/>
 	
 	<xsl:template match="/root|/croot">
-		<xsl:variable name="domain" select="request/headers/header[name='host']/value"/>
+		<xsl:variable name="x-forwarded-host"><xsl:value-of select="replace(request/headers/header[name='x-forwarded-host']/value,'^([^,]+).*$','$1')"/></xsl:variable>
+		<xsl:variable name="domain">
+			<xsl:value-of select="$x-forwarded-host"/> <!-- Use original hostname in case of proxy, first one in case of multiple proxies -->
+			<xsl:if test="$x-forwarded-host=''"><xsl:value-of select="request/headers/header[name='host']/value"/></xsl:if>
+		</xsl:variable>
 		<xsl:variable name="docroot"><xsl:value-of select="theatre/site[@domain=$domain]/@docroot"/></xsl:variable>
 		<xsl:variable name="stylesheet"><xsl:value-of select="theatre/site[@domain=$domain]/@css"/></xsl:variable>
 		<xsl:variable name="subdomain1" select="substring-after(theatre/subdomain,$docroot)"/>
@@ -72,6 +76,15 @@
 			</xsl:if>
 		</xsl:variable>
 		
+		<!-- URL should be request-url, but in case of proxy we need to replace the host -->
+		<xsl:variable name="url">
+			<xsl:choose>
+				<!-- TODO: Maybe http is not realy correct: what if it should be https?? -->
+				<xsl:when test="$x-forwarded-host!=''">http://<xsl:value-of select="$x-forwarded-host"/><xsl:value-of select="request/request-path"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="request/request-url"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		
 		<context docroot="{$docroot}" version="{version/number}" timestamp="{version/timestamp}" sparql="{theatre/@sparql}">
 			<configuration-endpoint><xsl:value-of select="theatre/@configuration-endpoint"/></configuration-endpoint>
 			<local-endpoint>
@@ -80,7 +93,7 @@
 					<xsl:otherwise><xsl:value-of select="theatre/@local-endpoint"/></xsl:otherwise>
 				</xsl:choose>
 			</local-endpoint>
-			<url><xsl:value-of select="request/request-url"/></url>
+			<url><xsl:value-of select="$url"/></url>
 			<domain><xsl:value-of select="$domain"/></domain>
 			<subdomain><xsl:value-of select="$subdomain"/></subdomain>
 			<query><xsl:value-of select="theatre/query"/></query>
@@ -119,19 +132,19 @@
 			<subject>
 				<xsl:choose>
 					<!-- For security reasons, subject of a container should ALWAYS be the same as the request-url -->
-					<xsl:when test="exists(/croot)"><xsl:value-of select="request/request-url"/></xsl:when>
+					<xsl:when test="exists(/croot)"><xsl:value-of select="$url"/></xsl:when>
 					<!-- Subject URL available in subject parameter -->
 					<xsl:when test="theatre/subject!=''"><xsl:value-of select="theatre/subject"/></xsl:when>
 					<!-- Dereferenceable URI, /doc/ to /id/ redirect -->
-					<xsl:when test="substring-before(request/request-url,'/doc/')!=''">
-						<xsl:variable name="domain" select="substring-before(request/request-url,'/doc/')"/>
-						<xsl:variable name="term" select="substring-after(request/request-url,'/doc/')"/>
+					<xsl:when test="substring-before($url,'/doc/')!=''">
+						<xsl:variable name="domain" select="substring-before($url,'/doc/')"/>
+						<xsl:variable name="term" select="substring-after($url,'/doc/')"/>
 						<xsl:value-of select="$domain"/>/id/<xsl:value-of select="$term"/>
 					</xsl:when>
 					<!-- Special case: /context/ to /def/ redirect -->
-					<xsl:when test="substring-before(request/request-url,'/context/')!=''">
-						<xsl:variable name="domain" select="substring-before(request/request-url,'/context/')"/>
-						<xsl:variable name="term" select="substring-after(request/request-url,'/context/')"/>
+					<xsl:when test="substring-before($url,'/context/')!=''">
+						<xsl:variable name="domain" select="substring-before($url,'/context/')"/>
+						<xsl:variable name="term" select="substring-after($url,'/context/')"/>
 						<xsl:value-of select="$domain"/>
 						<xsl:text>/def/</xsl:text>
 						<xsl:choose>
@@ -140,7 +153,7 @@
 						</xsl:choose>
 					</xsl:when>
 					<!-- Dereferenceable URI, other situations (such as def-URI's) -->
-					<xsl:otherwise><xsl:value-of select="request/request-url"/></xsl:otherwise>
+					<xsl:otherwise><xsl:value-of select="$url"/></xsl:otherwise>
 				</xsl:choose>
 			</subject>
 			<parameters>

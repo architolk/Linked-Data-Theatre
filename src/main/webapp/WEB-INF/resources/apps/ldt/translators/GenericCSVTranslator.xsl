@@ -52,6 +52,7 @@
 								<csvw:row>
 									<csvw:Row rdf:about="{$container}/{$csvname}/r{$pos}">
 										<csvw:rownum><xsl:value-of select="$pos"/></csvw:rownum>
+										<rdfs:label>#<xsl:value-of select="$pos"/></rdfs:label>
 										<csvw:describes>
 											<rdf:Description rdf:about="{$container}/{$csvname}/r{$pos}s">
 												<xsl:for-each select="column">

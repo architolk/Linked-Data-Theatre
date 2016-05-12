@@ -32,15 +32,16 @@
 -->
 <Context reloadable="true">
 	<Resource name="jdbc/virtuoso" auth="Container"
-             type="virtuoso.jdbc3.VirtuosoConnectionPoolDataSource"
-             removeAbandoned="true" removeAbandonedTimeout="30" maxActive="100" maxIdle="30"
-             maxWait="10000"
-             driverClassName="virtuoso.jdbc4.Driver"
-			    factory="virtuoso.jdbc3.VirtuosoDataSourceFactory"
-             username="dba"
-             password="dba"
-			    charSet="UTF-8"
-			    url="jdbc:virtuoso://localhost:1111/"
+		type="virtuoso.jdbc3.VirtuosoConnectionPoolDataSource"
+		removeAbandoned="true" removeAbandonedTimeout="30" maxActive="100" maxIdle="30" maxWait="10000"
+		driverClassName="virtuoso.jdbc4.Driver"
+		factory="virtuoso.jdbc3.VirtuosoDataSourceFactory"
+		username="dba"
+		password="dba"
+		charset="UTF-8"
+		serverName="localhost"
+		portNumber="1111"
+		url="jdbc:virtuoso://localhost:1111/" <!-- Deze regel lijkt niets te doen -->
 	/>
 	<Resource name="ldt/converter" auth="Container" type="nl.architolk.ldt.rdbprocessors.RDB2RDFExecutor" factory="org.apache.naming.factory.BeanFactory"/>
 </Context>
