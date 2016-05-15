@@ -2,7 +2,7 @@
 
     NAME     rdf2graphjson.xsl
     VERSION  1.7.1-SNAPSHOT
-    DATE     2016-05-13
+    DATE     2016-05-16
 
     Copyright 2012-2016
 
@@ -43,7 +43,7 @@
 
 <xsl:template match="/root">
 	<xsl:text>{</xsl:text>
-	<xsl:apply-templates select="key('resource',context/subject)"/>
+	<xsl:apply-templates select="key('resource',context/subject)[1]"/>
 	<xsl:text>}</xsl:text>
 </xsl:template>
 
@@ -116,7 +116,7 @@
 	<xsl:text>]</xsl:text>
 	<xsl:text>,"links":[</xsl:text>
 	<!-- Outgoing links, elmo:style en blank nodes doen niet mee -->
-	<xsl:for-each select="key('resource',$uri)/*[exists(@rdf:resource)] except elmo:style">
+	<xsl:for-each select="key('resource',$uri)/(*[exists(@rdf:resource)] except elmo:style)">
 		<xsl:variable name="ruri"><xsl:value-of select="namespace-uri()"/><xsl:value-of select="local-name()"/></xsl:variable>
 		<xsl:variable name="rlabel"><xsl:value-of select="key('resource',$ruri)/rdfs:label"/></xsl:variable>
 		<xsl:variable name="relatielabel">
@@ -130,7 +130,7 @@
 		<xsl:text>,"label":"</xsl:text><xsl:value-of select="translate($relatielabel,$dblquote,$quote)"/><xsl:text>"</xsl:text>
 		<xsl:text>}</xsl:text>
 	</xsl:for-each>
-	<xsl:variable name="out-count" select="count(key('resource',$uri)/*[exists(@rdf:resource)] except elmo:style)"/>
+	<xsl:variable name="out-count" select="count(key('resource',$uri)/(*[exists(@rdf:resource)] except elmo:style))"/>
 	<!-- Incomming links, blank nodes doen niet mee -->
 	<xsl:for-each select="../rdf:Description[@rdf:about!=$uri]/*[@rdf:resource=$uri]">
 		<xsl:variable name="ruri"><xsl:value-of select="namespace-uri()"/><xsl:value-of select="local-name()"/></xsl:variable>
