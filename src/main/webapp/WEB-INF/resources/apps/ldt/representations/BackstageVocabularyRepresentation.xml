@@ -1,0 +1,116 @@
+<!--
+
+    NAME     BackstageVocabularyRepresentation.xml
+    VERSION  1.7.1-SNAPSHOT
+    DATE     2016-05-04
+
+    Copyright 2012-2016
+
+    This file is part of the Linked Data Theatre.
+
+    The Linked Data Theatre is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    The Linked Data Theatre is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with the Linked Data Theatre.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!--
+    DESCRIPTION
+	Representation that is used when a user goes to the /backstage page.
+	
+-->
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:elmo="http://bp4mc2.org/elmo/def#"
+         xmlns:xhtml="http://www.w3.org/1999/xhtml/vocab#"
+>
+	<rdf:Description rdf:about="http://bp4mc2.org/elmo/def#BackstageRepresentation_Header">
+		<elmo:appearance rdf:resource="http://bp4mc2.org/elmo/def#HeaderAppearance"/>
+		<elmo:query>
+			<![CDATA[
+			prefix elmo: <http://bp4mc2.org/elmo/def#>
+			prefix html: <http://www.w3.org/1999/xhtml/vocab#>
+			construct {
+				<header> elmo:html "<img src='/images/ldt-logo.png'/>"
+			}
+			where {}
+			]]>
+		</elmo:query>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://bp4mc2.org/elmo/def#BackstageRepresentation_List">
+		<elmo:index>1</elmo:index>
+		<elmo:endpoint rdf:resource="http://lov.okfn.org/dataset/lov/sparql"/>
+		<elmo:fragment rdf:nodeID="fvoc"/>
+		<elmo:fragment rdf:nodeID="fpage"/>
+		<elmo:query>
+			<![CDATA[
+				prefix vann: <http://purl.org/vocab/vann/>
+				prefix dct: <http://purl.org/dc/terms/>
+				prefix foaf: <http://xmlns.com/foaf/0.1/>
+				select ?voc ?prefix ?namespace (if(bound(?homepage),iri(?homepage),?voc) as ?page) ?page_label
+				where {
+					?voc dct:title ?page_label.
+					?voc vann:preferredNamespacePrefix ?prefix.
+					?voc vann:preferredNamespaceUri ?namespace.
+					OPTIONAL {?voc foaf:homepage ?homepage}
+				}
+			]]>
+		</elmo:query>
+	</rdf:Description>
+	<rdf:Description rdf:nodeID="fvoc">
+		<elmo:applies-to>voc</elmo:applies-to>
+		<elmo:appearance rdf:resource="http://bp4mc2.org/elmo/def#HiddenAppearance"/>
+		<elmo:name>SUBJECT</elmo:name>
+	</rdf:Description>
+	<rdf:Description rdf:nodeID="fpage">
+		<elmo:applies-to>page</elmo:applies-to>
+		<elmo:appearance rdf:resource="http://bp4mc2.org/elmo/def#GlobalLink"/>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://bp4mc2.org/elmo/def#BackstageRepresentation_Nav">
+		<elmo:appearance rdf:resource="http://bp4mc2.org/elmo/def#NavbarAppearance"/>
+		<elmo:query>
+			<![CDATA[
+			prefix elmo: <http://bp4mc2.org/elmo/def#>
+			prefix html: <http://www.w3.org/1999/xhtml/vocab#>
+			prefix dcterms: <http://purl.org/dc/terms/>
+			construct {
+				<menu-item4> rdfs:label "Query".
+				<menu-item4> html:link ?query.
+				<menu-item4> elmo:index "4".
+				<menu-item3> rdfs:label "Backstage".
+				<menu-item3> html:link ?backstage.
+				<menu-item3> elmo:index "2".
+				<menu-item2> rdfs:label "Add representation".
+				<menu-item2> html:link ?add.
+				<menu-item2> elmo:index "3".
+				<menu-item1> rdfs:label "Goto stage".
+				<menu-item1> html:link ?stage.
+				<menu-item1> elmo:index "1".
+				<menu> dcterms:title ?stagename.
+				<menu> elmo:data <menu-item1>.
+				<menu> elmo:data <menu-item2>.
+				<menu> elmo:data <menu-item3>.
+			}
+			where {
+				select	strbefore("@STAGE@","/stage") as ?stage
+						strafter(strbefore("@STAGE@","/stage"),"http://") as ?stagename
+						concat(strbefore("@STAGE@","/stage"),"/backstage/rep") as ?add
+						concat(strbefore("@STAGE@","/stage"),"/backstage/sparql") as ?query
+						concat(strbefore("@STAGE@","/stage"),"/backstage") as ?backstage
+				where {
+					?x rdf:type elmo:Representation
+				}
+				limit 1
+			}
+			]]>
+		</elmo:query>
+	</rdf:Description>
+</rdf:RDF>

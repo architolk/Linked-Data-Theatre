@@ -24,7 +24,7 @@
 -->
 <!--
   DESCRIPTION
-  Generates the context, used in the version.xpl, query.xpl and container.xpl pipelines
+  Generates the context, used in the version.xpl, query.xpl, sparql.xpl and container.xpl pipelines
   
 -->
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">

@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2html.xsl
-    VERSION  1.7.0
-    DATE     2016-05-02
+    VERSION  1.7.1-SNAPSHOT
+    DATE     2016-05-15
 
     Copyright 2012-2016
 
@@ -52,8 +52,9 @@
 <xsl:template match="*" mode="predicate">
 	<xsl:variable name="predicate"><xsl:value-of select="namespace-uri()"/><xsl:value-of select="local-name()"/></xsl:variable>
 	<a href="{$predicate}">
+		<xsl:if test="@elmo:comment!=''"><xsl:attribute name="title"><xsl:value-of select="@elmo:comment"/></xsl:attribute></xsl:if>
 		<xsl:choose>
-			<xsl:when test="@elmo:label"><xsl:value-of select="@elmo:label"/></xsl:when>
+			<xsl:when test="@elmo:label!=''"><xsl:value-of select="@elmo:label"/></xsl:when>
 			<xsl:otherwise><xsl:value-of select="local-name()"/></xsl:otherwise>
 		</xsl:choose>
 	</a>
@@ -773,11 +774,25 @@
 				</xsl:if>
 			</div>
 			<div id="navbar" class="collapse navbar-collapse">
+				<!--
 				<ul class="nav navbar-nav">
 					<xsl:for-each select="rdf:Description[exists(rdfs:label)]"><xsl:sort select="elmo:index"/>
 						<li><a href="{html:link}"><xsl:value-of select="rdfs:label"/></a></li>
 					</xsl:for-each>
 				</ul>
+				-->
+				<ul class="nav navbar-nav">
+					<xsl:for-each select="rdf:Description[exists(rdfs:label)]"><xsl:sort select="elmo:index"/>
+						<xsl:apply-templates select="." mode="nav"/>
+					</xsl:for-each>
+				</ul>
+				<!--
+				<ul class="nav navbar-nav">
+					<xsl:for-each select="rdf:Description[1]/elmo:data"><xsl:sort select="key('nav-bnode',@rdf:nodeID)/elmo:index"/>
+						<xsl:apply-templates select="key('nav-bnode',@rdf:nodeID)" mode="nav"/>
+					</xsl:for-each>
+				</ul>
+				-->
 			</div>
 		</div>
 	</nav>
@@ -798,7 +813,13 @@
 					</ul>
 				</xsl:when>
 				<xsl:when test="exists(html:link)">
-					<a href="{html:link}"><xsl:value-of select="$label"/></a>
+					<xsl:variable name="link">
+						<xsl:value-of select="html:link"/>
+						<xsl:if test="exists(elmo:subject/@rdf:resource)">?SUBJECT=<xsl:value-of select="encode-for-uri(elmo:subject/@rdf:resource)"/></xsl:if>
+					</xsl:variable>
+					<a href="{$link}">
+						<xsl:value-of select="$label"/>
+					</a>
 				</xsl:when>
 				<xsl:otherwise>
 					<a href="#"><xsl:value-of select="$label"/></a>

@@ -1,8 +1,8 @@
 <!--
 
     NAME     BackstageRepresentation.xml
-    VERSION  1.7.0
-    DATE     2016-05-02
+    VERSION  1.7.1-SNAPSHOT
+    DATE     2016-05-15
 
     Copyright 2012-2016
 
@@ -45,11 +45,53 @@
 			]]>
 		</elmo:query>
 	</rdf:Description>
+	<rdf:Description rdf:about="http://bp4mc2.org/elmo/def#BackstageRepresentation_Content">
+		<elmo:index>1</elmo:index>
+		<elmo:fragment rdf:nodeID="rdfs-label"/>
+		<elmo:fragment rdf:nodeID="rdf-type"/>
+		<elmo:fragment rdf:nodeID="rdfs-comment"/>
+		<elmo:fragment rdf:nodeID="elmo-uses"/>
+		<elmo:query>
+			<![CDATA[
+			prefix elmo: <http://bp4mc2.org/elmo/def#>
+			construct {
+				?presentation ?p ?o.
+			}
+			where {
+				graph <@STAGE@> {
+					?presentation rdf:type elmo:Presentation.
+					?presentation ?p ?o.
+					FILTER (?p = rdfs:label ||
+							?p = rdf:type ||
+							?p = rdfs:comment ||
+							?p = elmo:uses
+					)
+				}
+			}
+			]]>
+		</elmo:query>
+	</rdf:Description>
+	<rdf:Description rdf:nodeID="rdf-type">
+		<elmo:applies-to rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"/>
+		<elmo:appearance rdf:resource="http://bp4mc2.org/elmo/def#HiddenAppearance"/>
+	</rdf:Description>
+	<rdf:Description rdf:nodeID="rdfs-label">
+		<elmo:applies-to rdf:resource="http://www.w3.org/2000/01/rdf-schema#label"/>
+		<elmo:appearance rdf:resource="http://bp4mc2.org/elmo/def#HiddenAppearance"/>
+	</rdf:Description>
+	<rdf:Description rdf:nodeID="rdfs-comment">
+		<elmo:applies-to rdf:resource="http://www.w3.org/2000/01/rdf-schema#comment"/>
+		<rdfs:label>Comment</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:nodeID="elmo-uses">
+		<elmo:applies-to rdf:resource="http://bp4mc2.org/elmo/def#uses"/>
+		<rdfs:label>Used vocabularies</rdfs:label>
+	</rdf:Description>
 	<rdf:Description rdf:about="http://bp4mc2.org/elmo/def#BackstageRepresentation_List">
 		<elmo:fragment rdf:nodeID="frep"/>
 		<elmo:fragment rdf:nodeID="furlpattern"/>
 		<elmo:fragment rdf:nodeID="fobject"/>
-		<elmo:index>1</elmo:index>
+		<elmo:index>2</elmo:index>
 		<elmo:query>
 			<![CDATA[
 			prefix elmo: <http://bp4mc2.org/elmo/def#>
@@ -83,8 +125,15 @@
 			prefix html: <http://www.w3.org/1999/xhtml/vocab#>
 			prefix dcterms: <http://purl.org/dc/terms/>
 			construct {
-				<menu-item3> rdfs:label "Query".
-				<menu-item3> html:link ?query.
+				<menu-item5> rdfs:label "Query".
+				<menu-item5> html:link ?query.
+				<menu-item5> elmo:index "5".
+				<menu-item4> rdfs:label "Edit presentation".
+				<menu-item4> html:link ?add.
+				<menu-item4> elmo:subject ?presentation.
+				<menu-item4> elmo:index "4".
+				<menu-item3> rdfs:label "Search vocabulary".
+				<menu-item3> html:link ?voc.
 				<menu-item3> elmo:index "3".
 				<menu-item2> rdfs:label "Add representation".
 				<menu-item2> html:link ?add.
@@ -98,12 +147,18 @@
 				<menu> elmo:data <menu-item3>.
 			}
 			where {
-				select	strbefore("@STAGE@","/stage") as ?stage
-						strafter(strbefore("@STAGE@","/stage"),"http://") as ?stagename
-						"@SUBJECT@/rep" as ?add
-						"@SUBJECT@/sparql" as ?query
+				select	(strbefore("@STAGE@","/stage") as ?stage)
+						(strafter(strbefore("@STAGE@","/stage"),"http://") as ?stagename)
+						("@SUBJECT@/rep" as ?add)
+						("@SUBJECT@/sparql" as ?query)
+						("@SUBJECT@/vocabulary" as ?voc)
+						(if(bound(?pres),?pres,?default) as ?presentation)
 				where {
-					?x rdf:type elmo:Representation
+					graph <@STAGE@> {
+						OPTIONAL {?pres rdf:type elmo:Presentation}
+						{select (count(?pres) as ?pcnt) where {?presentation rdf:type elmo:Presentation}}
+						BIND(<@STAGE@#Presentation> as ?default)
+					}
 				}
 				limit 1
 			}

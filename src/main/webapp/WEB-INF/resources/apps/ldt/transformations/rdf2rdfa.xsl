@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2rdfa.xsl
-    VERSION  1.7.0
-    DATE     2016-05-02
+    VERSION  1.7.1-SNAPSHOT
+    DATE     2016-05-15
 
     Copyright 2012-2016
 
@@ -70,6 +70,15 @@
 			</xsl:choose>
 		</xsl:variable>
 		<xsl:if test="$plabel!=''"><xsl:attribute name="elmo:label"><xsl:value-of select="$plabel"/></xsl:attribute></xsl:if>
+		<!-- Same for comments -->
+		<xsl:variable name="pcomment">
+			<xsl:choose>
+				<xsl:when test="exists($fragment/rdfs:comment)"><xsl:copy-of select="$fragment/rdfs:comment"/></xsl:when>
+				<xsl:otherwise><xsl:copy-of select="key('resource',$uri)/rdfs:comment"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<xsl:if test="$pcomment!=''"><xsl:attribute name="elmo:comment"><xsl:value-of select="$pcomment"/></xsl:attribute></xsl:if>
+		<!-- Other fragments -->
 		<xsl:if test="$fragment/elmo:appearance[1]/@rdf:resource!=''"><xsl:attribute name="elmo:appearance"><xsl:value-of select="$fragment/elmo:appearance[1]/@rdf:resource"/></xsl:attribute></xsl:if>
 		<xsl:if test="$fragment/html:link[1]!=''"><xsl:attribute name="elmo:link"><xsl:value-of select="$fragment/html:link[1]"/></xsl:attribute></xsl:if>
 		<xsl:if test="$fragment/elmo:index[1]!=''"><xsl:attribute name="elmo:index"><xsl:value-of select="$fragment/elmo:index[1]"/></xsl:attribute></xsl:if>
@@ -161,9 +170,15 @@
 			</xsl:when>
 			<xsl:when test="$appearance='http://bp4mc2.org/elmo/def#ContentAppearance' or $appearance='http://bp4mc2.org/elmo/def#CarouselAppearance'">
 				<xsl:variable name="fragments" select="fragment"/>
+				<xsl:variable name="properties">
+					<xsl:for-each-group select="/root/results/rdf:RDF[position()=$index]/rdf:Description/*" group-by="name()">
+						<property><xsl:value-of select="namespace-uri()"/><xsl:value-of select="local-name()"/></property>
+					</xsl:for-each-group>
+				</xsl:variable>
 				<xsl:for-each-group select="/root/results/rdf:RDF[position()=$index]/rdf:Description" group-by="@rdf:about">
-					<xsl:if test="exists(current-group()/*[name()!='rdfs:label'])"> <!-- Groups with only labels should be ignored -->
-						<rdf:Description rdf:about="{@rdf:about}">
+					<xsl:variable name="about" select="@rdf:about"/>
+					<xsl:if test="exists(current-group()/*[name()!='rdfs:label']) and not(exists($properties/property[.=$about]))"> <!-- Groups with only labels should be ignored -->
+						<rdf:Description rdf:about="{$about}">
 							<xsl:apply-templates select="current-group()/*" mode="property">
 								<xsl:with-param name="fragments" select="$fragments"/>
 							</xsl:apply-templates>
