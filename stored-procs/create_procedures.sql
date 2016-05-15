@@ -1,7 +1,7 @@
 --
 -- NAME     create_procedures.sql
--- VERSION  1.7.0
--- DATE     2016-05-02
+-- VERSION  1.7.1-SNAPSHOT
+-- DATE     2016-05-15
 --
 -- Copyright 2012-2016
 --
@@ -140,13 +140,13 @@ create procedure LDT.MULTI_UPDATE_CONTAINER  (in flist varchar, in ftype varchar
 	result (message);
 };
 
-drop procedure CamelCase;
-create procedure CamelCase (in istr varchar)
+drop procedure UCamelCase;
+create procedure UCamelCase (in istr varchar)
 {
 	declare svector any;
 	declare res varchar;
 	res := '';
-	svector := split_and_decode(istr,0,'\0\0 ');
+	svector := split_and_decode(regexp_replace(istr,'\\.|,|:|;|\\?|!|\\+',' '),0,'\0\0 ');
 	foreach (varchar prt in svector) do {
 		if (length(prt)=1) {
 			res := concat(res,ucase(prt));
@@ -156,9 +156,50 @@ create procedure CamelCase (in istr varchar)
 			}
 		}
 	}
+	res := regexp_replace(res,'[^a-zA-Z0-9_()~-]','');
+	if (regexp_like(res,'^[0-9]')) {
+		res := concat('_',res);
+	}
 	return (res);
 };
-grant execute on CamelCase to public;
+grant execute on UCamelCase to public;
+
+drop procedure LCamelCase;
+create procedure LCamelCase (in istr varchar)
+{
+	declare svector any;
+	declare res varchar;
+	declare frst int;
+	res := '';
+	svector := split_and_decode(regexp_replace(istr,'\\.|,|:|;|\\?|!|\\+',' '),0,'\0\0 ');
+	frst := 1;
+	foreach (varchar prt in svector) do {
+		if (frst=1) {
+			if (length(prt)=1) {
+				res := concat(res,lcase(prt));
+			} else {
+				if (length(prt)>1) {
+					res := concat(res,lcase(substring(prt,1,1)),substring(prt,2,255));
+				}
+			}
+			frst:=0;
+		} else {
+			if (length(prt)=1) {
+				res := concat(res,ucase(prt));
+			} else {
+				if (length(prt)>1) {
+					res := concat(res,ucase(substring(prt,1,1)),substring(prt,2,255));
+				}
+			}
+		}
+	}
+	res := regexp_replace(res,'[^a-zA-Z0-9_()~-]','');
+	if (regexp_like(res,'^[0-9]')) {
+		res := concat('_',res);
+	}
+	return (res);
+};
+grant execute on LCamelCase to public;
 
 drop procedure StrDateDiff;
 create procedure StrDateDiff (in dstr varchar)

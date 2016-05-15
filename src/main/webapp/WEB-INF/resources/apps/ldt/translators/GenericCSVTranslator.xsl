@@ -1,8 +1,8 @@
 <!--
 
     NAME     GenericCSVTranslator.xsl
-    VERSION  1.7.0
-    DATE     2016-05-02
+    VERSION  1.7.1-SNAPSHOT
+    DATE     2016-05-15
 
     Copyright 2012-2016
 

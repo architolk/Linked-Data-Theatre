@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2graphjson.xsl
-    VERSION  1.7.0
-    DATE     2016-05-02
+    VERSION  1.7.1-SNAPSHOT
+    DATE     2016-05-13
 
     Copyright 2012-2016
 
@@ -130,7 +130,7 @@
 		<xsl:text>,"label":"</xsl:text><xsl:value-of select="translate($relatielabel,$dblquote,$quote)"/><xsl:text>"</xsl:text>
 		<xsl:text>}</xsl:text>
 	</xsl:for-each>
-	<xsl:variable name="out-count" select="count(key('resource',$uri)/*[exists(@rdf:resource)])"/>
+	<xsl:variable name="out-count" select="count(key('resource',$uri)/*[exists(@rdf:resource)] except elmo:style)"/>
 	<!-- Incomming links, blank nodes doen niet mee -->
 	<xsl:for-each select="../rdf:Description[@rdf:about!=$uri]/*[@rdf:resource=$uri]">
 		<xsl:variable name="ruri"><xsl:value-of select="namespace-uri()"/><xsl:value-of select="local-name()"/></xsl:variable>
