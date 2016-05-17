@@ -47,8 +47,19 @@ If you have performed step 3.1, please add a `docroot` statement to the configur
 
 Without the docroot statement, the LDT won't be able to find the right stylesheets or javascript libraries.
 
+#### 4.2 In case of Tomcat running on a different port.
+You should change the domain of your site to the correct port number:
+
+	<site domain="localhost:8080" icon="favicon.ico">
+		<stage/>
+	</site>
+
+Do **NOT** add the protocol ("http://") to the domainname.
+
 ### 5. Test your version of the Linked Data Theatre
 Go to `http://localhost/version` and check if the Linked Data Theatre runs correctly. You should receive something that looks like this:
+
+The most important line is the one that starts with `<representation-graph`. The uri should be the uri of your stage. If this value is empty (e.g.: `uri=""`), than your config.xml file is probably not correct. 
 
 	<?xml version="1.0" encoding="UTF-8"?>
 	<context sparql="no" timestamp="2016-03-13 16:24:38" version="1.6.0" docroot="">
