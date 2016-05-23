@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2jsonldcontext.xsl
-    VERSION  1.7.0
-    DATE     2016-05-02
+    VERSION  1.7.1-SNAPSHOT
+    DATE     2016-05-20
 
     Copyright 2012-2016
 
@@ -36,8 +36,8 @@
 
 <xsl:template match="/">
 {"@context":
-	{<xsl:for-each-group select="results/rdf:RDF[1]/rdf:Description[rdf:type/@rdf:resource='http://www.w3.org/2002/07/owl#DatatypeProperty' or rdf:type/@rdf:resource='http://www.w3.org/2002/07/owl#ObjectProperty']" group-by="@rdf:about"><xsl:if test="position()!=1">
-	,</xsl:if>"<xsl:value-of select="rdfs:label"/>":"<xsl:value-of select="@rdf:about"/>"</xsl:for-each-group>
+	{<xsl:for-each-group select="results/rdf:RDF[1]/rdf:Description[rdf:type/@rdf:resource='http://www.w3.org/2002/07/owl#DatatypeProperty' or rdf:type/@rdf:resource='http://www.w3.org/2002/07/owl#ObjectProperty']" group-by="@rdf:about"><xsl:sort select="@rdf:about"/><xsl:if test="position()!=1">
+	,</xsl:if>"<xsl:value-of select="replace(@rdf:about,'^.*(#|/)','')"/>":{"@id":"<xsl:value-of select="@rdf:about"/>"<xsl:if test="rdf:type/@rdf:resource='http://www.w3.org/2002/07/owl#ObjectProperty'">,"@type":"@id"</xsl:if>}</xsl:for-each-group>
 	}
 }
 </xsl:template>

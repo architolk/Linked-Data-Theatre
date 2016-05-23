@@ -2,7 +2,7 @@
 
     NAME     BackstageRepresentation.xml
     VERSION  1.7.1-SNAPSHOT
-    DATE     2016-05-15
+    DATE     2016-05-18
 
     Copyright 2012-2016
 
@@ -125,12 +125,18 @@
 			prefix html: <http://www.w3.org/1999/xhtml/vocab#>
 			prefix dcterms: <http://purl.org/dc/terms/>
 			construct {
+				<menu-item7> rdfs:label "Export".
+				<menu-item7> html:link ?export.
+				<menu-item7> elmo:index "7".
+				<menu-item6> rdfs:label "Import".
+				<menu-item6> html:link ?import.
+				<menu-item6> elmo:index "6".
 				<menu-item5> rdfs:label "Query".
 				<menu-item5> html:link ?query.
 				<menu-item5> elmo:index "5".
-				<menu-item4> rdfs:label "Edit presentation".
-				<menu-item4> html:link ?add.
-				<menu-item4> elmo:subject ?presentation.
+				#<menu-item4> rdfs:label "Edit stage".
+				#<menu-item4> html:link ?add.
+				#<menu-item4> elmo:subject ?presentation.
 				<menu-item4> elmo:index "4".
 				<menu-item3> rdfs:label "Search vocabulary".
 				<menu-item3> html:link ?voc.
@@ -152,6 +158,8 @@
 						("@SUBJECT@/rep" as ?add)
 						("@SUBJECT@/sparql" as ?query)
 						("@SUBJECT@/vocabulary" as ?voc)
+						("@SUBJECT@/import" as ?import)
+						("@SUBJECT@/export.ttl" as ?export)
 						(if(bound(?pres),?pres,?default) as ?presentation)
 				where {
 					graph <@STAGE@> {

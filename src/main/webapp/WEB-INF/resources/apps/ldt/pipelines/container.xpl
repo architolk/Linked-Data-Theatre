@@ -2,7 +2,7 @@
 
     NAME     container.xpl
     VERSION  1.7.1-SNAPSHOT
-    DATE     2016-05-15
+    DATE     2016-05-23
 
     Copyright 2012-2016
 
@@ -210,6 +210,29 @@
 										<xsl:otherwise>CONSTRUCT {?x?x?x} WHERE {?x?x?x}</xsl:otherwise>
 									</xsl:choose>
 								</fetchquery>
+							</container>
+						</xsl:template>
+					</xsl:stylesheet>
+				</p:input>
+				<p:input name="data" href="#context"/>
+				<p:output name="data" id="containercontext"/>
+			</p:processor>
+		</p:when>
+		<p:when test="matches(context/subject,'backstage/import$') and context/back-of-stage!=''">
+			<!-- Special container: backstage import! -->
+			<p:processor name="oxf:xslt">
+				<p:input name="config">
+					<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+						<xsl:template match="/">
+							<container>
+								<label>Backstage of &lt;<xsl:value-of select="context/back-of-stage"/>></label>
+								<url><xsl:value-of select="context/back-of-stage"/></url>
+								<user-role/>
+								<translator/>
+								<version-url><xsl:value-of select="context/back-of-stage"/></version-url>
+								<representation>http://bp4mc2.org/elmo/def#UploadRepresentation</representation>
+								<postquery/>
+								<fetchquery>CONSTRUCT {?x?x?x} WHERE {?x?x?x}</fetchquery>
 							</container>
 						</xsl:template>
 					</xsl:stylesheet>

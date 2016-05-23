@@ -2,7 +2,7 @@
 
     NAME     page-flow.xml
     VERSION  1.7.1-SNAPSHOT
-    DATE     2016-05-15
+    DATE     2016-05-23
 
     Copyright 2012-2016
 
@@ -55,6 +55,14 @@
 	</page>
 	<page path="(((?!backstage).)*)/backstage/vocabulary" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
 		<setvalue ref="theatre/representation">http://bp4mc2.org/elmo/def#BackstageVocabularyRepresentation</setvalue>
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
+	</page>
+	<page path="(((?!backstage).)*)/backstage/export\.([^ ]*)" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/representation">http://bp4mc2.org/elmo/def#BackstageExport</setvalue>
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
+		<setvalue ref="theatre/format" matcher-group="3"/>
+	</page>
+	<page path="(((?!backstage).)*)/backstage/import" model="pipelines/container.xpl" default-submission="config.xml" public-methods="#all">
 		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 	</page>
 	<page path="(((?!backstage).)*)/backstage/rep" model="pipelines/container.xpl" default-submission="config.xml" public-methods="#all">
