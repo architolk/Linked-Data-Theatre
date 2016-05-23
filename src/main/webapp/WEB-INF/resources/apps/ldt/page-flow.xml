@@ -46,6 +46,7 @@
 	<!-- Sparql endpoint (at front stage - if available) -->
 	<page path="(((?!sparql).)*)/sparql" model="pipelines/sparql.xpl" default-submission="config.xml" public-methods="#all">
 		<setvalue ref="theatre/subdomain" matcher-group="1"/>
+		<setvalue ref="theatre/format" parameter="format"/>
 	</page>
 	
 	<!-- Backstage -->

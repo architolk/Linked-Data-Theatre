@@ -2,7 +2,7 @@
 
     NAME     sparql.xpl
     VERSION  1.7.1-SNAPSHOT
-    DATE     2016-05-15
+    DATE     2016-05-23
 
     Copyright 2012-2016
 
@@ -116,39 +116,80 @@
 				</p:otherwise>
 			</p:choose>
 			
-			<!-- Convert sparql to rdfa -->
-			<p:processor name="oxf:xslt">
-				<p:input name="data" href="aggregate('root',#sparql,#context)"/>
-				<p:input name="config" href="../transformations/sparql2rdfaform.xsl"/>
-				<p:output name="data" id="rdfa"/>
-			</p:processor>
+			<p:choose href="#context">
+				<!-- XML -->
+				<p:when test="context/format='application/xml'">
+					<p:processor name="oxf:xml-serializer">
+						<p:input name="config">
+							<config/>
+						</p:input>
+						<p:input name="data" href="#sparql"/>
+					</p:processor>
+				</p:when>
+				<!-- XLSX -->
+				<p:when test="context/format='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'">
+					<!-- Convert sparql to rdfa -->
+					<p:processor name="oxf:xslt">
+						<p:input name="data" href="aggregate('root',#sparql,#context)"/>
+						<p:input name="config" href="../transformations/sparql2rdfa.xsl"/>
+						<p:output name="data" id="rdfa"/>
+					</p:processor>
+					<!-- Transform -->
+					<p:processor name="oxf:xslt">
+						<p:input name="data" href="aggregate('results',#rdfa)"/>
+						<p:input name="config" href="../transformations/rdf2xls.xsl"/>
+						<p:output name="data" id="xlsxml"/>
+					</p:processor>
+					<!-- Serialize -->
+					<p:processor name="oxf:excel-serializer">
+						<p:input name="config">
+							<config>
+								<content-type>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</content-type>
+								<header>
+									<name>Content-Disposition</name>
+									<value>attachment; filename=result.xlsx</value>
+								</header>
+							</config>
+						</p:input>
+						<p:input name="data" href="#xlsxml"/>
+					</p:processor>
+				</p:when>
+				<p:otherwise>
+					<!-- Convert sparql to rdfa -->
+					<p:processor name="oxf:xslt">
+						<p:input name="data" href="aggregate('root',#sparql,#context)"/>
+						<p:input name="config" href="../transformations/sparql2rdfaform.xsl"/>
+						<p:output name="data" id="rdfa"/>
+					</p:processor>
 
-			<!-- Transform rdfa to html -->
-			<p:processor name="oxf:xslt">
-				<p:input name="data" href="#rdfa"/>
-				<p:input name="config" href="../transformations/rdf2html.xsl"/>
-				<p:output name="data" id="html"/>
-			</p:processor>
-			<!-- Convert XML result to HTML -->
-			<p:processor name="oxf:html-converter">
-				<p:input name="config">
-					<config>
-						<encoding>utf-8</encoding>
-						<public-doctype>-//W3C//DTD XHTML 1.0 Strict//EN</public-doctype>
-					</config>
-				</p:input>
-				<p:input name="data" href="#html" />
-				<p:output name="data" id="htmlres" />
-			</p:processor>
-			<!-- Serialize -->
-			<p:processor name="oxf:http-serializer">
-				<p:input name="config">
-					<config>
-						<cache-control><use-local-cache>false</use-local-cache></cache-control>
-					</config>
-				</p:input>
-				<p:input name="data" href="#htmlres"/>
-			</p:processor>
+					<!-- Transform rdfa to html -->
+					<p:processor name="oxf:xslt">
+						<p:input name="data" href="#rdfa"/>
+						<p:input name="config" href="../transformations/rdf2html.xsl"/>
+						<p:output name="data" id="html"/>
+					</p:processor>
+					<!-- Convert XML result to HTML -->
+					<p:processor name="oxf:html-converter">
+						<p:input name="config">
+							<config>
+								<encoding>utf-8</encoding>
+								<public-doctype>-//W3C//DTD XHTML 1.0 Strict//EN</public-doctype>
+							</config>
+						</p:input>
+						<p:input name="data" href="#html" />
+						<p:output name="data" id="htmlres" />
+					</p:processor>
+					<!-- Serialize -->
+					<p:processor name="oxf:http-serializer">
+						<p:input name="config">
+							<config>
+								<cache-control><use-local-cache>false</use-local-cache></cache-control>
+							</config>
+						</p:input>
+						<p:input name="data" href="#htmlres"/>
+					</p:processor>
+				</p:otherwise>
+			</p:choose>
 	
 		</p:when>
 		<p:otherwise>
