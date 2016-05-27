@@ -2,7 +2,7 @@
 
     NAME     page-flow.xml
     VERSION  1.7.1-SNAPSHOT
-    DATE     2016-05-23
+    DATE     2016-05-27
 
     Copyright 2012-2016
 
@@ -97,6 +97,7 @@
 		<!-- <setvalue ref="submission/query" matcher-group="3"/> -->
 		<setvalue ref="theatre/format" matcher-group="4"/>
 		<setvalue ref="theatre/subject" parameter="subject"/>
+		<setvalue ref="theatre/representation" parameter="representation"/>
 	</page>
 	<page path="(((?!query).)*)/query/([^ ]*)" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
 		<setvalue ref="theatre/subdomain" matcher-group="1"/>
@@ -125,6 +126,7 @@
 		<!-- <setvalue ref="submission/query">resource</setvalue> -->
 		<setvalue ref="theatre/subject" parameter="subject"/>
 		<setvalue ref="theatre/format" parameter="format"/>
+		<setvalue ref="theatre/representation" parameter="representation"/>
 	</page>
 	
 	<!-- def uri (give some information about a hash URI) -->
@@ -132,6 +134,7 @@
 		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 		<setvalue ref="theatre/subject" parameter="subject"/>
 		<setvalue ref="theatre/format" parameter="format"/>
+		<setvalue ref="theatre/representation" parameter="representation"/>
 	</page>
 	<!-- context uri (same as def uri, but should result in a JSON-LD context representation -->
 	<page path="(((?!context).)*)/context(/[^\.]*)*\.([^ ]*)" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
