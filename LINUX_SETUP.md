@@ -1,10 +1,10 @@
 # Linux setup
-This document will give you a step-by-step guide to setup the Linked Data Theatre and a Virtuoso database on a clean Linux machine. A more experienced user might just want to read the deploy manual: [DEPLOY.nd](DEPLOY.md)
+This document will give you a step-by-step guide to setup the Linked Data Theatre and a Virtuoso database on a clean Linux machine. A more experienced user might just want to read the deploy manual: [DEPLOY.md](DEPLOY.md)
 
 ## Debian
-This guide assumes a fresh and clean installation of [Debian](https://www.debian.org). A minimal installation will suffice and no additional packages or options are neede. All these commands are run by the `root` user.
+This guide assumes a fresh and clean installation of [Debian](https://www.debian.org). A minimal installation will suffice and no additional packages or options are needed. All the commands in this guide are run by the `root` user.
 
-If you are installing virtuoso and the Linked Data Theatre in a virtual machine, then you will need to forward ports 8080 and 8890 from you host machine to the guest machine.
+If you are installing virtuoso and the Linked Data Theatre in a virtual machine, then you will need to forward ports `8080` and `8890` from you host machine to the guest machine.
 
 ## Install software
 Start with updating the apt repository:
@@ -24,7 +24,7 @@ Later on we need curl:
 ```
 During the installation process you are asked to enter the password for the main dba-user.
 
-The virtuso conductor is not needed to complete this guide, but you will propably need this afterwards:
+The virtuso conductor is not needed to complete this guide, but you will probably need this afterwards:
 ```
 >> apt-get install virtuoso-vad-conductor
 ```
@@ -33,11 +33,9 @@ The installer will start virtuoso for you. You might need to restart it after in
 ```
 service virtuoso-opensource-6.1 restart
 ```
-NOTE::
+NOTE: Debian ships with version 6.1 of virtuoso. You might want to upgrade to a newer version.
 
-    Debian ships with version 6.1 of virtuoso. You might want to upgrade to a newer version.
-
-You can test your viruoso installation by visting [http://localhost:8890](http://localhost:8890). You should see the virtuoso start page. You can test the sparql endpoint at [http://localhost:8890/sparql](http://localhost:8890/sparql).
+You can test your virtuoso installation by visting [http://localhost:8890](http://localhost:8890). You should see the virtuoso start page. You can test the sparql endpoint at [http://localhost:8890/sparql](http://localhost:8890/sparql).
 
 ### Install Tomcat and the Linked Data Theatre
 Install java:
@@ -49,7 +47,7 @@ Install tomcat:
 ```
 >> apt-get install tomcat8
 ```
-Goto webapps directory:
+Go to the webapps directory:
 ```
 >> cd /var/lib/tomcat8/webapps
 ```
@@ -62,15 +60,13 @@ Download the Linked Data Theatre:
 ```
 >> wget https://github.com/architolk/Linked-Data-Theatre/releases/download/v1.7.0/ldt-1.7.0.war -O ROOT.war
 ```
-NOTE::
-
-    The will install version 1.7.0. You can change the download link if you prefer a different version.
+NOTE: The will install version 1.7.0. You can change the download link if you prefer a different version.
 
 Restart tomcat
 ```
 >> service tomcat8 restart
 ```
-The standard configuration of the Linked Data Theatre assumes port 80, but tomcat is connected to port 8080. Therefore the configuration needs to be adjusted. Edit the file ``/var/lib/tomcat8/webapps/ROOT/WEB-INF/resources/apps/ldt/config.xml`. Change:
+The standard configuration of the Linked Data Theatre assumes port 80, but tomcat is connected to port 8080. Therefore the configuration needs to be adjusted. Edit the file `/var/lib/tomcat8/webapps/ROOT/WEB-INF/resources/apps/ldt/config.xml`. Change:
 ```
 <site domain="localhost" icon="favicon.ico">
 ```
@@ -98,7 +94,7 @@ You can test the Linked Data theatre by visitin [http://localhost:8080/version](
 	<parameters/>
 </context>
 ```
-Make sure the `representation-graph uri` show the correct uri.
+Make sure the `representation-graph uri` shows the correct uri.
 
 ## Testing
 The Linked Data Theatre comes with a couple of examples. You can download the turtle files:
@@ -118,9 +114,14 @@ curl -X POST http://localhost:8890/sparql-graph-crud-auth?graph-uri=http:8080/st
 curl -X POST http://localhost:8890/sparql-graph-crud-auth?graph-uri=http:8080/stage --user dba:<<virtuosopassword>> --digest -T showGraphs.ttl
 ```
 You can test the examples by visiting the Theatre pages:
+
 [http://localhost:8080/query/helloWorld](http://localhost:8080/query/helloWorld)
+
 [http://localhost:8080/query/amersfoort](http://localhost:8080/query/amersfoort)
+
 [http://localhost:8080/query/dbpedia](http://localhost:8080/query/dbpedia)
+
 [http://localhost:8080/query/showGraphs](http://localhost:8080/query/showGraphs)
 
+---
 Congratulations! You have now setup a virtuoso triple-store and connected the Linked Data Theatre.
