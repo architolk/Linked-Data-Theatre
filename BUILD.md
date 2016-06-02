@@ -59,9 +59,9 @@ The Linked Data Theatre consists of four different components:
 ### Build the java source code
 To build the java source code perform the following steps (only ones):
 
-1.	Go to \processors and install the orbeon.jar in your local maven repository by executing: `maven-install-orbeon-jar.bat`.
-2.	Go to \processors and execute `mvn clean install`
-3.	Go to \license-builder and execute: `mvn clean install`
+1.	Go to \license-builder and execute: `mvn clean install`
+2.	Go to \processors and install the orbeon.jar in your local maven repository by executing: `maven-install-orbeon-jar.bat`.
+3.	Go to \processors and execute `mvn clean install`
 
 ### Virtuoso stored procedures
 No build is needed for the virtuoso stored procedures.
