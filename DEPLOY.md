@@ -6,6 +6,7 @@ You could follow two approaches:
 - Deploying the Linked Data Theatre from scratch.
 
 ## Deploying the Linked Data Theatre from scratch
+A step-by-step guide for a clean install of the Linked Data Theatre and a Virtuoso triple-store on a Linux environment is described in [LINUX_SETUP.md](LINUX_SETUP.md).
 
 ### Prerequisites
 You should have a working version of the Java Runtime Environment.
