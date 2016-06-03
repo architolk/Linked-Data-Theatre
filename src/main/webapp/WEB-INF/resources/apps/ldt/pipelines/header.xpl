@@ -1,7 +1,7 @@
 <!--
 
     NAME     header.xpl
-    VERSION  1.7.1-SNAPSHOT
+    VERSION  1.7.1
     DATE     2016-06-03
 
     Copyright 2012-2016

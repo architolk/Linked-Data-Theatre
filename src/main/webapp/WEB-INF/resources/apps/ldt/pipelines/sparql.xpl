@@ -1,8 +1,8 @@
 <!--
 
     NAME     sparql.xpl
-    VERSION  1.7.1-SNAPSHOT
-    DATE     2016-05-23
+    VERSION  1.7.1
+    DATE     2016-06-03
 
     Copyright 2012-2016
 

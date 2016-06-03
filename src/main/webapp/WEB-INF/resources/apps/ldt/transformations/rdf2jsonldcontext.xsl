@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2jsonldcontext.xsl
-    VERSION  1.7.1-SNAPSHOT
-    DATE     2016-05-20
+    VERSION  1.7.1
+    DATE     2016-06-03
 
     Copyright 2012-2016
 
