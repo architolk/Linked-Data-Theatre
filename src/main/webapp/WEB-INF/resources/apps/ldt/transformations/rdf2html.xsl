@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.7.1-SNAPSHOT
-    DATE     2016-05-15
+    DATE     2016-06-03
 
     Copyright 2012-2016
 
@@ -770,7 +770,14 @@
 					<span class="icon-bar"></span>
 				</button>
 				<xsl:if test="exists(rdf:Description/dcterms:title)">
-					<a class="navbar-brand" href="/"><xsl:value-of select="rdf:Description/dcterms:title[1]"/></a>
+					<xsl:variable name="root" select="rdf:Description/dcterms:title[1]/.."/>
+					<xsl:variable name="link">
+						<xsl:choose>
+							<xsl:when test="exists($root/html:link)"><xsl:value-of select="$root/html:link"/></xsl:when>
+							<xsl:otherwise><xsl:value-of select="$docroot"/></xsl:otherwise>
+						</xsl:choose>
+					</xsl:variable>
+					<a class="navbar-brand" href="{$link}"><xsl:value-of select="rdf:Description/dcterms:title[1]"/></a>
 				</xsl:if>
 			</div>
 			<div id="navbar" class="collapse navbar-collapse">

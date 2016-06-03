@@ -1,0 +1,59 @@
+<!--
+
+    NAME     BackstageMenu.xml
+    VERSION  1.7.1-SNAPSHOT
+    DATE     2016-06-02
+
+    Copyright 2012-2016
+
+    This file is part of the Linked Data Theatre.
+
+    The Linked Data Theatre is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    The Linked Data Theatre is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with the Linked Data Theatre.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!--
+    DESCRIPTION
+	Representation that is used when a user goes to the /backstage page.
+	
+-->
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:elmo="http://bp4mc2.org/elmo/def#"
+         xmlns:xhtml="http://www.w3.org/1999/xhtml/vocab#"
+		 xmlns:dcterms="http://purl.org/dc/terms/"
+>
+	<rdf:Description rdf:about="http://bp4mc2.org/elmo/def#BackstageRepresentation_Header">
+		<elmo:appearance rdf:resource="http://bp4mc2.org/elmo/def#HeaderAppearance"/>
+		<elmo:data rdf:nodeID="header"/>
+	</rdf:Description>
+	<rdf:Description rdf:nodeID="header">
+		<elmo:html rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#HTML"><![CDATA[<img src='/images/ldt-logo.png'/>]]></elmo:html>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://bp4mc2.org/elmo/def#BackstageRepresentation_Menu">
+		<elmo:appearance rdf:resource="http://bp4mc2.org/elmo/def#NavbarAppearance"/>
+		<elmo:data rdf:nodeID="menu"/>
+	</rdf:Description>
+	<rdf:Description rdf:nodeID="menu">
+		<dcterms:title>Backstage</dcterms:title>
+		<elmo:data rdf:nodeID="menu-item1"/>
+		<xhtml:link>../backstage</xhtml:link>
+	</rdf:Description>
+	<!--
+	<rdf:Description rdf:nodeID="menu-item1">
+		<rdfs:label>goto </rdfs:label>
+		<elmo:index>1</elmo:index>
+		<xhtml:link>../backstage</xhtml:link>
+	</rdf:Description>
+	-->
+</rdf:RDF>

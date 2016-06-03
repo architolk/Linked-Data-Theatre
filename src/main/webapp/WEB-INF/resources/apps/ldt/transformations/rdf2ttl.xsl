@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2ttl.xsl
-    VERSION  1.7.0
-    DATE     2016-05-02
+    VERSION  1.7.1-SNAPSHOT
+    DATE     2016-06-03
 
     Copyright 2012-2016
 
@@ -58,9 +58,9 @@
 		<prefix name="{substring-before(name(),':')}"><xsl:value-of select="namespace-uri()"/></prefix>
 	</xsl:for-each-group>
 	<!-- Prefixes used in about -->
-	<xsl:for-each-group select="results/rdf:RDF[1]/rdf:Description|xmlresult/rdf:RDF[1]/rdf:Description" group-by="replace(@rdf:about,'(/|#|\\)[0-9A-Za-z-._~()@]*$','$1')">
-		<xsl:variable name="prefix" select="replace(@rdf:about,'(/|#|\\)[0-9A-Za-z-._~()@]*$','$1')"/>
-		<xsl:if test="$prefix!=''">
+	<xsl:for-each-group select="results/rdf:RDF[1]/rdf:Description|xmlresult/rdf:RDF[1]/rdf:Description" group-by="replace(@rdf:about,'(/|#|\\)([0-9A-Za-z-_~]+)$','$1')"><xsl:sort select="replace(@rdf:about,'(/|#|\\)([0-9A-Za-z-_~]+)$','$1')" order="descending"/>
+		<xsl:variable name="prefix" select="replace(@rdf:about,'(/|#|\\)([0-9A-Za-z-_~]+)$','$1')"/>
+		<xsl:if test="$prefix!='' and substring-after(@rdf:about,$prefix)!=''">
 			<prefix name="n{position()}"><xsl:value-of select="$prefix"/></prefix>
 		</xsl:if>
 	</xsl:for-each-group>
@@ -69,9 +69,10 @@
 <xsl:template match="@rdf:about|@rdf:resource" mode="uri">
 	<xsl:variable name="fulluri" select="."/>
 	<xsl:variable name="uriprefix" select="$prefix/prefix[substring-after($fulluri,.)!=''][1]"/>
+	<xsl:variable name="localname"><xsl:value-of select="substring-after($fulluri,$uriprefix)"/></xsl:variable>
 	<xsl:choose>
-		<xsl:when test="$uriprefix/@name!=''">
-			<xsl:value-of select="$uriprefix/@name"/>:<xsl:value-of select="substring-after($fulluri,$uriprefix)"/>
+		<xsl:when test="$uriprefix/@name!='' and matches($localname,'^[0-9A-Za-z-_~.]+$')">
+			<xsl:value-of select="$uriprefix/@name"/>:<xsl:value-of select="$localname"/>
 		</xsl:when>
 		<xsl:otherwise>&lt;<xsl:value-of select="."/>></xsl:otherwise>
 	</xsl:choose>
