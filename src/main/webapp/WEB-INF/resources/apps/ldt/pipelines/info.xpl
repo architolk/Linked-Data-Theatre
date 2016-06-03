@@ -1,6 +1,6 @@
 <!--
 
-    NAME     version.xpl
+    NAME     info.xpl
     VERSION  1.7.1-SNAPSHOT
     DATE     2016-06-03
 
@@ -24,7 +24,8 @@
 -->
 <!--
     DESCRIPTION
-    Debug option to show version information
+    Page that shows information about this version of the Linked Data Theatre
+	In prod, this page will show only a minimum of information.
 	
 -->
 <p:config xmlns:p="http://www.orbeon.com/oxf/pipeline"
@@ -81,31 +82,32 @@
 		<p:input name="config" href="../transformations/context.xsl"/>
 		<p:output name="data" id="context"/>
 	</p:processor>
+
+	<!-- Transform to an information page -->
+	<p:processor name="oxf:xslt">
+		<p:input name="data" href="aggregate('root',#context,#instance)"/>
+		<p:input name="config" href="../transformations/context2info.xsl"/>
+		<p:output name="data" id="info"/>
+	</p:processor>
 	
-	<p:choose href="#instance">
-		<!-- Only show version information in development-mode -->
-		<p:when test="theatre/@env='dev'">
-			<p:processor name="oxf:xml-serializer">
-				<p:input name="config">
-					<config>
-					</config>
-				</p:input>
-				<p:input name="data" href="#context"/>
-			</p:processor>
-		</p:when>
-		<p:otherwise>
-			<p:processor name="oxf:http-serializer">
-				<p:input name="config">
-					<config>
-						<cache-control><use-local-cache>false</use-local-cache></cache-control>
-						<status-code>404</status-code>
-					</config>
-				</p:input>
-				<p:input name="data">
-					<document xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string" content-type="text/plain"/>
-				</p:input>
-			</p:processor>
-		</p:otherwise>
-	</p:choose>
-	
+	<!-- Convert XML result to plain text -->
+	<p:processor name="oxf:text-converter">
+		<p:input name="config">
+			<config>
+				<encoding>utf-8</encoding>
+			</config>
+		</p:input>
+		<p:input name="data" href="#info" />
+		<p:output name="data" id="converted" />
+	</p:processor>
+	<!-- Serialize -->
+	<p:processor name="oxf:http-serializer">
+		<p:input name="config">
+			<config>
+				<cache-control><use-local-cache>false</use-local-cache></cache-control>
+			</config>
+		</p:input>
+		<p:input name="data" href="#converted"/>
+	</p:processor>
+
 </p:config>

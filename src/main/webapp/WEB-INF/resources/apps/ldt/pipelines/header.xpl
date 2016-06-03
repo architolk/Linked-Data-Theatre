@@ -1,8 +1,8 @@
 <!--
 
     NAME     header.xpl
-    VERSION  1.7.0
-    DATE     2016-05-02
+    VERSION  1.7.1-SNAPSHOT
+    DATE     2016-06-03
 
     Copyright 2012-2016
 
@@ -59,13 +59,31 @@
 		</p:input>
 		<p:output name="data" id="roles"/>
 	</p:processor>
-	
-	<p:processor name="oxf:xml-serializer">
-		<p:input name="config">
-			<config>
-			</config>
-		</p:input>
-		<p:input name="data" href="aggregate('root',#request,#roles)"/>
-	</p:processor>
 
+	<p:choose href="#instance">
+		<!-- Only show header information in development-mode -->
+		<p:when test="theatre/@env='dev'">
+			<p:processor name="oxf:xml-serializer">
+				<p:input name="config">
+					<config>
+					</config>
+				</p:input>
+				<p:input name="data" href="aggregate('root',#request,#roles)"/>
+			</p:processor>
+		</p:when>
+		<p:otherwise>
+			<p:processor name="oxf:http-serializer">
+				<p:input name="config">
+					<config>
+						<cache-control><use-local-cache>false</use-local-cache></cache-control>
+						<status-code>404</status-code>
+					</config>
+				</p:input>
+				<p:input name="data">
+					<document xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string" content-type="text/plain"/>
+				</p:input>
+			</p:processor>
+		</p:otherwise>
+	</p:choose>
+	
 </p:config>

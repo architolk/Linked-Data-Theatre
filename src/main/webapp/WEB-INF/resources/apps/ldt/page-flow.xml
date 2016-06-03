@@ -2,7 +2,7 @@
 
     NAME     page-flow.xml
     VERSION  1.7.1-SNAPSHOT
-    DATE     2016-05-27
+    DATE     2016-06-03
 
     Copyright 2012-2016
 
@@ -78,19 +78,6 @@
 		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 	</page>
 
-	<!-- Request header information (for debugging purposes in production) -->
-	<page path="(((?!header).)*)/header" model="pipelines/header.xpl" default-submission="config.xml" public-methods="#all"/>
-	<page path="(((?!header).)*)/header.json" model="pipelines/jsonheader.xpl" default-submission="config.xml" public-methods="#all"/>
-	<!-- <page path="/admin/header" model="pipelines/header.xpl" default-submission="config.xml" public-methods="#all"/> -->
-
-	<!-- Version header information (for debugging purposes) -->
-	<page path="(((?!version).)*)/version" model="pipelines/version.xpl" default-submission="config.xml" public-methods="#all">
-		<setvalue ref="theatre/subdomain" matcher-group="1"/>
-		<setvalue ref="theatre/format" parameter="format"/>
-		<setvalue ref="theatre/subject" parameter="subject"/>
-	</page>
-	<!-- <page path="/admin/version" model="pipelines/version.xpl" default-submission="config.xml" public-methods="#all"/> -->
-	
 	<!-- query -->
 	<page path="(((?!query).)*)/query/([^\.]*)\.([^ ]*)" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
 		<setvalue ref="theatre/subdomain" matcher-group="1"/>
@@ -203,6 +190,24 @@
 		<setvalue ref="theatre/query">rep://elmo.localhost/document</setvalue>
 		<setvalue ref="theatre/format" parameter="format"/>
 		<setvalue ref="theatre/subject" parameter="subject"/>
+	</page>
+	
+	<!-- Request header information (for debugging purposes in production) -->
+	<page path="(((?!header).)*)/header" model="pipelines/header.xpl" default-submission="config.xml" public-methods="#all"/>
+	<page path="(((?!header).)*)/header.json" model="pipelines/jsonheader.xpl" default-submission="config.xml" public-methods="#all"/>
+	<!-- <page path="/admin/header" model="pipelines/header.xpl" default-submission="config.xml" public-methods="#all"/> -->
+
+	<!-- Version header information (for debugging purposes) -->
+	<page path="(((?!version).)*)/version" model="pipelines/version.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
+		<setvalue ref="theatre/format" parameter="format"/>
+		<setvalue ref="theatre/subject" parameter="subject"/>
+	</page>
+	<!-- <page path="/admin/version" model="pipelines/version.xpl" default-submission="config.xml" public-methods="#all"/> -->
+
+	<!-- Info version (human-friendly version of the version-page) -->
+	<page path="(((?!info).)*)/info" model="pipelines/info.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 	</page>
 	
 	<!-- Administrator pages -->

@@ -2,7 +2,7 @@
 
     NAME     context.xsl
     VERSION  1.7.1-SNAPSHOT
-    DATE     2016-05-04
+    DATE     2016-06-03
 
     Copyright 2012-2016
 
@@ -24,7 +24,7 @@
 -->
 <!--
   DESCRIPTION
-  Generates the context, used in the version.xpl, query.xpl, sparql.xpl and container.xpl pipelines
+  Generates the context, used in the info.xpl, version.xpl, query.xpl, sparql.xpl and container.xpl pipelines
   
 -->
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
