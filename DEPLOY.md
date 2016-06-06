@@ -80,3 +80,10 @@ The most important line is the one that starts with `<representation-graph`. The
 		<subject>http://localhost/version</subject>
 		<parameters/>
 	</context> 
+
+### 6. Install the default configuration
+After you have installed the LDT, the main page of the theatre will be a empty page. Just like a new theatre, the stage will be empty. You can use the default configuration that comes with the LDT to get you started.
+
+Upload the file [basic-configuration.ttl](basic-configuration.ttl) to the named graph of your stage (as shown in the previous step, for example: `http://localhost/stage`), using your triple store upload facility.
+
+From version 1.7.1, you can also use the import facility of the LDT backstage. To use this facility, go to your backstage (for example: `http://localhost/backage`), navigate to the import menuitem and upload the file [basic-configuration.ttl](basic-configuration.ttl). 

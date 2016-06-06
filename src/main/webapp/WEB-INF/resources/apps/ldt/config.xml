@@ -1,8 +1,8 @@
 <!--
 
     NAME     config.xml
-    VERSION  1.7.1
-    DATE     2016-06-03
+    VERSION  1.7.2-SNAPSHOT
+    DATE     2016-06-06
 
     Copyright 2012-2016
 
@@ -62,13 +62,15 @@
 	A user with the backstage-role can look into the stage configuration using the following URL:
 		http://{domain}/backstage/{stage name}
 -->
-<theatre env="prod" configuration-endpoint="http://127.0.0.1:8890/sparql" local-endpoint="http://127.0.0.1:8890/sparql" sparql="no">
-	<site domain="localhost" icon="favicon.ico">
+<!-- Set env="dev" to env="prod" in a production environment -->
+<theatre env="dev" configuration-endpoint="http://127.0.0.1:8890/sparql" local-endpoint="http://127.0.0.1:8890/sparql" sparql="yes">
+	<!-- Remove the "backstage" attribute in a production environment (or secure that particular URL) -->
+	<site domain="localhost" icon="favicon.ico" backstage="localhost">
 		<stage/>
 	</site>
 	<!-- The default port of Tomcat is 8080, so the site below will give you access to a LDT on a default Tomcat install -->
 	<!-- The configuration of the LDT for the stage below is expected in the named graph <http://localhost:8080/stage> -->
-	<site domain="localhost:8080" icon="favicon.ico">
+	<site domain="localhost:8080" icon="favicon.ico" backstage="localhost:8080">
 		<stage/>
 	</site>
 	<!-- Optional: include a third site, with two stages and a backstage for every stage -->

@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2html.xsl
-    VERSION  1.7.1
-    DATE     2016-06-03
+    VERSION  1.7.2-SNAPSHOT
+    DATE     2016-06-06
 
     Copyright 2012-2016
 
@@ -406,7 +406,7 @@
 	<script type="text/javascript" language="javascript" charset="utf-8">
 		<xsl:text>var elmo_language = </xsl:text>
 		<xsl:choose>
-			<xsl:when test="language='nl'">{language:{info:"_START_ tot _END_ van _TOTAL_ resultaten",search:"Zoeken:",lengthMenu:"Toon _MENU_ rijen",zeroRecords:"Niets gevonden",infoEmpty: "Geen resultaten",paginate:{first:"Eerste",previous:"Vorige",next:"Volgende",last:"Laatste"}},paging:true,searching:true,info:true}</xsl:when>
+			<xsl:when test="language='nl'">{language:{info:"_START_ tot _END_ van _TOTAL_ resultaten",search:"Filter:",lengthMenu:"Toon _MENU_ rijen",zeroRecords:"Niets gevonden",infoEmpty: "Geen resultaten",paginate:{first:"Eerste",previous:"Vorige",next:"Volgende",last:"Laatste"}},paging:true,searching:true,info:true}</xsl:when>
 			<xsl:otherwise>{};</xsl:otherwise>
 		</xsl:choose>
 		

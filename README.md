@@ -13,7 +13,9 @@ If you want to create a new release of the LDT, please look into [BUILD-LICENSE.
 
 To deploy the Linked Data Theatre in a tomcat container, follow the instructions in [DEPLOY.md](DEPLOY.md). A step-by-step installation guide for Linux is available here: [LINUX_SETUP.md](LINUX_SETUP.md). You can also opt for a docker installation, see [DOCKER.md](DOCKER.md).
 
-The Linked Data Theatre uses a configuration graph containing all the triples that make up the LDT configuration. Instructions and examples how to create such a configuration can be found at the [wiki](https://github.com/architolk/Linked-Data-Theatre/wiki).
+The default setting of the LDT is for development purposes. Read [PRODUCTION.md](PRODUCTION.md) for information about securing the LDT for a production environment.
+
+The Linked Data Theatre uses a configuration graph containing all the triples that make up the LDT configuration. Instructions and examples how to create such a configuration can be found at the [wiki](https://github.com/architolk/Linked-Data-Theatre/wiki). A [basic-configuration.ttl](basic-configuration) is provided tot get you started.
 
 To add security to the Linked Data Theatre, follow the instructions in [SECURE.md](SECURE.md).
 

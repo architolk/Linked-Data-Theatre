@@ -1,0 +1,384 @@
+#
+# NAME     basic-configuration.ttl
+# VERSION  1.7.2-SNAPSHOT
+# DATE     2016-06-06
+#
+# Copyright 2012-2016
+#
+# This file is part of the Linked Data Theatre.
+#
+# The Linked Data Theatre is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# The Linked Data Theatre is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with the Linked Data Theatre.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+# DESCRIPTION
+# The basic configuration for a LDT installation, just to get folks up to speed with a working configuration
+# If your installation is NOT running on http://localhost or http://localhost:8080, please change line 38 or 39 accordingly!
+#
+
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix xhtml: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix stage: <http://localhost#>
+
+# ======================================================================
+# Homepage, including header and menu
+# ======================================================================
+stage:Home	a	elmo:Representation;
+	elmo:url-pattern	"^http://pdok.localhost(/|)$";
+	elmo:url-pattern	"^http://localhost:8080(/|)$";
+	elmo:contains	stage:Header;
+	elmo:contains	stage:Menu;
+	elmo:contains	stage:Home_content;
+.
+stage:Header elmo:appearance elmo:HeaderAppearance;
+	elmo:index "~";
+	elmo:data	[ elmo:html "<img src='/images/ldt-logo.png'></img>"^^rdf:HTML];
+.
+stage:Menu elmo:appearance elmo:NavbarSearchAppearance;
+	elmo:index "~";
+	elmo:data [
+		rdfs:label "Linked Data Theater"@nl;
+		rdfs:label "Linked Data Theatre"@en;
+		xhtml:link "/";
+		elmo:data [elmo:index "1"; rdfs:label "Datasets"; xhtml:link "/query/datasets"];
+		elmo:data [elmo:index "2"; rdfs:label "Graphs"; xhtml:link "/query/graphs"];
+		elmo:data [elmo:index "3"; rdfs:label "Configs"; xhtml:link "/query/configs"];
+		elmo:data [elmo:index "4"; rdfs:label "Backstage"; xhtml:link "/backstage"];
+	];
+.
+stage:Home_content elmo:appearance elmo:HtmlAppearance;
+	elmo:data [
+		rdfs:label "Het theater is open!"@nl;
+		rdfs:label "The theatre is open!"@en;
+		elmo:html '''
+			<div>
+				<p>Welcome! You have succesfully installed the Linked Data theatre!</p>
+				<p>This default configuration gives you the opportunity to browse through all the data in your triplestore:</p>
+				<ul>
+					<li><i>Datasets</i> lists all the available datasets in your triplestore (all named graphs of type void:Dataset or dcat:Dataset);</li>
+					<li><i>Graphs</i> lists all the graphs in your triplestore. From here, you can browse through the triples from a particular graph;</li>
+					<li><i>Configs</i> lists all the LDT configurations in your triplestore. If you have just installed your LDT, only one configuration will exist;</li>
+					<li><i>Backstage</i> will direct you to the backstage of your LDT stage.</li>
+				</ul>
+				<p>You can use the search bar to search through all available labels in your triplestore (using rdfs:label).</p>
+ 			</div>''';
+	]
+.
+
+# ======================================================================
+# List of all available datasets
+# ======================================================================
+stage:Datasets rdf:type elmo:Representation;
+	elmo:url-pattern "/query/datasets$";
+	elmo:contains stage:Header;
+	elmo:contains stage:Menu;
+	elmo:contains stage:Datasets_list;
+.
+stage:Datasets_list elmo:index "1";
+	elmo:fragment [
+		elmo:applies-to "dataset";
+		rdfs:label "Dataset"@en;
+		rdfs:label "Dataset"@nl;
+		xhtml:link "/query/datasets";
+	];
+	elmo:query '''
+		prefix void: <http://rdfs.org/ns/void#>
+		prefix dcat: <http://www.w3.org/ns/dcat#>
+		select distinct ?dataset
+		where {
+			graph ?dataset {
+				?dataset rdf:type ?type
+				FILTER (?type = void:Dataset || ?type = dcat:Dataset)
+			}
+		}
+	'''
+.
+
+# ======================================================================
+# List of all available graphs
+# ======================================================================
+stage:Graphs rdf:type elmo:Representation;
+	elmo:url-pattern "/query/graphs$";
+	elmo:contains stage:Header;
+	elmo:contains stage:Menu;
+	elmo:contains stage:Graphs_list;
+.
+stage:Graphs_list elmo:index "1";
+	elmo:fragment [
+		elmo:applies-to "graph";
+		rdfs:label "Graph"@en;
+		rdfs:label "Graaf"@nl;
+		xhtml:link "/query/classes";
+	];
+	elmo:fragment [
+		elmo:applies-to "triplecount";
+		rdfs:label "Number of triples"@en;
+		rdfs:label "Aantal triples"@nl;
+	];
+	elmo:query '''
+		select distinct ?graph (count(?s) as ?triplecount)
+		where {
+			graph ?graph {
+				?s?p?o
+			}
+		}
+		group by ?graph
+	'''
+.
+
+# ======================================================================
+# List of all available configurations
+# ======================================================================
+stage:Configs rdf:type elmo:Representation;
+	elmo:url-pattern "/query/configs$";
+	elmo:contains stage:Header;
+	elmo:contains stage:Menu;
+	elmo:contains stage:Configs_list;
+.
+stage:Configs_list elmo:index "1";
+	elmo:fragment [
+		elmo:applies-to "graph";
+		rdfs:label "Configuration"@en;
+		rdfs:label "Configuratie"@nl;
+		xhtml:link "/query/classes";
+	];
+	elmo:fragment [
+		elmo:applies-to "representationcount";
+		rdfs:label "Number of representations"@en;
+		rdfs:label "Aantal representaties"@nl;
+	];
+	elmo:query '''
+		prefix elmo: <http://bp4mc2.org/elmo/def#>
+		select distinct ?graph (count(?r) as ?representationcount)
+		where {
+			graph ?graph {
+				?r rdf:type elmo:Representation
+			}
+		}
+		group by ?graph
+	'''
+.
+
+# ======================================================================
+# Search (including form for advanced search)
+# ======================================================================
+stage:Search rdf:type elmo:Representation;
+	elmo:url-pattern "/query/search$";
+	elmo:contains stage:Header;
+	elmo:contains stage:Menu;
+	elmo:contains stage:Search_graphs;
+	elmo:queryForm stage:Search_form;
+	elmo:fragment [
+		elmo:applies-to "graph";
+		rdfs:label "Graph"@en;
+		rdfs:label "Graaf"@nl;
+	];
+	elmo:fragment [
+		elmo:applies-to "result";
+		rdfs:label "Search result"@en;
+		rdfs:label "Zoekresultaat"@nl;
+	];
+	elmo:fragment [
+		elmo:applies-to "class";
+		rdfs:label "Klasse"@nl;
+		rdfs:label "Class"@en;
+	];
+	elmo:query '''
+		select	?graph ?graph_label
+				?class ?class_label
+				?result ?result_label
+		where {
+			graph ?graph {
+				?result rdfs:label ?result_label.
+				filter regex(?result_label,"@TERM@",'i')
+				OPTIONAL {?graph rdfs:label ?graph_label}
+				OPTIONAL {
+					?result rdf:type ?class.
+					OPTIONAL {?class rdfs:label ?class_label}
+				}
+				FILTER (isIRI(?result))
+			}
+			FILTER (?graph = <@GRAPH@> or substr("@GRAPH@",2)="GRAPH@") #Hack to ignore GRAPH parameter if it isn't used
+		}
+		limit 100
+	''';
+.
+stage:Search_form a elmo:Form;
+	elmo:fragment [
+		elmo:applies-to "term";
+		rdfs:label "Zoekterm"@nl;
+		rdfs:label "Search term"@en;
+		elmo:constraint elmo:MandatoryConstraint;
+		elmo:index "1";
+	];
+	elmo:fragment [
+		elmo:applies-to "graph";
+		rdfs:label "Graaf"@nl;
+		rdfs:label "Graph"@en;
+		elmo:index "2";
+		elmo:valuesFrom stage:Search_graphs;
+	];
+	elmo:fragment [
+		elmo:appearance elmo:SubmitAppearance;
+		rdfs:label "Zoeken"@nl;
+#		rdfs:label "Search"@en;
+	];
+.
+stage:Search_graphs elmo:appearance elmo:HiddenAppearance;
+	elmo:query '''
+		construct {
+			?g rdfs:label ?gl
+		}
+		where {
+			select distinct ?g (str(?g) as ?gl)
+			where {
+				graph ?g {
+					?s ?p ?o
+				}
+			}
+		}
+	''';
+.
+
+# ======================================================================
+# List of classes for a particular graph
+# ======================================================================
+stage:Classes	a	elmo:Representation;
+	elmo:url-pattern "/query/classes";
+	elmo:contains stage:Header;
+	elmo:contains stage:Menu;
+	elmo:contains stage:Classes_list;
+.
+stage:Classes_list	elmo:index "1";
+	elmo:fragment [
+		elmo:applies-to "class";
+		rdfs:label "Class"@en;
+		rdfs:label "Klasse"@nl;
+		elmo:name "class";
+	];
+	elmo:fragment [
+		elmo:applies-to "graph";
+		rdfs:label "Items"@en;
+		rdfs:label "Items"@nl;
+		rdf:value "Items";
+		xhtml:link "/query/items";
+	];
+	elmo:fragment [
+		elmo:applies-to "properties";
+		rdfs:label "Properties"@en;
+		rdfs:label "Eigenschappen"@nl;
+		rdf:value "Properties"@en;
+		rdf:value "Eigenschappen"@nl;
+		xhtml:link "/query/properties";
+	];
+	elmo:query	'''
+		select distinct ?class ?graph_count (<@SUBJECT@> as ?graph) (<@SUBJECT@> as ?properties)
+		where {
+			graph <@SUBJECT@> {
+				{
+					{
+						select ?class (count(?s) as ?graph_count)
+						where {?s rdf:type ?class}
+						group by ?class
+					}
+				}
+			}
+		}
+	''';
+.
+
+# ======================================================================
+# List of items of a particular class in a particular graph
+# ======================================================================
+stage:Items	a	elmo:Representation;
+	elmo:url-pattern "/query/items";
+	elmo:contains stage:Header;
+	elmo:contains stage:Menu;
+	elmo:contains stage:Items_list;
+.
+stage:Items_list	elmo:index "1";
+	elmo:fragment [
+		elmo:applies-to "item";
+		rdfs:label "Item"@en;
+		rdfs:label "Item"@nl;
+	];
+	elmo:query	'''
+		select ?item ?item_label
+		where {
+			graph <@SUBJECT@> {
+				?item rdf:type <@CLASS@>.
+				OPTIONAL {?item rdfs:label ?item_label}
+			}
+		}
+		limit 1000
+	''';
+.
+
+# ======================================================================
+# List of used properties of a particular class in a particular graph
+# ======================================================================
+stage:Properties	rdf:type	elmo:Representation;
+	elmo:url-pattern "/query/properties";
+	elmo:contains stage:Header;
+	elmo:contains stage:Menu;
+	elmo:contains stage:Properties_list;
+.
+stage:Properties_list	elmo:index "1";
+	elmo:fragment [
+		elmo:applies-to "property";
+		rdfs:label "Predicate"@en;
+		rdfs:label "Eigenschap"@nl;
+		elmo:name "property";
+	];
+	elmo:query	'''
+		select distinct ?property (count(?s) as ?property_count)
+		where {
+			graph <@SUBJECT@> {
+				?s rdf:type <@CLASS@>.
+				?s ?property ?o
+			}
+		}
+	''';
+.
+# ======================================================================
+# Representation of a resource
+# ======================================================================
+stage:Resource rdf:type elmo:Representation;
+	elmo:url-pattern "/resource";
+	elmo:url-pattern "((?!doc).)*/doc/";
+	elmo:contains stage:Header;
+	elmo:contains stage:Menu;
+	elmo:contains stage:Resource_content;
+	elmo:layer elmo:BottomLayer;
+.
+stage:Resource_content elmo:index "1";
+	elmo:query '''
+		construct {
+			<@SUBJECT@>?p?o.
+			?o rdfs:label ?o_label.
+			?o ?bnp ?bno.
+		}
+		where {
+			<@SUBJECT@>?p?o.
+			OPTIONAL {
+				?o rdfs:label ?o_label
+			}
+			OPTIONAL {
+				?o ?bnp ?bno.
+				FILTER(isBlank(?o))
+			}
+			FILTER (isIri(?o) || isblank(?o) || lang(?o)="@LANGUAGE@" || lang(?o)="")
+		}
+	''';
+.
