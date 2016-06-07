@@ -29,7 +29,7 @@
 @prefix elmo: <http://bp4mc2.org/elmo/def#>.
 @prefix xhtml: <http://www.w3.org/1999/xhtml/vocab#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
-@prefix stage: <http://localhost#>
+@prefix stage: <http://localhost#>.
 
 # ======================================================================
 # Homepage, including header and menu
