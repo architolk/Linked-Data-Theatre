@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.7.2-SNAPSHOT
-    DATE     2016-06-06
+    DATE     2016-06-09
 
     Copyright 2012-2016
 
@@ -25,6 +25,7 @@
 <!--
     DESCRIPTION
 	Transformation of RDF document to html format. Depends upon rdf2rdfa.xsl
+	rdf2html includes the appearances templates within the subdirectory /appearances
 	
 -->
 <xsl:stylesheet version="2.0"
@@ -281,6 +282,9 @@
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#ChartAppearance'">
 			<xsl:apply-templates select="." mode="ChartAppearance"/>
 		</xsl:when>
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#CesiumAppearance'">
+			<xsl:apply-templates select="." mode="CesiumAppearance"/>
+		</xsl:when>
 		<xsl:otherwise>
 			<!-- No, or an unknown appearance, use the data to select a suitable appearance -->
 			<xsl:apply-templates select="." mode="ContentAppearance"/>
@@ -340,7 +344,7 @@
 
 		<!-- Alternatieve stijlen -->
 		<xsl:for-each select="context/stylesheet">
-			<link rel="stylesheet" type="text/css" href="{$docroot}{@href}"/>
+			<link rel="stylesheet" type="text/css" href="{@href}"/>
 		</xsl:for-each>
 		
 		<!-- TODO: Make this generic (appearances with specific stylesheets) -->
@@ -1527,5 +1531,7 @@ table.fragment tr td{
 	<link rel="stylesheet" href="{$docroot}/css/treestyle.css"/>
 	<script src="{$docroot}/js/MultiNestedList.js"></script>
 </xsl:template>
+
+<xsl:include href="appearances/CesiumAppearance.xsl"/>
 
 </xsl:stylesheet>
