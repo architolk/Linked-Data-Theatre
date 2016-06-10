@@ -1,8 +1,8 @@
 <!--
 
     NAME     sparql.xpl
-    VERSION  1.7.1
-    DATE     2016-06-03
+    VERSION  1.7.2-SNAPSHOT
+    DATE     2016-06-10
 
     Copyright 2012-2016
 
@@ -83,7 +83,7 @@
 				<p:when test="context/parameters/parameter[name='query']/value!=''">
 					<p:processor name="oxf:xforms-submission">
 						<p:input name="submission" transform="oxf:xslt" href="#context">
-							<xforms:submission method="get" xsl:version="2.0" action="{context/configuration-endpoint}">
+							<xforms:submission method="get" xsl:version="2.0" action="{context/local-endpoint}">
 								<xforms:header>
 									<xforms:name>Accept</xforms:name>
 									<xforms:value>application/sparql-results+xml</xforms:value>

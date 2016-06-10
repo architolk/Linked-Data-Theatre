@@ -1,8 +1,8 @@
 <!--
 
     NAME     sparql2rdfaform.xsl
-    VERSION  1.7.0
-    DATE     2016-05-02
+    VERSION  1.7.2-SNAPSHOT
+    DATE     2016-06-10
 
     Copyright 2012-2016
 
@@ -95,6 +95,7 @@
 			<rdf:Description rdf:nodeID="f4">
 				<rdfs:label>Go!</rdfs:label>
 				<elmo:appearance rdf:resource="http://bp4mc2.org/elmo/def#SubmitAppearance"/>
+				<html:link>#</html:link>
 			</rdf:Description>
 		</rdf:RDF>
 		<xsl:apply-templates select="root/rdf:RDF|root/res:sparql"/>

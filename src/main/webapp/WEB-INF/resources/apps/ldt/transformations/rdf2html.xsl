@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.7.2-SNAPSHOT
-    DATE     2016-06-09
+    DATE     2016-06-10
 
     Copyright 2012-2016
 
@@ -1139,12 +1139,17 @@ table.fragment tr td{
 				</h3>
 			</div>
 			<div class="panel-body">
-				<form role="form" class="form-horizontal" method="post" action="{/results/context/url}">
+				<xsl:variable name="turtleEditorID" select="rdf:Description[elmo:appearance/@rdf:resource='http://bp4mc2.org/elmo/def#TurtleEditor']/elmo:applies-to"/>
+				<xsl:variable name="sparqlEditorID" select="rdf:Description[elmo:appearance/@rdf:resource='http://bp4mc2.org/elmo/def#SparqlEditor']/elmo:applies-to"/>
+				<xsl:variable name="alt-action" select="rdf:Description[elmo:appearance/@rdf:resource='http://bp4mc2.org/elmo/def#SubmitAppearance']/html:link"/>
+				<xsl:variable name="action">
+					<xsl:value-of select="$alt-action"/>
+					<xsl:if test="not($alt-action!='')"><xsl:value-of select="/results/context/url"/></xsl:if>
+				</xsl:variable>
+				<form role="form" class="form-horizontal" method="post" action="{$action}">
 					<xsl:if test="exists(rdf:Description/elmo:valueDatatype[@rdf:resource='http://purl.org/dc/dcmitype/Dataset'])">
 						<xsl:attribute name="enctype">multipart/form-data</xsl:attribute>
 					</xsl:if>
-					<xsl:variable name="turtleEditorID" select="rdf:Description[elmo:appearance/@rdf:resource='http://bp4mc2.org/elmo/def#TurtleEditor']/elmo:applies-to"/>
-					<xsl:variable name="sparqlEditorID" select="rdf:Description[elmo:appearance/@rdf:resource='http://bp4mc2.org/elmo/def#SparqlEditor']/elmo:applies-to"/>
 					<xsl:if test="$turtleEditorID!=''">
 						<link rel="stylesheet" href="{$docroot}/css/codemirror.css"/>
 						<script src="{$docroot}/js/codemirror.js"/>

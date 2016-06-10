@@ -1,7 +1,7 @@
 #
 # NAME     basic-configuration.ttl
 # VERSION  1.7.2-SNAPSHOT
-# DATE     2016-06-06
+# DATE     2016-06-10
 #
 # Copyright 2012-2016
 #
@@ -23,7 +23,6 @@
 
 # DESCRIPTION
 # The basic configuration for a LDT installation, just to get folks up to speed with a working configuration
-# If your installation is NOT running on http://localhost or http://localhost:8080, please change line 38 or 39 accordingly!
 #
 
 @prefix elmo: <http://bp4mc2.org/elmo/def#>.
@@ -35,8 +34,7 @@
 # Homepage, including header and menu
 # ======================================================================
 stage:Home	a	elmo:Representation;
-	elmo:url-pattern	"^http://pdok.localhost(/|)$";
-	elmo:url-pattern	"^http://localhost:8080(/|)$";
+	elmo:url-pattern	"^[^/]+(/|)$";
 	elmo:contains	stage:Header;
 	elmo:contains	stage:Menu;
 	elmo:contains	stage:Home_content;
