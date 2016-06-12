@@ -2,7 +2,7 @@
 
     NAME     sparql2rdfaform.xsl
     VERSION  1.7.2-SNAPSHOT
-    DATE     2016-06-10
+    DATE     2016-06-12
 
     Copyright 2012-2016
 
@@ -72,6 +72,32 @@
 <xsl:template match="/">
 	<results>
 		<xsl:copy-of select="root/context"/>
+		<rdf:RDF elmo:appearance="http://bp4mc2.org/elmo/def#NavbarSearchAppearance">
+			<rdf:Description rdf:nodeID="menu">
+				<rdfs:label>SPARQL</rdfs:label>
+				<elmo:data rdf:nodeID="menu-item1"/>
+				<elmo:data rdf:nodeID="menu-item2"/>
+			</rdf:Description>
+			<rdf:Description rdf:nodeID="menu-item1">
+				<rdfs:label>Home</rdfs:label>
+				<elmo:index>1</elmo:index>
+				<html:link>/</html:link>
+			</rdf:Description>
+			<rdf:Description rdf:nodeID="menu-item2">
+				<rdfs:label>Voorbeelden</rdfs:label>
+				<elmo:index>2</elmo:index>
+				<elmo:data rdf:nodeID="vb1"/>
+				<elmo:data rdf:nodeID="vb2"/>
+			</rdf:Description>
+			<rdf:Description rdf:nodeID="vb1">
+				<rdfs:label>Aantal klassen</rdfs:label>
+				<html:link>?query=select+distinct+%3Ft+where+%7B%3Fx+rdf%3Atype+%3Ft%7D</html:link>
+			</rdf:Description>
+			<rdf:Description rdf:nodeID="vb2">
+				<rdfs:label>Aantal objecten</rdfs:label>
+				<html:link>?query=select+(count(*)+as+%3Fcnt)+where+%7B%3Fx%3Fy%3Fz%7D</html:link>
+			</rdf:Description>
+		</rdf:RDF>
 		<rdf:RDF elmo:appearance="http://bp4mc2.org/elmo/def#FormAppearance">
 			<rdf:Description rdf:nodeID="form">
 				<rdfs:label>Query</rdfs:label>
@@ -95,7 +121,7 @@
 			<rdf:Description rdf:nodeID="f4">
 				<rdfs:label>Go!</rdfs:label>
 				<elmo:appearance rdf:resource="http://bp4mc2.org/elmo/def#SubmitAppearance"/>
-				<html:link>#</html:link>
+				<html:link><xsl:value-of select="root/context/@docroot"/>/sparql</html:link>
 			</rdf:Description>
 		</rdf:RDF>
 		<xsl:apply-templates select="root/rdf:RDF|root/res:sparql"/>

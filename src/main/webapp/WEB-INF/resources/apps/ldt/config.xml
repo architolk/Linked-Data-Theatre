@@ -2,7 +2,7 @@
 
     NAME     config.xml
     VERSION  1.7.2-SNAPSHOT
-    DATE     2016-06-06
+    DATE     2016-06-12
 
     Copyright 2012-2016
 
@@ -47,6 +47,7 @@
 	    (for example: a backstage behind a VPN). Make sure that a backstage domain is not a regular site domain!
 	  - the <stage> node contains the configuration for every stage within the specific domain. At least one stage should be present.
 		- name: (optional) the name of the stage
+		- title: (optional) the title of any page on that stage (as displayed in the tab of your browser)
 		- backstage-role: (optional) the role for anybody that can enter the backstage (to update or view the stage configuration)
 	- the <endpoint> node(s) contain extra information uses for sparql-endpoint, currently only for basic-authentication:
 		- username: the username for the endpoint

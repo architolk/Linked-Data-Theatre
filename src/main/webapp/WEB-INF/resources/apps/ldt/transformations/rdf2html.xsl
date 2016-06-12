@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.7.2-SNAPSHOT
-    DATE     2016-06-10
+    DATE     2016-06-12
 
     Copyright 2012-2016
 
@@ -335,7 +335,7 @@
 		<meta charset="utf-8"/>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-		<title>Linked Data Theater</title>
+		<title><xsl:value-of select="context/title"/></title>
 
 		<link rel="stylesheet" type="text/css" href="{$docroot}/css/bootstrap.min.css"/>
 		<link rel="stylesheet" type="text/css" href="{$docroot}/css/dataTables.bootstrap.min.css"/>

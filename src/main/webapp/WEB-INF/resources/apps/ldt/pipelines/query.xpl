@@ -1,8 +1,8 @@
 <!--
 
     NAME     query.xpl
-    VERSION  1.7.1
-    DATE     2016-06-03
+    VERSION  1.7.2-SNAPSHOT
+    DATE     2016-06-12
 
     Copyright 2012-2016
 
@@ -581,13 +581,20 @@
 						<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 							<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="no"/>
 							<xsl:template match="parameter" mode="replace">
+								<!-- Escape characters that could be used for SPARQL insertion -->
+								<!-- The solution is quite harsh: all ', ", <, > and \ are deleted -->
+								<!-- A better solution could be to know if a parameter is a literal or a URI -->
+								<xsl:variable name="problems">("|'|&lt;|&gt;|\\|\$)</xsl:variable>
+								<xsl:variable name="value">
+									<xsl:value-of select="replace(value[1],$problems,'')"/>
+								</xsl:variable>
 								<xsl:choose>
 									<xsl:when test="exists(following-sibling::*[1])">
 										<xsl:variable name="query"><xsl:apply-templates select="following-sibling::*[1]" mode="replace"/></xsl:variable>
-										<xsl:value-of select="replace($query,concat('@',upper-case(name),'@'),value[1])"/>
+										<xsl:value-of select="replace($query,concat('@',upper-case(name),'@'),$value)"/>
 									</xsl:when>
 									<xsl:otherwise>
-										<xsl:value-of select="replace(/root/representation/query,concat('@',upper-case(name),'@'),value[1])"/>
+										<xsl:value-of select="replace(/root/representation/query,concat('@',upper-case(name),'@'),$value)"/>
 									</xsl:otherwise>
 								</xsl:choose>
 							</xsl:template>

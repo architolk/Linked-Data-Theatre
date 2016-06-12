@@ -1,8 +1,8 @@
 <!--
 
     NAME     context.xsl
-    VERSION  1.7.1
-    DATE     2016-06-03
+    VERSION  1.7.2-SNAPSHOT
+    DATE     2016-06-12
 
     Copyright 2012-2016
 
@@ -93,6 +93,12 @@
 					<xsl:otherwise><xsl:value-of select="theatre/@local-endpoint"/></xsl:otherwise>
 				</xsl:choose>
 			</local-endpoint>
+			<title>
+				<xsl:choose>
+					<xsl:when test="$stage/@title!=''"><xsl:value-of select="$stage/@title"/></xsl:when>
+					<xsl:otherwise>Linked Data Theatre</xsl:otherwise>
+				</xsl:choose>
+			</title>
 			<url><xsl:value-of select="$url"/></url>
 			<domain><xsl:value-of select="$domain"/></domain>
 			<subdomain><xsl:value-of select="$subdomain"/></subdomain>
@@ -102,7 +108,7 @@
 			<language><xsl:value-of select="substring(request/headers/header[name='accept-language']/value,1,2)"/></language>
 			<user><xsl:value-of select="request/remote-user"/></user>
 			<user-role><xsl:value-of select="request-security/role"/></user-role>
-			<representation><xsl:value-of select="theatre/representation"/></representation>
+			<representation><xsl:value-of select="replace(theatre/representation,'[^a-zA-Z0-9:.-_~/()#]','')"/></representation> <!-- Remove any illegal characters -->
 			<xsl:if test="$stylesheet!=''"><stylesheet href="{$docroot}/css/{$stylesheet}"/></xsl:if>
 			<format>
 				<xsl:choose>
@@ -134,7 +140,8 @@
 					<!-- For security reasons, subject of a container should ALWAYS be the same as the request-url -->
 					<xsl:when test="exists(/croot)"><xsl:value-of select="$url"/></xsl:when>
 					<!-- Subject URL available in subject parameter -->
-					<xsl:when test="theatre/subject!=''"><xsl:value-of select="theatre/subject"/></xsl:when>
+					<!-- Remove any illegal characters from URI -->
+					<xsl:when test="theatre/subject!=''"><xsl:value-of select="replace(theatre/subject,'[^a-zA-Z0-9:.-_~/()#]','')"/></xsl:when>
 					<!-- Dereferenceable URI, /doc/ to /id/ redirect -->
 					<xsl:when test="substring-before($url,'/doc/')!=''">
 						<xsl:variable name="domain" select="substring-before($url,'/doc/')"/>
