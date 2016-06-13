@@ -2,7 +2,7 @@
 
     NAME     context.xsl
     VERSION  1.7.2-SNAPSHOT
-    DATE     2016-06-12
+    DATE     2016-06-13
 
     Copyright 2012-2016
 
@@ -32,6 +32,7 @@
 	<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="no"/>
 	
 	<xsl:template match="/root|/croot">
+		<xsl:variable name="uri-filter">[^a-zA-Z0-9:\.\-_~/()#]</xsl:variable>
 		<xsl:variable name="x-forwarded-host"><xsl:value-of select="replace(request/headers/header[name='x-forwarded-host']/value,'^([^,]+).*$','$1')"/></xsl:variable>
 		<xsl:variable name="domain">
 			<xsl:value-of select="$x-forwarded-host"/> <!-- Use original hostname in case of proxy, first one in case of multiple proxies -->
@@ -108,7 +109,7 @@
 			<language><xsl:value-of select="substring(request/headers/header[name='accept-language']/value,1,2)"/></language>
 			<user><xsl:value-of select="request/remote-user"/></user>
 			<user-role><xsl:value-of select="request-security/role"/></user-role>
-			<representation><xsl:value-of select="replace(theatre/representation,'[^a-zA-Z0-9:.-_~/()#]','')"/></representation> <!-- Remove any illegal characters -->
+			<representation><xsl:value-of select="replace(theatre/representation,$uri-filter,'')"/></representation> <!-- Remove any illegal characters -->
 			<xsl:if test="$stylesheet!=''"><stylesheet href="{$docroot}/css/{$stylesheet}"/></xsl:if>
 			<format>
 				<xsl:choose>
@@ -141,7 +142,7 @@
 					<xsl:when test="exists(/croot)"><xsl:value-of select="$url"/></xsl:when>
 					<!-- Subject URL available in subject parameter -->
 					<!-- Remove any illegal characters from URI -->
-					<xsl:when test="theatre/subject!=''"><xsl:value-of select="replace(theatre/subject,'[^a-zA-Z0-9:.-_~/()#]','')"/></xsl:when>
+					<xsl:when test="theatre/subject!=''"><xsl:value-of select="replace(theatre/subject,$uri-filter,'')"/></xsl:when>
 					<!-- Dereferenceable URI, /doc/ to /id/ redirect -->
 					<xsl:when test="substring-before($url,'/doc/')!=''">
 						<xsl:variable name="domain" select="substring-before($url,'/doc/')"/>
