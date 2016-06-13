@@ -1,0 +1,61 @@
+<!--
+
+    NAME     SPARQLRepresentation.xml
+    VERSION  1.7.2-SNAPSHOT
+    DATE     2016-06-13
+
+    Copyright 2012-2016
+
+    This file is part of the Linked Data Theatre.
+
+    The Linked Data Theatre is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    The Linked Data Theatre is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with the Linked Data Theatre.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!--
+    DESCRIPTION
+	Representation (top part) that is used when a user goes to the /sparql page.
+	
+-->
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:elmo="http://bp4mc2.org/elmo/def#"
+         xmlns:html="http://www.w3.org/1999/xhtml/vocab#"
+		 xmlns:dcterms="http://purl.org/dc/terms/"
+		 elmo:appearance="http://bp4mc2.org/elmo/def#NavbarSearchAppearance"
+>
+	<rdf:Description rdf:nodeID="menu">
+		<rdfs:label>SPARQL</rdfs:label>
+		<elmo:data rdf:nodeID="menu-item1"/>
+		<elmo:data rdf:nodeID="menu-item2"/>
+	</rdf:Description>
+	<rdf:Description rdf:nodeID="menu-item1">
+		<rdfs:label>Home</rdfs:label>
+		<elmo:index>1</elmo:index>
+		<html:link>/</html:link>
+	</rdf:Description>
+	<rdf:Description rdf:nodeID="menu-item2">
+		<rdfs:label>Voorbeelden</rdfs:label>
+		<elmo:index>2</elmo:index>
+		<elmo:data rdf:nodeID="vb1"/>
+		<elmo:data rdf:nodeID="vb2"/>
+	</rdf:Description>
+	<rdf:Description rdf:nodeID="vb1">
+		<rdfs:label>Aantal klassen</rdfs:label>
+		<html:link>?query=select+distinct+%3Ft+where+%7B%3Fx+rdf%3Atype+%3Ft%7D</html:link>
+	</rdf:Description>
+	<rdf:Description rdf:nodeID="vb2">
+		<rdfs:label>Aantal objecten</rdfs:label>
+		<html:link>?query=select+(count(*)+as+%3Fcnt)+where+%7B%3Fx%3Fy%3Fz%7D</html:link>
+	</rdf:Description>
+</rdf:RDF>

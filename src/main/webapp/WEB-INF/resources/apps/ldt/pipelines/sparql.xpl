@@ -2,7 +2,7 @@
 
     NAME     sparql.xpl
     VERSION  1.7.2-SNAPSHOT
-    DATE     2016-06-10
+    DATE     2016-06-13
 
     Copyright 2012-2016
 
@@ -155,9 +155,19 @@
 					</p:processor>
 				</p:when>
 				<p:otherwise>
+					<!-- Get predefined representation from LDT for SPARQL endpoint -->
+					<p:processor name="oxf:url-generator">
+						<p:input name="config" transform="oxf:xslt" href="#context">
+							<config xsl:version="2.0">
+								<url>../representations/SPARQLRepresentation.xml</url>
+								<content-type>application/xml</content-type>
+							</config>
+						</p:input>
+						<p:output name="data" id="sparqlrep"/>
+					</p:processor>
 					<!-- Convert sparql to rdfa -->
 					<p:processor name="oxf:xslt">
-						<p:input name="data" href="aggregate('root',#sparql,#context)"/>
+						<p:input name="data" href="aggregate('root',#sparql,#context,aggregate('representation',#sparqlrep))"/>
 						<p:input name="config" href="../transformations/sparql2rdfaform.xsl"/>
 						<p:output name="data" id="rdfa"/>
 					</p:processor>
