@@ -7,7 +7,7 @@ The Linked Data Theatre uses [semantic versioning](http://semver.org).
 If you make any changes to the LDT, you should include a `-SNAPSHOT` postfix to the project version, like any maven project. *A release version should never have such a postfix.*
 
 - Set the project version for any new release.
-- In case of a major or minor release: set the release version. **Don't set the release version (or release date) for a patch version!**
+- In case of a major or minor release: set the release version and release date. **Don't set the release version (or release date) for a patch version!**
 - **Also: don't update the patch date at this step!**
 
 Change this in the `\pom.xml` maven project file:
@@ -49,7 +49,7 @@ For example (refering to release 1.6.0):
 ##6. Add war to github release
 **Do this step only for minor and major releases! Patch release should not have a new war uploaded!.**
 
-Goto github: [https://github.com/architolk/Linked-Data-Theatre/tags](https://github.com/architolk/Linked-Data-Theatre/tags). Look for the correct tag (should be the topmost) and navigate to "Add release notes" and update the documentation for the release notes. Upload the war using the user interface of github. Publish the release.
+Goto github: [https://github.com/architolk/Linked-Data-Theatre/tags](https://github.com/architolk/Linked-Data-Theatre/tags). Look for the correct tag (should be the topmost) and navigate to "Edit tag" and update the documentation for the release notes (at least: set the title to something like "Release 1.6.0"). Upload the war using the user interface of github. Publish the release.
 
 ##7. Update pom.xml to snapshot version
 Because any change after the release should be a new version, directly update the version of the project to patchversion+1 (for example from `.0` to `.1`) and prefix `-SNAPSHOT`. Also set the date of the patch level to the current date:
