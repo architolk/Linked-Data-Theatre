@@ -1,7 +1,7 @@
 <!--
 
     NAME     rdf2rdfa.xsl
-    VERSION  1.7.2-SNAPSHOT
+    VERSION  1.8.0
     DATE     2016-06-15
 
     Copyright 2012-2016

@@ -1,7 +1,7 @@
 --
 -- NAME     create_procedures.sql
--- VERSION  1.7.1
--- DATE     2016-06-03
+-- VERSION  1.8.0
+-- DATE     2016-06-15
 --
 -- Copyright 2012-2016
 --
