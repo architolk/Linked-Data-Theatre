@@ -2,7 +2,7 @@
 
     NAME     rdf2rdfa.xsl
     VERSION  1.7.2-SNAPSHOT
-    DATE     2016-06-09
+    DATE     2016-06-15
 
     Copyright 2012-2016
 
@@ -272,6 +272,8 @@
 
 </xsl:template>
 
+<!-- THIS PART OF THE CODEBASE IS DEPRECATED AND SHOULD BE DELETED -->
+<!-- Start -->
 <xsl:template match="representation" mode="merge">
 	<xsl:param name="index"/>
 
@@ -335,6 +337,7 @@
 	</rdf:RDF>
 
 </xsl:template>
+<!-- END -->
 
 <xsl:template match="/root">
 	<results>
@@ -343,18 +346,20 @@
 			<xsl:copy-of select="context/*"/>
 			<xsl:copy-of select="view/stylesheet"/>
 		</context>
-		<xsl:for-each select="view/representation[not(exists(service))]">
+		<xsl:for-each select="view/representation">
 			<xsl:variable name="index" select="position()"/>
 			<xsl:apply-templates select="." mode="results">
 				<xsl:with-param name="index" select="$index"/>
 			</xsl:apply-templates>
 		</xsl:for-each>
+		<!--
 		<xsl:for-each select="view/representation[exists(service)]">
 			<xsl:variable name="index" select="position()"/>
 			<xsl:apply-templates select="." mode="merge">
 				<xsl:with-param name="index" select="$index"/>
 			</xsl:apply-templates>
 		</xsl:for-each>
+		-->
 	</results>
 </xsl:template>
 

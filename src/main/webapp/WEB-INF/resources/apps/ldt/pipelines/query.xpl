@@ -2,7 +2,7 @@
 
     NAME     query.xpl
     VERSION  1.7.2-SNAPSHOT
-    DATE     2016-06-12
+    DATE     2016-06-15
 
     Copyright 2012-2016
 
@@ -358,7 +358,7 @@
 				<xsl:template match="/root">
 					<view>
 						<xsl:apply-templates select="rdf:RDF/rdf:Description[rdf:type/@rdf:resource!='http://bp4mc2.org/elmo/def#fragment']/html:stylesheet"/>
-						<xsl:for-each-group select="rdf:RDF/rdf:Description[exists(elmo:data[1]) or exists(elmo:query[1]) or exists(elmo:service[1]) or exists(elmo:operation[1])]" group-by="@rdf:about"><xsl:sort select="concat(elmo:index[1],'~')"/>
+						<xsl:for-each-group select="rdf:RDF/rdf:Description[exists(elmo:data[1]) or exists(elmo:query[1]) or exists(elmo:service[1])]" group-by="@rdf:about"><xsl:sort select="concat(elmo:index[1],'~')"/>
 							<xsl:choose>
 								<!-- Special: data is available in a file (used only for ELMO-LDT related content -->
 								<xsl:when test="exists(elmo:file[1])">
@@ -369,29 +369,10 @@
 										<file><xsl:value-of select="elmo:file[1]"/></file>
 									</representation>
 								</xsl:when>
-								<xsl:when test="exists(elmo:operation[1])">
-									<representation uri="{@rdf:about}" index="{position()}">
-										<xsl:if test="exists(elmo:appearance[1])"><xsl:attribute name="appearance"><xsl:value-of select="elmo:appearance[1]/@rdf:resource"/></xsl:attribute></xsl:if>
-										<xsl:apply-templates select="elmo:queryForm"/>
-										<xsl:apply-templates select="elmo:fragment"/>
-										<xsl:apply-templates select="elmo:use"/>
-										<service uri="{elmo:operation[1]/@rdf:resource}"/>
-									</representation>
-								</xsl:when>
-								<xsl:when test="exists(elmo:service[1])">
-									<representation uri="{@rdf:about}" index="{position()}">
-										<xsl:if test="exists(elmo:appearance[1])"><xsl:attribute name="appearance"><xsl:value-of select="elmo:appearance[1]/@rdf:resource"/></xsl:attribute></xsl:if>
-										<xsl:apply-templates select="elmo:queryForm"/>
-										<xsl:apply-templates select="elmo:fragment"/>
-										<xsl:apply-templates select="elmo:use"/>
-										<service><xsl:value-of select="elmo:service[1]/@rdf:resource"/></service>
-									</representation>
-								</xsl:when>
 								<xsl:when test="exists(elmo:data[1])">
 									<!-- Als er letterlijke data wordt opgevraagd, dan deze straks ophalen via de query -->
 									<representation uri="{@rdf:about}" index="{position()}" endpoint="{/root/context/configuration-endpoint}">
 										<xsl:if test="exists(elmo:appearance[1])"><xsl:attribute name="appearance"><xsl:value-of select="elmo:appearance[1]/@rdf:resource"/></xsl:attribute></xsl:if>
-										<xsl:if test="exists(elmo:operation[1])"><xsl:attribute name="operation"><xsl:value-of select="elmo:operation[1]/@rdf:resource"/></xsl:attribute></xsl:if>
 										<xsl:apply-templates select="elmo:queryForm"/>
 										<xsl:apply-templates select="elmo:fragment"/>
 										<query>
@@ -422,12 +403,26 @@
 									<representation uri="{@rdf:about}" index="{position()}">
 										<xsl:if test="exists(elmo:endpoint[1])"><xsl:attribute name="endpoint"><xsl:value-of select="elmo:endpoint[1]/@rdf:resource"/></xsl:attribute></xsl:if>
 										<xsl:if test="exists(elmo:appearance[1])"><xsl:attribute name="appearance"><xsl:value-of select="elmo:appearance[1]/@rdf:resource"/></xsl:attribute></xsl:if>
-										<xsl:if test="exists(elmo:operation[1])"><xsl:attribute name="operation"><xsl:value-of select="elmo:operation[1]/@rdf:resource"/></xsl:attribute></xsl:if>
 										<xsl:if test="exists(elmo:container[1])"><xsl:attribute name="container"><xsl:value-of select="elmo:container[1]/@rdf:resource"/></xsl:attribute></xsl:if>
 										<xsl:apply-templates select="elmo:queryForm"/>
 										<xsl:apply-templates select="elmo:fragment"/>
 										<query><xsl:value-of select="elmo:query[1]"/></query>
 										<xsl:apply-templates select="elmo:link"/>
+										<!-- Een service kan vooraf gaan aan een query, dus die hier ook meenemen -->
+										<xsl:if test="exists(elmo:service[1])">
+											<xsl:apply-templates select="elmo:output"/>
+											<service><xsl:value-of select="elmo:service[1]"/></service>
+										</xsl:if>
+									</representation>
+								</xsl:when>
+								<xsl:when test="exists(elmo:service[1])">
+									<representation uri="{@rdf:about}" index="{position()}">
+										<xsl:if test="exists(elmo:appearance[1])"><xsl:attribute name="appearance"><xsl:value-of select="elmo:appearance[1]/@rdf:resource"/></xsl:attribute></xsl:if>
+										<xsl:apply-templates select="elmo:queryForm"/>
+										<xsl:apply-templates select="elmo:fragment"/>
+										<xsl:apply-templates select="elmo:use"/> <!-- Niet duidelijk waar deze voor is -->
+										<xsl:apply-templates select="elmo:output"/>
+										<service><xsl:value-of select="elmo:service[1]"/></service>
 									</representation>
 								</xsl:when>
 								<!-- No data, no query -->
@@ -450,7 +445,7 @@
 </p:processor>
 -->
 	<!-- More than one query is possible -->
-	<p:for-each href="#querytext" select="/view/representation[not(exists(service))]" root="results" id="sparql">
+	<p:for-each href="#querytext" select="/view/representation" root="results" id="sparql">
 	
 		<p:choose href="current()">
 			<!-- queryForm constraint not satisfied, so query won't succeed: show form -->
@@ -471,6 +466,62 @@
 							<content-type>application/xml</content-type>
 						</config>
 					</p:input>
+					<p:output name="data" ref="sparql"/>
+				</p:processor>
+			</p:when>
+			<!-- Service execution, no query -->
+			<p:when test="exists(representation/service) and not(exists(representation/query))">
+				<!-- Create service request -->
+				<p:processor name="oxf:xslt">
+					<p:input name="config">
+						<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+							<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="no"/>
+							<xsl:template match="parameter" mode="replace">
+								<!-- Escape characters that could be used for SPARQL insertion -->
+								<!-- The solution is quite harsh: all ', ", <, > and \ are deleted -->
+								<!-- A better solution could be to know if a parameter is a literal or a URI -->
+								<xsl:variable name="problems">("|'|&lt;|&gt;|\\|\$)</xsl:variable>
+								<xsl:variable name="value">
+									<xsl:value-of select="replace(value[1],$problems,'')"/>
+								</xsl:variable>
+								<xsl:choose>
+									<xsl:when test="exists(following-sibling::*[1])">
+										<xsl:variable name="service"><xsl:apply-templates select="following-sibling::*[1]" mode="replace"/></xsl:variable>
+										<xsl:value-of select="replace($service,concat('@',upper-case(name),'@'),$value)"/>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:value-of select="replace(/root/representation/service,concat('@',upper-case(name),'@'),$value)"/>
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:template>
+							<xsl:template match="/root">
+								<service>
+									<xsl:apply-templates select="/root/context/parameters/parameter[1]" mode="replace"/>
+									<xsl:if test="not(exists(/root/context/parameters/parameter))"><xsl:value-of select="/root/representation/service"/></xsl:if>
+								</service>
+							</xsl:template>
+						</xsl:stylesheet>
+					</p:input>
+					<p:input name="data" href="aggregate('root',current(),#context)"/>
+					<p:output name="data" id="servicecall"/>
+				</p:processor>
+				<p:processor name="oxf:xforms-submission">
+					<p:input name="submission" href="#servicecall" transform="oxf:xslt">
+						<xforms:submission method="get" xsl:version="2.0" action="{service}">
+							<xforms:setvalue ev:event="xforms-submit-error" ref="response" value="event('response-body')"/>
+						</xforms:submission>
+					</p:input>
+					<p:input name="request">
+						<parameters>
+							<response />
+						</parameters>
+					</p:input>
+					<p:output name="response" id="service"/>
+				</p:processor>
+				<!-- Transform json to xml-->
+				<p:processor name="oxf:xslt">
+					<p:input name="data" href="aggregate('root',current(),#service)"/>
+					<p:input name="config" href="../transformations/json2xml.xsl"/>
 					<p:output name="data" ref="sparql"/>
 				</p:processor>
 			</p:when>
@@ -575,6 +626,71 @@
 				
 			</p:when>
 			<p:otherwise>
+				<!-- Execute service if any -->
+				<p:choose href="current()">
+					<p:when test="exists(representation/service)">
+						<!-- Create service request -->
+						<p:processor name="oxf:xslt">
+							<p:input name="config">
+								<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+									<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="no"/>
+									<xsl:template match="parameter" mode="replace">
+										<!-- Escape characters that could be used for SPARQL insertion -->
+										<!-- The solution is quite harsh: all ', ", <, > and \ are deleted -->
+										<!-- A better solution could be to know if a parameter is a literal or a URI -->
+										<xsl:variable name="problems">("|'|&lt;|&gt;|\\|\$)</xsl:variable>
+										<xsl:variable name="value">
+											<xsl:value-of select="replace(value[1],$problems,'')"/>
+										</xsl:variable>
+										<xsl:choose>
+											<xsl:when test="exists(following-sibling::*[1])">
+												<xsl:variable name="service"><xsl:apply-templates select="following-sibling::*[1]" mode="replace"/></xsl:variable>
+												<xsl:value-of select="replace($service,concat('@',upper-case(name),'@'),$value)"/>
+											</xsl:when>
+											<xsl:otherwise>
+												<xsl:value-of select="replace(/root/representation/service,concat('@',upper-case(name),'@'),$value)"/>
+											</xsl:otherwise>
+										</xsl:choose>
+									</xsl:template>
+									<xsl:template match="/root">
+										<service>
+											<xsl:apply-templates select="/root/context/parameters/parameter[1]" mode="replace"/>
+											<xsl:if test="not(exists(/root/context/parameters/parameter))"><xsl:value-of select="/root/representation/service"/></xsl:if>
+										</service>
+									</xsl:template>
+								</xsl:stylesheet>
+							</p:input>
+							<p:input name="data" href="aggregate('root',current(),#context)"/>
+							<p:output name="data" id="servicecall"/>
+						</p:processor>
+						<p:processor name="oxf:xforms-submission">
+							<p:input name="submission" href="#servicecall" transform="oxf:xslt">
+								<xforms:submission method="get" xsl:version="2.0" action="{service}">
+									<xforms:setvalue ev:event="xforms-submit-error" ref="response" value="event('response-body')"/>
+								</xforms:submission>
+							</p:input>
+							<p:input name="request">
+								<parameters>
+									<response />
+								</parameters>
+							</p:input>
+							<p:output name="response" id="service"/>
+						</p:processor>
+						<!-- Transform json to xml, include parameters -->
+						<p:processor name="oxf:xslt">
+							<p:input name="data" href="aggregate('root',current(),#service,#context)"/>
+							<p:input name="config" href="../transformations/json2xml.xsl"/>
+							<p:output name="data" id="sparqlinput"/>
+						</p:processor>
+					</p:when>
+					<p:otherwise>
+						<!-- No service, so return normal parameters -->
+						<p:processor name="oxf:identity">
+							<p:input name="data" href="#context#xpointer(context/parameters)"/>
+							<p:output name="data" id="sparqlinput"/>
+						</p:processor>
+					</p:otherwise>
+				</p:choose>
 				<!-- Create sparql request -->
 				<p:processor name="oxf:xslt">
 					<p:input name="config">
@@ -602,12 +718,12 @@
 								<parameters>
 									<!-- Currentmoment kan nog beinvloed worden door de date-parameter, beetje raar, afkomstig uit andere implementatie -->
 									<xsl:variable name="currentmoment">
-										<xsl:value-of select="root/context/parameters/parameter[name='date']/value[1]"/>
+										<xsl:value-of select="root/parameters/parameter[name='date']/value[1]"/>
 										<xsl:value-of select="substring(xs:string(current-dateTime()),1+string-length(root/context/parameters/parameter[name='date']/value[1]),255)"/>
 									</xsl:variable>
 									<xsl:variable name="query1">
-										<xsl:apply-templates select="/root/context/parameters/parameter[1]" mode="replace"/>
-										<xsl:if test="not(exists(/root/context/parameters/parameter))"><xsl:value-of select="/root/representation/query"/></xsl:if>
+										<xsl:apply-templates select="/root/parameters/parameter[1]" mode="replace"/>
+										<xsl:if test="not(exists(/root/parameters/parameter))"><xsl:value-of select="/root/representation/query"/></xsl:if>
 									</xsl:variable>
 									<xsl:variable name="query2" select="replace($query1,'@LANGUAGE@',/root/context/language)"/>
 									<xsl:variable name="query3" select="replace($query2,'@USER@',/root/context/user)"/>
@@ -620,7 +736,7 @@
 							</xsl:template>
 						</xsl:stylesheet>
 					</p:input>
-					<p:input name="data" href="aggregate('root',current(),#context)"/>
+					<p:input name="data" href="aggregate('root',current(),#context,#sparqlinput)"/>
 					<p:output name="data" id="query"/>
 				</p:processor>
 				
