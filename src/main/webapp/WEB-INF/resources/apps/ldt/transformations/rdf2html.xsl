@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.7.2-SNAPSHOT
-    DATE     2016-06-12
+    DATE     2016-06-15
 
     Copyright 2012-2016
 
@@ -573,14 +573,24 @@
 		<!-- <div class="row"> -->
 			<ul class="nav nav-tabs">
 				<xsl:variable name="value" select="tokenize(rdf:value,'\|')"/>
-				<xsl:variable name="link" select="html:link"/>
+				<xsl:variable name="link"><xsl:value-of select="html:link"/></xsl:variable>
+				<xsl:variable name="reallink">
+					<xsl:value-of select="$link"/>
+					<xsl:if test="$link=''">
+						<xsl:value-of select="/results/context/url"/>
+						<xsl:choose>
+							<xsl:when test="matches(/results/context/url,'/resource$')">?subject=<xsl:value-of select="encode-for-uri(/results/context/subject)"/>&amp;</xsl:when>
+							<xsl:otherwise>?</xsl:otherwise>
+						</xsl:choose>
+					</xsl:if>
+				</xsl:variable>
 				<xsl:variable name="para" select="elmo:name"/>
 				<xsl:variable name="current" select="/results/context/parameters/parameter[name=$para]/value[1]"/>
 				<xsl:for-each select="tokenize(rdfs:label,'\|')">
 					<xsl:variable name="pos" select="position()"/>
 					<li>
 						<xsl:if test="$value[$pos]=$current"><xsl:attribute name="class">active</xsl:attribute></xsl:if>
-						<a href="{$link}?{$para}={$value[$pos]}"><xsl:value-of select="."/></a>
+						<a href="{$reallink}{$para}={$value[$pos]}"><xsl:value-of select="."/></a>
 					</li>
 				</xsl:for-each>
 			</ul>
