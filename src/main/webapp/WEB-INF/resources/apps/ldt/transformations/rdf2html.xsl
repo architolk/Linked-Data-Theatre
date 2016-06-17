@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2html.xsl
-    VERSION  1.8.0
-    DATE     2016-06-15
+    VERSION  1.8.1-SNAPSHOT
+    DATE     2016-06-17
 
     Copyright 2012-2016
 
@@ -576,13 +576,14 @@
 				<xsl:variable name="link"><xsl:value-of select="html:link"/></xsl:variable>
 				<xsl:variable name="reallink">
 					<xsl:value-of select="$link"/>
-					<xsl:if test="$link=''">
-						<xsl:value-of select="/results/context/url"/>
-						<xsl:choose>
-							<xsl:when test="matches(/results/context/url,'/resource$')">?subject=<xsl:value-of select="encode-for-uri(/results/context/subject)"/>&amp;</xsl:when>
-							<xsl:otherwise>?</xsl:otherwise>
-						</xsl:choose>
-					</xsl:if>
+					<xsl:choose>
+						<xsl:when test="$link=''">
+							<xsl:value-of select="/results/context/url"/>
+							<xsl:text>?</xsl:text>
+							<xsl:if test="matches(/results/context/url,'/resource$')">subject=<xsl:value-of select="encode-for-uri(/results/context/subject)"/>&amp;</xsl:if>
+						</xsl:when>
+						<xsl:otherwise>?</xsl:otherwise>
+					</xsl:choose>
 				</xsl:variable>
 				<xsl:variable name="para" select="elmo:name"/>
 				<xsl:variable name="current" select="/results/context/parameters/parameter[name=$para]/value[1]"/>

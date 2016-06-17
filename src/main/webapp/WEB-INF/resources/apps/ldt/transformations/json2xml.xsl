@@ -2,8 +2,8 @@
 <!--
 
     NAME     json2xml.xsl
-    VERSION  1.8.0
-    DATE     2016-06-15
+    VERSION  1.8.1-SNAPSHOT
+    DATE     2016-06-17
 
     Copyright 2012-2016
 
@@ -51,9 +51,14 @@
 					<xsl:copy-of select="/root/context/parameters/parameter"/>
 					<xsl:for-each select="$output">
 						<xsl:variable name="path" select="elmo:path"/>
+						<xsl:variable name="value"><xsl:for-each select="$xml"><xsl:value-of select="saxon:evaluate($path)" xmlns:saxon="http://saxon.sf.net/"/></xsl:for-each></xsl:variable>
 						<parameter>
 							<name><xsl:value-of select="elmo:name"/></name>
-							<value><xsl:for-each select="$xml"><xsl:value-of select="saxon:evaluate($path)" xmlns:saxon="http://saxon.sf.net/"/></xsl:for-each></value>
+							<value>
+								<xsl:value-of select="$value"/>
+								<!-- Setting the empty value to an empty URI is a quick fix, should be better solution in query.xsl: not performing query after an empty result -->
+								<xsl:if test="$value=''">http://bp4mc2.org/elmo/def#Nothing</xsl:if>
+							</value>
 						</parameter>
 					</xsl:for-each>
 				</parameters>

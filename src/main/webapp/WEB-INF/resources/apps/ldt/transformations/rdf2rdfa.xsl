@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2rdfa.xsl
-    VERSION  1.8.0
-    DATE     2016-06-15
+    VERSION  1.8.1-SNAPSHOT
+    DATE     2016-06-17
 
     Copyright 2012-2016
 
@@ -216,6 +216,13 @@
 			<xsl:when test="$appearance='http://bp4mc2.org/elmo/def#NavbarSearchAppearance'">
 				<xsl:for-each-group select="/root/results/rdf:RDF[position()=$index]/rdf:Description" group-by="@rdf:nodeID">
 					<rdf:Description rdf:nodeID="{@rdf:nodeID}">
+						<xsl:copy-of select="current-group()/*"/>
+					</rdf:Description>
+				</xsl:for-each-group>
+			</xsl:when>
+			<xsl:when test="$appearance='http://bp4mc2.org/elmo/def#TreeAppearance'">
+				<xsl:for-each-group select="/root/results/rdf:RDF[position()=$index]/rdf:Description" group-by="@rdf:about">
+					<rdf:Description rdf:about="{@rdf:about}">
 						<xsl:copy-of select="current-group()/*"/>
 					</rdf:Description>
 				</xsl:for-each-group>
