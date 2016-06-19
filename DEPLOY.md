@@ -58,28 +58,18 @@ You should change the domain of your site to the correct port number:
 Do **NOT** add the protocol ("http://") to the domainname.
 
 ### 5. Test your version of the Linked Data Theatre
-Go to `http://localhost/version` and check if the Linked Data Theatre runs correctly. You should receive something that looks like this:
+Go to `http://localhost/info` and check if the Linked Data Theatre runs correctly. You should receive something that looks like this:
 
-The most important line is the one that starts with `<representation-graph`. The uri should be the uri of your stage. If this value is empty (e.g.: `uri=""`), than your config.xml file is probably not correct. 
+The most important line is the one that starts with `Config:`. You should have the value `VALID`. If your config is `INVALID`, some extra lines will be present, telling you which problem you should fix.
 
-	<?xml version="1.0" encoding="UTF-8"?>
-	<context sparql="no" timestamp="2016-03-13 16:24:38" version="1.6.0" docroot="">
-		<configuration-endpoint>http://127.0.0.1:8890/sparql</configuration-endpoint>
-		<local-endpoint>http://127.0.0.1:8890/sparql</local-endpoint>
-		<url>http://localhost/version</url>
-		<domain>localhost</domain>
-		<subdomain/>
-		<query/>
-		<representation-graph uri="http://localhost/stage"/>
-		<back-of-stage>http://localhost/stage</back-of-stage>
-		<language>nl</language>
-		<user/>
-		<user-role/>
-		<representation/>
-		<format>text/html</format>
-		<subject>http://localhost/version</subject>
-		<parameters/>
-	</context> 
+	Version number:          1.8.0
+	Version timestamp:       2016-06-15 21:18:08
+	Environment:             dev
+	Stage:                   http://localhost/stage
+	Docroot:                 /
+	Public SPARQL endpoint:  yes
+	Public backstage:        yes
+	Config:                  VALID
 
 ### 6. Install the default configuration
 After you have installed the LDT, the main page of the theatre will be a empty page. Just like a new theatre, the stage will be empty. You can use the default configuration that comes with the LDT to get you started.
