@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.8.1-SNAPSHOT
-    DATE     2016-06-17
+    DATE     2016-06-21
 
     Copyright 2012-2016
 
@@ -1188,8 +1188,16 @@ table.fragment tr td{
 											<xsl:when test="count(key('rdf',elmo:valuesFrom/@rdf:resource)/rdf:Description)>2">
 												<div class="input-group" style="width:100%;">
 													<select data-placeholder="Select..." class="chosen-select" multiple="multiple" id="{elmo:applies-to}" name="{elmo:applies-to}">
+														<xsl:if test="exists(elmo:value-to)">
+															<xsl:attribute name="onchange">
+																<xsl:choose>
+																	<xsl:when test="elmo:value-to=$sparqlEditorID">if(this.selectedIndex!=-1) {editor.setValue($('option:selected',this).attr('rdfvalue'))};</xsl:when>
+																	<xsl:otherwise>if(this.selectedIndex!=-1) {$('#<xsl:value-of select="elmo:value-to"/>').val($('option:selected',this).attr('rdfvalue'))};</xsl:otherwise>
+																</xsl:choose>
+															</xsl:attribute>
+														</xsl:if>
 														<xsl:for-each select="key('rdf',elmo:valuesFrom/@rdf:resource)/rdf:Description"><xsl:sort select="@rdf:about"/>
-															<option value="{@rdf:about}"><xsl:value-of select="rdfs:label"/></option>
+															<option value="{@rdf:about}" rdfvalue="{rdf:value}"><xsl:value-of select="rdfs:label"/></option>
 														</xsl:for-each>
 													</select>
 													<script>$('#<xsl:value-of select="elmo:applies-to"/>').chosen({max_selected_options: 1});</script>

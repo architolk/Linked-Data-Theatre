@@ -1,8 +1,8 @@
 <!--
 
     NAME     sparql.xpl
-    VERSION  1.8.0
-    DATE     2016-06-15
+    VERSION  1.8.1-SNAPSHOT
+    DATE     2016-06-21
 
     Copyright 2012-2016
 
@@ -155,6 +155,42 @@
 					</p:processor>
 				</p:when>
 				<p:otherwise>
+					<!-- Get possible examples queries -->
+					<p:processor name="oxf:xforms-submission">
+						<p:input name="submission" transform="oxf:xslt" href="#context">
+							<xforms:submission method="get" xsl:version="2.0" action="{context/configuration-endpoint}">
+								<xforms:header>
+									<xforms:name>Accept</xforms:name>
+									<xforms:value>application/rdf+xml</xforms:value>
+								</xforms:header>
+								<xforms:setvalue ev:event="xforms-submit-error" ref="error" value="event('response-body')"/>
+								<xforms:setvalue ev:event="xforms-submit-error" ref="error/@type" value="event('error-type')"/>
+							</xforms:submission>
+						</p:input>
+						<p:input name="request" transform="oxf:xslt" href="#context">
+							<parameters xsl:version="2.0">
+								<query>
+								<![CDATA[
+									PREFIX elmo: <http://bp4mc2.org/elmo/def#>
+									CONSTRUCT {
+										?q rdfs:label ?qlabel.
+										?q rdf:value ?query
+									}
+									WHERE {
+										GRAPH <]]><xsl:value-of select="context/representation-graph/@uri"/><![CDATA[> {
+											?q rdf:type elmo:Query.
+											?q rdfs:label ?qlabel.
+											?q elmo:query ?query
+										}
+									}
+								]]>
+								</query>
+								<default-graph-uri/>
+								<error type=""/>
+							</parameters>
+						</p:input>
+						<p:output name="response" id="queries"/>
+					</p:processor>
 					<!-- Get predefined representation from LDT for SPARQL endpoint -->
 					<p:processor name="oxf:url-generator">
 						<p:input name="config" transform="oxf:xslt" href="#context">
@@ -167,11 +203,18 @@
 					</p:processor>
 					<!-- Convert sparql to rdfa -->
 					<p:processor name="oxf:xslt">
-						<p:input name="data" href="aggregate('root',#sparql,#context,aggregate('representation',#sparqlrep))"/>
+						<p:input name="data" href="aggregate('root',#sparql,#context,aggregate('representation',#sparqlrep),aggregate('queries',#queries))"/>
 						<p:input name="config" href="../transformations/sparql2rdfaform.xsl"/>
 						<p:output name="data" id="rdfa"/>
 					</p:processor>
-
+<!--
+<p:processor name="oxf:xml-serializer">
+	<p:input name="config">
+		<config/>
+	</p:input>
+	<p:input name="data" href="#rdfa"/>
+</p:processor>
+-->
 					<!-- Transform rdfa to html -->
 					<p:processor name="oxf:xslt">
 						<p:input name="data" href="#rdfa"/>
