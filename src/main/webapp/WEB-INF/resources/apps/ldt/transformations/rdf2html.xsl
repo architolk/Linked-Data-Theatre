@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.8.1-SNAPSHOT
-    DATE     2016-06-21
+    DATE     2016-06-22
 
     Copyright 2012-2016
 
@@ -274,7 +274,7 @@
 			<xsl:apply-templates select="." mode="FormAppearance"/>
 		</xsl:when>
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#GeoAppearance' or @elmo:appearance='http://bp4mc2.org/elmo/def#GeoSelectAppearance'">
-			<xsl:apply-templates select="." mode="GeoAppearance"><xsl:with-param name="backmap">brt</xsl:with-param><xsl:with-param name="appearance" select="substring-after(@elmo:appearance,'http://bp4mc2.org/elmo/def#')"/></xsl:apply-templates>
+			<xsl:apply-templates select="." mode="GeoAppearance"><xsl:with-param name="backmap"><xsl:value-of select="rdf:Description[elmo:applies-to='http://bp4mc2.org/elmo/def#Appearance']/elmo:backmap[1]"/></xsl:with-param><xsl:with-param name="appearance" select="substring-after(@elmo:appearance,'http://bp4mc2.org/elmo/def#')"/></xsl:apply-templates>
 		</xsl:when>
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#ImageAppearance'">
 			<xsl:apply-templates select="." mode="GeoAppearance"><xsl:with-param name="backmap">image</xsl:with-param><xsl:with-param name="appearance">ImageAppearance</xsl:with-param></xsl:apply-templates>

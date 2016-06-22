@@ -1,7 +1,7 @@
 /*
  * NAME     linkeddatamap.js
- * VERSION  1.8.0
- * DATE     2016-06-15
+ * VERSION  1.8.1-SNAPSHOT
+ * DATE     2016-06-22
  *
  * Copyright 2012-2016
  *
@@ -494,13 +494,11 @@ function mapClicked(e) {
 	form.submit();
 }
 
-function initMap(docroot, latCor, longCor, backMap, imageMapURL, contURL, left, top, width, height)
-{
+function initMap(docroot, latCor, longCor, baseLayer, imageMapURL, contURL, left, top, width, height) {
 	// Pad naar de icons goedmaken
 	L.Icon.Default.imagePath = docroot + '/images';
 
-	if (backMap=='image') {
-	
+	if (baseLayer === 'image') {
 		// create the slippy map
 		map = L.map('map', {
 		  minZoom: 1,
@@ -527,14 +525,14 @@ function initMap(docroot, latCor, longCor, backMap, imageMapURL, contURL, left, 
 		L.easyButton( '<span class="print"><b>P</b></span>', printMap).addTo(map);
 		
 		// Add save-button
-		if (contURL!='') {
+		if (contURL !== '') {
 			containerURL = contURL;
 			L.easyButton( '<span class="save"><b>S</b></span>', updateMap).addTo(map);
 		}
 	}
 	else {
-	
-		if (backMap=='brt') {
+		overlay = null;
+		if (baseLayer === 'brt') {
 			//Use BRT tiles
 			//RD Projectie
 			var RD = L.CRS.proj4js('EPSG:28992', '+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +towgs84=565.2369,50.0087,465.658,-0.406857330322398,0.350732676542563,-1.8703473836068,4.0812 +no_defs', new L.Transformation(1, 285401.920, -1, 903401.920));
@@ -543,6 +541,19 @@ function initMap(docroot, latCor, longCor, backMap, imageMapURL, contURL, left, 
 			};
 			map = L.map('map',{crs: RD});
 			osm = new L.TileLayer('http://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png', {minZoom: 1, maxZoom: 13, tms: true, continuousWorld: true});
+		} else if (baseLayer=='brk') {
+			//Use BRK tiles
+			//RD Projectie
+			var RD = L.CRS.proj4js('EPSG:28992', '+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +towgs84=565.2369,50.0087,465.658,-0.406857330322398,0.350732676542563,-1.8703473836068,4.0812 +no_defs', new L.Transformation(1, 285401.920, -1, 903401.920));
+			RD.scale = function(zoom) {
+				return 1 / res[zoom];
+			};
+			map = L.map('map', {
+				crs: RD,
+				maxZoom: 13
+			});
+			osm = new L.TileLayer('http://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png', {minZoom: 1, maxZoom: 13, tms: true, continuousWorld: true});
+			overlay = new L.tileLayer.wms('https://geodata.nationaalgeoregister.nl/kadastralekaartv2/wms', {layers: 'perceel,perceelnummer',format: 'image/png',transparent: true});
 		} else {
 			//Use OpenStreetMap tiles
 			map = L.map('map');
@@ -553,6 +564,7 @@ function initMap(docroot, latCor, longCor, backMap, imageMapURL, contURL, left, 
 
 		//Add tile layer to map
 		map.addLayer(osm);
+		if (overlay) map.addLayer(overlay);
 	}
 
 	//Zoom option for circlemarkers

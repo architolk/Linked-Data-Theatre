@@ -2,7 +2,7 @@
 
     NAME     rdf2rdfa.xsl
     VERSION  1.8.1-SNAPSHOT
-    DATE     2016-06-17
+    DATE     2016-06-22
 
     Copyright 2012-2016
 
@@ -167,6 +167,12 @@
 					<geo:long>5.387197444102625</geo:long>
 					<geo:lat>52.15516475286759</geo:lat>
 				</rdf:Description>
+				<xsl:for-each select="fragment">
+					<rdf:Description rdf:nodeID="f{position()}">
+						<xsl:if test="@applies-to!=''"><elmo:applies-to><xsl:value-of select="@applies-to"/></elmo:applies-to></xsl:if>
+						<xsl:copy-of select="*"/>
+					</rdf:Description>
+				</xsl:for-each>
 			</xsl:when>
 			<xsl:when test="$appearance='http://bp4mc2.org/elmo/def#ContentAppearance' or $appearance='http://bp4mc2.org/elmo/def#CarouselAppearance'">
 				<xsl:variable name="fragments" select="fragment"/>
