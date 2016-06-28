@@ -18,7 +18,7 @@
 		<dependency>
 			<groupId>nl.architolk.ldt</groupId>
 			<artifactId>processors</artifactId>
-			<version>1.5.1</version>
+			<version>1.9.0</version>
 		</dependency>
 	</dependencies>
 	<build>

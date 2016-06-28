@@ -3,16 +3,16 @@
 	<groupId>nl.architolk.ldt</groupId>
 	<artifactId>processors</artifactId>
 	<packaging>jar</packaging>
-	<version>1.5.1</version>
+	<version>1.9.0</version>
 	<name>processors</name>
 	<properties>
 		<maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
 		<buildTimestamp>${maven.build.timestamp}</buildTimestamp>
 		<license-maven-plugin.version>2.11</license-maven-plugin.version>
 		<license.failIfMissing>false</license.failIfMissing>
-		<release.version>1.5.1</release.version>
-		<release.date>2016-02-09</release.date>
-		<patch.date>2016-02-09</patch.date>
+		<release.version>1.9.0</release.version>
+		<release.date>2016-06-28</release.date>
+		<patch.date>2016-06-28</patch.date>
 	</properties>
 	<dependencies>
 		<!-- Dependency for testing -->
@@ -51,6 +51,18 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>3.10.1</version>
 			<scope>compile</scope>
+		</dependency>
+		<!-- Dependencies HttpClientProcessor -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.2</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.json-lib</groupId>
+			<artifactId>json-lib</artifactId>
+			<version>2.4</version>
+			<classifier>jdk15</classifier>
 		</dependency>
 	</dependencies>
 	<build>

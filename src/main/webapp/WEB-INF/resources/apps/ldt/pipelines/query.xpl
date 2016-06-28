@@ -1,8 +1,8 @@
 <!--
 
     NAME     query.xpl
-    VERSION  1.8.0
-    DATE     2016-06-15
+    VERSION  1.8.1-SNAPSHOT
+    DATE     2016-06-28
 
     Copyright 2012-2016
 
@@ -349,9 +349,6 @@
 				<xsl:template match="elmo:link">
 					<link uri="{@rdf:resource}"/>
 				</xsl:template>
-				<xsl:template match="elmo:use">
-					<parameter name="{substring-after(@rdf:resource,'#')}" uri="{@rdf:resource}"/>
-				</xsl:template>
 				<xsl:template match="html:stylesheet">
 					<stylesheet href="{.}"/>
 				</xsl:template>
@@ -410,8 +407,10 @@
 										<xsl:apply-templates select="elmo:link"/>
 										<!-- Een service kan vooraf gaan aan een query, dus die hier ook meenemen -->
 										<xsl:if test="exists(elmo:service[1])">
-											<xsl:apply-templates select="elmo:output"/>
-											<service><xsl:value-of select="elmo:service[1]"/></service>
+											<service>
+												<url><xsl:value-of select="elmo:service[1]"/></url>
+												<xsl:if test="elmo:post[1]!=''"><body><xsl:value-of select="elmo:post[1]"/></body></xsl:if>
+											</service>
 										</xsl:if>
 									</representation>
 								</xsl:when>
@@ -420,9 +419,10 @@
 										<xsl:if test="exists(elmo:appearance[1])"><xsl:attribute name="appearance"><xsl:value-of select="elmo:appearance[1]/@rdf:resource"/></xsl:attribute></xsl:if>
 										<xsl:apply-templates select="elmo:queryForm"/>
 										<xsl:apply-templates select="elmo:fragment"/>
-										<xsl:apply-templates select="elmo:use"/> <!-- Niet duidelijk waar deze voor is -->
-										<xsl:apply-templates select="elmo:output"/>
-										<service><xsl:value-of select="elmo:service[1]"/></service>
+										<service>
+											<url><xsl:value-of select="elmo:service[1]"/></url>
+											<xsl:if test="elmo:post[1]!=''"><body><xsl:value-of select="elmo:post[1]"/></body></xsl:if>
+										</service>
 									</representation>
 								</xsl:when>
 								<!-- No data, no query -->
@@ -490,14 +490,25 @@
 										<xsl:value-of select="replace($service,concat('@',upper-case(name),'@'),$value)"/>
 									</xsl:when>
 									<xsl:otherwise>
-										<xsl:value-of select="replace(/root/representation/service,concat('@',upper-case(name),'@'),$value)"/>
+										<xsl:value-of select="replace(/root/representation/service/url,concat('@',upper-case(name),'@'),$value)"/>
 									</xsl:otherwise>
 								</xsl:choose>
 							</xsl:template>
 							<xsl:template match="/root">
 								<service>
-									<xsl:apply-templates select="/root/context/parameters/parameter[1]" mode="replace"/>
-									<xsl:if test="not(exists(/root/context/parameters/parameter))"><xsl:value-of select="/root/representation/service"/></xsl:if>
+									<url>
+										<xsl:apply-templates select="/root/context/parameters/parameter[1]" mode="replace"/>
+										<xsl:if test="not(exists(/root/context/parameters/parameter))"><xsl:value-of select="/root/representation/service/url"/></xsl:if>
+									</url>
+									<xsl:choose>
+										<xsl:when test="/root/representation/service/body!=''">
+											<body><xsl:value-of select="/root/representation/service/body"/></body>
+											<method>post</method>
+										</xsl:when>
+										<xsl:otherwise>
+											<method>get</method>
+										</xsl:otherwise>
+									</xsl:choose>
 								</service>
 							</xsl:template>
 						</xsl:stylesheet>
@@ -505,23 +516,24 @@
 					<p:input name="data" href="aggregate('root',current(),#context)"/>
 					<p:output name="data" id="servicecall"/>
 				</p:processor>
-				<p:processor name="oxf:xforms-submission">
-					<p:input name="submission" href="#servicecall" transform="oxf:xslt">
-						<xforms:submission method="get" xsl:version="2.0" action="{service}">
-							<xforms:setvalue ev:event="xforms-submit-error" ref="response" value="event('response-body')"/>
-						</xforms:submission>
+				<p:processor name="oxf:httpclient-processor">
+					<p:input name="config" href="#servicecall" transform="oxf:xslt">
+						<config xsl:version="2.0">
+							<input-type>text</input-type>
+							<output-type>json</output-type>
+							<url><xsl:value-of select="service/url"/></url>
+							<method><xsl:value-of select="service/method"/></method>
+						</config>
 					</p:input>
-					<p:input name="request">
-						<parameters>
-							<response />
-						</parameters>
+					<p:input name="data" href="#servicecall" transform="oxf:xslt">
+						<input xsl:version="2.0"><xsl:value-of select="service/body"/></input>
 					</p:input>
-					<p:output name="response" id="service"/>
+					<p:output name="data" id="service"/>
 				</p:processor>
-				<!-- Transform json to xml-->
+				<!-- Combine result with original parameters-->
 				<p:processor name="oxf:xslt">
 					<p:input name="data" href="aggregate('root',current(),#service)"/>
-					<p:input name="config" href="../transformations/json2xml.xsl"/>
+					<p:input name="config" href="../transformations/merge-parameters.xsl"/>
 					<p:output name="data" ref="sparql"/>
 				</p:processor>
 			</p:when>
@@ -648,14 +660,25 @@
 												<xsl:value-of select="replace($service,concat('@',upper-case(name),'@'),$value)"/>
 											</xsl:when>
 											<xsl:otherwise>
-												<xsl:value-of select="replace(/root/representation/service,concat('@',upper-case(name),'@'),$value)"/>
+												<xsl:value-of select="replace(/root/representation/service/url,concat('@',upper-case(name),'@'),$value)"/>
 											</xsl:otherwise>
 										</xsl:choose>
 									</xsl:template>
 									<xsl:template match="/root">
 										<service>
-											<xsl:apply-templates select="/root/context/parameters/parameter[1]" mode="replace"/>
-											<xsl:if test="not(exists(/root/context/parameters/parameter))"><xsl:value-of select="/root/representation/service"/></xsl:if>
+											<url>
+												<xsl:apply-templates select="/root/context/parameters/parameter[1]" mode="replace"/>
+												<xsl:if test="not(exists(/root/context/parameters/parameter))"><xsl:value-of select="/root/representation/service/url"/></xsl:if>
+											</url>
+											<xsl:choose>
+												<xsl:when test="/root/representation/service/body!=''">
+													<body><xsl:value-of select="/root/representation/service/body"/></body>
+													<method>post</method>
+												</xsl:when>
+												<xsl:otherwise>
+													<method>get</method>
+												</xsl:otherwise>
+											</xsl:choose>
 										</service>
 									</xsl:template>
 								</xsl:stylesheet>
@@ -663,23 +686,24 @@
 							<p:input name="data" href="aggregate('root',current(),#context)"/>
 							<p:output name="data" id="servicecall"/>
 						</p:processor>
-						<p:processor name="oxf:xforms-submission">
-							<p:input name="submission" href="#servicecall" transform="oxf:xslt">
-								<xforms:submission method="get" xsl:version="2.0" action="{service}">
-									<xforms:setvalue ev:event="xforms-submit-error" ref="response" value="event('response-body')"/>
-								</xforms:submission>
+						<p:processor name="oxf:httpclient-processor">
+							<p:input name="config" href="#servicecall" transform="oxf:xslt">
+								<config xsl:version="2.0">
+									<input-type>text</input-type>
+									<output-type>json</output-type>
+									<url><xsl:value-of select="service/url"/></url>
+									<method><xsl:value-of select="service/method"/></method>
+								</config>
 							</p:input>
-							<p:input name="request">
-								<parameters>
-									<response />
-								</parameters>
+							<p:input name="data" href="#servicecall" transform="oxf:xslt">
+								<input xsl:version="2.0"><xsl:value-of select="service/body"/></input>
 							</p:input>
-							<p:output name="response" id="service"/>
+							<p:output name="data" id="service"/>
 						</p:processor>
 						<!-- Transform json to xml, include parameters -->
 						<p:processor name="oxf:xslt">
 							<p:input name="data" href="aggregate('root',current(),#service,#context)"/>
-							<p:input name="config" href="../transformations/json2xml.xsl"/>
+							<p:input name="config" href="../transformations/merge-parameters.xsl"/>
 							<p:output name="data" id="sparqlinput"/>
 						</p:processor>
 					</p:when>
