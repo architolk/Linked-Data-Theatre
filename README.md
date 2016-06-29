@@ -13,7 +13,7 @@ To deploy the Linked Data Theatre in a tomcat container, follow the instructions
 
 The default setting of the LDT is for development purposes. Read [PRODUCTION.md](PRODUCTION.md) for information about securing the LDT for a production environment.
 
-The Linked Data Theatre uses a configuration graph containing all the triples that make up the LDT configuration. Instructions and examples how to create such a configuration can be found at the [wiki](https://github.com/architolk/Linked-Data-Theatre/wiki). A [basic-configuration.ttl](basic-configuration) is provided tot get you started.
+The Linked Data Theatre uses a configuration graph containing all the triples that make up the LDT configuration. Instructions and examples how to create such a configuration can be found at the [wiki](https://github.com/architolk/Linked-Data-Theatre/wiki). A [basic-configuration](basic-configuration.ttl) is provided tot get you started.
 
 To add security to the Linked Data Theatre, follow the instructions in [SECURE.md](SECURE.md).
 
