@@ -215,7 +215,6 @@ public class HttpClientProcessor extends SimpleProcessor {
 						contentHandler.characters(textValue.toCharArray(),0,textValue.length());
 					}
 					//Array means repeating the XML node, so end the current node, and start a new one
-					//Not quite right: always one to many this way!
 					if (jsonit.hasNext()) {
 						contentHandler.endElement("", safeName, safeName);
 						contentHandler.startElement("", safeName, safeName, new AttributesImpl());
