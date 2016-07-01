@@ -30,7 +30,6 @@ package nl.architolk.ldt.processors;
 import org.orbeon.oxf.pipeline.api.PipelineContext;
 import org.orbeon.oxf.processor.ProcessorInputOutputInfo;
 import org.orbeon.oxf.processor.SimpleProcessor;
-import org.orbeon.oxf.util.TextXMLReceiver;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.orbeon.oxf.common.OXFException;
@@ -41,15 +40,14 @@ import org.dom4j.Element;
 import org.dom4j.Attribute;
 
 import java.io.IOException;
-import java.io.CharArrayWriter;
 import java.util.Iterator;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpOptions;
@@ -62,7 +60,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.log4j.Logger;
 import org.orbeon.oxf.util.LoggerFactory;
 
-import net.sf.json.xml.XMLSerializer;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONArray;
 
@@ -94,67 +91,35 @@ public class HttpClientProcessor extends SimpleProcessor {
 				if (configNode.valueOf("method").equals("post")) {
 					// POST
 					// Read content of input pipe
-					Document dataDocument = readInputAsDOM4J(context, INPUT_DATA);
-					String jsonstr;
-					if (configNode.valueOf("input-type").equals("json")) {
-						//Conversion of XML input to JSON
-						JSONObject jsondata = new JSONObject();
-						PopulateJSONObject(jsondata,dataDocument);
-						jsonstr = jsondata.toString();
-					} else {
-						//No conversion, just use plain text in input
-						jsonstr = dataDocument.getRootElement().getText();
-					}
+					String jsonstr = determineJsonBody(context, configNode);					
 					HttpPost httpRequest = new HttpPost(configNode.valueOf("url"));
 					StringEntity body = new StringEntity(jsonstr);
 					httpRequest.setEntity(body);
 
-					logger.info("Executing request " + httpRequest.getRequestLine());
-					logger.info("With body: " + jsonstr);
-					response = httpclient.execute(httpRequest);
+					response = executeRequest(httpRequest, httpclient, jsonstr);
 				} else if (configNode.valueOf("method").equals("put")) {
 					// PUT
-					Document dataDocument = readInputAsDOM4J(context, INPUT_DATA);
-					String jsonstr;
-					if (configNode.valueOf("input-type").equals("json")) {
-						//Conversion of XML input to JSON
-						JSONObject jsondata = new JSONObject();
-						PopulateJSONObject(jsondata,dataDocument);
-						jsonstr = jsondata.toString();
-					} else {
-						//No conversion, just use plain text in input
-						jsonstr = dataDocument.getRootElement().getText();
-					}
+					String jsonstr = determineJsonBody(context, configNode);					
 					HttpPut httpRequest = new HttpPut(configNode.valueOf("url"));
 					StringEntity body = new StringEntity(jsonstr);
 					httpRequest.setEntity(body);
-
-					logger.info("Executing request " + httpRequest.getRequestLine());
-					response = httpclient.execute(httpRequest);
+					response = executeRequest(httpRequest, httpclient, jsonstr);
 				} else if (configNode.valueOf("method").equals("delete")) {
 					//DELETE
 					HttpDelete httpRequest = new HttpDelete(configNode.valueOf("url"));
-
-					logger.info("Executing request " + httpRequest.getRequestLine());
-					response = httpclient.execute(httpRequest);
+					response = executeRequest(httpRequest, httpclient, null);
 				} else if (configNode.valueOf("method").equals("head")) {
 					//HEAD
 					HttpHead httpRequest = new HttpHead(configNode.valueOf("url"));
-
-					logger.info("Executing request " + httpRequest.getRequestLine());
-					response = httpclient.execute(httpRequest);
+					response = executeRequest(httpRequest, httpclient, null);
 				} else if (configNode.valueOf("method").equals("options")) {
 					//HEAD
 					HttpOptions httpRequest = new HttpOptions(configNode.valueOf("url"));
-
-					logger.info("Executing request " + httpRequest.getRequestLine());
-					response = httpclient.execute(httpRequest);
+					response = executeRequest(httpRequest, httpclient, null);
 				} else {
 					//Default = GET
 					HttpGet httpRequest = new HttpGet(configNode.valueOf("url"));
-
-					logger.info("Executing request " + httpRequest.getRequestLine());
-					response = httpclient.execute(httpRequest);
+					response = executeRequest(httpRequest, httpclient, null);
 				}
 
 				try {
@@ -172,7 +137,7 @@ public class HttpClientProcessor extends SimpleProcessor {
 							// output-type = json means: response is json, convert to xml. Or else: return plain string
 							if (configNode.valueOf("output-type").equals("json")) {
 								JSONObject json = JSONObject.fromObject(responseBody);
-								ParseJSONObject(contentHandler,json);
+								parseJSONObject(contentHandler,json);
 							} else {
 								contentHandler.characters(responseBody.toCharArray(), 0, responseBody.length());
 							}
@@ -192,8 +157,31 @@ public class HttpClientProcessor extends SimpleProcessor {
 		}
 
 	}
+    
+    private CloseableHttpResponse executeRequest(HttpRequestBase httpRequest, CloseableHttpClient httpclient, String jsonstr) throws ClientProtocolException, IOException {
+    	logger.info("Executing request " + httpRequest.getRequestLine());
+    	if (!jsonstr.isEmpty())
+    		logger.info("With body: " + jsonstr);
+		return httpclient.execute(httpRequest);
+    }
+    
+    private String determineJsonBody(PipelineContext context, Node configNode) {
+    	Document dataDocument = readInputAsDOM4J(context, INPUT_DATA);
+		String jsonstr;
+		if (configNode.valueOf("input-type").equals("json")) {
+			//Conversion of XML input to JSON
+			JSONObject jsondata = new JSONObject();
+			populateJSONObject(jsondata,dataDocument);
+			jsonstr = jsondata.toString();
+		} else {
+			//No conversion, just use plain text in input
+			jsonstr = dataDocument.getRootElement().getText();
+		}
+		
+		return jsonstr;
+    }
 	
-	private void ParseJSONObject(ContentHandler contentHandler, JSONObject json) throws SAXException {
+	private void parseJSONObject(ContentHandler contentHandler, JSONObject json) throws SAXException {
 		Object[] names = json.names().toArray();
 		for( int i = 0; i < names.length; i++ ){
 			String name = (String) names[i];
@@ -202,13 +190,13 @@ public class HttpClientProcessor extends SimpleProcessor {
 			contentHandler.startElement("", safeName, safeName, new AttributesImpl());
 			
 			if ( value instanceof JSONObject ) {
-				ParseJSONObject(contentHandler, (JSONObject)value);
+				parseJSONObject(contentHandler, (JSONObject)value);
 			} else if ( value instanceof JSONArray ) {
-				Iterator jsonit = ((JSONArray)value).iterator();
+				Iterator<?> jsonit = ((JSONArray)value).iterator();
 				while (jsonit.hasNext()) {
 					Object arrayValue = jsonit.next();
 					if ( arrayValue instanceof JSONObject ) {
-						ParseJSONObject(contentHandler, (JSONObject)arrayValue);
+						parseJSONObject(contentHandler, (JSONObject)arrayValue);
 					}
 					else {
 						String textValue = String.valueOf(arrayValue);
@@ -229,12 +217,12 @@ public class HttpClientProcessor extends SimpleProcessor {
 		}
 	}
 	
-	private void PopulateJSONArray(JSONArray root, Element element) {
+	private void populateJSONArray(JSONArray root, Element element) {
 		//At this moment, only simple arrays are possible, not arrays that contain arrays or objects
 		Attribute typeAttr = element.attribute("type");
 		String nodeType = (typeAttr!=null) ? typeAttr.getValue() : "";
 		if (nodeType.equals("number")) {
-			//Nummeric field
+			//Numeric field
 			try {
 				root.add(Float.valueOf(element.getText()));
 			}
@@ -247,15 +235,15 @@ public class HttpClientProcessor extends SimpleProcessor {
 		}
 	}
 	
-	private void PopulateJSONObject(JSONObject root, Element element) {
+	private void populateJSONObject(JSONObject root, Element element) {
 		Attribute typeAttr = element.attribute("type");
 		String nodeType = (typeAttr!=null) ? typeAttr.getValue() : "";
 		if (element.isTextOnly()) {
 			if (nodeType.equals("node")) {
-				//Text only means: no childs. If type is explicitly set to "node", the result should be an empty object
+				//Text only means: no children. If type is explicitly set to "node", the result should be an empty object
 				root.put(element.getQName().getName(),new JSONObject());
 			} else if (nodeType.equals("number")) {
-				//Nummeric field
+				//Numeric field
 				try {
 					root.put(element.getQName().getName(),Float.valueOf(element.getText()));
 				}
@@ -268,25 +256,25 @@ public class HttpClientProcessor extends SimpleProcessor {
 			}
 		} else if (nodeType.equals("nodelist")) {
 			JSONArray json = new JSONArray();
-			Iterator elit = element.elementIterator();
+			Iterator<?> elit = element.elementIterator();
 			while (elit.hasNext()) {
 				Element child = (Element) elit.next();
-				PopulateJSONArray(json,child);
+				populateJSONArray(json,child);
 			}
 			root.put(element.getQName().getName(),json);
 		} else {
 			JSONObject json = new JSONObject();
-			Iterator elit = element.elementIterator();
+			Iterator<?> elit = element.elementIterator();
 			while (elit.hasNext()) {
 				Element child = (Element) elit.next();
-				PopulateJSONObject(json,child);
+				populateJSONObject(json,child);
 			}
 			root.put(element.getQName().getName(),json);
 		}
 	}
 	
-	private void PopulateJSONObject(JSONObject root, Document document) {
+	private void populateJSONObject(JSONObject root, Document document) {
 		Element rootElement = document.getRootElement();
-		PopulateJSONObject(root,rootElement);
+		populateJSONObject(root,rootElement);
 	}
 }
