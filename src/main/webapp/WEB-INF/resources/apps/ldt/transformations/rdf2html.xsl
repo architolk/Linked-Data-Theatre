@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.8.1-SNAPSHOT
-    DATE     2016-06-22
+    DATE     2016-06-29
 
     Copyright 2012-2016
 
@@ -47,6 +47,7 @@
 
 <xsl:variable name="serverdomain"><xsl:value-of select="substring-before(substring-after(/results/context/url,'http://'),'/')"/></xsl:variable>
 <xsl:variable name="docroot"><xsl:value-of select="/results/context/@docroot"/></xsl:variable>
+<xsl:variable name="staticroot"><xsl:value-of select="/results/context/@staticroot"/></xsl:variable>
 <xsl:variable name="subdomain"><xsl:value-of select="/results/context/subdomain"/></xsl:variable>
 <xsl:variable name="subject"><xsl:value-of select="/results/context/subject"/></xsl:variable>
 
@@ -337,10 +338,10 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 		<title><xsl:value-of select="context/title"/></title>
 
-		<link rel="stylesheet" type="text/css" href="{$docroot}/css/bootstrap.min.css"/>
-		<link rel="stylesheet" type="text/css" href="{$docroot}/css/dataTables.bootstrap.min.css"/>
-		<link rel="stylesheet" type="text/css" href="{$docroot}/css/bootstrap-datepicker3.min.css"/>
-		<link rel="stylesheet" type="text/css" href="{$docroot}/css/ldt-theme.css"/>
+		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/bootstrap.min.css"/>
+		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/dataTables.bootstrap.min.css"/>
+		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/bootstrap-datepicker3.min.css"/>
+		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/ldt-theme.css"/>
 
 		<!-- Alternatieve stijlen -->
 		<xsl:for-each select="context/stylesheet">
@@ -349,16 +350,16 @@
 		
 		<!-- TODO: Make this generic (appearances with specific stylesheets) -->
 		<xsl:if test="exists(rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#LoginAppearance'])">
-			<link rel="stylesheet" type="text/css" href="{$docroot}/css/signin.css"/>
+			<link rel="stylesheet" type="text/css" href="{$staticroot}/css/signin.css"/>
 		</xsl:if>
 		
-		<script type="text/javascript" language="javascript" src="{$docroot}/js/jquery-1.11.3.min.js"></script>
-		<script type="text/javascript" language="javascript" src="{$docroot}/js/jquery.dataTables.min.js"></script>
-		<script type="text/javascript" language="javascript" src="{$docroot}/js/dataTables.bootstrap.min.js"></script>
-		<script type="text/javascript" language="javascript" src="{$docroot}/js/bootstrap.min.js"></script>
-		<script type="text/javascript" language="javascript" src="{$docroot}/js/bootstrap-datepicker.min.js"></script>
-		<script type="text/javascript" language="javascript" src="{$docroot}/js/locales/bootstrap-datepicker.nl.min.js"></script>
-		<script type="text/javascript" language="javascript" src="{$docroot}/js/d3.v3.min.js"></script>
+		<script type="text/javascript" language="javascript" src="{$staticroot}/js/jquery-1.11.3.min.js"></script>
+		<script type="text/javascript" language="javascript" src="{$staticroot}/js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" language="javascript" src="{$staticroot}/js/dataTables.bootstrap.min.js"></script>
+		<script type="text/javascript" language="javascript" src="{$staticroot}/js/bootstrap.min.js"></script>
+		<script type="text/javascript" language="javascript" src="{$staticroot}/js/bootstrap-datepicker.min.js"></script>
+		<script type="text/javascript" language="javascript" src="{$staticroot}/js/locales/bootstrap-datepicker.nl.min.js"></script>
+		<script type="text/javascript" language="javascript" src="{$staticroot}/js/d3.v3.min.js"></script>
 
 		<xsl:apply-templates select="context" mode="datatable-languageset"/>
 		
@@ -1038,7 +1039,7 @@
 		var jsonApiCall = "<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource.d3json?representation=<xsl:value-of select="encode-for-uri(@elmo:query)"/>&amp;subject=";
 		var uriEndpoint = "<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource?subject=";
 	</script>
-	<script src="{$docroot}/js/d3graphs-inner.js" type="text/javascript"/>
+	<script src="{$staticroot}/js/d3graphs-inner.js" type="text/javascript"/>
 </xsl:template>
 
 <!-- Fragment afhandeling -->
@@ -1139,8 +1140,8 @@ table.fragment tr td{
 </xsl:template>
 
 <xsl:template match="rdf:RDF" mode="FormAppearance">
-	<script type="text/javascript" language="javascript" src="{$docroot}/js/chosen.jquery.min.js"></script>
-	<link rel="stylesheet" type="text/css" href="{$docroot}/css/bootstrap-chosen.css"/>
+	<script type="text/javascript" language="javascript" src="{$staticroot}/js/chosen.jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="{$staticroot}/css/bootstrap-chosen.css"/>
 	<!-- <div class="row"> -->
 		<div class="panel panel-primary">
 			<div class="panel-heading">
@@ -1162,15 +1163,15 @@ table.fragment tr td{
 						<xsl:attribute name="enctype">multipart/form-data</xsl:attribute>
 					</xsl:if>
 					<xsl:if test="$turtleEditorID!=''">
-						<link rel="stylesheet" href="{$docroot}/css/codemirror.css"/>
-						<script src="{$docroot}/js/codemirror.js"/>
-						<script src="{$docroot}/js/turtle.js"/>
+						<link rel="stylesheet" href="{$staticroot}/css/codemirror.css"/>
+						<script src="{$staticroot}/js/codemirror.js"/>
+						<script src="{$staticroot}/js/turtle.js"/>
 					</xsl:if>
 					<xsl:if test="$sparqlEditorID!=''">
-						<link rel="stylesheet" href="{$docroot}/css/codemirror.css"/>
-						<link rel="stylesheet" href="{$docroot}/css/yasqe.min.css"/>
-						<script src="{$docroot}/js/codemirror.js"/>
-						<script src="{$docroot}/js/yasqe.min.js"/>
+						<link rel="stylesheet" href="{$staticroot}/css/codemirror.css"/>
+						<link rel="stylesheet" href="{$staticroot}/css/yasqe.min.css"/>
+						<script src="{$staticroot}/js/codemirror.js"/>
+						<script src="{$staticroot}/js/yasqe.min.js"/>
 					</xsl:if>
 					<xsl:for-each select="rdf:Description[exists(elmo:applies-to)]"><xsl:sort select="elmo:index"/>
 						<xsl:variable name="applies-to" select="elmo:applies-to"/>
@@ -1268,10 +1269,10 @@ table.fragment tr td{
 
 		<xsl:choose>
 			<xsl:when test="$backmap='image'">
-				<link href="{$docroot}/css/leaflet.css" rel="stylesheet"/>
-				<script src="{$docroot}/js/leaflet.js"></script>
-				<script src="{$docroot}/js/leaflet.label.js"></script>
-				<script src="{$docroot}/js/easy-button.js"></script>
+				<link href="{$staticroot}/css/leaflet.css" rel="stylesheet"/>
+				<script src="{$staticroot}/js/leaflet.js"></script>
+				<script src="{$staticroot}/js/leaflet.label.js"></script>
+				<script src="{$staticroot}/js/easy-button.js"></script>
 				<!-- Print form -->
 				<form id="svgform" method="post" action="{$subdomain}/print-graph" enctype="multipart/form-data">
 					<input type="hidden" id="type" name="type" value=""/>
@@ -1282,10 +1283,10 @@ table.fragment tr td{
 				<!-- TOT HIER -->
 			</xsl:when>
 			<xsl:otherwise>
-				<link href="{$docroot}/css/leaflet.css" rel="stylesheet"/>
-				<script src="{$docroot}/js/leaflet.js"></script>
-				<script src="{$docroot}/js/proj4-compressed.js"></script>
-				<script src="{$docroot}/js/proj4leaflet.js"></script>
+				<link href="{$staticroot}/css/leaflet.css" rel="stylesheet"/>
+				<script src="{$staticroot}/js/leaflet.js"></script>
+				<script src="{$staticroot}/js/proj4-compressed.js"></script>
+				<script src="{$staticroot}/js/proj4leaflet.js"></script>
 				<!-- Clickable map form -->
 				<form id="clickform" method="get" action="">
 					<input type="hidden" id="lat" name="lat" value=""/>
@@ -1293,7 +1294,7 @@ table.fragment tr td{
 				</form>
 			</xsl:otherwise>
 		</xsl:choose>
-		<script src="{$docroot}/js/linkeddatamap.js"></script>
+		<script src="{$staticroot}/js/linkeddatamap.js"></script>
 		
 		<xsl:variable name="latlocator" select="rdf:Description[rdf:type/@rdf:resource='http://bp4mc2.org/elmo/def#GeoLocator'][1]/geo:lat"/>
 		<xsl:variable name="latdata">
@@ -1552,8 +1553,8 @@ table.fragment tr td{
 			</ul></div><!--
 		</div>
 	</div>-->
-	<link rel="stylesheet" href="{$docroot}/css/treestyle.css"/>
-	<script src="{$docroot}/js/MultiNestedList.js"></script>
+	<link rel="stylesheet" href="{$staticroot}/css/treestyle.css"/>
+	<script src="{$staticroot}/js/MultiNestedList.js"></script>
 </xsl:template>
 
 <xsl:include href="appearances/CesiumAppearance.xsl"/>

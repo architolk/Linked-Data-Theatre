@@ -1,8 +1,8 @@
 <!--
 
     NAME     error2html.xsl
-    VERSION  1.8.0
-    DATE     2016-06-15
+    VERSION  1.8.1-SNAPSHOT
+    DATE     2016-06-29
 
     Copyright 2012-2016
 
@@ -29,8 +29,7 @@
 -->
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
-<!-- Doesn't work - need to include real docroot! -->
-<xsl:variable name="docroot"><xsl:value-of select="/results/context/@docroot"/></xsl:variable>
+<xsl:variable name="staticroot"><xsl:value-of select="/results/context/@staticroot"/></xsl:variable>
 
 <xsl:template match="/">
 
@@ -41,19 +40,19 @@
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title>Oeps - er ging iets mis</title>
 
-			<link rel="stylesheet" type="text/css" href="{$docroot}/css/bootstrap.min.css"/>
-			<link rel="stylesheet" type="text/css" href="{$docroot}/css/dataTables.bootstrap.min.css"/>
-			<link rel="stylesheet" type="text/css" href="{$docroot}/css/ldt-theme.css"/>
+			<link rel="stylesheet" type="text/css" href="{$staticroot}/css/bootstrap.min.css"/>
+			<link rel="stylesheet" type="text/css" href="{$staticroot}/css/dataTables.bootstrap.min.css"/>
+			<link rel="stylesheet" type="text/css" href="{$staticroot}/css/ldt-theme.css"/>
 
 			<!-- Alternatieve stijlen -->
 			<xsl:for-each select="results/context/stylesheet">
-				<link rel="stylesheet" type="text/css" href="{$docroot}{@href}"/>
+				<link rel="stylesheet" type="text/css" href="{$staticroot}{@href}"/>
 			</xsl:for-each>
 
-			<script type="text/javascript" language="javascript" src="{$docroot}/js/jquery-1.11.3.min.js"></script>
-			<script type="text/javascript" language="javascript" src="{$docroot}/js/jquery.dataTables.min.js"></script>
-			<script type="text/javascript" language="javascript" src="{$docroot}/js/dataTables.bootstrap.min.js"></script>
-			<script type="text/javascript" language="javascript" src="{$docroot}/js/bootstrap.min.js"></script>
+			<script type="text/javascript" language="javascript" src="{$staticroot}/js/jquery-1.11.3.min.js"></script>
+			<script type="text/javascript" language="javascript" src="{$staticroot}/js/jquery.dataTables.min.js"></script>
+			<script type="text/javascript" language="javascript" src="{$staticroot}/js/dataTables.bootstrap.min.js"></script>
+			<script type="text/javascript" language="javascript" src="{$staticroot}/js/bootstrap.min.js"></script>
 			<!-- TODO: This won't work for multi language -->
 			<script type="text/javascript" language="javascript" charset="utf-8">
 				var elmo_language = {language:{info:"_START_ tot _END_ van _TOTAL_ resultaten",search:"Zoeken:",lengthMenu:"Toon _MENU_ rijen",zeroRecords:"Niets gevonden",infoEmpty: "Geen resultaten",paginate:{first:"Eerste",previous:"Vorige",next:"Volgende",last:"Laatste"}},paging:true,searching:true,info:true}
@@ -64,7 +63,7 @@
 				<div class="content">
 					<div class="container hidden-xs">
 						<div class="row text-center">
-							<img src="{$docroot}/images/ldt-logo.png"/>
+							<img src="{$staticroot}/images/ldt-logo.png"/>
 						</div>
 					</div>
 					<div class="container">
@@ -85,31 +84,33 @@
 						</div>
 						<xsl:variable name="divclass">
 							<xsl:choose>
-								<xsl:when test="results/theatre/@env='dev'">row</xsl:when>
+								<xsl:when test="results/context/@env='dev'">row</xsl:when>
 								<xsl:otherwise>row hidden</xsl:otherwise>
 							</xsl:choose>
 						</xsl:variable>
-						<div class="{$divclass}">
-							<script type="text/javascript" charset="utf-8">
-								$(document).ready(function() {$('#errortable').dataTable(elmo_language);} );
-							</script>
-							<table id="errortable" class="table table-striped table-bordered">
-								<thead>
-									<tr>
-										<th>Error type</th>
-										<th>Error</th>
-									</tr>
-								</thead>
-								<tbody>
-									<xsl:for-each select="results/exceptions/exception">
+						<xsl:if test="exists(results/exceptions)">
+							<div class="{$divclass}">
+								<script type="text/javascript" charset="utf-8">
+									$(document).ready(function() {$('#errortable').dataTable(elmo_language);} );
+								</script>
+								<table id="errortable" class="table table-striped table-bordered">
+									<thead>
 										<tr>
-											<td><xsl:value-of select="type"/></td>
-											<td><xsl:value-of select="message"/></td>
+											<th>Error type</th>
+											<th>Error</th>
 										</tr>
-									</xsl:for-each>
-								</tbody>
-							</table>
-						</div>
+									</thead>
+									<tbody>
+										<xsl:for-each select="results/exceptions/exception">
+											<tr>
+												<td><xsl:value-of select="type"/></td>
+												<td><xsl:value-of select="message"/></td>
+											</tr>
+										</xsl:for-each>
+									</tbody>
+								</table>
+							</div>
+						</xsl:if>
 					</div>
 				</div>
 			</div>

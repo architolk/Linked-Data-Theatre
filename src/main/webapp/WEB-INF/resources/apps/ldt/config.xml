@@ -1,8 +1,8 @@
 <!--
 
     NAME     config.xml
-    VERSION  1.8.0
-    DATE     2016-06-15
+    VERSION  1.8.1-SNAPSHOT
+    DATE     2016-06-29
 
     Copyright 2012-2016
 
@@ -43,6 +43,10 @@
 	  - docroot: (optional): use a docroot, if the LDT is not installed in the tomcat ROOT and is only serving a subdirectory
 			(for example: http://mydomain.org/linkeddatatheatre/...)
 			When using the docroot, all URI's will be made relative to this docroot and not the root itself
+			If the LDT receives a URL without the docroot, it will asume that a proxy has deleted the docroot, and the LDT will reinsert the docroot.
+			THIS IS VERY IMPORTANT WITH REGARD TO id/def/doc URL's and URL's regarding containers!
+	  - staticroot: (optional): use a staticroot if the static content of the LDT is not at the ROOT level.
+			by default, the staticroot is the same as the docroot (it serves the same purpose), but can be used independent if you only want to redirect the static content
 	  - backstage: (optional) the domainname of the backstage, if the backstage domain is different from the stage domain
 	    (for example: a backstage behind a VPN). Make sure that a backstage domain is not a regular site domain!
 	  - the <stage> node contains the configuration for every stage within the specific domain. At least one stage should be present.

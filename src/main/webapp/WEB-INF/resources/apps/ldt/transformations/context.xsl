@@ -1,8 +1,8 @@
 <!--
 
     NAME     context.xsl
-    VERSION  1.8.0
-    DATE     2016-06-15
+    VERSION  1.8.1-SNAPSHOT
+    DATE     2016-06-29
 
     Copyright 2012-2016
 
@@ -38,7 +38,15 @@
 			<xsl:value-of select="$x-forwarded-host"/> <!-- Use original hostname in case of proxy, first one in case of multiple proxies -->
 			<xsl:if test="$x-forwarded-host=''"><xsl:value-of select="request/headers/header[name='host']/value"/></xsl:if>
 		</xsl:variable>
+		<!-- docroot is defined as the root that MUST be included after the domain. -->
 		<xsl:variable name="docroot"><xsl:value-of select="theatre/site[@domain=$domain]/@docroot"/></xsl:variable>
+		<!-- staticroot is defined as the root that MUST be included, but only for static content. Is made the same as the docroot, but can be explicitly set -->
+		<xsl:variable name="staticroot">
+			<xsl:choose>
+				<xsl:when test="exists(theatre/site[@domain=$domain]/@staticroot)"><xsl:value-of select="theatre/site[@domain=$domain]/@staticroot"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="$docroot"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
 		<xsl:variable name="stylesheet"><xsl:value-of select="theatre/site[@domain=$domain]/@css"/></xsl:variable>
 		<xsl:variable name="subdomain1" select="substring-after(theatre/subdomain,$docroot)"/>
 		<xsl:variable name="subdomain">
@@ -86,7 +94,7 @@
 			</xsl:choose>
 		</xsl:variable>
 		
-		<context docroot="{$docroot}" version="{version/number}" timestamp="{version/timestamp}" sparql="{theatre/@sparql}">
+		<context env="{theatre/@env}" docroot="{$docroot}" staticroot="{$staticroot}" version="{version/number}" timestamp="{version/timestamp}" sparql="{theatre/@sparql}">
 			<configuration-endpoint><xsl:value-of select="theatre/@configuration-endpoint"/></configuration-endpoint>
 			<local-endpoint>
 				<xsl:choose>
@@ -110,7 +118,7 @@
 			<user><xsl:value-of select="request/remote-user"/></user>
 			<user-role><xsl:value-of select="request-security/role"/></user-role>
 			<representation><xsl:value-of select="replace(theatre/representation,$uri-filter,'')"/></representation> <!-- Remove any illegal characters -->
-			<xsl:if test="$stylesheet!=''"><stylesheet href="{$docroot}/css/{$stylesheet}"/></xsl:if>
+			<xsl:if test="$stylesheet!=''"><stylesheet href="{$staticroot}/css/{$stylesheet}"/></xsl:if>
 			<format>
 				<xsl:choose>
 					<xsl:when test="theatre/format='graphml'">application/graphml+xml</xsl:when> <!-- No specific mime-type is available for graphml, this seems the most logical -->

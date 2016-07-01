@@ -2,7 +2,7 @@
 
     NAME     rdf2rdfa.xsl
     VERSION  1.8.1-SNAPSHOT
-    DATE     2016-06-22
+    DATE     2016-06-29
 
     Copyright 2012-2016
 
@@ -354,7 +354,7 @@
 
 <xsl:template match="/root">
 	<results>
-		<context docroot="{context/@docroot}">
+		<context docroot="{context/@docroot}" staticroot="{context/@staticroot}">
 			<!-- TODO: to much namespaces declarations in resulting XML due to copy-of statement -->
 			<xsl:copy-of select="context/*"/>
 			<xsl:copy-of select="view/stylesheet"/>

@@ -1,8 +1,8 @@
 <!--
 
     NAME     error.xpl
-    VERSION  1.8.0
-    DATE     2016-06-15
+    VERSION  1.8.1-SNAPSHOT
+    DATE     2016-06-29
 
     Copyright 2012-2016
 
@@ -31,10 +31,25 @@
 		  xmlns:xforms="http://www.w3.org/2002/xforms"
           xmlns:oxf="http://www.orbeon.com/oxf/processors"
 		  xmlns:ev="http://www.w3.org/2001/xml-events"
+          xmlns:xs="http://www.w3.org/2001/XMLSchema"
 		  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
 	<!-- Configuration> -->
 	<p:param type="input" name="instance"/>
+
+	<!-- Generate original request -->
+	<p:processor name="oxf:request">
+		<p:input name="config">
+			<config stream-type="xs:anyURI">
+				<include>/request/headers/header</include>
+				<include>/request/request-url</include>
+				<include>/request/parameters/parameter</include>
+				<include>/request/remote-user</include>
+				<include>/request/request-path</include>
+			</config>
+		</p:input>
+		<p:output name="data" id="request"/>
+	</p:processor>
 
 	<!-- Config won't be part of the configuration, so explicit loading -->
 	<p:processor name="oxf:url-generator">
@@ -47,19 +62,17 @@
 		<p:output name="data" id="defaults"/>
 	</p:processor>
 	
+	<!-- Convert defaults to context -->
+	<p:processor name="oxf:xslt">
+		<p:input name="data" href="aggregate('root',#request,#defaults)"/>
+		<p:input name="config" href="../transformations/context.xsl"/>
+		<p:output name="data" id="context"/>
+	</p:processor>
+	
 	<!-- Get all the error information -->
 	<p:processor name="oxf:exception">
 		<p:output name="data" id="exception"/>
 	</p:processor>
-
-<!--
-<p:processor name="oxf:xml-serializer">
-	<p:input name="config">
-		<config/>
-	</p:input>
-	<p:input name="data" href="#defaults"/>
-</p:processor>
--->
 
 	<!-- Transform error message to HTML -->
 	<p:processor name="oxf:identity">
@@ -71,7 +84,7 @@
 		<p:output name="data" id="errortext"/>
 	</p:processor>
 	<p:processor name="oxf:xslt">
-		<p:input name="data" href="aggregate('results',#defaults,#errortext,#exception)"/>
+		<p:input name="data" href="aggregate('results',#context,#errortext,#exception)"/>
 		<p:input name="config" href="../transformations/error2html.xsl"/>
 		<p:output name="data" id="html"/>
 	</p:processor>

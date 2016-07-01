@@ -1,8 +1,8 @@
 <!--
 
     NAME     context2info.xsl
-    VERSION  1.8.0
-    DATE     2016-06-15
+    VERSION  1.8.1-SNAPSHOT
+    DATE     2016-06-29
 
     Copyright 2012-2016
 
@@ -59,9 +59,10 @@
 </xsl:variable>
 <xsl:text>Version number:          </xsl:text><xsl:value-of select="root/context/@version"/><xsl:text>
 Version timestamp:       </xsl:text><xsl:value-of select="root/context/@timestamp"/><xsl:text>
-Environment:             </xsl:text><xsl:value-of select="root/theatre/@env"/><xsl:text>
+Environment:             </xsl:text><xsl:value-of select="root/context/@env"/><xsl:text>
 Stage:                   </xsl:text><xsl:value-of select="root/context/representation-graph/@uri"/><xsl:text>
 Docroot:                 </xsl:text><xsl:if test="not(root/context/@docroot!='')">/</xsl:if><xsl:value-of select="root/context/@docroot"/><xsl:text>
+Staticroot:              </xsl:text><xsl:if test="not(root/context/@staticroot!='')">/</xsl:if><xsl:value-of select="root/context/@staticroot"/><xsl:text>
 Public SPARQL endpoint:  </xsl:text><xsl:value-of select="root/context/@sparql"/><xsl:text>
 Public backstage:        </xsl:text><xsl:choose><xsl:when test="root/context/back-of-stage!=''">yes</xsl:when><xsl:otherwise>no</xsl:otherwise></xsl:choose><xsl:text>
 Config:                  </xsl:text><xsl:value-of select="$config"/><xsl:if test="$config='INVALID'"><xsl:text>

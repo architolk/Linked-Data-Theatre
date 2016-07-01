@@ -1,8 +1,8 @@
 <!--
 
     NAME     result2rdfa.xsl
-    VERSION  1.8.0
-    DATE     2016-06-15
+    VERSION  1.8.1-SNAPSHOT
+    DATE     2016-06-29
 
     Copyright 2012-2016
 
@@ -39,7 +39,7 @@
 
 <xsl:template match="/root">
 	<results>
-		<context docroot="{context/@docroot}">
+		<context docroot="{context/@docroot}" staticroot="{contect/@staticroot}">
 			<!-- TODO: to much namespaces declarations in resulting XML due to copy-of statement -->
 			<xsl:copy-of select="context/*"/>
 		</context>

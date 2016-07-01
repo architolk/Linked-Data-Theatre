@@ -1,8 +1,8 @@
 <!--
 
     NAME     CesiumAppearance.xsl
-    VERSION  1.8.0
-    DATE     2016-06-15
+    VERSION  1.8.1-SNAPSHOT
+    DATE     2016-06-29
 
     Copyright 2012-2016
 
@@ -39,8 +39,8 @@
 <xsl:output method="xml" indent="yes"/>
 
 <xsl:template match="rdf:RDF" mode="CesiumAppearance">
-  <script type="text/javascript" language="javascript" src="{$docroot}/js/Cesium.js"></script>
-  <link rel="stylesheet" type="text/css" href="{$docroot}/css/cesium-widgets.css"/>
+  <script type="text/javascript" language="javascript" src="{$staticroot}/js/Cesium.js"></script>
+  <link rel="stylesheet" type="text/css" href="{$staticroot}/css/cesium-widgets.css"/>
   <style>
         html, body, #cesiumContainer {
             width: 100%;
