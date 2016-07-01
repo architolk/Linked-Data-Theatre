@@ -87,7 +87,6 @@ public class HttpClientProcessor extends SimpleProcessor {
 				Node configNode = configDocument.selectSingleNode("//config");
 
 				CloseableHttpResponse response;
-				logger.info("Preee");
 				if (configNode.valueOf("method").equals("post")) {
 					// POST
 					// Read content of input pipe
@@ -125,7 +124,6 @@ public class HttpClientProcessor extends SimpleProcessor {
 				}
 
 				try {
-					logger.info("start");
 					contentHandler.startDocument();
 					
 					int status = response.getStatusLine().getStatusCode();
@@ -149,7 +147,6 @@ public class HttpClientProcessor extends SimpleProcessor {
 					contentHandler.endElement("", "response", "response");
 						
 					contentHandler.endDocument();
-					logger.info("finish");
 				} finally {
 					response.close();
 				}
