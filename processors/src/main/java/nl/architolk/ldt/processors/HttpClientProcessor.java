@@ -1,7 +1,7 @@
 /**
  * NAME     HttpClientProcessor.java
  * VERSION  1.9.0
- * DATE     2016-06-28
+ * DATE     2016-07-01
  *
  * Copyright 2012-2016
  *
@@ -87,7 +87,7 @@ public class HttpClientProcessor extends SimpleProcessor {
 				Node configNode = configDocument.selectSingleNode("//config");
 
 				CloseableHttpResponse response;
-				
+				logger.info("Preee");
 				if (configNode.valueOf("method").equals("post")) {
 					// POST
 					// Read content of input pipe
@@ -96,33 +96,36 @@ public class HttpClientProcessor extends SimpleProcessor {
 					StringEntity body = new StringEntity(jsonstr);
 					httpRequest.setEntity(body);
 
-					response = executeRequest(httpRequest, httpclient, jsonstr);
+					response = executeRequest(httpRequest, httpclient);
+					logger.debug("With body: " + jsonstr);
 				} else if (configNode.valueOf("method").equals("put")) {
 					// PUT
 					String jsonstr = determineJsonBody(context, configNode);					
 					HttpPut httpRequest = new HttpPut(configNode.valueOf("url"));
 					StringEntity body = new StringEntity(jsonstr);
 					httpRequest.setEntity(body);
-					response = executeRequest(httpRequest, httpclient, jsonstr);
+					response = executeRequest(httpRequest, httpclient);
+					logger.debug("With body: " + jsonstr);
 				} else if (configNode.valueOf("method").equals("delete")) {
 					//DELETE
 					HttpDelete httpRequest = new HttpDelete(configNode.valueOf("url"));
-					response = executeRequest(httpRequest, httpclient, null);
+					response = executeRequest(httpRequest, httpclient);
 				} else if (configNode.valueOf("method").equals("head")) {
 					//HEAD
 					HttpHead httpRequest = new HttpHead(configNode.valueOf("url"));
-					response = executeRequest(httpRequest, httpclient, null);
+					response = executeRequest(httpRequest, httpclient);
 				} else if (configNode.valueOf("method").equals("options")) {
 					//HEAD
 					HttpOptions httpRequest = new HttpOptions(configNode.valueOf("url"));
-					response = executeRequest(httpRequest, httpclient, null);
+					response = executeRequest(httpRequest, httpclient);
 				} else {
 					//Default = GET
 					HttpGet httpRequest = new HttpGet(configNode.valueOf("url"));
-					response = executeRequest(httpRequest, httpclient, null);
+					response = executeRequest(httpRequest, httpclient);
 				}
 
 				try {
+					logger.info("start");
 					contentHandler.startDocument();
 					
 					int status = response.getStatusLine().getStatusCode();
@@ -146,6 +149,7 @@ public class HttpClientProcessor extends SimpleProcessor {
 					contentHandler.endElement("", "response", "response");
 						
 					contentHandler.endDocument();
+					logger.info("finish");
 				} finally {
 					response.close();
 				}
@@ -158,10 +162,8 @@ public class HttpClientProcessor extends SimpleProcessor {
 
 	}
     
-    private CloseableHttpResponse executeRequest(HttpRequestBase httpRequest, CloseableHttpClient httpclient, String jsonstr) throws ClientProtocolException, IOException {
+    private CloseableHttpResponse executeRequest(HttpRequestBase httpRequest, CloseableHttpClient httpclient) throws ClientProtocolException, IOException {
     	logger.info("Executing request " + httpRequest.getRequestLine());
-    	if (!jsonstr.isEmpty())
-    		logger.info("With body: " + jsonstr);
 		return httpclient.execute(httpRequest);
     }
     
