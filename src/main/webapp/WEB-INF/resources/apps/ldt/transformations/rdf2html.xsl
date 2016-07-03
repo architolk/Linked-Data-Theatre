@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.8.1-SNAPSHOT
-    DATE     2016-06-29
+    DATE     2016-07-03
 
     Copyright 2012-2016
 
@@ -86,6 +86,7 @@
 	<xsl:choose>
 		<xsl:when test="$var/@elmo:link!=''">
 			<xsl:value-of select="$docroot"/>
+			<xsl:if test="$docroot!='' and not(starts-with($var/@elmo:link,'/'))">/</xsl:if>
 			<xsl:value-of select="$var/@elmo:link"/>
 			<xsl:choose>
 				<xsl:when test="matches($var/@elmo:link,'\?')">&amp;</xsl:when>
@@ -824,7 +825,11 @@
 <xsl:template match="rdf:Description" mode="nav">
 	<xsl:if test="exists(rdfs:label)">
 		<xsl:variable name="label"><xsl:call-template name="normalize-language"><xsl:with-param name="text" select="rdfs:label"/></xsl:call-template></xsl:variable>
-		<li>
+		<!-- This sets the menu to the active menu, but is not full proof! -->
+		<xsl:variable name="active">
+			<xsl:if test="(/results/context/subject=html:link) or (/results/context/subject=concat(replace(/results/context/url,'^([^/]+//[^/]+).*','$1'),html:link))">active</xsl:if>
+		</xsl:variable>
+		<li class="{$active}">
 			<xsl:choose>
 				<xsl:when test="exists(elmo:data)">
 					<xsl:attribute name="class">dropdown</xsl:attribute>

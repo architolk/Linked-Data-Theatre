@@ -1,8 +1,8 @@
 <!--
 
     NAME     ttl2rdfaform.xsl
-    VERSION  1.8.0
-    DATE     2016-06-15
+    VERSION  1.8.1-SNAPSHOT
+    DATE     2016-07-03
 
     Copyright 2012-2016
 
@@ -46,7 +46,7 @@
 
 <xsl:template match="/">
 	<results>
-		<context>
+		<context docroot="{root/context/@docroot}" staticroot="{root/context/@staticroot}">
 			<language>nl</language>
 			<xsl:copy-of select="root/context/stylesheet"/>
 		</context>
