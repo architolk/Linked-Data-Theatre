@@ -22,22 +22,25 @@ Change this in the `\pom.xml` maven project file:
 
 (This example shows only the relevant lines from the pom.xml. This example refers to a release with version 1.6.0 and release data march 13, 2016).
 
-##2. Check if all license headers are set correctly
+##2. Change the README.md description
+The README.md contains a link to the most recent major release of the Linked Data Theatre. In case of a major release: update this link.
+
+##3. Check if all license headers are set correctly
 All license-headers should have the release version included. This means that all files should have the same date for major and minor releases (the release date). A patch release leaves the version header of unchanged files to the version of the major/minor release.
 
 	mvn license:format
 
 You should perform this step twice, just to be sure that every file header has the correct file date.
 
-##3. Create the war package
+##4. Create the war package
 You're now ready to create the war:
 
 	mvn clean package
 
-##4. Test the package
+##5. Test the package
 You should perform a regression test. A regression test is currently not part of the build procedure. 
 
-##5. Commit changes to github and create release tag
+##6. Commit changes to github and create release tag
 For example (refering to release 1.6.0):
 
 	git add *
@@ -46,12 +49,12 @@ For example (refering to release 1.6.0):
 	git tag -a v1.6.0 -m "Release 1.6.0"
 	git push origin v1.6.0
 
-##6. Add war to github release
+##7. Add war to github release
 **Do this step only for minor and major releases! Patch release should not have a new war uploaded!.**
 
 Goto github: [https://github.com/architolk/Linked-Data-Theatre/tags](https://github.com/architolk/Linked-Data-Theatre/tags). Look for the correct tag (should be the topmost) and navigate to "Edit tag" and update the documentation for the release notes (at least: set the title to something like "Release 1.6.0"). Upload the war using the user interface of github. Publish the release.
 
-##7. Update pom.xml to snapshot version
+##8. Update pom.xml to snapshot version
 Because any change after the release should be a new version, directly update the version of the project to patchversion+1 (for example from `.0` to `.1`) and prefix `-SNAPSHOT`. Also set the date of the patch level to the current date:
 
 	<project>
