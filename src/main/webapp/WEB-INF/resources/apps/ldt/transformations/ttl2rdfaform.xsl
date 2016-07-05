@@ -1,8 +1,8 @@
 <!--
 
     NAME     ttl2rdfaform.xsl
-    VERSION  1.8.1-SNAPSHOT
-    DATE     2016-07-03
+    VERSION  1.9.0
+    DATE     2016-07-05
 
     Copyright 2012-2016
 

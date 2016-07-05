@@ -1,8 +1,8 @@
 <!--
 
     NAME     GenericExcelTranslator.xsl
-    VERSION  1.8.0
-    DATE     2016-06-15
+    VERSION  1.9.0
+    DATE     2016-07-05
 
     Copyright 2012-2016
 
