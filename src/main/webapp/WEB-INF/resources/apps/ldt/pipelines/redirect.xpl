@@ -1,8 +1,8 @@
 <!--
 
     NAME     redirect.xpl
-    VERSION  1.9.0
-    DATE     2016-07-05
+    VERSION  1.9.1-SNAPSHOT
+    DATE     2016-07-07
 
     Copyright 2012-2016
 
@@ -44,23 +44,22 @@
 		<p:output name="data" id="request"/>
 	</p:processor>
 
-<!--
-<p:processor name="oxf:xml-serializer">
-	<p:input name="config">
-		<config/>
-	</p:input>
-	<p:input name="data" href="#request"/>
-</p:processor>
--->
-	
-	<p:processor xmlns:p="http://www.orbeon.com/oxf/pipeline" name="oxf:redirect">    
-		<p:input name="data" transform="oxf:xslt" href="#request">
-			<redirect-url xsl:version="2.0">
+	<p:processor name="oxf:http-serializer">
+		<p:input name="config" transform="oxf:xslt" href="#request">
+			<config xsl:version="2.0">
 				<xsl:variable name="domain" select="substring-before(request/request-url,'/id/')"/>
 				<xsl:variable name="term" select="substring-after(request/request-url,'/id/')"/>
-				<path-info><xsl:value-of select="$domain"/>/doc/<xsl:value-of select="$term"/></path-info>
-				<server-side>false</server-side>
-			</redirect-url>   
+				<cache-control><use-local-cache>false</use-local-cache></cache-control>
+				<status-code>303</status-code>
+				<empty-content>true</empty-content>
+				<header>
+					<name>Location</name>
+					<value><xsl:value-of select="$domain"/>/doc/<xsl:value-of select="$term"/></value>
+				</header>
+			</config>
+		</p:input>
+		<p:input name="data">
+			<document/>
 		</p:input>
 	</p:processor>
 
