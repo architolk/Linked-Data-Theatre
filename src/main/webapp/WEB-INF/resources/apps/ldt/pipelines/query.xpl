@@ -477,6 +477,7 @@
 						<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 							<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="no"/>
 							<xsl:template match="parameter" mode="replace">
+								<xsl:param name="text"/>
 								<!-- Escape characters that could be used for SPARQL insertion -->
 								<!-- The solution is quite harsh: all ', ", <, > and \ are deleted -->
 								<!-- A better solution could be to know if a parameter is a literal or a URI -->
@@ -486,23 +487,34 @@
 								</xsl:variable>
 								<xsl:choose>
 									<xsl:when test="exists(following-sibling::*[1])">
-										<xsl:variable name="service"><xsl:apply-templates select="following-sibling::*[1]" mode="replace"/></xsl:variable>
+										<xsl:variable name="service">
+											<xsl:apply-templates select="following-sibling::*[1]" mode="replace">
+												<xsl:with-param name="text" select="$text"/>
+											</xsl:apply-templates>
+										</xsl:variable>
 										<xsl:value-of select="replace($service,concat('@',upper-case(name),'@'),$value)"/>
 									</xsl:when>
 									<xsl:otherwise>
-										<xsl:value-of select="replace(/root/representation/service/url,concat('@',upper-case(name),'@'),$value)"/>
+										<xsl:value-of select="replace($text,concat('@',upper-case(name),'@'),$value)"/>
 									</xsl:otherwise>
 								</xsl:choose>
 							</xsl:template>
 							<xsl:template match="/root">
 								<service>
 									<url>
-										<xsl:apply-templates select="/root/context/parameters/parameter[1]" mode="replace"/>
+										<xsl:apply-templates select="/root/context/parameters/parameter[1]" mode="replace">
+											<xsl:with-param name="text" select="/root/representation/service/url"/>
+										</xsl:apply-templates>
 										<xsl:if test="not(exists(/root/context/parameters/parameter))"><xsl:value-of select="/root/representation/service/url"/></xsl:if>
 									</url>
 									<xsl:choose>
 										<xsl:when test="/root/representation/service/body!=''">
-											<body><xsl:value-of select="/root/representation/service/body"/></body>
+											<body>
+												<xsl:apply-templates select="/root/context/parameters/parameter[1]" mode="replace">
+													<xsl:with-param name="text" select="/root/representation/service/body"/>
+												</xsl:apply-templates>
+												<xsl:if test="not(exists(/root/context/parameters/parameter))"><xsl:value-of select="/root/representation/service/body"/></xsl:if>
+											</body>
 											<method>post</method>
 										</xsl:when>
 										<xsl:otherwise>
@@ -647,6 +659,7 @@
 								<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 									<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="no"/>
 									<xsl:template match="parameter" mode="replace">
+										<xsl:param name="text"/>
 										<!-- Escape characters that could be used for SPARQL insertion -->
 										<!-- The solution is quite harsh: all ', ", <, > and \ are deleted -->
 										<!-- A better solution could be to know if a parameter is a literal or a URI -->
@@ -656,23 +669,34 @@
 										</xsl:variable>
 										<xsl:choose>
 											<xsl:when test="exists(following-sibling::*[1])">
-												<xsl:variable name="service"><xsl:apply-templates select="following-sibling::*[1]" mode="replace"/></xsl:variable>
+												<xsl:variable name="service">
+													<xsl:apply-templates select="following-sibling::*[1]" mode="replace">
+														<xsl:with-param name="text" select="$text"/>
+													</xsl:apply-templates>
+												</xsl:variable>
 												<xsl:value-of select="replace($service,concat('@',upper-case(name),'@'),$value)"/>
 											</xsl:when>
 											<xsl:otherwise>
-												<xsl:value-of select="replace(/root/representation/service/url,concat('@',upper-case(name),'@'),$value)"/>
+												<xsl:value-of select="replace($text,concat('@',upper-case(name),'@'),$value)"/>
 											</xsl:otherwise>
 										</xsl:choose>
 									</xsl:template>
 									<xsl:template match="/root">
 										<service>
 											<url>
-												<xsl:apply-templates select="/root/context/parameters/parameter[1]" mode="replace"/>
+												<xsl:apply-templates select="/root/context/parameters/parameter[1]" mode="replace">
+													<xsl:with-param name="text" select="/root/representation/service/url"/>
+												</xsl:apply-templates>
 												<xsl:if test="not(exists(/root/context/parameters/parameter))"><xsl:value-of select="/root/representation/service/url"/></xsl:if>
 											</url>
 											<xsl:choose>
 												<xsl:when test="/root/representation/service/body!=''">
-													<body><xsl:value-of select="/root/representation/service/body"/></body>
+													<body>
+														<xsl:apply-templates select="/root/context/parameters/parameter[1]" mode="replace">
+															<xsl:with-param name="text" select="/root/representation/service/body"/>
+														</xsl:apply-templates>
+														<xsl:if test="not(exists(/root/context/parameters/parameter))"><xsl:value-of select="/root/representation/service/body"/></xsl:if>
+													</body>
 													<method>post</method>
 												</xsl:when>
 												<xsl:otherwise>
