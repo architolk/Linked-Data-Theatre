@@ -35,7 +35,7 @@
 # Homepage, including header and menu
 # ======================================================================
 stage:Home	a	elmo:Representation;
-	elmo:url-pattern	"^[^/]+(/|)$";
+	elmo:url-pattern	"^http(s|)://[^/]+(/|)$";
 	elmo:contains	stage:Header;
 	elmo:contains	stage:Menu;
 	elmo:contains	stage:Home_content;
