@@ -53,7 +53,12 @@ stage:Menu elmo:appearance elmo:NavbarSearchAppearance;
 		elmo:data [elmo:index "1"; rdfs:label "Datasets"; xhtml:link "/query/datasets"];
 		elmo:data [elmo:index "2"; rdfs:label "Graphs"; xhtml:link "/query/graphs"];
 		elmo:data [elmo:index "3"; rdfs:label "Configs"; xhtml:link "/query/configs"];
-		elmo:data [elmo:index "4"; rdfs:label "Backstage"; xhtml:link "/backstage"];
+		elmo:data [
+			elmo:index "4";
+			rdfs:label "Examples";
+			elmo:data [elmo:index "1"; rdfs:label "Hospitals within 10km"; xhtml:link "/query/geo"];
+		];
+		elmo:data [elmo:index "5"; rdfs:label "Backstage"; xhtml:link "/backstage"];
 	];
 .
 stage:Home_content elmo:appearance elmo:HtmlAppearance;
@@ -379,5 +384,33 @@ stage:Resource_content elmo:index "1";
 			}
 			FILTER (isIri(?o) || isblank(?o) || lang(?o)="@LANGUAGE@" || lang(?o)="")
 		}
+	''';
+.
+
+# Show every hospital in a 10km range from the selected point
+stage:GeoAppearance rdf:type elmo:Representation;
+	elmo:url-pattern "/query/geo";
+	elmo:contains stage:Header;
+	elmo:contains stage:Menu;
+	elmo:endpoint <http://linkedgeodata.org/sparql>;
+	elmo:appearance elmo:GeoSelectAppearance;
+	elmo:queryForm elmo:GeoForm;
+	elmo:query '''
+		Prefix lgdo:<http://linkedgeodata.org/ontology/>
+		Prefix geom:<http://geovocab.org/geometry#>
+		Prefix ogc: <http://www.opengis.net/ont/geosparql#>
+		prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+		construct {
+		#	?h ogc:asWKT ?hgv
+			?s geo:geometry ?g
+		}
+		WHERE {
+		?s a lgdo:Hospital ;
+			rdfs:label ?l ;    
+			geom:geometry [ ogc:asWKT ?g] 
+		 
+			Filter(bif:st_intersects(?g, bif:st_point(@LONG@,@LAT@), 10))
+		 }
+		LIMIT 10
 	''';
 .
