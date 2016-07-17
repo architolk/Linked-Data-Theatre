@@ -2,7 +2,7 @@
 
     NAME     redirect.xpl
     VERSION  1.9.1-SNAPSHOT
-    DATE     2016-07-07
+    DATE     2016-07-17
 
     Copyright 2012-2016
 
@@ -38,17 +38,33 @@
 	<p:processor name="oxf:request">
 		<p:input name="config">
 			<config>
+				<include>/request/headers/header</include>
 				<include>/request/request-url</include>
+				<include>/request/request-path</include>
 			</config>
 		</p:input>
 		<p:output name="data" id="request"/>
 	</p:processor>
 
+	<!-- Create context -->
+	<p:processor name="oxf:xslt">
+		<p:input name="data" href="aggregate('root',#instance,#request)"/>
+		<p:input name="config" href="../transformations/context.xsl"/>
+		<p:output name="data" id="context"/>
+	</p:processor>
+<!--
+<p:processor name="oxf:xml-serializer">
+	<p:input name="config">
+		<config/>
+	</p:input>
+	<p:input name="data" href="#context"/>
+</p:processor>
+-->
 	<p:processor name="oxf:http-serializer">
-		<p:input name="config" transform="oxf:xslt" href="#request">
+		<p:input name="config" transform="oxf:xslt" href="#context">
 			<config xsl:version="2.0">
-				<xsl:variable name="domain" select="substring-before(request/request-url,'/id/')"/>
-				<xsl:variable name="term" select="substring-after(request/request-url,'/id/')"/>
+				<xsl:variable name="domain" select="substring-before(context/url,'/id/')"/>
+				<xsl:variable name="term" select="substring-after(context/url,'/id/')"/>
 				<cache-control><use-local-cache>false</use-local-cache></cache-control>
 				<status-code>303</status-code>
 				<empty-content>true</empty-content>
