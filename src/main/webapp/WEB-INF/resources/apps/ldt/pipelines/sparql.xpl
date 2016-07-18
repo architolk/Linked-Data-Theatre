@@ -1,8 +1,8 @@
 <!--
 
     NAME     sparql.xpl
-    VERSION  1.9.0
-    DATE     2016-07-05
+    VERSION  1.9.1-SNAPSHOT
+    DATE     2016-07-18
 
     Copyright 2012-2016
 
@@ -203,7 +203,7 @@
 					</p:processor>
 					<!-- Convert sparql to rdfa -->
 					<p:processor name="oxf:xslt">
-						<p:input name="data" href="aggregate('root',#sparql,#context,aggregate('representation',#sparqlrep),aggregate('queries',#queries))"/>
+						<p:input name="data" href="aggregate('root',#sparql,#context,#sparqlrep,aggregate('queries',#queries))"/>
 						<p:input name="config" href="../transformations/sparql2rdfaform.xsl"/>
 						<p:output name="data" id="rdfa"/>
 					</p:processor>
