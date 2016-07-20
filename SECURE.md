@@ -55,9 +55,11 @@ Open /WEB-INF/resource/apps/ldt/config.xml, and add some roles to the configurat
 If you use tomcat, you should add the names and roles of users to the tomcat-users.xml file. Open /conf/tomcat-users.xml and add something like:
 
 	<role rolename="admin"/>
-	<user username="admin" password="{some secret}" roles="admin"/>
+	<user username="admin@localhost" password="{some secret}" roles="admin"/>
 
-## 4. Add role to a container
+Important: the LDT will add a "@{servername}" postfix after the username. So when you configure tomcat-users.xml please add this postfix with the servername you are using. At the login page, a user doesn't have to add this postfix for his/her username.
+
+## 4. Optional: add role to a container
 
 You could add a role to a container. This will ensure that only authorized users with the corresponding role can access the container (read and/or write). Container security is handled by the Linked Data Theatre, but you need to have access restricted (step one). If you don't you will always get a 403 not allowed error, because the credentials will not be set.
 
