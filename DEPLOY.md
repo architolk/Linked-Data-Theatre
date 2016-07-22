@@ -18,6 +18,8 @@ You can download Virtuoso from this location: [http://virtuoso.openlinksw.com/da
 Prebuild versions are available, you can also try to build virtuoso yourself.
 
 #### 1.1 Update stored procedures
+(This step is only necessary if you use Virtuoso as a backend. Note that some functionality (mainly backstage and containers) is not available if you use different backend).
+
 Execute `\stored-procs\install.bat`, located in your git repository. If you have only downloaded the war from the release, follow these steps:
 
 1. Download the file [create_procedures.sql](stored-procs/create_procedures.sql);
@@ -56,6 +58,15 @@ You should change the domain of your site to the correct port number:
 	</site>
 
 Do **NOT** add the protocol ("http://") to the domainname.
+
+#### 4.3 In case of using a different endpoint than Virtuoso
+The config file assumes that you have a SPARQL endpoint available at `http://127.0.0.1:8890/sparql`. Some triplestores use a different port, or use a different path to the SPARQL endpoint. Please change your config accordingly.
+
+Sesame triplestores (like GraphDB) support multiple repositories per triplestore, so you should specifiy the respository you are using, and you should configure these repositories in your triplestore. For example, your `config.xml` for GraphDB might start with:
+
+	<theatre env="dev" configuration-endpoint="http://127.0.0.1:7200/repositories/ldt" local-endpoint="http://127.0.0.1:7200/repositories/data" sparql="yes">
+
+This assumes that you have a repository named "ldt" for your LDT configuration, and a repository named "data" for your Linked Data.
 
 ### 5. Test your version of the Linked Data Theatre
 Go to `http://localhost/info` and check if the Linked Data Theatre runs correctly. You should receive something that looks like this:
