@@ -54,7 +54,7 @@ $('.tree ul li').each(function(){
 // Add button to expand and condense - Using FontAwesome
 $('.tree ul li.hasSubmenu').each(function(){
   $this = $(this);
-  $this.prepend("<a href='#'><i class='glyphicon glyphicon-minus-sign'></i><i style='display:none;' class='glyphicon glyphicon-plus-sign'></i></a>");
+  $this.prepend("<a href='#'><i style='display:none;' class='glyphicon glyphicon-minus-sign'></i><i class='glyphicon glyphicon-plus-sign'></i></a>");
   $this.children("a").not(":last").removeClass().addClass("toogle");
 });
 // Actions to expand and consense
