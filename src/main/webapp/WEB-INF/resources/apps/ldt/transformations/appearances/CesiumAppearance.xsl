@@ -1,8 +1,8 @@
 <!--
 
     NAME     CesiumAppearance.xsl
-    VERSION  1.9.0
-    DATE     2016-07-05
+    VERSION  1.9.1-SNAPSHOT
+    DATE     2016-07-26
 
     Copyright 2012-2016
 
@@ -24,7 +24,11 @@
 -->
 <!--
     DESCRIPTION
-	Cesium Appearance template, to be included within rdf2html.xsl
+	CesiumAppearance, add-on of rdf2html.xsl
+	
+	Cesium is an appearance that shows a 3D representation of a KML object
+	
+	TODO: CesiumAppearance is still a prototype: needs more development
 	
 -->
 <xsl:stylesheet version="2.0"
