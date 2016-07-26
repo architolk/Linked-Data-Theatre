@@ -1,7 +1,7 @@
 /*
  * NAME     MultiNestedList.js
- * VERSION  1.9.0
- * DATE     2016-07-05
+ * VERSION  1.9.1-SNAPSHOT
+ * DATE     2016-07-26
  *
  * Copyright 2012-2016
  *

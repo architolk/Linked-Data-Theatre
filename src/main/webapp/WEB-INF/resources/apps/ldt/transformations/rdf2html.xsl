@@ -518,13 +518,13 @@
 			<link rel="stylesheet" type="text/css" href="{$staticroot}/css/signin.css"/>
 		</xsl:if>
 		
-		<script type="text/javascript" language="javascript" src="{$staticroot}/js/jquery-1.11.3.min.js"></script>
-		<script type="text/javascript" language="javascript" src="{$staticroot}/js/jquery.dataTables.min.js"></script>
-		<script type="text/javascript" language="javascript" src="{$staticroot}/js/dataTables.bootstrap.min.js"></script>
-		<script type="text/javascript" language="javascript" src="{$staticroot}/js/bootstrap.min.js"></script>
-		<script type="text/javascript" language="javascript" src="{$staticroot}/js/bootstrap-datepicker.min.js"></script>
-		<script type="text/javascript" language="javascript" src="{$staticroot}/js/locales/bootstrap-datepicker.nl.min.js"></script>
-		<script type="text/javascript" language="javascript" src="{$staticroot}/js/d3.v3.min.js"></script>
+		<script type="text/javascript" src="{$staticroot}/js/jquery-1.11.3.min.js"></script>
+		<script type="text/javascript" src="{$staticroot}/js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" src="{$staticroot}/js/dataTables.bootstrap.min.js"></script>
+		<script type="text/javascript" src="{$staticroot}/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="{$staticroot}/js/bootstrap-datepicker.min.js"></script>
+		<script type="text/javascript" src="{$staticroot}/js/locales/bootstrap-datepicker.nl.min.js"></script>
+		<script type="text/javascript" src="{$staticroot}/js/d3.v3.min.js"></script>
 
 		<xsl:apply-templates select="context" mode="datatable-languageset"/>
 		
@@ -532,7 +532,7 @@
 </xsl:template>
 
 <xsl:template match="context" mode="datatable-languageset">
-	<script type="text/javascript" language="javascript" charset="utf-8">
+	<script type="text/javascript">
 		<xsl:text>var elmo_language = </xsl:text>
 		<xsl:choose>
 			<xsl:when test="language='nl'">{language:{info:"_START_ tot _END_ van _TOTAL_ resultaten",search:"Filter:",lengthMenu:"Toon _MENU_ rijen",zeroRecords:"Niets gevonden",infoEmpty: "Geen resultaten",paginate:{first:"Eerste",previous:"Vorige",next:"Volgende",last:"Laatste"}},paging:true,searching:true,info:true}</xsl:when>
@@ -548,76 +548,54 @@
 <xsl:template match="rdf:RDF" mode="IndexAppearance">
 	<!-- IndexAppearance with dynamic data -->
 	<xsl:for-each select="rdf:Description/res:solution[1]">
-		<style>
-			.nav-tabs li a {
-				padding-left: 10px;
-				padding-right: 10px;
-				padding-top: 5px;
-				padding-bottom: 5px;
-				margin-top: 0px;
-			}
-		</style>
-		<!-- <div class="row"> -->
-			<ul class="nav nav-tabs">
-				<xsl:for-each select="res:binding">
-					<li>
-						<xsl:if test="res:value/@rdf:resource=$subject"><xsl:attribute name="class">active</xsl:attribute></xsl:if>
-						<xsl:variable name="resource-uri"><xsl:call-template name="resource-uri"><xsl:with-param name="uri" select="res:value/@rdf:resource"/></xsl:call-template></xsl:variable>
-						<a href="{$resource-uri}"><xsl:value-of select="res:variable"/></a>
-					</li>
-				</xsl:for-each>
-			
-				<xsl:variable name="value" select="tokenize(rdf:value,'\|')"/>
-				<xsl:variable name="link" select="html:link"/>
-				<xsl:variable name="para" select="elmo:name"/>
-				<xsl:variable name="current" select="/results/context/parameters/parameter[name=$para]/value[1]"/>
-				<xsl:for-each select="tokenize(rdfs:label,'\|')">
-					<xsl:variable name="pos" select="position()"/>
-					<li>
-						<xsl:if test="$value[$pos]=$current"><xsl:attribute name="class">active</xsl:attribute></xsl:if>
-						<a href="{$link}?{$para}={$value[$pos]}"><xsl:value-of select="."/></a>
-					</li>
-				</xsl:for-each>
-			</ul>
-		<!-- </div> -->
+		<ul class="nav nav-tabs">
+			<xsl:for-each select="res:binding">
+				<li>
+					<xsl:if test="res:value/@rdf:resource=$subject"><xsl:attribute name="class">active</xsl:attribute></xsl:if>
+					<xsl:variable name="resource-uri"><xsl:call-template name="resource-uri"><xsl:with-param name="uri" select="res:value/@rdf:resource"/></xsl:call-template></xsl:variable>
+					<a href="{$resource-uri}"><xsl:value-of select="res:variable"/></a>
+				</li>
+			</xsl:for-each>
+		
+			<xsl:variable name="value" select="tokenize(rdf:value,'\|')"/>
+			<xsl:variable name="link" select="html:link"/>
+			<xsl:variable name="para" select="elmo:name"/>
+			<xsl:variable name="current" select="/results/context/parameters/parameter[name=$para]/value[1]"/>
+			<xsl:for-each select="tokenize(rdfs:label,'\|')">
+				<xsl:variable name="pos" select="position()"/>
+				<li>
+					<xsl:if test="$value[$pos]=$current"><xsl:attribute name="class">active</xsl:attribute></xsl:if>
+					<a href="{$link}?{$para}={$value[$pos]}"><xsl:value-of select="."/></a>
+				</li>
+			</xsl:for-each>
+		</ul>
 	</xsl:for-each>
 	<!-- IndexAppearance with static data -->
 	<xsl:for-each select="rdf:Description[exists(rdfs:label)][1]">
-		<style>
-			.nav-tabs li a {
-				padding-left: 10px;
-				padding-right: 10px;
-				padding-top: 5px;
-				padding-bottom: 5px;
-				margin-top: 0px;
-			}
-		</style>
-		<!-- <div class="row"> -->
-			<ul class="nav nav-tabs">
-				<xsl:variable name="value" select="tokenize(rdf:value,'\|')"/>
-				<xsl:variable name="link"><xsl:value-of select="html:link"/></xsl:variable>
-				<xsl:variable name="reallink">
-					<xsl:value-of select="$link"/>
-					<xsl:choose>
-						<xsl:when test="$link=''">
-							<xsl:value-of select="/results/context/url"/>
-							<xsl:text>?</xsl:text>
-							<xsl:if test="matches(/results/context/url,'/resource$')">subject=<xsl:value-of select="encode-for-uri(/results/context/subject)"/>&amp;</xsl:if>
-						</xsl:when>
-						<xsl:otherwise>?</xsl:otherwise>
-					</xsl:choose>
-				</xsl:variable>
-				<xsl:variable name="para" select="elmo:name"/>
-				<xsl:variable name="current" select="/results/context/parameters/parameter[name=$para]/value[1]"/>
-				<xsl:for-each select="tokenize(rdfs:label,'\|')">
-					<xsl:variable name="pos" select="position()"/>
-					<li>
-						<xsl:if test="$value[$pos]=$current"><xsl:attribute name="class">active</xsl:attribute></xsl:if>
-						<a href="{$reallink}{$para}={$value[$pos]}"><xsl:value-of select="."/></a>
-					</li>
-				</xsl:for-each>
-			</ul>
-		<!-- </div> -->
+		<ul class="nav nav-tabs">
+			<xsl:variable name="value" select="tokenize(rdf:value,'\|')"/>
+			<xsl:variable name="link"><xsl:value-of select="html:link"/></xsl:variable>
+			<xsl:variable name="reallink">
+				<xsl:value-of select="$link"/>
+				<xsl:choose>
+					<xsl:when test="$link=''">
+						<xsl:value-of select="/results/context/url"/>
+						<xsl:text>?</xsl:text>
+						<xsl:if test="matches(/results/context/url,'/resource$')">subject=<xsl:value-of select="encode-for-uri(/results/context/subject)"/>&amp;</xsl:if>
+					</xsl:when>
+					<xsl:otherwise>?</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
+			<xsl:variable name="para" select="elmo:name"/>
+			<xsl:variable name="current" select="/results/context/parameters/parameter[name=$para]/value[1]"/>
+			<xsl:for-each select="tokenize(rdfs:label,'\|')">
+				<xsl:variable name="pos" select="position()"/>
+				<li>
+					<xsl:if test="$value[$pos]=$current"><xsl:attribute name="class">active</xsl:attribute></xsl:if>
+					<a href="{$reallink}{$para}={$value[$pos]}"><xsl:value-of select="."/></a>
+				</li>
+			</xsl:for-each>
+		</ul>
 	</xsl:for-each>
 </xsl:template>
 
@@ -645,64 +623,62 @@
 	<!-- A select query will have @rdf:nodeID elements, with id 'rset' -->
 	<xsl:for-each select="rdf:Description[@rdf:nodeID='rset']">
 		<xsl:if test="$paging='true' or exists(res:solution)">
-			<!-- <div class="row"> -->
-				<script type="text/javascript" charset="utf-8">
-					$(document).ready(function() {
-						elmo_language.paging = <xsl:value-of select="$paging"/>;
-						elmo_language.searching = <xsl:value-of select="$paging"/>;
-						elmo_language.info = <xsl:value-of select="$paging"/>;
-						$('#datatable<xsl:value-of select="generate-id()"/>').dataTable(elmo_language);
-					} );
-				</script>
-				<table id="datatable{generate-id()}" class="table table-striped table-bordered">
-					<thead>
-						<tr>
-							<xsl:for-each select="res:resultVariable[not(@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance' or matches(.,'[^_]*_(label|details|count|uri)'))]">
-								<th>
-									<xsl:choose>
-										<xsl:when test="exists(@elmo:label)"><xsl:value-of select="@elmo:label"/></xsl:when>
-										<xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
-									</xsl:choose>
-								</th>
+			<script type="text/javascript">
+				$(document).ready(function() {
+					elmo_language.paging = <xsl:value-of select="$paging"/>;
+					elmo_language.searching = <xsl:value-of select="$paging"/>;
+					elmo_language.info = <xsl:value-of select="$paging"/>;
+					$('#datatable<xsl:value-of select="generate-id()"/>').dataTable(elmo_language);
+				} );
+			</script>
+			<table id="datatable{generate-id()}" class="table table-striped table-bordered">
+				<thead>
+					<tr>
+						<xsl:for-each select="res:resultVariable[not(@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance' or matches(.,'[^_]*_(label|details|count|uri)'))]">
+							<th>
+								<xsl:choose>
+									<xsl:when test="exists(@elmo:label)"><xsl:value-of select="@elmo:label"/></xsl:when>
+									<xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
+								</xsl:choose>
+							</th>
+						</xsl:for-each>
+					</tr>
+				</thead>
+				<tbody>
+					<xsl:choose>
+						<xsl:when test="exists(res:resultVariable[@elmo:name='SUBJECT'])">
+							<xsl:variable name="key" select="res:resultVariable[@elmo:name='SUBJECT'][1]"/>
+							<xsl:for-each-group select="res:solution" group-by="res:binding[res:variable=$key]/res:value/@rdf:resource">
+								<tr>
+									<xsl:variable name="group" select="current-group()"/>
+									<xsl:for-each select="../res:resultVariable[not(@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance' or matches(.,'[^_]*_(label|details|count|uri)'))]">
+										<xsl:variable name="var" select="."/>
+										<td>
+											<!-- Remove duplicates, so still a for-each-group -->
+											<xsl:for-each-group select="$group/res:binding[res:variable=$var]" group-by="concat(res:value,res:value/@rdf:resource)">
+												<xsl:if test="position()!=1">, </xsl:if>
+												<xsl:apply-templates select="." mode="tableobject"/>
+											</xsl:for-each-group>
+										</td>
+									</xsl:for-each>
+								</tr>
+							</xsl:for-each-group>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:for-each select="res:solution">
+								<tr>
+									<xsl:variable name="binding" select="res:binding"/>
+									<xsl:for-each select="../res:resultVariable[not(@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance' or matches(.,'[^_]*_(label|details|count|uri)'))]">
+										<xsl:variable name="var" select="."/>
+										<td><xsl:apply-templates select="$binding[res:variable=$var]" mode="tableobject"/></td>
+									</xsl:for-each>
+								</tr>
 							</xsl:for-each>
-						</tr>
-					</thead>
-					<tbody>
-						<xsl:choose>
-							<xsl:when test="exists(res:resultVariable[@elmo:name='SUBJECT'])">
-								<xsl:variable name="key" select="res:resultVariable[@elmo:name='SUBJECT'][1]"/>
-								<xsl:for-each-group select="res:solution" group-by="res:binding[res:variable=$key]/res:value/@rdf:resource">
-									<tr>
-										<xsl:variable name="group" select="current-group()"/>
-										<xsl:for-each select="../res:resultVariable[not(@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance' or matches(.,'[^_]*_(label|details|count|uri)'))]">
-											<xsl:variable name="var" select="."/>
-											<td>
-												<!-- Remove duplicates, so still a for-each-group -->
-												<xsl:for-each-group select="$group/res:binding[res:variable=$var]" group-by="concat(res:value,res:value/@rdf:resource)">
-													<xsl:if test="position()!=1">, </xsl:if>
-													<xsl:apply-templates select="." mode="tableobject"/>
-												</xsl:for-each-group>
-											</td>
-										</xsl:for-each>
-									</tr>
-								</xsl:for-each-group>
-							</xsl:when>
-							<xsl:otherwise>
-								<xsl:for-each select="res:solution">
-									<tr>
-										<xsl:variable name="binding" select="res:binding"/>
-										<xsl:for-each select="../res:resultVariable[not(@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance' or matches(.,'[^_]*_(label|details|count|uri)'))]">
-											<xsl:variable name="var" select="."/>
-											<td><xsl:apply-templates select="$binding[res:variable=$var]" mode="tableobject"/></td>
-										</xsl:for-each>
-									</tr>
-								</xsl:for-each>
-							</xsl:otherwise>
-						</xsl:choose>
-					</tbody>
-				</table>
-				<a href="{$original-link}xlsx">Excel</a>
-			<!-- </div> -->
+						</xsl:otherwise>
+					</xsl:choose>
+				</tbody>
+			</table>
+			<a href="{$original-link}xlsx">Excel</a>
 		</xsl:if>
 	</xsl:for-each>
 </xsl:template>
@@ -711,9 +687,7 @@
 	<!-- A construct query will have @rdf:about elements -->
 	<xsl:if test="exists(rdf:Description/@rdf:about)">
 		<xsl:for-each select="rdf:Description">
-			<!-- <div class="row"> -->
-				<xsl:apply-templates select="." mode="PropertyTable"/>
-			<!-- </div> -->
+			<xsl:apply-templates select="." mode="PropertyTable"/>
 		</xsl:for-each>
 	</xsl:if>
 </xsl:template>

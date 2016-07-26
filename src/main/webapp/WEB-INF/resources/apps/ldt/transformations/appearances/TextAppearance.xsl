@@ -30,6 +30,7 @@
 	with a specific XML document, and NOT a Linked Data dataset.
 	
 	TODO: TextAppearance is a depricated appearance, only available because of the previous LDT version. It should be deleted or updated.
+	TODO: Including a <style> element within a <div> is not compliant to html5: this has to change
 	
 -->
 <xsl:stylesheet version="2.0"

@@ -29,6 +29,7 @@
 	Show linked data as a Chart.
 	
 	TODO: Chart appearance now uses rdfs:label (X axes) and rdf:value (Y axes). Should probably use datacube ontology.
+	TODO: Including a <style> element within a <div> is not compliant to html5: this has to change
 	
 -->
 <xsl:stylesheet version="2.0"

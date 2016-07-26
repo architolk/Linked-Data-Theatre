@@ -28,6 +28,8 @@
 	
 	GeoAppearance is used for presenting a geographical representation of the data (as WKT string)
 	This file is also used for the ImageAppearance
+
+	TODO: Including a <style> element within a <div> is not compliant to html5: this has to change
 	
 -->
 <xsl:stylesheet version="2.0"
@@ -69,7 +71,7 @@
 				<script src="{$staticroot}/js/proj4-compressed.js"></script>
 				<script src="{$staticroot}/js/proj4leaflet.js"></script>
 				<!-- Clickable map form -->
-				<form id="clickform" method="get" action="">
+				<form id="clickform" method="get" action="#">
 					<input type="hidden" id="lat" name="lat" value=""/>
 					<input type="hidden" id="long" name="long" value=""/>
 				</form>
@@ -117,80 +119,78 @@
 		<xsl:variable name="width"><xsl:value-of select="$htmlwidth"/><xsl:if test="not($htmlwidth!='')">1000</xsl:if></xsl:variable>
 		<xsl:variable name="height"><xsl:value-of select="$htmlheight"/><xsl:if test="not($htmlheight!='')">600</xsl:if></xsl:variable>
 		
-		<!-- <div class="row"> -->
-			<div class="panel panel-primary">
-				<div class="panel-heading"/>
-				<div class="panel-body">
-					<div id="map"></div>
-					<style>
-							.shidden-object {
-								display:none;
-								pointer-events: none;
-							}
-						<xsl:for-each select="rdf:Description[html:stylesheet!='' and elmo:applies-to!='' and not(matches(elmo:applies-to,'^http://bp4mc2.org/elmo/def'))]">
-							.s<xsl:value-of select="elmo:applies-to"/> {
-							<xsl:value-of select="html:stylesheet"/>
-							}
-							.edgestyle {
-								stroke: #606060;
-								stroke-width: 2px;
-								pointer-events: none;
-							}
-						</xsl:for-each>
-						<xsl:choose>
-							<xsl:when test="exists(rdf:Description[html:stylesheet!='' and elmo:applies-to='http://bp4mc2.org/elmo/def#Appearance'])">
-								.leaflet-container {
-									<xsl:value-of select="rdf:Description[elmo:applies-to='http://bp4mc2.org/elmo/def#Appearance']/html:stylesheet[1]"/>
-								}
-							</xsl:when>
-							<xsl:otherwise>
-								.leaflet-container {
-									height: 500px;
-									width: 100%;
-								}
-							</xsl:otherwise>
-						</xsl:choose>
-					</style>
-					<!-- TODO: width en height moet ergens vandaan komen. Liefst uit plaatje, maar mag ook uit eigenschappen -->
-					<script type="text/javascript">
-						initMap('<xsl:value-of select="$docroot"/>',<xsl:value-of select="$lat"/>, <xsl:value-of select="$long"/>, '<xsl:value-of select="$backmap"/>', '<xsl:value-of select="$img"/>', '<xsl:value-of select="$container"/>', <xsl:value-of select="$left"/>, <xsl:value-of select="$top"/>, <xsl:value-of select="$width"/>, <xsl:value-of select="$height"/>);
-						
-						<xsl:for-each select="rdf:Description[geo:lat!='' and geo:long!='' and rdfs:label!='']">
-							<xsl:variable name="resource-uri"><xsl:call-template name="resource-uri"><xsl:with-param name="uri" select="@rdf:about"/></xsl:call-template></xsl:variable>
-							addPoint(<xsl:value-of select="geo:lat[1]"/>,<xsl:value-of select="geo:long[1]"/>,"<xsl:value-of select="rdfs:label"/>","<xsl:value-of select="$resource-uri"/>");
-						</xsl:for-each>
-						<xsl:for-each select="rdf:Description[geo:geometry!='']"><xsl:sort select="string-length(geo:geometry[1])" data-type="number" order="descending"/>
-							<!-- //<xsl:value-of select="string-length(geo:geometry[1])"/>-<xsl:value-of select="key('resource',elmo:style[1]/@rdf:resource)/elmo:name"/> -->
-							<xsl:variable name="link-uri">
-								<xsl:choose>
-									<xsl:when test="exists(html:link)"><xsl:copy-of select="html:link"/></xsl:when>
-									<xsl:otherwise><html:link rdf:resource="{@rdf:about}"/></xsl:otherwise>
-								</xsl:choose>
-							</xsl:variable>
-							<xsl:variable name="resource-uri">
-								<xsl:call-template name="resource-uri">
-									<xsl:with-param name="uri" select="$link-uri/html:link/@rdf:resource"/>
-									<xsl:with-param name="var" select="$link-uri/html:link"/>
-								</xsl:call-template>
-							</xsl:variable>
-							<xsl:variable name="styleclass">
-								<xsl:choose>
-									<xsl:when test="elmo:style/@rdf:resource='http://bp4mc2.org/elmo/def#HiddenStyle'">hidden-object</xsl:when>
-									<xsl:otherwise><xsl:value-of select="key('resource',elmo:style[1]/@rdf:resource)/elmo:name[1]"/></xsl:otherwise>
-								</xsl:choose>
-							</xsl:variable>
-							addWKT('<xsl:value-of select="@rdf:about"/>','<xsl:value-of select="geo:geometry[1]"/>','<xsl:value-of select="rdfs:label[1]"/>','<xsl:value-of select="$resource-uri"/>','s<xsl:value-of select="$styleclass"/>');
-						</xsl:for-each>
+		<style>
+				.shidden-object {
+					display:none;
+					pointer-events: none;
+				}
+			<xsl:for-each select="rdf:Description[html:stylesheet!='' and elmo:applies-to!='' and not(matches(elmo:applies-to,'^http://bp4mc2.org/elmo/def'))]">
+				.s<xsl:value-of select="elmo:applies-to"/> {
+				<xsl:value-of select="html:stylesheet"/>
+				}
+				.edgestyle {
+					stroke: #606060;
+					stroke-width: 2px;
+					pointer-events: none;
+				}
+			</xsl:for-each>
+			<xsl:choose>
+				<xsl:when test="exists(rdf:Description[html:stylesheet!='' and elmo:applies-to='http://bp4mc2.org/elmo/def#Appearance'])">
+					.leaflet-container {
+						<xsl:value-of select="rdf:Description[elmo:applies-to='http://bp4mc2.org/elmo/def#Appearance']/html:stylesheet[1]"/>
+					}
+				</xsl:when>
+				<xsl:otherwise>
+					.leaflet-container {
+						height: 500px;
+						width: 100%;
+					}
+				</xsl:otherwise>
+			</xsl:choose>
+		</style>
+		<div class="panel panel-primary">
+			<div class="panel-heading"/>
+			<div class="panel-body">
+				<div id="map"></div>
+				<!-- TODO: width en height moet ergens vandaan komen. Liefst uit plaatje, maar mag ook uit eigenschappen -->
+				<script type="text/javascript">
+					initMap('<xsl:value-of select="$docroot"/>',<xsl:value-of select="$lat"/>, <xsl:value-of select="$long"/>, '<xsl:value-of select="$backmap"/>', '<xsl:value-of select="$img"/>', '<xsl:value-of select="$container"/>', <xsl:value-of select="$left"/>, <xsl:value-of select="$top"/>, <xsl:value-of select="$width"/>, <xsl:value-of select="$height"/>);
+					
+					<xsl:for-each select="rdf:Description[geo:lat!='' and geo:long!='' and rdfs:label!='']">
+						<xsl:variable name="resource-uri"><xsl:call-template name="resource-uri"><xsl:with-param name="uri" select="@rdf:about"/></xsl:call-template></xsl:variable>
+						addPoint(<xsl:value-of select="geo:lat[1]"/>,<xsl:value-of select="geo:long[1]"/>,"<xsl:value-of select="rdfs:label"/>","<xsl:value-of select="$resource-uri"/>");
+					</xsl:for-each>
+					<xsl:for-each select="rdf:Description[geo:geometry!='']"><xsl:sort select="string-length(geo:geometry[1])" data-type="number" order="descending"/>
+						<!-- //<xsl:value-of select="string-length(geo:geometry[1])"/>-<xsl:value-of select="key('resource',elmo:style[1]/@rdf:resource)/elmo:name"/> -->
+						<xsl:variable name="link-uri">
+							<xsl:choose>
+								<xsl:when test="exists(html:link)"><xsl:copy-of select="html:link"/></xsl:when>
+								<xsl:otherwise><html:link rdf:resource="{@rdf:about}"/></xsl:otherwise>
+							</xsl:choose>
+						</xsl:variable>
+						<xsl:variable name="resource-uri">
+							<xsl:call-template name="resource-uri">
+								<xsl:with-param name="uri" select="$link-uri/html:link/@rdf:resource"/>
+								<xsl:with-param name="var" select="$link-uri/html:link"/>
+							</xsl:call-template>
+						</xsl:variable>
+						<xsl:variable name="styleclass">
+							<xsl:choose>
+								<xsl:when test="elmo:style/@rdf:resource='http://bp4mc2.org/elmo/def#HiddenStyle'">hidden-object</xsl:when>
+								<xsl:otherwise><xsl:value-of select="key('resource',elmo:style[1]/@rdf:resource)/elmo:name[1]"/></xsl:otherwise>
+							</xsl:choose>
+						</xsl:variable>
+						addWKT('<xsl:value-of select="@rdf:about"/>','<xsl:value-of select="geo:geometry[1]"/>','<xsl:value-of select="rdfs:label[1]"/>','<xsl:value-of select="$resource-uri"/>','s<xsl:value-of select="$styleclass"/>');
+					</xsl:for-each>
 
-						<xsl:for-each select="rdf:Description[geo:geometry!='']/(* except (html:link|elmo:style))[exists(@rdf:resource)]">
-							addEdge('<xsl:value-of select="../@rdf:about"/>','<xsl:value-of select="name()"/>','<xsl:value-of select="@rdf:resource"/>');
-						</xsl:for-each>
-						
-						showLocations(<xsl:value-of select="$doZoom"/>,'<xsl:value-of select="$appearance"/>');
-					</script>
-				</div>
+					<xsl:for-each select="rdf:Description[geo:geometry!='']/(* except (html:link|elmo:style))[exists(@rdf:resource)]">
+						addEdge('<xsl:value-of select="../@rdf:about"/>','<xsl:value-of select="name()"/>','<xsl:value-of select="@rdf:resource"/>');
+					</xsl:for-each>
+					
+					showLocations(<xsl:value-of select="$doZoom"/>,'<xsl:value-of select="$appearance"/>');
+				</script>
 			</div>
-		<!-- </div> -->
+		</div>
 	</xsl:if>
 	
 </xsl:template>

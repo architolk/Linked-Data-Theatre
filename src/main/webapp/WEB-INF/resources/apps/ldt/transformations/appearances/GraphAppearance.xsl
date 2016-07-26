@@ -28,6 +28,7 @@
 	
 	A GraphAppearance shows Linked Data as a graph, plus the opportunity to navigate through the linked data (expand the graph)
 	
+	TODO: Including a <style> element within a <div> is not compliant to html5: this has to change
 -->
 <xsl:stylesheet version="2.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"

@@ -2,7 +2,7 @@
 
     NAME     query.xpl
     VERSION  1.9.1-SNAPSHOT
-    DATE     2016-07-10
+    DATE     2016-07-26
 
     Copyright 2012-2016
 
@@ -925,7 +925,7 @@
 				<p:input name="config">
 					<config>
 						<encoding>utf-8</encoding>
-						<public-doctype>-//W3C//DTD XHTML 1.0 Strict//EN</public-doctype>
+						<version>5.0</version>
 					</config>
 				</p:input>
 				<p:input name="data" href="#html" />
@@ -1200,7 +1200,7 @@
 						<p:input name="config">
 							<config>
 								<encoding>utf-8</encoding>
-								<public-doctype>-//W3C//DTD XHTML 1.0 Strict//EN</public-doctype>
+								<version>5.0</version>
 							</config>
 						</p:input>
 						<p:input name="data" href="#html" />
@@ -1317,7 +1317,7 @@
 								<p:input name="config">
 									<config>
 										<encoding>utf-8</encoding>
-										<public-doctype>-//W3C//DTD XHTML 1.0 Strict//EN</public-doctype>
+										<version>5.0</version>
 									</config>
 								</p:input>
 								<p:input name="data" href="#html" />

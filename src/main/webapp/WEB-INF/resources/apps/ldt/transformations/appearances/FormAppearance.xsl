@@ -44,7 +44,7 @@
 <xsl:output method="xml" indent="yes"/>
 
 <xsl:template match="rdf:RDF" mode="FormAppearance">
-	<script type="text/javascript" language="javascript" src="{$staticroot}/js/chosen.jquery.min.js"></script>
+	<script type="text/javascript" src="{$staticroot}/js/chosen.jquery.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="{$staticroot}/css/bootstrap-chosen.css"/>
 	<div class="panel panel-primary">
 		<div class="panel-heading">
@@ -61,7 +61,7 @@
 				<xsl:value-of select="$alt-action"/>
 				<xsl:if test="not($alt-action!='')"><xsl:value-of select="/results/context/url"/></xsl:if>
 			</xsl:variable>
-			<form role="form" class="form-horizontal" method="post" action="{$action}">
+			<form class="form-horizontal" method="post" action="{$action}">
 				<xsl:if test="exists(rdf:Description/elmo:valueDatatype[@rdf:resource='http://purl.org/dc/dcmitype/Dataset'])">
 					<xsl:attribute name="enctype">multipart/form-data</xsl:attribute>
 				</xsl:if>
@@ -85,7 +85,7 @@
 							</xsl:if>
 							<xsl:call-template name="normalize-language"><xsl:with-param name="text" select="rdfs:label"/></xsl:call-template>
 						</label>
-						<div class="col-sm-10" id="the-basics">
+						<div class="col-sm-10">
 							<xsl:choose>
 								<xsl:when test="elmo:valuesFrom/@rdf:resource!=''">
 									<xsl:choose>
@@ -95,13 +95,13 @@
 													<xsl:if test="exists(elmo:value-to)">
 														<xsl:attribute name="onchange">
 															<xsl:choose>
-																<xsl:when test="elmo:value-to=$sparqlEditorID">if(this.selectedIndex!=-1) {editor.setValue($('option:selected',this).attr('rdfvalue'))};</xsl:when>
-																<xsl:otherwise>if(this.selectedIndex!=-1) {$('#<xsl:value-of select="elmo:value-to"/>').val($('option:selected',this).attr('rdfvalue'))};</xsl:otherwise>
+																<xsl:when test="elmo:value-to=$sparqlEditorID">if(this.selectedIndex!=-1) {editor.setValue($('option:selected',this).attr('data-rdfvalue'))};</xsl:when>
+																<xsl:otherwise>if(this.selectedIndex!=-1) {$('#<xsl:value-of select="elmo:value-to"/>').val($('option:selected',this).attr('data-rdfvalue'))};</xsl:otherwise>
 															</xsl:choose>
 														</xsl:attribute>
 													</xsl:if>
 													<xsl:for-each select="key('rdf',elmo:valuesFrom/@rdf:resource)/rdf:Description"><xsl:sort select="@rdf:about"/>
-														<option value="{@rdf:about}" rdfvalue="{rdf:value}"><xsl:value-of select="rdfs:label"/></option>
+														<option value="{@rdf:about}" data-rdfvalue="{rdf:value}"><xsl:value-of select="rdfs:label"/></option>
 													</xsl:for-each>
 												</select>
 												<script>$('#<xsl:value-of select="elmo:applies-to"/>').chosen({max_selected_options: 1});</script>
