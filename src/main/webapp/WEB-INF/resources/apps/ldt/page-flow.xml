@@ -1,8 +1,8 @@
 <!--
 
     NAME     page-flow.xml
-    VERSION  1.9.0
-    DATE     2016-07-05
+    VERSION  1.9.1-SNAPSHOT
+    DATE     2016-08-02
 
     Copyright 2012-2016
 
@@ -99,7 +99,13 @@
 		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 	</page>
 
+	<!-- update -->
+	<page path="(((?!update).)*)/update/([^ ]*)" model="pipelines/update.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
+	</page>
+	
 	<!-- conversion -->
+	<!-- (Linked Data Studio - but included here for comfort) -->
 	<page path="(((?!conversion).)*)/conversion/([^ ]*)" model="pipelines/conversion.xpl" default-submission="config.xml" public-methods="#all">
 		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 	</page>

@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.9.1-SNAPSHOT
-    DATE     2016-07-26
+    DATE     2016-08-02
 
     Copyright 2012-2016
 
@@ -681,6 +681,34 @@
 			<a href="{$original-link}xlsx">Excel</a>
 		</xsl:if>
 	</xsl:for-each>
+	<!-- If it's not a select query, construct the table: a column for a property, and a row for a resource -->
+	<xsl:if test="not(exists(rdf:Description[@rdf:nodeID='rset']))">
+		<xsl:variable name="columns">
+			<xsl:for-each-group select="rdf:Description[exists(@rdf:about)]/*" group-by="local-name()">
+				<column name="{local-name()}"/>
+			</xsl:for-each-group>
+		</xsl:variable>
+		<table id="datatable{generate-id()}" class="table table-striped table-bordered">
+			<thead>
+				<tr>
+					<xsl:for-each select="$columns/column">
+						<th><xsl:value-of select="@name"/></th>
+					</xsl:for-each>
+				</tr>
+			</thead>
+			<tbody>
+				<xsl:for-each-group select="rdf:Description" group-by="@rdf:about">
+					<tr>
+						<xsl:variable name="group" select="current-group()"/>
+						<xsl:for-each select="$columns/column">
+							<xsl:variable name="column" select="@name"/>
+							<td><xsl:value-of select="$group/*[local-name()=$column]"/></td>
+						</xsl:for-each>
+					</tr>
+				</xsl:for-each-group>
+			</tbody>
+		</table>
+	</xsl:if>
 </xsl:template>
 
 <xsl:template match="rdf:RDF" mode="ContentAppearance">
