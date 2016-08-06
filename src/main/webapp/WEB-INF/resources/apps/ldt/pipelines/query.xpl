@@ -2,7 +2,7 @@
 
     NAME     query.xpl
     VERSION  1.9.1-SNAPSHOT
-    DATE     2016-08-03
+    DATE     2016-08-06
 
     Copyright 2012-2016
 
@@ -1164,7 +1164,8 @@
 						</p:when>
 						<p:otherwise>
 							<!-- Transform -->
-							<p:processor name="oxf:xslt">
+							<!-- Using unsafe-xslt instead of xslt to use external functions (used for markdown conversion) -->
+							<p:processor name="oxf:unsafe-xslt">
 								<p:input name="data" href="#rdfa"/>
 								<p:input name="config" href="../transformations/rdf2html.xsl"/>
 								<p:output name="data" id="html"/>

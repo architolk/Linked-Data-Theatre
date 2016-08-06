@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.9.1-SNAPSHOT
-    DATE     2016-08-02
+    DATE     2016-08-06
 
     Copyright 2012-2016
 
@@ -48,6 +48,7 @@
 	xmlns:elmo="http://bp4mc2.org/elmo/def#"
 	xmlns:html="http://www.w3.org/1999/xhtml/vocab#"
 	xmlns:dcterms="http://purl.org/dc/terms/"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
 >
 
 <xsl:output method="xml" indent="yes"/>
@@ -245,6 +246,12 @@
 			<xsl:variable name="html">&lt;div&gt;<xsl:value-of select="."/>&lt;/div&gt;</xsl:variable>
 			<xsl:copy-of select="saxon:parse($html)" xmlns:saxon="http://saxon.sf.net/"/>
 		</xsl:when>
+		<!-- Markdown -->
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#MarkdownAppearance'">
+			<xsl:variable name="markdown" as="xs:string" select="."/>
+			<xsl:variable name="html">&lt;div&gt;<xsl:value-of select="md2html:process($markdown)" xmlns:md2html="com.github.rjeschke.txtmark.Processor"/>&lt;/div&gt;</xsl:variable>
+			<xsl:copy-of select="saxon:parse($html)" xmlns:saxon="http://saxon.sf.net/"/>
+		</xsl:when>
 		<xsl:otherwise>
 			<!-- If new lines are included, include them in resulting html -->
 			<xsl:for-each select="tokenize(replace(.,'\n+$',''),'\n')">
@@ -385,6 +392,11 @@
 		</xsl:when>
 		<xsl:when test="$vars[.=$parname]/@elmo:appearance='http://bp4mc2.org/elmo/def#HtmlAppearance'">
 			<xsl:variable name="html">&lt;div&gt;<xsl:value-of select="res:value"/>&lt;/div&gt;</xsl:variable>
+			<xsl:copy-of select="saxon:parse($html)" xmlns:saxon="http://saxon.sf.net/"/>
+		</xsl:when>
+		<xsl:when test="$vars[.=$parname]/@elmo:appearance='http://bp4mc2.org/elmo/def#MarkdownAppearance'">
+			<xsl:variable name="markdown" as="xs:string" select="res:value"/>
+			<xsl:variable name="html">&lt;div&gt;<xsl:value-of select="md2html:process($markdown)" xmlns:md2html="com.github.rjeschke.txtmark.Processor"/>&lt;/div&gt;</xsl:variable>
 			<xsl:copy-of select="saxon:parse($html)" xmlns:saxon="http://saxon.sf.net/"/>
 		</xsl:when>
 		<xsl:when test="exists($vars[.=$parname]/@html:glossary)">
