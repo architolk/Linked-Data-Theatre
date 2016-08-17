@@ -2,7 +2,7 @@
 
     NAME     GeoAppearance.xsl
     VERSION  1.9.1-SNAPSHOT
-    DATE     2016-07-26
+    DATE     2016-08-17
 
     Copyright 2012-2016
 
@@ -154,7 +154,7 @@
 				<div id="map"></div>
 				<!-- TODO: width en height moet ergens vandaan komen. Liefst uit plaatje, maar mag ook uit eigenschappen -->
 				<script type="text/javascript">
-					initMap('<xsl:value-of select="$docroot"/>',<xsl:value-of select="$lat"/>, <xsl:value-of select="$long"/>, '<xsl:value-of select="$backmap"/>', '<xsl:value-of select="$img"/>', '<xsl:value-of select="$container"/>', <xsl:value-of select="$left"/>, <xsl:value-of select="$top"/>, <xsl:value-of select="$width"/>, <xsl:value-of select="$height"/>);
+					initMap('<xsl:value-of select="$staticroot"/>',<xsl:value-of select="$lat"/>, <xsl:value-of select="$long"/>, '<xsl:value-of select="$backmap"/>', '<xsl:value-of select="$img"/>', '<xsl:value-of select="$container"/>', <xsl:value-of select="$left"/>, <xsl:value-of select="$top"/>, <xsl:value-of select="$width"/>, <xsl:value-of select="$height"/>);
 					
 					<xsl:for-each select="rdf:Description[geo:lat!='' and geo:long!='' and rdfs:label!='']">
 						<xsl:variable name="resource-uri"><xsl:call-template name="resource-uri"><xsl:with-param name="uri" select="@rdf:about"/></xsl:call-template></xsl:variable>
