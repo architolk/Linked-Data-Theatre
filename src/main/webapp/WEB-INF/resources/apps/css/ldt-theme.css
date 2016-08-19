@@ -1,7 +1,7 @@
 /**
  * NAME     ldt-theme.css
  * VERSION  1.9.1-SNAPSHOT
- * DATE     2016-07-26
+ * DATE     2016-08-19
  *
  * Copyright 2012-2016
  *
@@ -124,4 +124,9 @@
 	padding-top: 5px;
 	padding-bottom: 5px;
 	margin-top: 0px;
+}
+
+.basic-text-table td:first-child {
+	width: 150px;
+	vertical-align: top;
 }

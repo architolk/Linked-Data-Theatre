@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.9.1-SNAPSHOT
-    DATE     2016-08-06
+    DATE     2016-08-19
 
     Copyright 2012-2016
 
@@ -63,6 +63,7 @@
 <xsl:variable name="subdomain"><xsl:value-of select="/results/context/subdomain"/></xsl:variable>
 <xsl:variable name="subject"><xsl:value-of select="/results/context/subject"/></xsl:variable>
 
+<xsl:variable name="language"><xsl:value-of select="/results/context/language"/></xsl:variable>
 <!-- 
 	Helper templates
 -->
@@ -80,7 +81,6 @@
 <xsl:template name="normalize-language">
 	<xsl:param name="text"/>
 
-	<xsl:variable name="language"><xsl:value-of select="/results/context/language"/></xsl:variable>
 	<xsl:choose>
 		<xsl:when test="$text[@xml:lang=$language]!=''"><xsl:value-of select="$text[@xml:lang=$language]"/></xsl:when> <!-- First choice: language of browser -->
 		<xsl:when test="$text[not(exists(@xml:lang))]!=''"><xsl:value-of select="$text[not(exists(@xml:lang))]"/></xsl:when> <!-- Second choice: no language -->
@@ -463,6 +463,9 @@
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#CesiumAppearance'">
 			<xsl:apply-templates select="." mode="CesiumAppearance"/>
 		</xsl:when>
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#VocabularyAppearance'">
+			<xsl:apply-templates select="." mode="VocabularyAppearance"/>
+		</xsl:when>
 		<xsl:otherwise>
 			<!-- No, or an unknown appearance, use the data to select a suitable appearance -->
 			<xsl:apply-templates select="." mode="ContentAppearance"/>
@@ -472,7 +475,7 @@
 
 <xsl:template match="/">
 	<xsl:for-each select="results">
-		<html lang="{context/language}">
+		<html lang="{$language}">
 			<xsl:apply-templates select="." mode="html-head"/>
 			<body>
 				<div id="page">
@@ -915,5 +918,6 @@
 <xsl:include href="appearances/ChartAppearance.xsl"/>
 <xsl:include href="appearances/TreeAppearance.xsl"/>
 <xsl:include href="appearances/CesiumAppearance.xsl"/>
+<xsl:include href="appearances/VocabularyAppearance.xsl"/>
 
 </xsl:stylesheet>
