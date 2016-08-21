@@ -1,7 +1,7 @@
 /*
  * NAME     d3graphs-inner.js
- * VERSION  1.9.0
- * DATE     2016-07-05
+ * VERSION  1.9.1-SNAPSHOT
+ * DATE     2016-08-21
  *
  * Copyright 2012-2016
  *
@@ -54,6 +54,9 @@ var rect = svg.append("rect")
  
 //Container that holds all the graphical elements
 var container = svg.append("g");
+
+//Flag for IE10 and IE11 bug: SVG edges are not showing when redrawn
+var bugIE = ((navigator.appVersion.indexOf("rv:11")!=-1) || (navigator.appVersion.indexOf("MSIE 10")!=-1));
 
 //Arrowhead definition
 //(All other endpoints should be defined in this section)
@@ -252,6 +255,11 @@ function tick(e) {
 			.attr("x",tx)
 			.attr("y",ty-3)
 			.attr("transform","rotate("+Math.atan(ddy/ddx)*57+" "+tx+" "+ty+")")
+			
+		//IE10 and IE11 bugfix
+		if (bugIE) {
+			this.parentNode.insertBefore(this,this);
+		}
 	})
 
     allNodes.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
