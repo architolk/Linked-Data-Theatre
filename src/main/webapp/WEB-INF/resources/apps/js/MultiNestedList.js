@@ -45,10 +45,10 @@ $('.tree li:last-child').each(function(){
 $('.tree ul li').each(function(){
   $this = $(this);
   $this.mouseenter(function(){
-    $( this ).children("a").css({"font-weight":"bold","color":"#336b9b"});
+    $( this ).children("a").css({"font-weight":"bold"});
   });
   $this.mouseleave(function(){
-    $( this ).children("a").css({"font-weight":"normal","color":"#428bca"});
+    $( this ).children("a").css({"font-weight":"normal"});
   });
 });
 // Add button to expand and condense - Using FontAwesome
