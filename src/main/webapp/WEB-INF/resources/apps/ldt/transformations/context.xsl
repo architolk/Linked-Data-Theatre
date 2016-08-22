@@ -23,8 +23,8 @@
 
 -->
 <!--
-  DESCRIPTION
-  Generates the context, used in the info.xpl, version.xpl, query.xpl, sparql.xpl and container.xpl pipelines
+	DESCRIPTION
+	Generates the context, used in the info.xpl, version.xpl, query.xpl, sparql.xpl and container.xpl pipelines
   
 -->
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -109,6 +109,23 @@
 			</xsl:choose>
 		</xsl:variable>
 		
+		<xsl:variable name="datearray" select="tokenize(theatre/date,'[-/]')"/>
+		<xsl:variable name="normalized-date">
+			<xsl:if test="$datearray[1]!=''"><xsl:value-of select="format-number(number($datearray[1]),'0000')"/></xsl:if>
+			<xsl:if test="$datearray[2]!=''">-<xsl:value-of select="format-number(number($datearray[2]),'00')"/></xsl:if>
+			<xsl:if test="$datearray[3]!=''">-<xsl:value-of select="format-number(number($datearray[3]),'00')"/></xsl:if>
+			<xsl:if test="$datearray[4]!=''">T<xsl:value-of select="format-number(number($datearray[4]),'00')"/></xsl:if>
+			<xsl:if test="$datearray[5]!=''">:<xsl:value-of select="format-number(number($datearray[5]),'00')"/></xsl:if>
+			<xsl:if test="$datearray[6]!=''">:<xsl:value-of select="format-number(number($datearray[6]),'00')"/></xsl:if>
+			<xsl:if test="$datearray[7]!=''">.<xsl:value-of select="format-number(number($datearray[7]),'000')"/></xsl:if>
+		</xsl:variable>
+		<xsl:variable name="normal-date">
+			<xsl:choose>
+				<xsl:when test="matches(theatre/date,'/')"><xsl:value-of select="replace($normalized-date,'[-T:\.]','/')"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="replace($normalized-date,'[T:\.]','-')"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		
 		<context env="{theatre/@env}" docroot="{$docroot}" staticroot="{$staticroot}" version="{version/number}" timestamp="{version/timestamp}" sparql="{theatre/@sparql}">
 			<configuration-endpoint><xsl:value-of select="theatre/@configuration-endpoint"/></configuration-endpoint>
 			<local-endpoint>
@@ -126,6 +143,8 @@
 			<url><xsl:value-of select="$url"/></url>
 			<domain><xsl:value-of select="$domain"/></domain>
 			<subdomain><xsl:value-of select="$subdomain"/></subdomain>
+			<date><xsl:value-of select="$normal-date"/></date>
+			<timestamp><xsl:value-of select="$normalized-date"/><xsl:value-of select="substring(string(current-dateTime()),1+string-length($normalized-date),255)"/></timestamp>
 			<query><xsl:value-of select="theatre/query"/></query>
 			<representation-graph uri="{$config}"/>
 			<back-of-stage><xsl:value-of select="$back-of-stage"/></back-of-stage>
@@ -188,7 +207,7 @@
 				</xsl:choose>
 			</subject>
 			<parameters>
-				<xsl:for-each select="request/parameters/parameter[name!='subject' and name!='format' and name!='representation']">
+				<xsl:for-each select="request/parameters/parameter[name!='subject' and name!='format' and name!='representation' and name!='date']">
 					<xsl:copy-of select="."/>
 				</xsl:for-each>
 			</parameters>

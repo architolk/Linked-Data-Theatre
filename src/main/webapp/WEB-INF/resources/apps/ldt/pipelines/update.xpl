@@ -2,7 +2,7 @@
 
     NAME     update.xpl
     VERSION  1.9.1-SNAPSHOT
-    DATE     2016-08-03
+    DATE     2016-08-22
 
     Copyright 2012-2016
 
@@ -169,20 +169,17 @@
 							</xsl:template>
 							<xsl:template match="/root">
 								<parameters>
-									<!-- Currentmoment kan nog beinvloed worden door de date-parameter, beetje raar, afkomstig uit andere implementatie -->
-									<xsl:variable name="currentmoment">
-										<xsl:value-of select="root/parameters/parameter[name='date']/value[1]"/>
-										<xsl:value-of select="substring(xs:string(current-dateTime()),1+string-length(root/context/parameters/parameter[name='date']/value[1]),255)"/>
-									</xsl:variable>
 									<xsl:variable name="query1">
 										<xsl:apply-templates select="/root/parameters/parameter[1]" mode="replace"/>
 										<xsl:if test="not(exists(/root/parameters/parameter))"><xsl:value-of select="/root/(scene|representation)/query"/></xsl:if>
 									</xsl:variable>
 									<xsl:variable name="query2" select="replace($query1,'@LANGUAGE@',/root/context/language)"/>
 									<xsl:variable name="query3" select="replace($query2,'@USER@',/root/context/user)"/>
-									<xsl:variable name="query4" select="replace($query3,'@CURRENTMOMENT@',format-dateTime($currentmoment,'[Y0001]/[M01]/[D01]/[H01]/[m01]/[s01]'))"/>
+									<xsl:variable name="query4" select="replace($query3,'@CURRENTMOMENT@',string(current-dateTime()))"/>
 									<xsl:variable name="query5" select="replace($query4,'@STAGE@',/root/context/back-of-stage)"/>
-									<query><xsl:value-of select="replace($query5,'@SUBJECT@',/root/context/subject)"/></query>
+									<xsl:variable name="query6" select="replace($query5,'@TIMESTAMP@',/root/context/timestamp)"/>
+									<xsl:variable name="query7" select="replace($query6,'@DATE@',/root/context/date)"/>
+									<query><xsl:value-of select="replace($query7,'@SUBJECT@',/root/context/subject)"/></query>
 									<default-graph-uri />
 									<error type=""/>
 								</parameters>
