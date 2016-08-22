@@ -1,8 +1,8 @@
 <!--
 
     NAME     context.xsl
-    VERSION  1.9.0
-    DATE     2016-07-05
+    VERSION  1.9.1-SNAPSHOT
+    DATE     2016-08-22
 
     Copyright 2012-2016
 
@@ -48,13 +48,19 @@
 			</xsl:choose>
 		</xsl:variable>
 		<xsl:variable name="stylesheet"><xsl:value-of select="theatre/site[@domain=$domain]/@css"/></xsl:variable>
-		<xsl:variable name="subdomain1" select="substring-after(theatre/subdomain,$docroot)"/>
+		<!-- Subdomain is the part after the docroot, but if the docroot is not part of the URL (in case of a proxy), the docroot is ignored -->
+		<xsl:variable name="subdomain2" select="substring-after(theatre/subdomain,$docroot)"/>
+		<xsl:variable name="subdomain1">
+			<xsl:value-of select="$subdomain2"/>
+			<xsl:if test="not($subdomain2!='')"><xsl:value-of select="theatre/subdomain"/></xsl:if>
+		</xsl:variable>
 		<xsl:variable name="subdomain">
 			<xsl:if test="matches($subdomain1,'^[^/]')">/</xsl:if>
 			<xsl:value-of select="$subdomain1"/>
 		</xsl:variable>
-		<xsl:variable name="stage" select="theatre/site[@domain=$domain]/stage[not(@name!='') or @name=substring($subdomain,2,string-length(@name))]"/>
-		<xsl:variable name="backstage" select="theatre/site[@backstage=$domain]/stage[not(@name!='') or @name=substring($subdomain,2,string-length(@name))]"/>
+		<xsl:variable name="url-stage" select="replace($subdomain,'^/([^/]+)','$1')"/>
+		<xsl:variable name="stage" select="theatre/site[@domain=$domain]/stage[not(@name!='') or @name=$url-stage]"/>
+		<xsl:variable name="backstage" select="theatre/site[@backstage=$domain]/stage[not(@name!='') or @name=$url-stage]"/>
 		<xsl:variable name="config">
 			<xsl:choose>
 				<xsl:when test="exists($stage)">
