@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2graphjson.xsl
-    VERSION  1.9.0
-    DATE     2016-07-05
+    VERSION  1.9.1-SNAPSHOT
+    DATE     2016-07-24
 
     Copyright 2012-2016
 
@@ -98,20 +98,23 @@
 	<!-- Incomming objects -->
 	<xsl:for-each-group select="../rdf:Description[@rdf:about!=$uri and */@rdf:resource=$uri]" group-by="@rdf:about">
 		<xsl:variable name="ouri"><xsl:value-of select="@rdf:about"/></xsl:variable>
-		<xsl:variable name="ordfs-label"><xsl:value-of select="key('resource',$ouri)/rdfs:label"/></xsl:variable>
-		<xsl:variable name="olabel">
-			<xsl:value-of select="$ordfs-label"/>
-			<xsl:if test="$ordfs-label=''"><xsl:value-of select="$ouri"/></xsl:if>
-		</xsl:variable>
-		<xsl:variable name="ostyle"><xsl:value-of select="key('resource',$ouri)/elmo:style/@rdf:resource"/></xsl:variable>
-		<xsl:variable name="oclass"><xsl:value-of select="key('resource',$ostyle)/elmo:name"/></xsl:variable>
-		<xsl:text>,{"@id":"</xsl:text><xsl:value-of select="$ouri"/><xsl:text>"</xsl:text>
-		<xsl:text>,"label":"</xsl:text><xsl:value-of select="translate($olabel,$dblquote,$quote)"/><xsl:text>"</xsl:text>
-		<xsl:if test="$oclass!=''">
-			<xsl:text>,"class":"</xsl:text><xsl:value-of select="$oclass"/><xsl:text>"</xsl:text>
+		<!-- Ignore if already outgoing object -->
+		<xsl:if test="not(exists(key('resource',$uri)/*[@rdf:resource=$ouri]))">
+			<xsl:variable name="ordfs-label"><xsl:value-of select="key('resource',$ouri)/rdfs:label"/></xsl:variable>
+			<xsl:variable name="olabel">
+				<xsl:value-of select="$ordfs-label"/>
+				<xsl:if test="$ordfs-label=''"><xsl:value-of select="$ouri"/></xsl:if>
+			</xsl:variable>
+			<xsl:variable name="ostyle"><xsl:value-of select="key('resource',$ouri)/elmo:style/@rdf:resource"/></xsl:variable>
+			<xsl:variable name="oclass"><xsl:value-of select="key('resource',$ostyle)/elmo:name"/></xsl:variable>
+			<xsl:text>,{"@id":"</xsl:text><xsl:value-of select="$ouri"/><xsl:text>"</xsl:text>
+			<xsl:text>,"label":"</xsl:text><xsl:value-of select="translate($olabel,$dblquote,$quote)"/><xsl:text>"</xsl:text>
+			<xsl:if test="$oclass!=''">
+				<xsl:text>,"class":"</xsl:text><xsl:value-of select="$oclass"/><xsl:text>"</xsl:text>
+			</xsl:if>
+			<xsl:text>,"data":{}</xsl:text>
+			<xsl:text>}</xsl:text>
 		</xsl:if>
-		<xsl:text>,"data":{}</xsl:text>
-		<xsl:text>}</xsl:text>
 	</xsl:for-each-group>
 	<xsl:text>]</xsl:text>
 	<xsl:text>,"links":[</xsl:text>
