@@ -30,7 +30,7 @@ var width = $("#graph").width(),
 	aspect = height/width;
 
 //Maximum number of nodes allowed before links and nodes are aggregated
-var maxNodes = 2;
+var maxNodes = 10;
 	
 // zoom features
 var zoom = d3.behavior.zoom()
