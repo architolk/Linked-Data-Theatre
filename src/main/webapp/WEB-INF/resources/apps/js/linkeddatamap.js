@@ -1,7 +1,7 @@
 /*
  * NAME     linkeddatamap.js
- * VERSION  1.9.0
- * DATE     2016-07-05
+ * VERSION  1.9.1-SNAPSHOT
+ * DATE     2016-08-17
  *
  * Copyright 2012-2016
  *
@@ -494,9 +494,9 @@ function mapClicked(e) {
 	form.submit();
 }
 
-function initMap(docroot, latCor, longCor, baseLayer, imageMapURL, contURL, left, top, width, height) {
+function initMap(staticroot, latCor, longCor, baseLayer, imageMapURL, contURL, left, top, width, height) {
 	// Pad naar de icons goedmaken
-	L.Icon.Default.imagePath = docroot + '/images';
+	L.Icon.Default.imagePath = staticroot + '/images';
 
 	if (baseLayer === 'image') {
 		// create the slippy map

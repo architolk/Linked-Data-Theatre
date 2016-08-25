@@ -1,7 +1,7 @@
 /*
  * NAME     d3graphs-inner.js
- * VERSION  1.9.0
- * DATE     2016-07-05
+ * VERSION  1.9.1-SNAPSHOT
+ * DATE     2016-08-24
  *
  * Copyright 2012-2016
  *
@@ -29,6 +29,9 @@ var width = $("#graph").width(),
     height = 500;//$("#graph").height(),
 	aspect = height/width;
 
+//Maximum number of nodes allowed before links and nodes are aggregated
+var maxNodes = 10;
+	
 // zoom features
 var zoom = d3.behavior.zoom()
 	.scaleExtent([0.1,10])
@@ -55,6 +58,9 @@ var rect = svg.append("rect")
 //Container that holds all the graphical elements
 var container = svg.append("g");
 
+//Flag for IE10 and IE11 bug: SVG edges are not showing when redrawn
+var bugIE = ((navigator.appVersion.indexOf("rv:11")!=-1) || (navigator.appVersion.indexOf("MSIE 10")!=-1));
+
 //Arrowhead definition
 //(All other endpoints should be defined in this section)
 container.append('defs').selectAll('marker')
@@ -79,38 +85,106 @@ var force = d3.layout.force()
 	.on("tick",tick);
 
 //Initialising selection of graphical elements
-//allLinks = all the current links
-//allNodes = all the current nodes
+//allLinks = all the current visible links
+//allNodes = all the current visible nodes
+//AllNodes and AllLinks are used within the tick function
+//root holds all data, even data that has been made invisible
 var allLinks = container.selectAll(".link"),
-	allNodes = container.selectAll(".node")
+	allNodes = container.selectAll(".node"),
 	nodeMap = {},
 	linkMap = {},
+	root = {},
 	currentNode = null;
 
+//Fetch data via Ajax-call and process
 d3.json(jsonApiCall+jsonApiSubject, function(error, json) {
 
-	//Links aanpassen: @id bevat de werkelijke identificatie die in source en target wordt gebruikt
-	//Issue: link with the same source and target, but a different label, those links are placed on top of each other
-	json.nodes.forEach(function(x) { nodeMap[x['@id']] = x; });
-	json.links = json.links.map(function(x) {
-		linkMap[x.source+x.target]=x;
-		return {source: nodeMap[x.source], target: nodeMap[x.target], label: x.label, uri: x.uri};
-    });
+	root.nodes = json.nodes;
+	//Update nodes: the original data contains nodes with an uri-reference to the node, not the node itself (@id holds the uri-reference)
+	root.nodes.forEach(function(x) { nodeMap[x['@id']] = x; });
 	
-	//Eerste node in het midden plaatsen en vastzetten
-	json.nodes[0].x = width/2;
-	json.nodes[0].y = height/2;
-	json.nodes[0].fixed = true;
-	json.nodes[0].expanded = true;
-	updateTitle(json.nodes[0]);
+	//Update links
+	root.links = [];
+	json.links.forEach(function(x) {
+		if (linkMap[x.source+x.target]) {
+			//Link already exists, add label to existing link
+			linkMap[x.source+x.target].label = linkMap[x.source+x.target].label+", "+x.label
+		} else {
+			//New link
+			var l = {id:x.source+x.target, source: nodeMap[x.source], target: nodeMap[x.target], label: x.label, uri: x.uri}
+			linkMap[x.source+x.target]=l;
+			root.links.push(l);
+		}
+	});
 	
-	force
-		.nodes(json.nodes)
-		.links(json.links);
-
+	//Place first node in the center and set to fixed
+	root.nodes[0].x = width/2;
+	root.nodes[0].y = height/2;
+	root.nodes[0].fixed = true;
+	root.nodes[0].expanded = true;
+	updateTitle(root.nodes[0]);
+	
+	//Create network
+	root.nodes.forEach(function(n) {
+		n.inLinks = {};
+		n.outLinks = {};
+		n.linkCount = 0;
+		n.parentLink;
+		n.elementType = "rect"; //Maybe not the best place...
+	});
+	root.links.forEach(function(l) {
+		l.source.outLinks[l.uri] = l.source.outLinks[l.uri] || [];
+		l.source.outLinks[l.uri].push(l);
+		l.source.linkCount++;
+		l.source.parentLink = l;
+		l.target.inLinks[l.uri] = l.target.inLinks[l.uri] || [];
+		l.target.inLinks[l.uri].push(l);
+		l.target.linkCount++;
+		l.target.parentLink = l;
+	});
+	
+	createAggregateNodes();
 	update();
 
 });
+
+function createAggregateNodes() {
+
+	//Add an aggregateNode for any node that has more than maxNodes outgoing OR ingoing links
+	root.nodes.forEach(function(n) {
+		if (!n.aggregateNode) {
+			Object.getOwnPropertyNames(n.outLinks).forEach(function(prop) {
+				var d = n.outLinks[prop];
+				if (d.length>=maxNodes) {
+					if (!nodeMap[n["@id"]+d[0].uri]) {
+						var aNode = {"@id":n["@id"]+d[0].uri,data:{},label:d[0].label,uri:d[0].uri,elementType:"circle",aggregateNode:true,count:d.length,links:d};
+						root.nodes.push(aNode);
+						root.links.push({id:n["@id"]+d[0].uri,source:n,target:aNode,label:d[0].label,uri:d[0].uri});
+						nodeMap[aNode["@id"]]=aNode;
+					}
+				}
+			});
+			Object.getOwnPropertyNames(n.inLinks).forEach(function(prop) {
+				var d = n.inLinks[prop];
+				if (d.length>=maxNodes) {
+					if (!nodeMap[n["@id"]+d[0].uri]) {
+						var aNode = {"@id":n["@id"]+d[0].uri,data:{},label:d[0].label,uri:d[0].uri,elementType:"circle",aggregateNode:true,count:d.length,links:d};
+						root.nodes.push(aNode);
+						root.links.push({id:n["@id"]+d[0].uri,source:aNode,target:n,label:d[0].label,uri:d[0].uri});
+						nodeMap[aNode["@id"]]=aNode;
+					}
+				}
+			});
+		}
+	});
+	//Do a recount of number of connections
+	//(count is number of connections minus the connections that remain visible
+	root.nodes.forEach(function(n) {
+		if (n.aggregateNode) {
+			n.count = n.links.filter(function(d) {return ((d.target.linkCount<=1) || (d.source.linkCount<=1))}).length;
+		}
+	});
+}
 
 var node_drag = d3.behavior.drag()
 	.on("dragstart", dragstart)
@@ -118,13 +192,6 @@ var node_drag = d3.behavior.drag()
 	.on("dragend", dragend);
 
 function updateTitle(d) {
-	/*
-	var html = '<div class="header">'+d.label+'</div><table><tr><td>URI</td><td class="data">'+d['@id']+"</td></tr>";
-	for (var key in d.data) {
-		html += '<tr><td>'+key+'</td><td class="data">'+d.data[key]+"</td></tr>";
-	}
-	html += '</table><div class="button"><p id="expand" onclick="expand();">Uitbreiden</p></div>';
-	*/
 	var html = '<h3 class="panel-title"><a style="font-size:16px" href="'+uriEndpoint+encodeURIComponent(d['@id'])+'"><span class="glyphicon glyphicon-new-window"/></a> '+d.label;
 	if (!d.expanded) {
 		html+=' <a onclick="expand();" class="badge" style="font-size:12px">';
@@ -162,8 +229,23 @@ function zoomed() {
 	
 function update() {
 
-	allLinks = container.selectAll(".link").data(force.links());
-	//Create a new selection of all the newLinks, only those links should be created as new graphical elements
+	//Keep only the visible nodes
+	var nodes = root.nodes.filter(function(d) {
+		return d.aggregateNode ? (!d.expanded) && (d.count>0) : ((d.linkCount>1) || ((d.parentLink.source.outLinks[d.parentLink.uri].length < maxNodes) && (d.parentLink.target.inLinks[d.parentLink.uri].length < maxNodes)))
+	});
+	var links = root.links;
+	//Keep only the visible links
+	links = root.links.filter(function(d) {
+		return d.source.aggregateNode ? (!d.source.expanded) && (d.source.count>0) : d.target.aggregateNode ? (!d.target.expanded) && (d.target.count>0) : (((d.source.linkCount>1) && (d.target.linkCount>1)) || ((d.source.outLinks[d.uri].length < maxNodes) && (d.target.inLinks[d.uri].length < maxNodes)))
+	});
+	
+	// Update the links
+	allLinks = allLinks.data(links,function(d) {return d.id});
+
+	// Exit any old links.
+	allLinks.exit().remove();
+
+	// Enter any new links.
 	var newLinks = allLinks
 		.enter().append("g")
 		.attr("class", function(d) { return "link"+(d.source.class ? " t"+d.source.class : "")+(d.target.class ? " t"+d.target.class : "") });
@@ -181,9 +263,17 @@ function update() {
 		.attr("text-anchor", "middle")
 		.style("font", "10px sans-serif")
 		.text(function(d) { return d.label });
-		
-	allNodes = container.selectAll(".node").data(force.nodes());
-	//Create a new selection of all the newNodes, only those nodes should be created as new graphical elements
+
+	// Update the nodes
+	allNodes = allNodes.data(nodes,function(d) {return d["@id"]});
+	
+	// Update text (count of an aggregateNode might change)
+	allNodes.select("text").text(function(d) { return d.aggregateNode ? d.count : d.label });
+
+	// Exit any old nodes.
+	allNodes.exit().remove();
+
+	// Enter any new nodes.
 	var newNodes = allNodes
 		.enter().append("g")
 		.attr("class", function(d) { return (d.class ? "node t"+d.class : "node")})
@@ -194,19 +284,26 @@ function update() {
 		.attr("dy", 0)
 		.attr("text-anchor", "middle")
 		.style("font", "10px sans-serif")
-		.text(function(d) { return d.label })
-		.each(function(d) {
-			d.rect = this.getBBox();
-		});
+		.text(function(d) { return d.aggregateNode ? d.count : d.label })
+		.each(function(d) {d.rect = this.getBBox();	});
 
-	newNodes.append("rect")
+	newNodes.filter(function(d) {return d.elementType==="rect"}).append("rect")
 		.attr("x", function(d) { return d.rect.x-5})
 		.attr("y", function(d) { return d.rect.y-5})
 		.attr("width", function(d) { return d.rect.width+10 })
 		.attr("height", function(d) { return d.rect.height+10 })
-		.attr("class", function(d) { return (d.class ? "s"+d.class : "default") })
-	
-	force.start();
+		.attr("class", function(d) { return (d.class ? "s"+d.class : "default") });
+
+	newNodes.filter(function(d) {return d.elementType==="circle"}).append("circle")
+		.attr("cx", function(d) { return d.rect.x+5})
+		.attr("cy", function(d) { return d.rect.y+5})
+		.attr("r", function(d) { return 5+d.rect.height/2 })
+		.attr("class", function(d) { return (d.class ? "s"+d.class : "default") });
+
+	force
+		.nodes(nodes)
+		.links(links)
+		.start();
 
 }
 
@@ -238,6 +335,19 @@ function tick(e) {
 			xs = d.source.x+(d.target.x < d.source.x ? Math.max(d.source.rect.x-5,(d.source.rect.y-5)*dx/dy) : Math.min(d.source.rect.x-5+d.source.rect.width+10,-(d.source.rect.y-5)*dx/dy)),
 			ys = d.source.y+(d.target.y < d.source.y ? Math.max(d.source.rect.y-5,(d.source.rect.x-5)*dy/dx) : Math.min(d.source.rect.y-5+d.source.rect.height+10,-(d.source.rect.x-5)*dy/dx));
 			
+			if (d.target.elementType==="circle") {
+				var pl = Math.sqrt((ddx*ddx)+(ddy*ddy)),
+					rad = 5+d.target.rect.height/2;
+				xt = d.target.x+((ddx*rad)/pl)+2;
+				yt = d.target.y+((ddy*rad)/pl)-5;
+			}
+			if (d.source.elementType==="circle") {
+				var pl = Math.sqrt((ddx*ddx)+(ddy*ddy)),
+					rad = 5+d.source.rect.height/2;
+				xs = d.source.x-((ddx*rad)/pl);
+				ys = d.source.y-((ddy*rad)/pl)-5;
+			}
+			
 		//Change the position of the lines, to match the border of the rectangle instead of the centre of the rectangle
 		d3.select(this).selectAll("line")
 			.attr("x1",xs)
@@ -246,25 +356,24 @@ function tick(e) {
 			.attr("y2",yt);
 			
 		//Rotate the text to match the angle of the lines
-		var tx = xs+(xt-xs)/2,
-			ty = ys+(yt-ys)/2;
+		var tx = xs+(xt-xs)*2/3, //set label at 2/3 of edge (to solve situation with overlapping edges)
+			ty = ys+(yt-ys)*2/3;
 		d3.select(this).selectAll("text")
 			.attr("x",tx)
 			.attr("y",ty-3)
-			.attr("transform","rotate("+Math.atan(ddy/ddx)*57+" "+tx+" "+ty+")")
+			.attr("transform","rotate("+Math.atan(ddy/ddx)*57+" "+tx+" "+ty+")");
+			
+		//In case of aggregateNode: update text
+		if (d.aggregateNode)
+			
+		//IE10 and IE11 bugfix
+		if (bugIE) {
+			this.parentNode.insertBefore(this,this);
+		}
 	})
 
     allNodes.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
 
-	// Onderstaande werkt wel om de rectangle groter te maken, maar je zou em ook weer kleiner moeten maken!
-	// Bovendien werkt het niet meer als je panning hebt toegepast: oplossing gaan we dus anders doen (vandaar commented)
-	// var maxwidth = 0;
-	// allNodes.each(function(d) {
-	// 	if (d.x > maxwidth) {
-	// 		maxwidth = d.x;
-	// 	}
-	// })
-	// rect.attr("width",maxwidth+100);
 }
 
 function expand() {
@@ -274,35 +383,69 @@ function expand() {
 }
 
 function dblclick(d) {
-	// d3.select(this).select("rect").style("fill","red");
 	// Fixed position of a node can be relaxed after a user doubleclicks AND the node has been expanded
 	d.fixed = d.expanded ? !d.fixed : d.fixed;
 
-	//Only query if the nodes hasn't been expanded yet
-	if (!d.expanded) {
-		d3.json(jsonApiCall+encodeURIComponent(d['@id']), function(error, json) {
-			//Only add new nodes
-			json.nodes.forEach(function(x) {
-				if (!nodeMap[x['@id']]) {
-					force.nodes().push(x);
+	//Check for aggregate node
+	if (!d.aggregateNode) {
+		//Only query if the nodes hasn't been expanded yet
+		if (!d.expanded) {
+			//Fetch new data via Ajax call
+			d3.json(jsonApiCall+encodeURIComponent(d['@id']), function(error, json) {
+				//Only add new nodes
+				var newNodes = json.nodes.filter(function(x) {return !nodeMap[x['@id']]});
+				newNodes.forEach(function(x) {
+					//force.nodes().push(x); OLD
+					root.nodes.push(x); //NEW
 					nodeMap[x['@id']] = x;
 					// startingpoint of new nodes = position starting node
 					x.x = d.x;
 					x.y = d.y;
-				}
+					//Create network: initialize new node
+					x.inLinks = {};
+					x.outLinks = {};
+					x.linkCount = 0;
+					x.parentLink;
+					x.elementType = "rect";
+				})
+				//Only add new lines
+				json.links.forEach(function(x) {
+					if (linkMap[x.source+x.target]) {
+						//Existing link, check if uri is different and label is different, add label to existing link
+						var el = linkMap[x.source+x.target];
+						if ((el.uri!=x.uri) && (el.label!=x.label)) {
+							el.label = el.label + ", " + x.label;
+						}
+					} else {
+						var l = {id:x.source+x.target,source:nodeMap[x.source],target:nodeMap[x.target],label:x.label,uri:x.uri};
+						root.links.push(l);
+						linkMap[x.source+x.target] = l;
+						//Create network: set in & out-links
+						l.source.outLinks[l.uri] = l.source.outLinks[l.uri] || [];
+						l.source.outLinks[l.uri].push(l);
+						l.source.linkCount++;
+						l.source.parentLink = l;
+						l.target.inLinks[l.uri] = l.target.inLinks[l.uri] || [];
+						l.target.inLinks[l.uri].push(l);
+						l.target.linkCount++;
+						l.target.parentLink = l;
+					}
+				})
+
+				d.expanded = true;
+				updateTitle(d);
+				createAggregateNodes();
+				update();
 			})
-			//Only add new lines
-			//Issue: link with the same source and target, but a different label, those links are not added
-			json.links.forEach(function(x) {
-				if (!linkMap[x.source+x.target]) {
-					force.links().push({source:nodeMap[x.source],target:nodeMap[x.target],label:x.label,uri:x.uri});
-					linkMap[x.source+x.target] = x;
-				}
-			})
-			
-			d.expanded = true;
-			updateTitle(d);
-			update();
-		})
+		}
+	} else {
+		//TODO: Uncollapse aggregate
+		d.expanded = true;
+		//A bit dirty: make sure that the new nodes are visible
+		d.links.forEach(function(x) {
+			x.target.linkCount++;
+			x.source.linkCount++;
+		});
+		update();
 	}
 }

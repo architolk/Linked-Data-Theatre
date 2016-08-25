@@ -1,8 +1,8 @@
 <!--
 
     NAME     container.xpl
-    VERSION  1.9.0
-    DATE     2016-07-05
+    VERSION  1.9.1-SNAPSHOT
+    DATE     2016-08-22
 
     Copyright 2012-2016
 
@@ -295,9 +295,42 @@
 							<xsl:param name="dt"/>
 							<xsl:value-of select="year-from-dateTime($dt)"/>-<xsl:value-of select="month-from-dateTime($dt)"/>-<xsl:value-of select="day-from-dateTime($dt)"/>-<xsl:value-of select="hours-from-dateTime($dt)"/>-<xsl:value-of select="minutes-from-dateTime($dt)"/>-<xsl:value-of select="seconds-from-dateTime($dt)"/>
 						</xsl:template>
+						<xsl:template match="parameter" mode="replace">
+							<xsl:param name="text"/>
+							<!-- Escape characters that could be used for SPARQL insertion -->
+							<!-- The solution is quite harsh: all ', ", <, > and \ are deleted -->
+							<!-- A better solution could be to know if a parameter is a literal or a URI -->
+							<xsl:variable name="problems">("|'|&lt;|&gt;|\\|\$)</xsl:variable>
+							<xsl:variable name="value">
+								<xsl:value-of select="replace(value[1],$problems,'')"/>
+							</xsl:variable>
+							<xsl:choose>
+								<xsl:when test="exists(following-sibling::*[1])">
+									<xsl:variable name="query">
+										<xsl:apply-templates select="following-sibling::*[1]" mode="replace">
+											<xsl:with-param name="text" select="$text"/>
+										</xsl:apply-templates>
+									</xsl:variable>
+									<xsl:choose>
+										<xsl:when test="name!='content'">
+											<xsl:value-of select="replace($query,concat('@',upper-case(name),'@'),$value)"/>
+										</xsl:when>
+										<xsl:otherwise><xsl:value-of select="$query"/></xsl:otherwise>
+									</xsl:choose>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:choose>
+										<xsl:when test="name!='content'">
+											<xsl:value-of select="replace($text,concat('@',upper-case(name),'@'),$value)"/>
+										</xsl:when>
+										<xsl:otherwise><xsl:value-of select="$text"/></xsl:otherwise>
+									</xsl:choose>
+								</xsl:otherwise>
+							</xsl:choose>
+						</xsl:template>
 						<xsl:template match="/">
 							<container>
-								<xsl:for-each select="rdf:RDF/rdf:Description[1]">
+								<xsl:for-each select="root/rdf:RDF/rdf:Description[1]">
 									<label><xsl:value-of select="rdfs:label"/></label>
 									<url><xsl:value-of select="@rdf:about"/></url>
 									<user-role><xsl:value-of select="elmo:user-role"/></user-role>
@@ -313,7 +346,20 @@
 										<xsl:otherwise/>
 									</xsl:choose>
 									<representation><xsl:value-of select="elmo:representation/@rdf:resource"/></representation>
-									<postquery><xsl:value-of select="normalize-space(translate(elmo:query,$returns,$noreturns))"/></postquery>
+									<!-- Create query (replace parameters and default settings) -->
+									<xsl:variable name="query1">
+										<xsl:apply-templates select="/root/context/parameters/parameter[1]" mode="replace">
+											<xsl:with-param name="text" select="elmo:query"/>
+										</xsl:apply-templates>
+										<xsl:if test="not(exists(/root/context/parameters/parameter))"><xsl:value-of select="elmo:query"/></xsl:if>
+									</xsl:variable>
+									<xsl:variable name="query2" select="replace($query1,'@LANGUAGE@',/root/context/language)"/>
+									<xsl:variable name="query3" select="replace($query2,'@USER@',/root/context/user)"/>
+									<xsl:variable name="query4" select="replace($query3,'@CURRENTMOMENT@',string(current-dateTime()))"/>
+									<xsl:variable name="query5" select="replace($query4,'@STAGE@',/root/context/back-of-stage)"/>
+									<xsl:variable name="query6" select="replace($query5,'@TIMESTAMP@',/root/context/timestamp)"/>
+									<xsl:variable name="query7" select="replace($query6,'@DATE@',/root/context/date)"/>
+									<postquery><xsl:value-of select="normalize-space(translate(replace($query7,'@SUBJECT@',/root/context/subject),$returns,$noreturns))"/></postquery>
 									<xsl:choose>
 										<xsl:when test="elmo:representation/@rdf:resource='http://bp4mc2.org/elmo/def#UploadRepresentation'">
 											<fetchquery>CONSTRUCT {?x?x?x} WHERE {?x?x?x}</fetchquery>
@@ -343,7 +389,7 @@
 						</xsl:template>
 					</xsl:stylesheet>
 				</p:input>
-				<p:input name="data" href="#container"/>
+				<p:input name="data" href="aggregate('root',#context,#container)"/>
 				<p:output name="data" id="containercontext"/>
 			</p:processor>
 		</p:otherwise>
@@ -353,7 +399,7 @@
 	<p:input name="config">
 		<config/>
 	</p:input>
-	<p:input name="data" href="#context"/>
+	<p:input name="data" href="#containercontext"/>
 </p:processor>
 -->
 	<p:choose href="#containercontext">
@@ -379,7 +425,7 @@
 						<p:input name="config">
 							<config>
 								<encoding>utf-8</encoding>
-								<public-doctype>-//W3C//DTD XHTML 1.0 Strict//EN</public-doctype>
+								<version>5.0</version>
 							</config>
 						</p:input>
 						<p:input name="data" href="#html"/>
@@ -738,7 +784,7 @@
 										<p:input name="config">
 											<config>
 												<encoding>utf-8</encoding>
-												<public-doctype>-//W3C//DTD XHTML 1.0 Strict//EN</public-doctype>
+												<version>5.0</version>
 											</config>
 										</p:input>
 										<p:input name="data" transform="oxf:xslt" href="#context">
@@ -865,7 +911,7 @@
 										<p:input name="config">
 											<config>
 												<encoding>utf-8</encoding>
-												<public-doctype>-//W3C//DTD XHTML 1.0 Strict//EN</public-doctype>
+												<version>5.0</version>
 											</config>
 										</p:input>
 										<p:input name="data" href="#html" />
@@ -1052,7 +1098,7 @@
 						<p:input name="config">
 							<config>
 								<encoding>utf-8</encoding>
-								<public-doctype>-//W3C//DTD XHTML 1.0 Strict//EN</public-doctype>
+								<version>5.0</version>
 							</config>
 						</p:input>
 						<p:input name="data" href="#html" />
@@ -1087,7 +1133,7 @@
 				<p:input name="config">
 					<config>
 						<encoding>utf-8</encoding>
-						<public-doctype>-//W3C//DTD XHTML 1.0 Strict//EN</public-doctype>
+						<version>5.0</version>
 					</config>
 				</p:input>
 				<p:input name="data" href="#html"/>

@@ -1,8 +1,8 @@
 <!--
 
     NAME     page-flow.xml
-    VERSION  1.9.0
-    DATE     2016-07-05
+    VERSION  1.9.1-SNAPSHOT
+    DATE     2016-08-22
 
     Copyright 2012-2016
 
@@ -85,6 +85,7 @@
 		<setvalue ref="theatre/format" matcher-group="4"/>
 		<setvalue ref="theatre/subject" parameter="subject"/>
 		<setvalue ref="theatre/representation" parameter="representation"/>
+		<setvalue ref="theatre/date" parameter="date"/>
 	</page>
 	<page path="(((?!query).)*)/query/([^ ]*)" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
 		<setvalue ref="theatre/subdomain" matcher-group="1"/>
@@ -92,6 +93,7 @@
 		<setvalue ref="theatre/format" parameter="format"/>
 		<setvalue ref="theatre/subject" parameter="subject"/>
 		<setvalue ref="theatre/representation" parameter="representation"/>
+		<setvalue ref="theatre/date" parameter="date"/>
 	</page>
 	
 	<!-- container -->
@@ -99,7 +101,13 @@
 		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 	</page>
 
+	<!-- update -->
+	<page path="(((?!update).)*)/update/([^ ]*)" model="pipelines/update.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
+	</page>
+	
 	<!-- conversion -->
+	<!-- (Linked Data Studio - but included here for comfort) -->
 	<page path="(((?!conversion).)*)/conversion/([^ ]*)" model="pipelines/conversion.xpl" default-submission="config.xml" public-methods="#all">
 		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 	</page>
@@ -107,13 +115,21 @@
 	<!-- id uri (deferenceable URI) -->
 	<page path="(((?!id).)*)/id/([^ ]*)" model="pipelines/redirect.xpl" default-submission="config.xml" public-methods="#all"/>
 	
-	<!-- doc uri (give some information about a URI) -->
-	<page path="(((?!doc).)*)/doc/([^ ]*)" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
+	<!-- doc, versioned uri (give some information about a URI) -->
+	<page path="(((?!doc).)*)/doc/([0-9/-]+)/([^ ]*)" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
 		<setvalue ref="theatre/subdomain" matcher-group="1"/>
-		<!-- <setvalue ref="submission/query">resource</setvalue> -->
+		<setvalue ref="theatre/date" matcher-group="3"/>
 		<setvalue ref="theatre/subject" parameter="subject"/>
 		<setvalue ref="theatre/format" parameter="format"/>
 		<setvalue ref="theatre/representation" parameter="representation"/>
+	</page>
+	<!-- doc, current version uri (give some information about a URI) -->
+	<page path="(((?!doc).)*)/doc/([^ ]*)" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
+		<setvalue ref="theatre/subject" parameter="subject"/>
+		<setvalue ref="theatre/format" parameter="format"/>
+		<setvalue ref="theatre/representation" parameter="representation"/>
+		<setvalue ref="theatre/date" parameter="date"/>
 	</page>
 	
 	<!-- def uri (give some information about a hash URI) -->
@@ -122,17 +138,20 @@
 		<setvalue ref="theatre/subject" parameter="subject"/>
 		<setvalue ref="theatre/format" parameter="format"/>
 		<setvalue ref="theatre/representation" parameter="representation"/>
+		<setvalue ref="theatre/date" parameter="date"/>
 	</page>
 	<!-- context uri (same as def uri, but should result in a JSON-LD context representation -->
 	<page path="(((?!context).)*)/context(/[^\.]*)*\.([^ ]*)" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
 		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 		<setvalue ref="theatre/subject" parameter="subject"/>
 		<setvalue ref="theatre/format" matcher-group="4"/>
+		<setvalue ref="theatre/date" parameter="date"/>
 	</page>
 	<page path="(((?!context).)*)/context(/[^ ]*)*" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
 		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 		<setvalue ref="theatre/subject" parameter="subject"/>
 		<setvalue ref="theatre/format" parameter="format"/>
+		<setvalue ref="theatre/date" parameter="date"/>
 	</page>
 	
 	<!-- resource API (give some information about a URI, assigned to the subject parameter -->
@@ -142,6 +161,7 @@
 		<setvalue ref="theatre/format" matcher-group="3"/>
 		<setvalue ref="theatre/subject" parameter="subject"/>
 		<setvalue ref="theatre/representation" parameter="representation"/>
+		<setvalue ref="theatre/date" parameter="date"/>
 	</page>
 	<page path="(((?!resource).)*)/resource" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
 		<setvalue ref="theatre/subdomain" matcher-group="1"/>
@@ -149,6 +169,7 @@
 		<setvalue ref="theatre/format" parameter="format"/>
 		<setvalue ref="theatre/subject" parameter="subject"/>
 		<setvalue ref="theatre/representation" parameter="representation"/>
+		<setvalue ref="theatre/date" parameter="date"/>
 	</page>
 	
 	<!-- default resource -->
@@ -158,6 +179,7 @@
 		<setvalue ref="theatre/format" matcher-group="3"/>
 		<setvalue ref="theatre/subject" parameter="subject"/>
 		<setvalue ref="theatre/representation">rep://elmo.localhost/resource</setvalue>
+		<setvalue ref="theatre/date" parameter="date"/>
 	</page>
 	<page path="(((?!resourcex).)*)/resourcex" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
 		<setvalue ref="theatre/subdomain" matcher-group="1"/>
@@ -165,6 +187,7 @@
 		<setvalue ref="theatre/format" parameter="format"/>
 		<setvalue ref="theatre/subject" parameter="subject"/>
 		<setvalue ref="theatre/representation">rep://elmo.localhost/resource</setvalue>
+		<setvalue ref="theatre/date" parameter="date"/>
 	</page>
 	
 	<!-- Text search -->
@@ -202,6 +225,7 @@
 		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 		<setvalue ref="theatre/format" parameter="format"/>
 		<setvalue ref="theatre/subject" parameter="subject"/>
+		<setvalue ref="theatre/date" parameter="date"/>
 	</page>
 	<!-- <page path="/admin/version" model="pipelines/version.xpl" default-submission="config.xml" public-methods="#all"/> -->
 

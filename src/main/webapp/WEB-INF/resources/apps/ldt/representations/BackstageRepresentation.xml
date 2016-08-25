@@ -1,8 +1,8 @@
 <!--
 
     NAME     BackstageRepresentation.xml
-    VERSION  1.9.0
-    DATE     2016-07-05
+    VERSION  1.9.1-SNAPSHOT
+    DATE     2016-08-22
 
     Copyright 2012-2016
 
@@ -125,35 +125,32 @@
 			prefix html: <http://www.w3.org/1999/xhtml/vocab#>
 			prefix dcterms: <http://purl.org/dc/terms/>
 			construct {
-				<menu-item7> rdfs:label "Export".
-				<menu-item7> html:link ?export.
-				<menu-item7> elmo:index "7".
-				<menu-item6> rdfs:label "Import".
-				<menu-item6> html:link ?import.
-				<menu-item6> elmo:index "6".
-				<menu-item5> rdfs:label "Query".
-				<menu-item5> html:link ?query.
-				<menu-item5> elmo:index "5".
-				#<menu-item4> rdfs:label "Edit stage".
-				#<menu-item4> html:link ?add.
-				#<menu-item4> elmo:subject ?presentation.
-				<menu-item4> elmo:index "4".
-				<menu-item3> rdfs:label "Search vocabulary".
-				<menu-item3> html:link ?voc.
-				<menu-item3> elmo:index "3".
-				<menu-item2> rdfs:label "Add representation".
-				<menu-item2> html:link ?add.
-				<menu-item2> elmo:index "2".
-				<menu-item1> rdfs:label "Goto stage".
-				<menu-item1> html:link ?stage.
-				<menu-item1> elmo:index "1".
-				<menu> dcterms:title ?stagename.
-				<menu> elmo:data <menu-item1>.
-				<menu> elmo:data <menu-item2>.
-				<menu> elmo:data <menu-item3>.
+				<urn:menu-item7> rdfs:label "Export".
+				<urn:menu-item7> html:link ?export.
+				<urn:menu-item7> elmo:index "7".
+				<urn:menu-item6> rdfs:label "Import".
+				<urn:menu-item6> html:link ?import.
+				<urn:menu-item6> elmo:index "6".
+				<urn:menu-item5> rdfs:label "Query".
+				<urn:menu-item5> html:link ?query.
+				<urn:menu-item5> elmo:index "5".
+				<urn:menu-item3> rdfs:label "Search vocabulary".
+				<urn:menu-item3> html:link ?voc.
+				<urn:menu-item3> elmo:index "3".
+				<urn:menu-item2> rdfs:label "Add representation".
+				<urn:menu-item2> html:link ?add.
+				<urn:menu-item2> elmo:index "2".
+				<urn:menu-item1> rdfs:label "Goto stage".
+				<urn:menu-item1> html:link ?stage.
+				<urn:menu-item1> elmo:index "1".
+				<urn:menu> dcterms:title ?stagename.
+				<urn:menu> html:link "#".
+				<urn:menu> elmo:data <urn:menu-item1>.
+				<urn:menu> elmo:data <urn:menu-item2>.
+				<urn:menu> elmo:data <urn:menu-item3>.
 			}
 			where {
-				select	(strbefore("@STAGE@","/stage") as ?stage)
+				select	(strbefore("@SUBJECT@","/backstage") as ?stage)
 						(strafter(strbefore("@STAGE@","/stage"),"http://") as ?stagename)
 						("@SUBJECT@/rep" as ?add)
 						("@SUBJECT@/sparql" as ?query)

@@ -42,4 +42,7 @@
 	<processor name="oxf:httpclient-processor">
 		<class name="nl.architolk.ldt.processors.HttpClientProcessor"/>
 	</processor>
+	<processor name="oxf:markdown-converter">
+		<class name="nl.architolk.ldt.processors.MarkDownConverter"/>
+	</processor>
 </processors>

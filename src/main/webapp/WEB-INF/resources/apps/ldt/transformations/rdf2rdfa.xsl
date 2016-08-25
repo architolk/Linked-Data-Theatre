@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2rdfa.xsl
-    VERSION  1.9.0
-    DATE     2016-07-05
+    VERSION  1.9.1-SNAPSHOT
+    DATE     2016-08-03
 
     Copyright 2012-2016
 
@@ -142,7 +142,17 @@
 	</xsl:element>
 </xsl:template>
 
-<xsl:template match="representation" mode="results">
+<xsl:template match="scene" mode="scene">
+	<xsl:param name="index"/>
+	
+	<rdf:Description rdf:about="{@uri}">
+		<elmo:index><xsl:value-of select="$index"/></elmo:index>
+		<xsl:if test="exists(label)"><rdfs:label><xsl:value-of select="label"/></rdfs:label></xsl:if>
+		<rdf:value><xsl:value-of select="/root/results/rdf:RDF[position()=$index]/rdf:Description[1]/res:solution[1]/res:binding[1]/res:value[1]"/></rdf:value>
+	</rdf:Description>
+</xsl:template>
+
+<xsl:template match="representation|production" mode="results">
 	<xsl:param name="index"/>
 
 	<xsl:variable name="representation-uri" select="@uri"/>
@@ -192,9 +202,6 @@
 					</xsl:if>
 				</xsl:for-each-group>
 			</xsl:when>
-			<xsl:when test="$appearance='http://bp4mc2.org/elmo/def#TableAppearance' or $appearance='http://bp4mc2.org/elmo/def#ShortTableAppearance' or $appearance='http://bp4mc2.org/elmo/def#TextSearchAppearance'">
-				<xsl:copy-of select="/root/results/rdf:RDF[position()=$index]/rdf:Description"/>
-			</xsl:when>
 			<xsl:when test="$appearance='http://bp4mc2.org/elmo/def#TextAppearance'">
 				<xsl:copy-of select="/root/docs/xmldocs[@uri=$representation-uri]"/>
 			</xsl:when>
@@ -210,6 +217,20 @@
 						</rdf:Description>
 					</xsl:for-each>
 				</xsl:for-each>
+			</xsl:when>
+			<xsl:when test="local-name()='production'">
+				<!-- Show special ShortTabelAppearance: the result of all stages -->
+				<xsl:for-each select="../(representation|scene)">
+					<xsl:variable name="scene-index" select="position()"/>
+					<xsl:if test="local-name()='scene'">
+						<xsl:apply-templates select="." mode="scene">
+							<xsl:with-param name="index" select="$scene-index"/>
+						</xsl:apply-templates>
+					</xsl:if>
+				</xsl:for-each>
+			</xsl:when>
+			<xsl:when test="$appearance='http://bp4mc2.org/elmo/def#TableAppearance' or $appearance='http://bp4mc2.org/elmo/def#ShortTableAppearance' or $appearance='http://bp4mc2.org/elmo/def#TextSearchAppearance'">
+				<xsl:copy-of select="/root/results/rdf:RDF[position()=$index]/rdf:Description"/>
 			</xsl:when>
 			<xsl:when test="$appearance='http://bp4mc2.org/elmo/def#GraphAppearance'">
 				<xsl:for-each select="fragment">
@@ -285,73 +306,6 @@
 
 </xsl:template>
 
-<!-- THIS PART OF THE CODEBASE IS DEPRECATED AND SHOULD BE DELETED -->
-<!-- Start -->
-<xsl:template match="representation" mode="merge">
-	<xsl:param name="index"/>
-
-	<xsl:variable name="representation-uri" select="@uri"/>
-	<xsl:variable name="appearance1">
-		<xsl:if test="not(@appearance!='')">http://bp4mc2.org/elmo/def#ContentAppearance</xsl:if>
-		<xsl:value-of select="@appearance"/>
-	</xsl:variable>
-	<xsl:variable name="appearance">
-		<xsl:choose>
-			<xsl:when test="queryForm/@satisfied!=''">http://bp4mc2.org/elmo/def#FormAppearance</xsl:when>
-			<xsl:when test="$appearance1='http://bp4mc2.org/elmo/def#ContentAppearance' and /root/merge/rdf:RDF[position()=$index]/rdf:Description[@rdf:nodeID='rset']/rdf:type/@rdf:resource='http://www.w3.org/2005/sparql-results#ResultSet'">http://bp4mc2.org/elmo/def#TableAppearance</xsl:when>
-			<xsl:otherwise><xsl:value-of select="$appearance1"/></xsl:otherwise>
-		</xsl:choose>
-	</xsl:variable>
-	<rdf:RDF elmo:appearance="{$appearance}" elmo:query="{$representation-uri}">
-		<xsl:choose>
-			<xsl:when test="$appearance='http://bp4mc2.org/elmo/def#ContentAppearance' or $appearance='http://bp4mc2.org/elmo/def#CarouselAppearance'">
-				<xsl:variable name="fragments" select="fragment"/>
-				<xsl:for-each-group select="/root/merge/rdf:RDF[position()=$index]/rdf:Description" group-by="@rdf:about">
-					<xsl:if test="exists(current-group()/*[name()!='rdfs:label'])"> <!-- Groups with only labels should be ignored -->
-						<rdf:Description rdf:about="{@rdf:about}">
-							<xsl:apply-templates select="current-group()/*" mode="property">
-								<xsl:with-param name="fragments" select="$fragments"/>
-							</xsl:apply-templates>
-						</rdf:Description>
-					</xsl:if>
-				</xsl:for-each-group>
-			</xsl:when>
-			<xsl:when test="$appearance='http://bp4mc2.org/elmo/def#TableAppearance' or $appearance='http://bp4mc2.org/elmo/def#ShortTableAppearance' or $appearance='http://bp4mc2.org/elmo/def#TextSearchAppearance'">
-				<xsl:copy-of select="/root/merge/rdf:RDF[position()=$index]/rdf:Description"/>
-			</xsl:when>
-			<xsl:when test="$appearance='http://bp4mc2.org/elmo/def#TextAppearance'">
-				<xsl:copy-of select="/root/docs/xmldocs[@uri=$representation-uri]"/>
-			</xsl:when>
-			<xsl:when test="$appearance='http://bp4mc2.org/elmo/def#FormAppearance'">
-				<xsl:for-each select="queryForm">
-					<rdf:Description rdf:nodeID="form">
-						<xsl:copy-of select="rdfs:label"/>
-					</rdf:Description>
-					<xsl:for-each select="fragment">
-						<rdf:Description rdf:nodeID="f{position()}">
-							<xsl:if test="@applies-to!=''"><elmo:applies-to><xsl:value-of select="@applies-to"/></elmo:applies-to></xsl:if>
-							<xsl:copy-of select="*"/>
-						</rdf:Description>
-					</xsl:for-each>
-				</xsl:for-each>
-			</xsl:when>
-			<xsl:when test="$appearance='http://bp4mc2.org/elmo/def#GraphAppearance'">
-				<xsl:for-each select="fragment">
-					<rdf:Description rdf:nodeID="f{position()}">
-						<xsl:if test="@applies-to!=''"><elmo:applies-to><xsl:value-of select="@applies-to"/></elmo:applies-to></xsl:if>
-						<xsl:copy-of select="*"/>
-					</rdf:Description>
-				</xsl:for-each>
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:copy-of select="/root/merge/rdf:RDF[position()=$index]/*"/>
-			</xsl:otherwise>
-		</xsl:choose>
-	</rdf:RDF>
-
-</xsl:template>
-<!-- END -->
-
 <xsl:template match="/root">
 	<results>
 		<context docroot="{context/@docroot}" staticroot="{context/@staticroot}">
@@ -359,20 +313,21 @@
 			<xsl:copy-of select="context/*"/>
 			<xsl:copy-of select="view/stylesheet"/>
 		</context>
-		<xsl:for-each select="view/representation">
+		<!-- Don't show scenes, but include it for the correct position count -->
+		<xsl:for-each select="view/(representation|scene)">
 			<xsl:variable name="index" select="position()"/>
-			<xsl:apply-templates select="." mode="results">
-				<xsl:with-param name="index" select="$index"/>
-			</xsl:apply-templates>
+			<xsl:if test="local-name()='representation'">
+				<xsl:apply-templates select="." mode="results">
+					<xsl:with-param name="index" select="$index"/>
+				</xsl:apply-templates>
+			</xsl:if>
 		</xsl:for-each>
-		<!--
-		<xsl:for-each select="view/representation[exists(service)]">
-			<xsl:variable name="index" select="position()"/>
-			<xsl:apply-templates select="." mode="merge">
-				<xsl:with-param name="index" select="$index"/>
+		<!-- Show scene result as part of a production representation -->
+		<xsl:if test="exists(view/production[1])">
+			<xsl:apply-templates select="view/production[1]" mode="results">
+				<xsl:with-param name="index">0</xsl:with-param>
 			</xsl:apply-templates>
-		</xsl:for-each>
-		-->
+		</xsl:if>
 	</results>
 </xsl:template>
 

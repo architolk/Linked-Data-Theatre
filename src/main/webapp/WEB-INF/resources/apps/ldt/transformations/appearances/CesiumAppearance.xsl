@@ -1,8 +1,8 @@
 <!--
 
     NAME     CesiumAppearance.xsl
-    VERSION  1.9.0
-    DATE     2016-07-05
+    VERSION  1.9.1-SNAPSHOT
+    DATE     2016-07-26
 
     Copyright 2012-2016
 
@@ -24,7 +24,12 @@
 -->
 <!--
     DESCRIPTION
-	Cesium Appearance template, to be included within rdf2html.xsl
+	CesiumAppearance, add-on of rdf2html.xsl
+	
+	Cesium is an appearance that shows a 3D representation of a KML object
+	
+	TODO: CesiumAppearance is still a prototype: needs more development
+	TODO: Including a <style> element within a <div> is not compliant to html5: this has to change
 	
 -->
 <xsl:stylesheet version="2.0"
@@ -39,7 +44,7 @@
 <xsl:output method="xml" indent="yes"/>
 
 <xsl:template match="rdf:RDF" mode="CesiumAppearance">
-  <script type="text/javascript" language="javascript" src="{$staticroot}/js/Cesium.js"></script>
+  <script type="text/javascript" src="{$staticroot}/js/Cesium.js"></script>
   <link rel="stylesheet" type="text/css" href="{$staticroot}/css/cesium-widgets.css"/>
   <style>
         html, body, #cesiumContainer {

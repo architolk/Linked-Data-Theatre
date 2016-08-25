@@ -2,7 +2,7 @@
 
     NAME     query.xpl
     VERSION  1.9.1-SNAPSHOT
-    DATE     2016-07-10
+    DATE     2016-08-22
 
     Copyright 2012-2016
 
@@ -289,151 +289,8 @@
 							
 	<!-- Query from graph representation -->
 	<p:processor name="oxf:xslt">
-		<p:input name="config">
-			<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-				<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="no"/>
-				<xsl:key name="bnodes" match="root/rdf:RDF/rdf:Description" use="@rdf:nodeID"/>
-				<xsl:key name="resources" match="root/rdf:RDF/rdf:Description" use="@rdf:about"/>
-				<xsl:key name="parameters" match="root/context/parameters/parameter" use="name"/>
-				<xsl:template match="elmo:fragment">
-					<xsl:if test="exists(@rdf:nodeID)">
-						<xsl:variable name="appliesTo" select="key('bnodes',@rdf:nodeID)/elmo:applies-to"/>
-						<fragment applies-to="{$appliesTo/@rdf:resource}{$appliesTo}">
-							<xsl:copy-of select="key('bnodes',@rdf:nodeID)/(* except elmo:applies-to)"/>
-						</fragment>
-					</xsl:if>
-					<xsl:if test="exists(@rdf:resource)">
-						<xsl:variable name="appliesTo" select="key('resources',@rdf:resource)/elmo:applies-to"/>
-						<fragment applies-to="{$appliesTo/@rdf:resource}{$appliesTo}">
-							<xsl:copy-of select="key('resources',@rdf:resource)/(* except elmo:applies-to)"/>
-						</fragment>
-					</xsl:if>
-				</xsl:template>
-				<xsl:template match="elmo:queryForm[@rdf:resource='http://bp4mc2.org/elmo/def#GeoForm']">
-					<xsl:variable name="satisfied">
-						<xsl:if test="not(key('parameters','long')/value[1]!='')">N</xsl:if>
-						<xsl:if test="not(key('parameters','lat')/value[1]!='')">N</xsl:if>
-					</xsl:variable>
-					<queryForm satisfied="{$satisfied}" geo="yes">
-						<rdfs:label>TEST</rdfs:label>
-						<elmo:fragment>
-							<rdf:Description>
-								<elmo:applies-to>long</elmo:applies-to>
-								<elmo:constraint rdf:resource="http://bp4mc2.org/elmo/def#MandatoryConstraint"/>
-							</rdf:Description>
-						</elmo:fragment>
-						<elmo:fragment>
-							<rdf:Description>
-								<elmo:applies-to>lat</elmo:applies-to>
-								<elmo:constraint rdf:resource="http://bp4mc2.org/elmo/def#MandatoryConstraint"/>
-							</rdf:Description>
-						</elmo:fragment>
-					</queryForm>
-				</xsl:template>
-				<xsl:template match="elmo:queryForm">
-					<xsl:for-each select="key('resources',@rdf:resource)">
-						<xsl:variable name="satisfied">
-							<xsl:for-each select="elmo:fragment">
-								<xsl:variable name="fragment" select="key('bnodes',@rdf:nodeID)"/>
-								<xsl:if test="$fragment/elmo:constraint/@rdf:resource='http://bp4mc2.org/elmo/def#MandatoryConstraint'">
-									<xsl:if test="$fragment/elmo:applies-to!='' and not(key('parameters',$fragment/elmo:applies-to)/value[1]!='')">N</xsl:if>
-								</xsl:if>
-							</xsl:for-each>
-						</xsl:variable>
-						<queryForm satisfied="{$satisfied}">
-							<xsl:copy-of select="rdfs:label"/>
-							<xsl:apply-templates select="elmo:fragment"/>
-						</queryForm>
-					</xsl:for-each>
-				</xsl:template>
-				<xsl:template match="elmo:link">
-					<link uri="{@rdf:resource}"/>
-				</xsl:template>
-				<xsl:template match="html:stylesheet">
-					<stylesheet href="{.}"/>
-				</xsl:template>
-				<xsl:template match="/root">
-					<view>
-						<xsl:apply-templates select="rdf:RDF/rdf:Description[rdf:type/@rdf:resource!='http://bp4mc2.org/elmo/def#fragment']/html:stylesheet"/>
-						<xsl:for-each-group select="rdf:RDF/rdf:Description[exists(elmo:data[1]) or exists(elmo:query[1]) or exists(elmo:service[1])]" group-by="@rdf:about"><xsl:sort select="concat(elmo:index[1],'~')"/>
-							<xsl:choose>
-								<!-- Special: data is available in a file (used only for ELMO-LDT related content -->
-								<xsl:when test="exists(elmo:file[1])">
-									<representation uri="{@rdf:about}" index="{position()}">
-										<xsl:if test="exists(elmo:appearance[1])"><xsl:attribute name="appearance"><xsl:value-of select="elmo:appearance[1]/@rdf:resource"/></xsl:attribute></xsl:if>
-										<xsl:apply-templates select="elmo:queryForm"/>
-										<xsl:apply-templates select="elmo:fragment"/>
-										<file><xsl:value-of select="elmo:file[1]"/></file>
-									</representation>
-								</xsl:when>
-								<xsl:when test="exists(elmo:data[1])">
-									<!-- Als er letterlijke data wordt opgevraagd, dan deze straks ophalen via de query -->
-									<representation uri="{@rdf:about}" index="{position()}" endpoint="{/root/context/configuration-endpoint}">
-										<xsl:if test="exists(elmo:appearance[1])"><xsl:attribute name="appearance"><xsl:value-of select="elmo:appearance[1]/@rdf:resource"/></xsl:attribute></xsl:if>
-										<xsl:apply-templates select="elmo:queryForm"/>
-										<xsl:apply-templates select="elmo:fragment"/>
-										<query>
-											<![CDATA[
-											PREFIX elmo: <http://bp4mc2.org/elmo/def#>
-											CONSTRUCT {
-												?s?p?o.
-												?sc?pc?oc.
-												?scc?pcc?occ.
-											}
-											WHERE { GRAPH <]]><xsl:value-of select="/root/context/representation-graph/@uri"/><![CDATA[>
-											{<]]><xsl:value-of select="@rdf:about"/><![CDATA[> elmo:data ?s.
-												?s?p?o.
-												OPTIONAL {
-													?s elmo:data ?sc.
-													?sc ?pc ?oc.
-													OPTIONAL {
-														?sc elmo:data ?scc.
-														?scc ?pcc ?occ.
-													}
-												}
-											}}
-											]]>
-										</query>
-									</representation>
-								</xsl:when>
-								<xsl:when test="exists(elmo:query[1])">
-									<representation uri="{@rdf:about}" index="{position()}">
-										<xsl:if test="exists(elmo:endpoint[1])"><xsl:attribute name="endpoint"><xsl:value-of select="elmo:endpoint[1]/@rdf:resource"/></xsl:attribute></xsl:if>
-										<xsl:if test="exists(elmo:appearance[1])"><xsl:attribute name="appearance"><xsl:value-of select="elmo:appearance[1]/@rdf:resource"/></xsl:attribute></xsl:if>
-										<xsl:if test="exists(elmo:container[1])"><xsl:attribute name="container"><xsl:value-of select="elmo:container[1]/@rdf:resource"/></xsl:attribute></xsl:if>
-										<xsl:apply-templates select="elmo:queryForm"/>
-										<xsl:apply-templates select="elmo:fragment"/>
-										<query><xsl:value-of select="elmo:query[1]"/></query>
-										<xsl:apply-templates select="elmo:link"/>
-										<!-- Een service kan vooraf gaan aan een query, dus die hier ook meenemen -->
-										<xsl:if test="exists(elmo:service[1])">
-											<service>
-												<url><xsl:value-of select="elmo:service[1]"/></url>
-												<xsl:if test="elmo:post[1]!=''"><body><xsl:value-of select="elmo:post[1]"/></body></xsl:if>
-											</service>
-										</xsl:if>
-									</representation>
-								</xsl:when>
-								<xsl:when test="exists(elmo:service[1])">
-									<representation uri="{@rdf:about}" index="{position()}">
-										<xsl:if test="exists(elmo:appearance[1])"><xsl:attribute name="appearance"><xsl:value-of select="elmo:appearance[1]/@rdf:resource"/></xsl:attribute></xsl:if>
-										<xsl:apply-templates select="elmo:queryForm"/>
-										<xsl:apply-templates select="elmo:fragment"/>
-										<service>
-											<url><xsl:value-of select="elmo:service[1]"/></url>
-											<xsl:if test="elmo:post[1]!=''"><body><xsl:value-of select="elmo:post[1]"/></body></xsl:if>
-										</service>
-									</representation>
-								</xsl:when>
-								<!-- No data, no query -->
-								<xsl:otherwise/>
-							</xsl:choose>
-						</xsl:for-each-group>
-					</view>
-				</xsl:template>
-			</xsl:stylesheet>
-		</p:input>
 		<p:input name="data" href="aggregate('root',#defquery,#context)"/>
+		<p:input name="config" href="../transformations/rdf2view.xsl"/>
 		<p:output name="data" id="querytext"/>
 	</p:processor>
 <!--
@@ -764,20 +621,17 @@
 							</xsl:template>
 							<xsl:template match="/root">
 								<parameters>
-									<!-- Currentmoment kan nog beinvloed worden door de date-parameter, beetje raar, afkomstig uit andere implementatie -->
-									<xsl:variable name="currentmoment">
-										<xsl:value-of select="root/parameters/parameter[name='date']/value[1]"/>
-										<xsl:value-of select="substring(xs:string(current-dateTime()),1+string-length(root/context/parameters/parameter[name='date']/value[1]),255)"/>
-									</xsl:variable>
 									<xsl:variable name="query1">
 										<xsl:apply-templates select="/root/parameters/parameter[1]" mode="replace"/>
 										<xsl:if test="not(exists(/root/parameters/parameter))"><xsl:value-of select="/root/representation/query"/></xsl:if>
 									</xsl:variable>
 									<xsl:variable name="query2" select="replace($query1,'@LANGUAGE@',/root/context/language)"/>
 									<xsl:variable name="query3" select="replace($query2,'@USER@',/root/context/user)"/>
-									<xsl:variable name="query4" select="replace($query3,'@CURRENTMOMENT@',format-dateTime($currentmoment,'[Y0001]/[M01]/[D01]/[H01]/[m01]/[s01]'))"/>
+									<xsl:variable name="query4" select="replace($query3,'@CURRENTMOMENT@',string(current-dateTime()))"/>
 									<xsl:variable name="query5" select="replace($query4,'@STAGE@',/root/context/back-of-stage)"/>
-									<query><xsl:value-of select="replace($query5,'@SUBJECT@',/root/context/subject)"/></query>
+									<xsl:variable name="query6" select="replace($query5,'@TIMESTAMP@',/root/context/timestamp)"/>
+									<xsl:variable name="query7" select="replace($query6,'@DATE@',/root/context/date)"/>
+									<query><xsl:value-of select="replace($query7,'@SUBJECT@',/root/context/subject)"/></query>
 									<default-graph-uri />
 									<error type=""/>
 								</parameters>
@@ -925,7 +779,7 @@
 				<p:input name="config">
 					<config>
 						<encoding>utf-8</encoding>
-						<public-doctype>-//W3C//DTD XHTML 1.0 Strict//EN</public-doctype>
+						<version>5.0</version>
 					</config>
 				</p:input>
 				<p:input name="data" href="#html" />
@@ -1200,7 +1054,7 @@
 						<p:input name="config">
 							<config>
 								<encoding>utf-8</encoding>
-								<public-doctype>-//W3C//DTD XHTML 1.0 Strict//EN</public-doctype>
+								<version>5.0</version>
 							</config>
 						</p:input>
 						<p:input name="data" href="#html" />
@@ -1307,7 +1161,8 @@
 						</p:when>
 						<p:otherwise>
 							<!-- Transform -->
-							<p:processor name="oxf:xslt">
+							<!-- Using unsafe-xslt instead of xslt to use external functions (used for markdown conversion) -->
+							<p:processor name="oxf:unsafe-xslt">
 								<p:input name="data" href="#rdfa"/>
 								<p:input name="config" href="../transformations/rdf2html.xsl"/>
 								<p:output name="data" id="html"/>
@@ -1317,7 +1172,7 @@
 								<p:input name="config">
 									<config>
 										<encoding>utf-8</encoding>
-										<public-doctype>-//W3C//DTD XHTML 1.0 Strict//EN</public-doctype>
+										<version>5.0</version>
 									</config>
 								</p:input>
 								<p:input name="data" href="#html" />

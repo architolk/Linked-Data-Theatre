@@ -1,8 +1,8 @@
 <!--
 
     NAME     BackstageVocabularyRepresentation.xml
-    VERSION  1.9.0
-    DATE     2016-07-05
+    VERSION  1.9.1-SNAPSHOT
+    DATE     2016-08-22
 
     Copyright 2012-2016
 
@@ -82,25 +82,26 @@
 			prefix html: <http://www.w3.org/1999/xhtml/vocab#>
 			prefix dcterms: <http://purl.org/dc/terms/>
 			construct {
-				<menu-item4> rdfs:label "Query".
-				<menu-item4> html:link ?query.
-				<menu-item4> elmo:index "4".
-				<menu-item3> rdfs:label "Backstage".
-				<menu-item3> html:link ?backstage.
-				<menu-item3> elmo:index "2".
-				<menu-item1> rdfs:label "Goto stage".
-				<menu-item1> html:link ?stage.
-				<menu-item1> elmo:index "1".
-				<menu> dcterms:title ?stagename.
-				<menu> elmo:data <menu-item1>.
-				<menu> elmo:data <menu-item2>.
-				<menu> elmo:data <menu-item3>.
+				<urn:menu-item4> rdfs:label "Query".
+				<urn:menu-item4> html:link ?query.
+				<urn:menu-item4> elmo:index "4".
+				<urn:menu-item3> rdfs:label "Backstage".
+				<urn:menu-item3> html:link ?backstage.
+				<urn:menu-item3> elmo:index "2".
+				<urn:menu-item1> rdfs:label "Goto stage".
+				<urn:menu-item1> html:link ?stage.
+				<urn:menu-item1> elmo:index "1".
+				<urn:menu> dcterms:title ?stagename.
+				<urn:menu> elmo:data <urn:menu-item1>.
+				<urn:menu> elmo:data <urn:menu-item2>.
+				<urn:menu> elmo:data <urn:menu-item3>.
+				<urn:menu> html:link "../backstage".
 			}
 			where {
-				select	(strbefore("@STAGE@","/stage") as ?stage)
+				select	(strbefore("@SUBJECT@","/backstage") as ?stage)
 						(strafter(strbefore("@STAGE@","/stage"),"http://") as ?stagename)
-						(concat(strbefore("@STAGE@","/stage"),"/backstage/sparql") as ?query)
-						(concat(strbefore("@STAGE@","/stage"),"/backstage") as ?backstage)
+						(concat(strbefore("@SUBJECT@","/backstage"),"/backstage/sparql") as ?query)
+						(concat(strbefore("@SUBJECT@","/backstage"),"/backstage") as ?backstage)
 				where {
 					?x rdf:type elmo:Representation
 				}
