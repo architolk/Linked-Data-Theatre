@@ -97,8 +97,8 @@
 			<xsl:apply-templates select="rdf:Description[not(exists(*/@rdf:resource))]" mode="makeTree"><xsl:with-param name="done" select="$done"/></xsl:apply-templates>
 		</ul>
 	</div>
-	<link rel="stylesheet" href="{$staticroot}/css/treestyle.css"/>
-	<script src="{$staticroot}/js/MultiNestedList.js"></script>
+	<link rel="stylesheet" href="{$staticroot}/css/treestyle.min.css"/>
+	<script src="{$staticroot}/js/MultiNestedList.min.js"></script>
 </xsl:template>
 
 </xsl:stylesheet>

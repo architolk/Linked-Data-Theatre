@@ -2,7 +2,7 @@
 
     NAME     GraphAppearance.xsl
     VERSION  1.9.1-SNAPSHOT
-    DATE     2016-07-26
+    DATE     2016-08-27
 
     Copyright 2012-2016
 
@@ -150,7 +150,7 @@
 		var jsonApiCall = "<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource.d3json?representation=<xsl:value-of select="encode-for-uri(@elmo:query)"/>&amp;subject=";
 		var uriEndpoint = "<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource?subject=";
 	</script>
-	<script src="{$staticroot}/js/d3graphs-inner.js" type="text/javascript"/>
+	<script src="{$staticroot}/js/d3graphs-inner.min.js" type="text/javascript"/>
 </xsl:template>
 
 </xsl:stylesheet>

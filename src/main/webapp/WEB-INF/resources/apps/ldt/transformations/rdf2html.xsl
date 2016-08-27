@@ -524,7 +524,7 @@
 		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/bootstrap.min.css"/>
 		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/dataTables.bootstrap.min.css"/>
 		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/bootstrap-datepicker3.min.css"/>
-		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/ldt-theme.css"/>
+		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/ldt-theme.min.css"/>
 
 		<!-- Alternatieve stijlen -->
 		<xsl:for-each select="context/stylesheet">
@@ -533,7 +533,7 @@
 		
 		<!-- TODO: Make this generic (appearances with specific stylesheets) -->
 		<xsl:if test="exists(rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#LoginAppearance'])">
-			<link rel="stylesheet" type="text/css" href="{$staticroot}/css/signin.css"/>
+			<link rel="stylesheet" type="text/css" href="{$staticroot}/css/signin.min.css"/>
 		</xsl:if>
 		
 		<script type="text/javascript" src="{$staticroot}/js/jquery-1.11.3.min.js"></script>

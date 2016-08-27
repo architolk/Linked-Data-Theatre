@@ -77,7 +77,7 @@
 				</form>
 			</xsl:otherwise>
 		</xsl:choose>
-		<script src="{$staticroot}/js/linkeddatamap.js"></script>
+		<script src="{$staticroot}/js/linkeddatamap.min.js"></script>
 		
 		<xsl:variable name="latlocator" select="rdf:Description[rdf:type/@rdf:resource='http://bp4mc2.org/elmo/def#GeoLocator'][1]/geo:lat"/>
 		<xsl:variable name="latdata">

@@ -66,12 +66,12 @@
 					<xsl:attribute name="enctype">multipart/form-data</xsl:attribute>
 				</xsl:if>
 				<xsl:if test="$turtleEditorID!=''">
-					<link rel="stylesheet" href="{$staticroot}/css/codemirror.css"/>
+					<link rel="stylesheet" href="{$staticroot}/css/codemirror.min.css"/>
 					<script src="{$staticroot}/js/codemirror.js"/>
 					<script src="{$staticroot}/js/turtle.js"/>
 				</xsl:if>
 				<xsl:if test="$sparqlEditorID!=''">
-					<link rel="stylesheet" href="{$staticroot}/css/codemirror.css"/>
+					<link rel="stylesheet" href="{$staticroot}/css/codemirror.min.css"/>
 					<link rel="stylesheet" href="{$staticroot}/css/yasqe.min.css"/>
 					<script src="{$staticroot}/js/codemirror.js"/>
 					<script src="{$staticroot}/js/yasqe.min.js"/>
