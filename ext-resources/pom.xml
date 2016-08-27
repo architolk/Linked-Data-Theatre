@@ -93,6 +93,66 @@
 						</configuration>
 					</execution>
 					<execution>
+						<id>get-font-awesome-css</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css</url>
+							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>get-font-awesome-eot</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/fonts/fontawesome-webfont.eot</url>
+							<outputDirectory>WEB-INF/resources/apps/fonts</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>get-font-awesome-svg</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/fonts/fontawesome-webfont.svg</url>
+							<outputDirectory>WEB-INF/resources/apps/fonts</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>get-font-awesome-ttf</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/fonts/fontawesome-webfont.ttf</url>
+							<outputDirectory>WEB-INF/resources/apps/fonts</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>get-font-awesome-woff</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/fonts/fontawesome-webfont.woff</url>
+							<outputDirectory>WEB-INF/resources/apps/fonts</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>get-font-awesome-woff2</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/fonts/fontawesome-webfont.woff2</url>
+							<outputDirectory>WEB-INF/resources/apps/fonts</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
 						<id>get-d3js</id>
 						<goals>
 							<goal>wget</goal>

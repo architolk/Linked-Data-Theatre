@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.9.1-SNAPSHOT
-    DATE     2016-08-22
+    DATE     2016-08-27
 
     Copyright 2012-2016
 
@@ -525,6 +525,7 @@
 		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/dataTables.bootstrap.min.css"/>
 		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/bootstrap-datepicker3.min.css"/>
 		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/ldt-theme.min.css"/>
+		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/font-awesome.min.css"/>
 
 		<!-- Alternatieve stijlen -->
 		<xsl:for-each select="context/stylesheet">
