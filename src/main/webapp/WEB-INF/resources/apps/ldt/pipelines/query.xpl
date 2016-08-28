@@ -881,6 +881,34 @@
 						<p:input name="data" href="#converted"/>
 					</p:processor>
 				</p:when>
+				<!-- CSV -->
+				<p:when test="context/format='text/csv'">
+					<!-- Transform -->
+					<p:processor name="oxf:xslt">
+						<p:input name="data" href="#sparql"/>
+						<p:input name="config" href="../transformations/rdf2csv.xsl"/>
+						<p:output name="data" id="csv"/>
+					</p:processor>
+					<!-- Convert XML result to plain text -->
+					<p:processor name="oxf:text-converter">
+						<p:input name="config">
+							<config>
+								<encoding>utf-8</encoding>
+							</config>
+						</p:input>
+						<p:input name="data" href="#csv" />
+						<p:output name="data" id="converted" />
+					</p:processor>
+					<!-- Serialize -->
+					<p:processor name="oxf:http-serializer">
+						<p:input name="config">
+							<config>
+								<cache-control><use-local-cache>false</use-local-cache></cache-control>
+							</config>
+						</p:input>
+						<p:input name="data" href="#converted"/>
+					</p:processor>
+				</p:when>
 				<!-- JSON (LD) - Special case: context -->
 				<p:when test="context/format='application/json' and substring-before(context/url,'/context/')!=''">
 					<!-- Transform -->
