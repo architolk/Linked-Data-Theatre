@@ -112,14 +112,12 @@
 								<cssSourceFile>codemirror.css</cssSourceFile>
 								<cssSourceFile>ldt-theme.css</cssSourceFile>
 								<cssSourceFile>signin.css</cssSourceFile>
-								<cssSourceFile>treestyle.css</cssSourceFile>
 							</cssSourceFiles>
 							<jsSourceDir>WEB-INF/resources/apps/js</jsSourceDir>
 							<jsSourceFiles>
 								<jsSourceFile>d3graphs-inner.js</jsSourceFile>
 								<jsSourceFile>leaflet.label.js</jsSourceFile>
 								<jsSourceFile>linkeddatamap.js</jsSourceFile>
-								<jsSourceFile>MultiNestedList.js</jsSourceFile>
 							</jsSourceFiles>
 						</configuration>
 						<goals>
