@@ -2,7 +2,7 @@
 
     NAME     query.xpl
     VERSION  1.9.1-SNAPSHOT
-    DATE     2016-08-22
+    DATE     2016-08-28
 
     Copyright 2012-2016
 
@@ -765,9 +765,9 @@
 		</p:processor>
 	</p:for-each>
 	
-	<p:choose href="#sparql">
+	<p:choose href="aggregate('root',#context,#sparql)">
 		<!-- Check for errors -->
-		<p:when test="exists(results/parameters/error)">
+		<p:when test="exists(root/results/parameters/error)">
 			<!-- Transform error message to HTML -->
 			<p:processor name="oxf:xslt">
 				<p:input name="data" href="#sparql"/>
@@ -794,6 +794,40 @@
 					</config>
 				</p:input>
 				<p:input name="data" href="#converted"/>
+			</p:processor>
+		</p:when>
+		<!-- Check if there is any result, return 404 if no resource could be found and a subject is expected -->
+		<p:when test="root/context/subject!='' and exists(root/results/rdf:RDF[1]) and not(exists(root/results/rdf:RDF[1]/*))">
+			<p:processor name="oxf:xslt">
+				<p:input name="data">
+					<results>
+						<parameters>
+							<error>Resource niet gevonden.</error>
+						</parameters>
+					</results>
+				</p:input>
+				<p:input name="config" href="../transformations/error2html.xsl"/>
+				<p:output name="data" id="html"/>
+			</p:processor>
+			<p:processor name="oxf:html-converter">
+				<p:input name="config">
+					<config>
+						<encoding>utf-8</encoding>
+						<version>5.0</version>
+					</config>
+				</p:input>
+				<p:input name="data" href="#html"/>
+				<p:output name="data" id="htmlres" />
+			</p:processor>
+			<!-- Serialize -->
+			<p:processor name="oxf:http-serializer">
+				<p:input name="config">
+					<config>
+						<cache-control><use-local-cache>false</use-local-cache></cache-control>
+						<status-code>404</status-code>
+					</config>
+				</p:input>
+				<p:input name="data" href="#htmlres"/>
 			</p:processor>
 		</p:when>
 		<p:otherwise>

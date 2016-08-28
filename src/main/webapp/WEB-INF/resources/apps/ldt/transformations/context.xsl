@@ -2,7 +2,7 @@
 
     NAME     context.xsl
     VERSION  1.9.1-SNAPSHOT
-    DATE     2016-08-22
+    DATE     2016-08-28
 
     Copyright 2012-2016
 
@@ -204,6 +204,8 @@
 							<xsl:otherwise><xsl:value-of select="$term"/></xsl:otherwise>
 						</xsl:choose>
 					</xsl:when>
+					<!-- Query URL's, without a subject parameter should not have a subject -->
+					<xsl:when test="substring-before($url,'/query/')!=''"/>
 					<!-- Dereferenceable URI, other situations (such as def-URI's) -->
 					<xsl:otherwise><xsl:value-of select="$url"/></xsl:otherwise>
 				</xsl:choose>
