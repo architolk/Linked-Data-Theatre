@@ -1,7 +1,7 @@
 /*
  * NAME     linkeddatamap.js
  * VERSION  1.9.1-SNAPSHOT
- * DATE     2016-08-17
+ * DATE     2016-08-28
  *
  * Copyright 2012-2016
  *
@@ -491,10 +491,11 @@ function mapClicked(e) {
 	var form = document.getElementById("clickform");
 	form['lat'].value = e.latlng.lat;
 	form['long'].value = e.latlng.lng;
+	form['zoom'].value = map.getZoom();
 	form.submit();
 }
 
-function initMap(staticroot, latCor, longCor, baseLayer, imageMapURL, contURL, left, top, width, height) {
+function initMap(staticroot, startZoom, latCor, longCor, baseLayer, imageMapURL, contURL, left, top, width, height) {
 	// Pad naar de icons goedmaken
 	L.Icon.Default.imagePath = staticroot + '/images';
 
@@ -560,7 +561,7 @@ function initMap(staticroot, latCor, longCor, baseLayer, imageMapURL, contURL, l
 			osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {minZoom: 1, maxZoom: 18});
 		}
 		//We initialiseren de kaart met een set van coördinaten waarbij we hier kiezen voor simpele Latitude/Longitude coördinaten die ook gebruikt worden door GPS. De derde parameter is het standaard zoom-niveau van de kaart. Bij zoomen geldt: hoe hoger, hoe dichter bij.
-		map.setView(new L.LatLng(latCor, longCor), 5);
+		map.setView(new L.LatLng(latCor, longCor), startZoom);
 
 		//Add tile layer to map
 		map.addLayer(osm);
