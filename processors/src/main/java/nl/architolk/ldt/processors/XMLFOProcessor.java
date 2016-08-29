@@ -1,6 +1,6 @@
 /**
  * NAME     XMLFOProcessor.java
- * VERSION  1.9.0
+ * VERSION  1.10.0
  * DATE     2016-06-28
  *
  * Copyright 2012-2016

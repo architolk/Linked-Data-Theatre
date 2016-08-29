@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2svgi.xsl
-    VERSION  1.9.0
-    DATE     2016-07-05
+    VERSION  1.10.0
+    DATE     2016-08-29
 
     Copyright 2012-2016
 

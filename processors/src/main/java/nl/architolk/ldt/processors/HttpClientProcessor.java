@@ -1,6 +1,6 @@
 /**
  * NAME     HttpClientProcessor.java
- * VERSION  1.9.0
+ * VERSION  1.10.0
  * DATE     2016-07-01
  *
  * Copyright 2012-2016

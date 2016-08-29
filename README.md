@@ -3,7 +3,9 @@ The Linked Data Theatre (LDT) is a platform for an optimal presentation of Linke
 
 See [BUILD.md](BUILD.md) for instructions to build the Linked Data Theatre. You can also try the latest release:
 
-- [ldt-1.9.0.war](https://github.com/architolk/Linked-Data-Theatre/releases/download/v1.9.0/ldt-1.9.0.war "ldt-1.9.0.war")
+- [ldt-1.10.0.war](https://github.com/architolk/Linked-Data-Theatre/releases/download/v1.1.0/ldt-1.10.0.war "ldt-1.10.0.war")
+
+**NB: Users that upgrade from version 1.9.0 or lower: the config.xml has changed with release 1.10.0. Please make sure that a `<date/>` entry exists after the upgrade!**
 
 To create linked data, the LDT can be extended with the [Linked Data Studio](https://github.com/architolk/Linked-Data-Studio) (LDS). If you install a version of the LDS, it includes a version of the LDT.
 
