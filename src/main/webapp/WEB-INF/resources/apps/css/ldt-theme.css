@@ -1,7 +1,7 @@
 /**
  * NAME     ldt-theme.css
- * VERSION  1.9.1-SNAPSHOT
- * DATE     2016-08-19
+ * VERSION  1.10.0
+ * DATE     2016-08-29
  *
  * Copyright 2012-2016
  *
@@ -130,3 +130,57 @@
 	width: 150px;
 	vertical-align: top;
 }
+
+/*Tree view styling*/
+.nav-tree {color: #6C7587; background-color: #fff; padding: 20px 10px 30px;}
+.nav-tree a {
+  color: #585858;
+  cursor: pointer; 
+}
+.nav-tree a:hover {text-decoration: none; }
+.nav-tree a.selected {color: #2AB2EA; }
+.nav-tree ul, .nav-tree li {
+  list-style: none;
+  margin: 0;
+  padding: 0; 
+}
+.nav-tree ul {padding-left: 1em; }
+.nav-tree ul li:last-child > ul {
+  border-left: 1px solid #fff;
+  margin-left: -15px; 
+}
+.nav-tree li {
+  padding-left: 1em;
+  border: 1px solid #C9C9C9;
+  border-top: 0;
+  border-right: 0;
+  padding-top: 10px; 
+}
+.nav-tree li.has-child {
+  border-bottom: 0;
+  position: relative; 
+}
+.nav-tree li.has-child i {
+  position: absolute;
+  left: -.5em;
+  top: 1.3em;
+  color: #C9C9C9;
+  cursor: pointer;
+  background-color: #fff;
+  z-index: 1; 
+}
+.nav-tree li.has-child.tree-collapsed {border-bottom: 1px solid #C9C9C9; }
+.nav-tree li p {
+  margin: 0;
+  background: white;
+  position: relative;
+  top: 0.5em;
+  line-height: 1;
+  z-index: 1; 
+}
+.nav-tree li ul {
+  border-top: 1px solid #C9C9C9;
+  margin-left: -1em;
+  padding-left: 2em; 
+}
+/* ------------------- */

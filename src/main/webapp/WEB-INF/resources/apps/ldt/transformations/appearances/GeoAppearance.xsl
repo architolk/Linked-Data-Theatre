@@ -1,8 +1,8 @@
 <!--
 
     NAME     GeoAppearance.xsl
-    VERSION  1.9.1-SNAPSHOT
-    DATE     2016-08-17
+    VERSION  1.10.0
+    DATE     2016-08-29
 
     Copyright 2012-2016
 
@@ -74,10 +74,11 @@
 				<form id="clickform" method="get" action="#">
 					<input type="hidden" id="lat" name="lat" value=""/>
 					<input type="hidden" id="long" name="long" value=""/>
+					<input type="hidden" id="zoom" name="zoom" value=""/>
 				</form>
 			</xsl:otherwise>
 		</xsl:choose>
-		<script src="{$staticroot}/js/linkeddatamap.js"></script>
+		<script src="{$staticroot}/js/linkeddatamap.min.js"></script>
 		
 		<xsl:variable name="latlocator" select="rdf:Description[rdf:type/@rdf:resource='http://bp4mc2.org/elmo/def#GeoLocator'][1]/geo:lat"/>
 		<xsl:variable name="latdata">
@@ -106,6 +107,11 @@
 				<xsl:when test="$longdata!=''">0</xsl:when>
 				<xsl:otherwise>1</xsl:otherwise>
 			</xsl:choose>
+		</xsl:variable>
+		<xsl:variable name="zoomdata"><xsl:value-of select="/results/context/parameters/parameter[name='zoom']/value"/></xsl:variable>
+		<xsl:variable name="zoom">
+			<xsl:value-of select="$zoomdata"/>
+			<xsl:if test="not($zoomdata!='')">5</xsl:if>
 		</xsl:variable>
 		<xsl:variable name="htmlimg" select="rdf:Description/html:img"/>
 		<xsl:variable name="htmlleft" select="rdf:Description/html:left"/>
@@ -149,12 +155,19 @@
 			</xsl:choose>
 		</style>
 		<div class="panel panel-primary">
-			<div class="panel-heading"/>
+			<div class="panel-heading">
+				<xsl:variable name="count" select="count(rdf:Description[(geo:lat!='' and geo:long!='' and rdfs:label!='') or geo:geometry!=''])"/>
+				<xsl:choose>
+					<xsl:when test="$count=0 and not($zoomdata!='')"/>
+					<xsl:when test="$count=0">Niets gevonden</xsl:when>
+					<xsl:otherwise>Aantal gevonden: <xsl:value-of select="$count"/></xsl:otherwise>
+				</xsl:choose>
+			</div>
 			<div class="panel-body">
 				<div id="map"></div>
 				<!-- TODO: width en height moet ergens vandaan komen. Liefst uit plaatje, maar mag ook uit eigenschappen -->
 				<script type="text/javascript">
-					initMap('<xsl:value-of select="$staticroot"/>',<xsl:value-of select="$lat"/>, <xsl:value-of select="$long"/>, '<xsl:value-of select="$backmap"/>', '<xsl:value-of select="$img"/>', '<xsl:value-of select="$container"/>', <xsl:value-of select="$left"/>, <xsl:value-of select="$top"/>, <xsl:value-of select="$width"/>, <xsl:value-of select="$height"/>);
+					initMap('<xsl:value-of select="$staticroot"/>',<xsl:value-of select="$zoom"/>,<xsl:value-of select="$lat"/>, <xsl:value-of select="$long"/>, '<xsl:value-of select="$backmap"/>', '<xsl:value-of select="$img"/>', '<xsl:value-of select="$container"/>', <xsl:value-of select="$left"/>, <xsl:value-of select="$top"/>, <xsl:value-of select="$width"/>, <xsl:value-of select="$height"/>);
 					
 					<xsl:for-each select="rdf:Description[geo:lat!='' and geo:long!='' and rdfs:label!='']">
 						<xsl:variable name="resource-uri"><xsl:call-template name="resource-uri"><xsl:with-param name="uri" select="@rdf:about"/></xsl:call-template></xsl:variable>

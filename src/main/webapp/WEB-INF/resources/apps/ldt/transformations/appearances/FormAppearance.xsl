@@ -1,8 +1,8 @@
 <!--
 
     NAME     FormAppearance.xsl
-    VERSION  1.9.1-SNAPSHOT
-    DATE     2016-07-26
+    VERSION  1.10.0
+    DATE     2016-08-29
 
     Copyright 2012-2016
 
@@ -66,12 +66,12 @@
 					<xsl:attribute name="enctype">multipart/form-data</xsl:attribute>
 				</xsl:if>
 				<xsl:if test="$turtleEditorID!=''">
-					<link rel="stylesheet" href="{$staticroot}/css/codemirror.css"/>
+					<link rel="stylesheet" href="{$staticroot}/css/codemirror.min.css"/>
 					<script src="{$staticroot}/js/codemirror.js"/>
 					<script src="{$staticroot}/js/turtle.js"/>
 				</xsl:if>
 				<xsl:if test="$sparqlEditorID!=''">
-					<link rel="stylesheet" href="{$staticroot}/css/codemirror.css"/>
+					<link rel="stylesheet" href="{$staticroot}/css/codemirror.min.css"/>
 					<link rel="stylesheet" href="{$staticroot}/css/yasqe.min.css"/>
 					<script src="{$staticroot}/js/codemirror.js"/>
 					<script src="{$staticroot}/js/yasqe.min.js"/>

@@ -1,7 +1,7 @@
 /*
  * NAME     d3graphs-inner.js
- * VERSION  1.9.1-SNAPSHOT
- * DATE     2016-08-24
+ * VERSION  1.10.0
+ * DATE     2016-08-29
  *
  * Copyright 2012-2016
  *
@@ -248,7 +248,7 @@ function update() {
 	// Enter any new links.
 	var newLinks = allLinks
 		.enter().append("g")
-		.attr("class", function(d) { return "link"+(d.source.class ? " t"+d.source.class : "")+(d.target.class ? " t"+d.target.class : "") });
+		.attr("class", function(d) { return "link"+(d.source["class"] ? " t"+d.source["class"] : "")+(d.target["class"] ? " t"+d.target["class"] : "") });
 
 	newLinks.append("line")
 		.attr("class","border")
@@ -276,7 +276,7 @@ function update() {
 	// Enter any new nodes.
 	var newNodes = allNodes
 		.enter().append("g")
-		.attr("class", function(d) { return (d.class ? "node t"+d.class : "node")})
+		.attr("class", function(d) { return (d["class"] ? "node t"+d["class"] : "node")})
 		.call(node_drag);
 
 	newNodes.append("text")
@@ -292,13 +292,13 @@ function update() {
 		.attr("y", function(d) { return d.rect.y-5})
 		.attr("width", function(d) { return d.rect.width+10 })
 		.attr("height", function(d) { return d.rect.height+10 })
-		.attr("class", function(d) { return (d.class ? "s"+d.class : "default") });
+		.attr("class", function(d) { return (d["class"] ? "s"+d["class"] : "default") });
 
 	newNodes.filter(function(d) {return d.elementType==="circle"}).append("circle")
 		.attr("cx", function(d) { return d.rect.x+5})
 		.attr("cy", function(d) { return d.rect.y+5})
 		.attr("r", function(d) { return 5+d.rect.height/2 })
-		.attr("class", function(d) { return (d.class ? "s"+d.class : "default") });
+		.attr("class", function(d) { return (d["class"] ? "s"+d["class"] : "default") });
 
 	force
 		.nodes(nodes)
@@ -362,9 +362,6 @@ function tick(e) {
 			.attr("x",tx)
 			.attr("y",ty-3)
 			.attr("transform","rotate("+Math.atan(ddy/ddx)*57+" "+tx+" "+ty+")");
-			
-		//In case of aggregateNode: update text
-		if (d.aggregateNode)
 			
 		//IE10 and IE11 bugfix
 		if (bugIE) {

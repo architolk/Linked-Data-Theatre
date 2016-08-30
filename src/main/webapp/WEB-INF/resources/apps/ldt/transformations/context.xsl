@@ -1,8 +1,8 @@
 <!--
 
     NAME     context.xsl
-    VERSION  1.9.1-SNAPSHOT
-    DATE     2016-08-22
+    VERSION  1.10.0
+    DATE     2016-08-29
 
     Copyright 2012-2016
 
@@ -160,6 +160,7 @@
 					<xsl:when test="theatre/format='exml'">application/xml</xsl:when> <!-- Full XML, all resultsets -->
 					<xsl:when test="theatre/format='xml'">application/rdf+xml</xsl:when> <!-- Only first resultset, like ttl and json -->
 					<xsl:when test="theatre/format='txt'">text/plain</xsl:when>
+					<xsl:when test="theatre/format='csv'">text/csv</xsl:when>
 					<xsl:when test="theatre/format='ttl'">text/turtle</xsl:when>
 					<xsl:when test="theatre/format='json'">application/json</xsl:when>
 					<xsl:when test="theatre/format='xlsx'">application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</xsl:when>
@@ -171,6 +172,7 @@
 					<xsl:when test="theatre/format='rdfa'">application/x.elmo.rdfa</xsl:when> <!-- Application specific mime-type -->
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/rdf+xml')">application/rdf+xml</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'text/turtle')">text/turtle</xsl:when>
+					<xsl:when test="contains(request/headers/header[name='accept']/value,'text/csv')">text/csv</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/json')">application/json</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')">application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/vnd.xmi+xml')">application/vnd.xmi+xml</xsl:when>
@@ -202,6 +204,8 @@
 							<xsl:otherwise><xsl:value-of select="$term"/></xsl:otherwise>
 						</xsl:choose>
 					</xsl:when>
+					<!-- Query URL's, without a subject parameter should not have a subject -->
+					<xsl:when test="substring-before($url,'/query/')!=''"/>
 					<!-- Dereferenceable URI, other situations (such as def-URI's) -->
 					<xsl:otherwise><xsl:value-of select="$url"/></xsl:otherwise>
 				</xsl:choose>

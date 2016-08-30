@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>nl.architolk.ldt</groupId>
 	<artifactId>ldt</artifactId>
-	<version>1.9.1-SNAPSHOT</version>
+	<version>1.10.1-SNAPSHOT</version>
 	<name>ldt</name>
 	<packaging>war</packaging>
 	<properties>
@@ -10,15 +10,15 @@
 		<buildTimestamp>${maven.build.timestamp}</buildTimestamp>
 		<license-maven-plugin.version>2.11</license-maven-plugin.version>
 		<license.failIfMissing>false</license.failIfMissing>
-		<release.version>1.9.0</release.version>
-		<release.date>2016-07-05</release.date>
-		<patch.date>2016-07-05</patch.date>
+		<release.version>1.10.0</release.version>
+		<release.date>2016-08-29</release.date>
+		<patch.date>2016-08-29</patch.date>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>nl.architolk.ldt</groupId>
 			<artifactId>processors</artifactId>
-			<version>1.9.0</version>
+			<version>1.10.0</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -94,6 +94,34 @@
 					<execution>
 						<goals>
 							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.samaxes.maven</groupId>
+				<artifactId>minify-maven-plugin</artifactId>
+				<version>1.7.4</version>
+				<executions>
+					<execution>
+						<id>default-minify</id>
+						<configuration>
+							<skipMerge>true</skipMerge>
+							<cssSourceDir>WEB-INF/resources/apps/css</cssSourceDir>
+							<cssSourceFiles>
+								<cssSourceFile>codemirror.css</cssSourceFile>
+								<cssSourceFile>ldt-theme.css</cssSourceFile>
+								<cssSourceFile>signin.css</cssSourceFile>
+							</cssSourceFiles>
+							<jsSourceDir>WEB-INF/resources/apps/js</jsSourceDir>
+							<jsSourceFiles>
+								<jsSourceFile>d3graphs-inner.js</jsSourceFile>
+								<jsSourceFile>leaflet.label.js</jsSourceFile>
+								<jsSourceFile>linkeddatamap.js</jsSourceFile>
+							</jsSourceFiles>
+						</configuration>
+						<goals>
+							<goal>minify</goal>
 						</goals>
 					</execution>
 				</executions>

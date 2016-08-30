@@ -52,7 +52,10 @@ For example (refering to release 1.6.0):
 ##7. Add war to github release
 **Do this step only for minor and major releases! Patch release should not have a new war uploaded!.**
 
-Goto github: [https://github.com/architolk/Linked-Data-Theatre/tags](https://github.com/architolk/Linked-Data-Theatre/tags). Look for the correct tag (should be the topmost) and navigate to "Edit tag" and update the documentation for the release notes (at least: set the title to something like "Release 1.6.0"). Upload the war using the user interface of github. Publish the release.
+1. Goto github: [https://github.com/architolk/Linked-Data-Theatre/tags](https://github.com/architolk/Linked-Data-Theatre/tags). Look for the correct tag (should be the topmost) and navigate to "Add release notes".
+2. Update the documentation for the release notes (at least: set the title to something like "Release 1.6.0").
+3. Upload the war using the user interface of github. 
+4. Publish the release.
 
 ##8. Update pom.xml to snapshot version
 Because any change after the release should be a new version, directly update the version of the project to patchversion+1 (for example from `.0` to `.1`) and prefix `-SNAPSHOT`. Also set the date of the patch level to the current date:

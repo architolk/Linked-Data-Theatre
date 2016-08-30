@@ -1,8 +1,8 @@
 <!--
 
     NAME     VocabularyAppearance.xsl
-    VERSION  1.9.1-SNAPSHOT
-    DATE     2016-08-19
+    VERSION  1.10.0
+    DATE     2016-08-29
 
     Copyright 2012-2016
 
@@ -143,18 +143,20 @@
 	<xsl:param name="done"/>
 	<xsl:param name="prefix"/>
 	<xsl:variable name="uri" select="@rdf:about"/>
+	<xsl:variable name="new">
+		<xsl:for-each select="../rdf:Description[rdfs:subClassOf/@rdf:resource=$uri]">
+			<xsl:variable name="about" select="@rdf:about"/>
+			<xsl:if test="not(exists($done[uri=$about]))">
+				<uri><xsl:value-of select="."/></uri>
+			</xsl:if>
+		</xsl:for-each>
+	</xsl:variable>
 	<li>
-		<xsl:apply-templates select="@rdf:about" mode="link"><xsl:with-param name="prefix" select="$prefix"/></xsl:apply-templates>
-		<xsl:variable name="new">
-			<xsl:for-each select="../rdf:Description[rdfs:subClassOf/@rdf:resource=$uri]">
-				<xsl:variable name="about" select="@rdf:about"/>
-				<xsl:if test="not(exists($done[uri=$about]))">
-					<uri><xsl:value-of select="."/></uri>
-				</xsl:if>
-			</xsl:for-each>
-		</xsl:variable>
+		<xsl:if test="exists($new/uri)"><xsl:attribute name="class">has-child tree-collapsed</xsl:attribute></xsl:if>
+		<p><xsl:apply-templates select="@rdf:about" mode="link"><xsl:with-param name="prefix" select="$prefix"/></xsl:apply-templates></p>
 		<xsl:if test="exists($new/uri)">
-			<ul style="display: none"> <!-- Default: collapsed tree -->
+			<a class="" href="#" onclick="toggleNode(this);return false;"><i class="fa fa-plus-square"></i></a>
+			<ul class="hide"> <!-- Default: collapsed tree -->
 				<xsl:for-each select="../rdf:Description[rdfs:subClassOf/@rdf:resource=$uri]"><xsl:sort select="@rdf:about"/>
 					<xsl:variable name="about" select="@rdf:about"/>
 					<xsl:if test="not(exists($done[uri=$about]))">
@@ -187,12 +189,15 @@
 				<h3 class="panel-title"><a href="{@rdf:about}"><xsl:value-of select="rdfs:label|dcterms:title"/></a></h3>
 			</div>
 			<div class="panel-body">
-				<div class="row">
-					<xsl:value-of select="rdfs:comment|dcterms:description"/>
-				</div>
+				<xsl:variable name="description"><xsl:value-of select="rdfs:comment|dcterms:description"/></xsl:variable>
+				<xsl:if test="$description!=''">
+					<div class="row">
+						<xsl:value-of select="$description"/>
+					</div>
+				</xsl:if>
 				<div class="row">
 					<div class="col-md-6">
-						<div class="tree"><xsl:value-of select="ldt:label('Classes')"/>
+						<div class="nav-tree"><b><xsl:value-of select="ldt:label('Classes')"/></b>
 							<ul>
 								<xsl:variable name="done">
 									<xsl:for-each select="../rdf:Description[(rdf:type/@rdf:resource='http://www.w3.org/2002/07/owl#Class' or rdf:type/@rdf:resource='http://www.w3.org/2000/01/rdf-schema#Class') and not(exists(rdfs:subClassOf/@rdf:resource))]/@rdf:about">
@@ -209,7 +214,7 @@
 						</div>
 					</div>
 					<div class="col-md-6">
-						<div class="tree"><xsl:value-of select="ldt:label('Properties')"/>
+						<div class="nav-tree"><b><xsl:value-of select="ldt:label('Properties')"/></b>
 							<ul>
 								<xsl:variable name="done">
 									<xsl:for-each select="../rdf:Description[(rdf:type/@rdf:resource='http://www.w3.org/2002/07/owl#DatatypeProperty' or rdf:type/@rdf:resource='http://www.w3.org/2000/01/rdf-schema#ObjectProperty') and not(exists(rdfs:subPropertyOf/@rdf:resource))]/@rdf:about">
@@ -335,8 +340,19 @@
 			</xsl:for-each>
 		</div>
 	</div>
-	<link rel="stylesheet" href="{$staticroot}/css/treestyle.css"/>
-	<script src="{$staticroot}/js/MultiNestedList.js"></script>
+	<script>
+		function toggleNode(node) {
+			if (node.parentElement.children[2].className!='') {
+				node.children[0].className='fa fa-minus-square';
+				node.parentElement.className='has-child';
+				node.parentElement.children[2].className=''
+			} else {
+				node.children[0].className='fa fa-plus-square';
+				node.parentElement.className='has-child tree-collapsed';
+				node.parentElement.children[2].className='hide'
+			}
+		};
+	</script>
 </xsl:template>
 
 </xsl:stylesheet>

@@ -1,8 +1,8 @@
 <!--
 
     NAME     CesiumAppearance.xsl
-    VERSION  1.9.1-SNAPSHOT
-    DATE     2016-07-26
+    VERSION  1.10.0
+    DATE     2016-08-29
 
     Copyright 2012-2016
 

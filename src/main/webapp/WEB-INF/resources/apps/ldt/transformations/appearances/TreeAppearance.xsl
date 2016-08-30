@@ -1,8 +1,8 @@
 <!--
 
     NAME     TreeAppearance.xsl
-    VERSION  1.9.1-SNAPSHOT
-    DATE     2016-07-26
+    VERSION  1.10.0
+    DATE     2016-08-29
 
     Copyright 2012-2016
 
@@ -50,26 +50,30 @@
 			<xsl:with-param name="var" select=".."/> <!-- Was rdf:Description, maar dit lijkt beter -->
 		</xsl:call-template>
 	</xsl:variable>
+	<xsl:variable name="new">
+		<xsl:for-each select="../rdf:Description[*/@rdf:resource=$uri]">
+			<xsl:variable name="about" select="@rdf:about"/>
+			<xsl:if test="not(exists($done[uri=$about]))">
+				<uri><xsl:value-of select="."/></uri>
+			</xsl:if>
+		</xsl:for-each>
+	</xsl:variable>
 	<li>
-		<a href="{$resource-uri}">
-			<xsl:choose>
-				<xsl:when test="rdfs:label!=''"><xsl:value-of select="rdfs:label"/></xsl:when>
-				<xsl:otherwise><xsl:value-of select="@rdf:about"/></xsl:otherwise>
-			</xsl:choose>
-			<xsl:call-template name="cross-site-marker">
-				<xsl:with-param name="url" select="$resource-uri"/>
-			</xsl:call-template>
-		</a>
-		<xsl:variable name="new">
-			<xsl:for-each select="../rdf:Description[*/@rdf:resource=$uri]">
-				<xsl:variable name="about" select="@rdf:about"/>
-				<xsl:if test="not(exists($done[uri=$about]))">
-					<uri><xsl:value-of select="."/></uri>
-				</xsl:if>
-			</xsl:for-each>
-		</xsl:variable>
+		<xsl:if test="exists($new/uri)"><xsl:attribute name="class">has-child tree-collapsed</xsl:attribute></xsl:if>
+		<p>
+			<a href="{$resource-uri}">
+				<xsl:choose>
+					<xsl:when test="rdfs:label!=''"><xsl:value-of select="rdfs:label"/></xsl:when>
+					<xsl:otherwise><xsl:value-of select="@rdf:about"/></xsl:otherwise>
+				</xsl:choose>
+				<xsl:call-template name="cross-site-marker">
+					<xsl:with-param name="url" select="$resource-uri"/>
+				</xsl:call-template>
+			</a>
+		</p>
 		<xsl:if test="exists($new/uri)">
-			<ul style="display: none"> <!-- Default: collapsed tree -->
+			<a class="" href="#" onclick="toggleNode(this);return false;"><i class="fa fa-plus-square"></i></a>
+			<ul class="hide"> <!-- Default: collapsed tree -->
 				<xsl:for-each select="../rdf:Description[*/@rdf:resource=$uri]">
 					<xsl:variable name="about" select="@rdf:about"/>
 					<xsl:if test="not(exists($done[uri=$about]))">
@@ -87,7 +91,7 @@
 </xsl:template>
 
 <xsl:template match="rdf:RDF" mode="TreeAppearance">
-	<div class="tree">
+	<div class="nav-tree">
 		<ul>
 			<xsl:variable name="done">
 				<xsl:for-each select="rdf:Description[not(exists(*/@rdf:resource))]/@rdf:about">
@@ -97,8 +101,19 @@
 			<xsl:apply-templates select="rdf:Description[not(exists(*/@rdf:resource))]" mode="makeTree"><xsl:with-param name="done" select="$done"/></xsl:apply-templates>
 		</ul>
 	</div>
-	<link rel="stylesheet" href="{$staticroot}/css/treestyle.css"/>
-	<script src="{$staticroot}/js/MultiNestedList.js"></script>
+	<script>
+		function toggleNode(node) {
+			if (node.parentElement.children[2].className!='') {
+				node.children[0].className='fa fa-minus-square';
+				node.parentElement.className='has-child';
+				node.parentElement.children[2].className=''
+			} else {
+				node.children[0].className='fa fa-plus-square';
+				node.parentElement.className='has-child tree-collapsed';
+				node.parentElement.children[2].className='hide'
+			}
+		};
+	</script>
 </xsl:template>
 
 </xsl:stylesheet>
