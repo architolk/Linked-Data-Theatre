@@ -1,8 +1,8 @@
 <!--
 
     NAME     query.xpl
-    VERSION  1.10.0
-    DATE     2016-08-29
+    VERSION  1.10.1-SNAPSHOT
+    DATE     2016-08-30
 
     Copyright 2012-2016
 
@@ -126,7 +126,7 @@
 											?rep elmo:uri-pattern ?pattern.
 											FILTER regex("]]><xsl:value-of select="context/subject"/><![CDATA[",?pattern)
 										}
-									}]]><xsl:if test="not(contains(context/subject,' '))"><![CDATA[
+									}]]><xsl:if test="context/subject!='' and not(contains(context/subject,' '))"><![CDATA[
 									UNION
 									{
 										GRAPH <]]><xsl:value-of select="context/representation-graph/@uri"/><![CDATA[> {
