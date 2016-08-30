@@ -363,9 +363,6 @@ function tick(e) {
 			.attr("y",ty-3)
 			.attr("transform","rotate("+Math.atan(ddy/ddx)*57+" "+tx+" "+ty+")");
 			
-		//In case of aggregateNode: update text
-		if (d.aggregateNode)
-			
 		//IE10 and IE11 bugfix
 		if (bugIE) {
 			this.parentNode.insertBefore(this,this);
