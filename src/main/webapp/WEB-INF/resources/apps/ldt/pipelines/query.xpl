@@ -797,7 +797,7 @@
 			</p:processor>
 		</p:when>
 		<!-- Check if there is any result, return 404 if no resource could be found and a subject is expected -->
-		<p:when test="root/context/subject!='' and exists(root/results/rdf:RDF[1]) and not(exists(root/results/rdf:RDF[1]/*))">
+		<p:when test="root/context/representation='' root/context/subject!='' and exists(root/results/rdf:RDF[1]) and not(exists(root/results/rdf:RDF[1]/*))">
 			<p:processor name="oxf:xslt">
 				<p:input name="data">
 					<results>
