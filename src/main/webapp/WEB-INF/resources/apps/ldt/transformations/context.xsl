@@ -1,8 +1,8 @@
 <!--
 
     NAME     context.xsl
-    VERSION  1.10.0
-    DATE     2016-08-29
+    VERSION  1.10.2-SNAPSHOT
+    DATE     2016-09-01
 
     Copyright 2012-2016
 
@@ -59,8 +59,8 @@
 			<xsl:value-of select="$subdomain1"/>
 		</xsl:variable>
 		<xsl:variable name="url-stage" select="replace($subdomain,'^/([^/]+)','$1')"/>
-		<xsl:variable name="stage" select="theatre/site[@domain=$domain]/stage[not(@name!='') or @name=$url-stage]"/>
-		<xsl:variable name="backstage" select="theatre/site[@backstage=$domain]/stage[not(@name!='') or @name=$url-stage]"/>
+		<xsl:variable name="stage" select="theatre/site[@domain=$domain]/stage[not(@name!='') or @name=substring($subdomain,2,string-length(@name))][1]"/>
+		<xsl:variable name="backstage" select="theatre/site[@backstage=$domain]/stage[not(@name!='') or @name=substring($subdomain,2,string-length(@name))][1]"/>
 		<xsl:variable name="config">
 			<xsl:choose>
 				<xsl:when test="exists($stage)">
