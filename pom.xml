@@ -81,6 +81,7 @@
 						<exclude>**/*.bat</exclude>
 						<exclude>**/pom.xml</exclude>
 						<exclude>images/**</exclude>
+						<exclude>**/robots.txt</exclude>
 					</excludes>
 				</configuration>
 				<dependencies>

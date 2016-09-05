@@ -1,8 +1,8 @@
 <!--
 
     NAME     page-flow.xml
-    VERSION  1.10.0
-    DATE     2016-08-29
+    VERSION  1.10.2-SNAPSHOT
+    DATE     2016-09-05
 
     Copyright 2012-2016
 
@@ -28,6 +28,9 @@
 	
 -->
 <controller xmlns="http://www.orbeon.com/oxf/controller" matcher="regexp">
+
+	<!-- Robots.txt -->
+	<files path="/robots.txt"/>
 
 	<!-- Favicon -->
 	<page path="/favicon.ico" model="pipelines/favicon.xpl" default-submission="config.xml" public-methods="#all"/>
