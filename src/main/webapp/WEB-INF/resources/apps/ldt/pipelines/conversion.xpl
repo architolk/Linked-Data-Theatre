@@ -1,8 +1,8 @@
 <!--
 
     NAME     conversion.xpl
-    VERSION  1.10.0
-    DATE     2016-08-29
+    VERSION  1.10.2-SNAPSHOT
+    DATE     2016-09-07
 
     Copyright 2012-2016
 
@@ -269,7 +269,7 @@
 	</p:processor>
 
 	<!-- Transform -->
-	<p:processor name="oxf:xslt">
+	<p:processor name="oxf:unsafe-xslt">
 		<p:input name="data" href="#rdfa"/>
 		<p:input name="config" href="../transformations/rdf2html.xsl"/>
 		<p:output name="data" id="html"/>
