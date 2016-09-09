@@ -1,0 +1,19 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+stage:HtmlAppearance a elmo:Representation;
+	elmo:url-pattern "^http://localhost:8080(|/)$";
+	elmo:index "1";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:HtmlAppearance;
+	elmo:data [
+		rdfs:label "HtmlAppearance (en)"@en;
+		rdfs:label "HtmlAppearance (nl)"@nl;
+		elmo:html '''
+			<p>Test environment</p>
+		''';
+	]
+.

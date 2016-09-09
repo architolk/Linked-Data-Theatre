@@ -1,0 +1,24 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+stage:NavbarSearchAppearance a elmo:Part;
+	elmo:appearance elmo:NavbarSearchAppearance;
+	elmo:index "~";
+	elmo:data [
+		rdfs:label "Linked Data Theater"@nl;
+		rdfs:label "Linked Data Theatre"@en;
+		elmo:data [
+			elmo:index "1";
+			rdfs:label "Appearances";
+			elmo:data [elmo:index "1"; rdfs:label "HtmlAppearance"; html:link "/"];
+		];
+		elmo:data [
+			elmo:index "2";
+			rdfs:label "Specific tests"@en;
+			rdfs:label "Specifieke testen"@nl;
+			elmo:data [elmo:index "1"; rdfs:label "global links"; html:link "/query/GlobalLinks"];
+		]
+	];
+.
