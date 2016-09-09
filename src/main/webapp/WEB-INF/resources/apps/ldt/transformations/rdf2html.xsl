@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2html.xsl
-    VERSION  1.10.0
-    DATE     2016-08-29
+    VERSION  1.10.2-SNAPSHOT
+    DATE     2016-09-09
 
     Copyright 2012-2016
 
@@ -96,7 +96,7 @@
 	<xsl:param name="var"><none/></xsl:param>
 	<xsl:param name="params"/>
 	
-	<xsl:variable name="urlpart"><xsl:value-of select="substring-after($uri,'http://')"/></xsl:variable>
+	<xsl:variable name="urlpart"><xsl:value-of select="replace($uri,'^([http|https]://)','')"/></xsl:variable>
 	<xsl:variable name="domain"><xsl:value-of select="substring-before($urlpart,'/')"/></xsl:variable>
 	<xsl:choose>
 		<xsl:when test="$var/@elmo:link!=''">
@@ -114,8 +114,8 @@
 			<xsl:value-of select="encode-for-uri($uri)"/>
 			<xsl:value-of select="$params"/>
 		</xsl:when> <!-- Link fragment, so locally derefenceable -->
-		<xsl:when test="$urlpart=''"><xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource?subject=<xsl:value-of select="encode-for-uri($uri)"/></xsl:when> <!-- Make non-dereferenceable uri's locally dereferenceable -->
 		<xsl:when test="$var/@elmo:appearance='http://bp4mc2.org/elmo/def#GlobalLink'"><xsl:value-of select="$uri"/></xsl:when> <!-- Global link, so plain uri -->
+		<xsl:when test="$urlpart=''"><xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource?subject=<xsl:value-of select="encode-for-uri($uri)"/></xsl:when> <!-- Make non-dereferenceable uri's locally dereferenceable -->
 		<xsl:when test="$domain!=$serverdomain"><xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource?subject=<xsl:value-of select="encode-for-uri($uri)"/></xsl:when> <!-- External uri's are treated as non-dereferenceable -->
 		<xsl:when test="matches($uri,'#')"><xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource?subject=<xsl:value-of select="encode-for-uri($uri)"/></xsl:when> <!-- Hash uri's are treated as non-dereferenceable (to avoid losing the part after the hash) -->
 		<xsl:otherwise><xsl:value-of select="$uri"/></xsl:otherwise> <!--Plain URI -->
