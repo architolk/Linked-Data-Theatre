@@ -13,6 +13,8 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:index "1";
 			rdfs:label "Appearances";
 			elmo:data [elmo:index "1"; rdfs:label "HtmlAppearance"; html:link "/"];
+			elmo:data [elmo:index "2"; rdfs:label "MarkdownAppearance"; html:link "/query/MarkdownAppearance"];
+			elmo:data [elmo:index "3"; rdfs:label "GraphAppearance"; html:link "/query/GraphAppearance?subject=http://localhost:8080/id/character/Bilbo"]
 		];
 		elmo:data [
 			elmo:index "2";

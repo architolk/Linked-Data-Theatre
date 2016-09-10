@@ -1,0 +1,45 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix skos: <http://www.w3.org/2004/02/skos/core#>.
+
+stage:MarkdownAppearance	a	elmo:Representation;
+	elmo:url-pattern	"/query/MarkdownAppearance$";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:contains stage:MarkdownAppearance_form;
+	elmo:contains stage:MarkdownAppearance_table;
+.
+
+stage:MarkdownAppearance_form elmo:index "1";
+	elmo:fragment [
+		elmo:applies-to skos:definition;
+		elmo:appearance elmo:MarkdownAppearance;
+	];
+	elmo:query "construct {?s?p?o} where {?s?p?o filter (?s = <http://localhost:8080/id/test/markdowntest>)}"
+.
+stage:MarkdownAppearance_table elmo:index "2";
+	elmo:fragment [
+		elmo:applies-to "definition";
+		elmo:appearance elmo:MarkdownAppearance;
+	];
+	elmo:query "select ?begrip ?label ?definition where {?begrip rdfs:label ?label.?begrip skos:definition ?definition.filter (?begrip = <http://elmo.localhost/markdowntest>)}"
+.
+
+<http://localhost:8080/id/test/markdowntest> rdf:type skos:Concept;
+	rdfs:label "Testbegrip";
+	skos:definition '''#Test
+Dit is een **test** van *markdown*.
+Kijken of `code` ook werkt:
+
+	Dit gaat dus anders
+	En dit ook
+	
+##Nummers
+En nummers:
+
+- dot 1
+- dot 2
+- dot 3'''
+.
