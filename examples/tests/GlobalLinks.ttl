@@ -25,10 +25,19 @@ stage:GlobalLinks a elmo:Representation;
 		elmo:applies-to exont:linkdef;
 		elmo:appearance elmo:GlobalLink;
 	];
+	elmo:fragment [
+		elmo:applies-to exont:linkhttps;
+		elmo:appearance elmo:GlobalLink;
+	];
+	elmo:fragment [
+		elmo:applies-to exont:linkhttpslabel;
+		elmo:appearance elmo:GlobalLink;
+	];
 	elmo:query '''
 		prefix ex: <http://localhost:8080/id/item/>
 		prefix exont: <http://localhost:8080/def#>
 		prefix dbpedia: <http://dbpedia.org/resource/>
+		prefix dbpedias: <https://dbpedia.org/resource/>
 		construct {
 			ex:t1 a exont:Example.
 			ex:t1 rdfs:label "Global link test".
@@ -40,6 +49,9 @@ stage:GlobalLinks a elmo:Representation;
 			ex:t1 exont:linkdef rdfs:label.
 			ex:t1 exont:ref ex:t2.
 			ex:t1 exont:ref dbpedia:Amersfoort.
+			ex:t1 exont:linkhttps dbpedias:Amsterdam.
+			ex:t1 exont:linkhttpslabel dbpedias:Amersfoort.
+			dbpedias:Amersfoort rdfs:label "Amersfoort(s)".
 		}
 		where {}
 	''';

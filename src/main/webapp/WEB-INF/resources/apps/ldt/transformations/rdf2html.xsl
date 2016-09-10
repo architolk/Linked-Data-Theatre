@@ -125,7 +125,7 @@
 <xsl:template name="cross-site-marker">
 	<xsl:param name="url"/>
 	
-	<xsl:variable name="urlpart"><xsl:value-of select="substring-after($url,'http://')"/></xsl:variable>
+	<xsl:variable name="urlpart"><xsl:value-of select="replace($url,'^([http|https]://)','')"/></xsl:variable>
 	<xsl:variable name="domain"><xsl:value-of select="substring-before($urlpart,'/')"/></xsl:variable>
 
 	<xsl:if test="$urlpart!='' and $domain!=$serverdomain">
