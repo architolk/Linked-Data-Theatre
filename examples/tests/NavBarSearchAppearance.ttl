@@ -20,7 +20,9 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:index "2";
 			rdfs:label "Specific tests"@en;
 			rdfs:label "Specifieke testen"@nl;
-			elmo:data [elmo:index "1"; rdfs:label "global links"; html:link "/query/GlobalLinks"];
+			elmo:data [elmo:index "1"; rdfs:label "Global links"; html:link "/query/GlobalLinks"];
+			elmo:data [elmo:index "2"; rdfs:label "Formats - SELECT"; html:link "/query/SelectFormats"];
+			elmo:data [elmo:index "3"; rdfs:label "Formats - CONSTRUCT"; html:link "/query/ConstructFormats"];
 		]
 	];
 .

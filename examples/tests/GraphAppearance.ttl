@@ -13,6 +13,19 @@ stage:GraphAppearance	a	elmo:Representation;
 	elmo:url-pattern	"/query/GraphAppearance$";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
+	elmo:contains stage:GraphAppearance_tab;
+	elmo:contains stage:GraphAppearance_content;
+.
+stage:GraphAppearance_tab elmo:index "1";
+	elmo:appearance elmo:IndexAppearance;
+	elmo:data [
+		html:link "/resource?representation=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GraphAppearance_content&subject=http://localhost:8080/id/character/Bilbo";
+		elmo:name "format";
+		rdfs:label "xml|json|ttl|csv|txt|excel|word|pdf|xmi|svgi|d3json|graphml|yed|query|exml|rdfa";
+		rdf:value "xml|json|ttl|csv|txt|xlsx|docx|pdf|xmi|svgi|d3json|graphml|yed|query|exml|rdfa";
+	];
+.
+stage:GraphAppearance_content elmo:index "2";
 	elmo:appearance elmo:GraphAppearance;
 	elmo:fragment [
 		elmo:applies-to "Species";

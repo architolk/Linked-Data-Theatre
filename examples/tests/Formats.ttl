@@ -1,0 +1,93 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dbo: <http://dbpedia.org/ontology/>.
+@prefix dbpedia: <http://dbpedia.org/resource/>.
+
+stage:SelectFormats a elmo:Representation;
+	elmo:url-pattern "/query/SelectFormats";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:contains stage:Formats_tab;
+	elmo:contains stage:SelectFormats_content;
+	elmo:index "0";
+	elmo:appearance elmo:HiddenAppearance;
+	elmo:query '''
+		prefix dbo: <http://dbpedia.org/ontology/>
+		select ?s ?s_label (dbo:City as ?type)
+		where {
+			?s rdf:type dbo:City.
+			?s rdfs:label ?s_label.
+		}
+	''';
+.
+stage:Formats_tab elmo:index "1";
+	elmo:appearance elmo:IndexAppearance;
+	elmo:data [
+		html:link "";
+		elmo:name "format";
+		rdfs:label "xml|json|ttl|csv|txt|excel|word|pdf|xmi|svgi|d3json|graphml|yed|query|exml|rdfa";
+		rdf:value "xml|json|ttl|csv|txt|xlsx|docx|pdf|xmi|svgi|d3json|graphml|yed|query|exml|rdfa";
+	];
+.
+stage:SelectFormats_content a elmo:Representation;
+	elmo:index "2";
+	elmo:query '''
+		prefix dbo: <http://dbpedia.org/ontology/>
+		select ?s ?s_label (dbo:City as ?type)
+		where {
+			?s rdf:type dbo:City.
+			?s rdfs:label ?s_label.
+		}
+	''';
+.
+
+stage:ConstructFormats a elmo:Representation;
+	elmo:url-pattern "/query/ConstructFormats";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:contains stage:Formats_tab;
+	elmo:contains stage:ConstructFormats_content;
+	elmo:index "0";
+	elmo:appearance elmo:HiddenAppearance;
+	elmo:query '''
+		prefix dbo: <http://dbpedia.org/ontology/>
+		construct {
+			?s?p?o
+		}
+		where {
+			?s rdf:type dbo:City.
+			?s?p?o.
+		}
+	''';
+.
+stage:Formats_constructTabs elmo:index "1";
+	elmo:appearance elmo:IndexAppearance;
+	elmo:data [
+		html:link "#";
+		elmo:name "format";
+		rdfs:label "rdf|json|ttl|csv|excel";
+		rdf:value "rdf|json|ttl|csv|excel";
+	];
+.
+stage:ConstructFormats_content a elmo:Representation;
+	elmo:index "2";
+	elmo:query '''
+		prefix dbo: <http://dbpedia.org/ontology/>
+		construct {
+			?s?p?o
+		}
+		where {
+			?s rdf:type dbo:City.
+			?s?p?o.
+		}
+	''';
+.
+
+dbpedia:Amersfoort a dbo:City;
+	rdfs:label "Amersfoort";
+.
+dbpedia:Amsterdam a dbo:City;
+	rdfs:label "Amsterdam";
+.

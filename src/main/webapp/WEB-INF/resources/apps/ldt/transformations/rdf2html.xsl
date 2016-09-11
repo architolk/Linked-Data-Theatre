@@ -602,6 +602,7 @@
 						<xsl:text>?</xsl:text>
 						<xsl:if test="matches(/results/context/url,'/resource$')">subject=<xsl:value-of select="encode-for-uri(/results/context/subject)"/>&amp;</xsl:if>
 					</xsl:when>
+					<xsl:when test="contains($link,'?')">&amp;</xsl:when>
 					<xsl:otherwise>?</xsl:otherwise>
 				</xsl:choose>
 			</xsl:variable>
