@@ -48,7 +48,7 @@
 	</xsl:for-each-group>
 	<!-- Prefixes used in local xlmns properties -->
 	<xsl:for-each-group select="results/rdf:RDF[1]/rdf:Description/*[substring-before(name(),':')='']" group-by="namespace-uri()">
-		<xsl:variable name="prefix" select="replace(namespace-uri(),'.*/([^/]*)#','$1')"/>
+		<xsl:variable name="prefix" select="replace(namespace-uri(),'.*/([^/]*)(#|/)','$1')"/>
 		<xsl:choose>
 			<xsl:when test="$prefix!=''"><prefix name="{$prefix}"><xsl:value-of select="namespace-uri()"/></prefix></xsl:when>
 			<xsl:otherwise><prefix name="n{position()}"><xsl:value-of select="namespace-uri()"/></prefix></xsl:otherwise>
