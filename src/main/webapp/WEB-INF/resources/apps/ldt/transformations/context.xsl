@@ -2,7 +2,7 @@
 
     NAME     context.xsl
     VERSION  1.10.2-SNAPSHOT
-    DATE     2016-09-01
+    DATE     2016-09-11
 
     Copyright 2012-2016
 
@@ -163,8 +163,10 @@
 					<xsl:when test="theatre/format='csv'">text/csv</xsl:when>
 					<xsl:when test="theatre/format='ttl'">text/turtle</xsl:when>
 					<xsl:when test="theatre/format='json'">application/json</xsl:when>
+					<xsl:when test="theatre/format='jsonld'">application/json</xsl:when>
 					<xsl:when test="theatre/format='xlsx'">application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</xsl:when>
 					<xsl:when test="theatre/format='docx'">application/vnd.openxmlformats-officedocument.wordprocessingml.document</xsl:when>
+					<xsl:when test="theatre/format='pdf'">application/rdf</xsl:when>
 					<xsl:when test="theatre/format='xmi'">application/vnd.xmi+xml</xsl:when>
 					<xsl:when test="theatre/format='svgi'">application/x.elmo.svg+xml</xsl:when> <!-- Application specific mime-type -->
 					<xsl:when test="theatre/format='d3json'">application/x.elmo.d3+json</xsl:when> <!-- Application specific mime-type -->
@@ -174,7 +176,10 @@
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'text/turtle')">text/turtle</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'text/csv')">text/csv</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/json')">application/json</xsl:when>
+					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/ld+json')">application/json</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')">application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</xsl:when>
+					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/vnd.openxmlformats-officedocument.wordprocessingml.document')">application/vnd.openxmlformats-officedocument.wordprocessingml.document</xsl:when>
+					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/rdf')">application/rdf</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/vnd.xmi+xml')">application/vnd.xmi+xml</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'text/html')">text/html</xsl:when>
 					<xsl:otherwise>text/html</xsl:otherwise> <!-- If all fails: simply html -->
