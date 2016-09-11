@@ -23,6 +23,12 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:data [elmo:index "1"; rdfs:label "Global links"; html:link "/query/GlobalLinks"];
 			elmo:data [elmo:index "2"; rdfs:label "Formats - SELECT"; html:link "/query/SelectFormats"];
 			elmo:data [elmo:index "3"; rdfs:label "Formats - CONSTRUCT"; html:link "/query/ConstructFormats"];
-		]
+		];
+		elmo:data [
+			elmo:index "3";
+			rdfs:label "Triplestore tests";
+			elmo:data [elmo:index "1"; rdfs:label "Formats - SELECT"; html:link "/query/sesame/SelectFormats"];
+			elmo:data [elmo:index "1"; rdfs:label "Formats - CONSTRUCT"; html:link "/query/sesame/ConstructFormats"];
+		];
 	];
 .

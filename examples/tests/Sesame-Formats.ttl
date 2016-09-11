@@ -4,16 +4,16 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 @prefix dbo: <http://dbpedia.org/ontology/>.
 @prefix dbpedia: <http://dbpedia.org/resource/>.
-@prefix dbp: <http://dbpedia.org/property/>.
 
-stage:SelectFormats a elmo:Representation;
-	elmo:url-pattern "/query/SelectFormats";
+stage:Sesame_SelectFormats a elmo:Representation;
+	elmo:url-pattern "/query/sesame/SelectFormats";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:contains stage:Formats_tab;
 	elmo:contains stage:SelectFormats_content;
 	elmo:index "0";
 	elmo:appearance elmo:HiddenAppearance;
+	elmo:endpoint <http://localhost:7200/repositories/data>;
 	elmo:query '''
 		prefix dbo: <http://dbpedia.org/ontology/>
 		select ?s ?s_label (dbo:City as ?type)
@@ -23,7 +23,7 @@ stage:SelectFormats a elmo:Representation;
 		}
 	''';
 .
-stage:Formats_tab elmo:index "1";
+stage:Sesame_Formats_tab elmo:index "1";
 	elmo:appearance elmo:IndexAppearance;
 	elmo:data [
 		html:link "";
@@ -32,8 +32,9 @@ stage:Formats_tab elmo:index "1";
 		rdf:value "xml|json|ttl|csv|txt|xlsx|docx|pdf|xmi|svgi|d3json|graphml|yed|query|exml|rdfa";
 	];
 .
-stage:SelectFormats_content a elmo:Representation;
+stage:Sesame_SelectFormats_content a elmo:Representation;
 	elmo:index "2";
+	elmo:endpoint <http://localhost:7200/repositories/data>;
 	elmo:query '''
 		prefix dbo: <http://dbpedia.org/ontology/>
 		select ?s ?s_label (dbo:City as ?type)
@@ -44,14 +45,15 @@ stage:SelectFormats_content a elmo:Representation;
 	''';
 .
 
-stage:ConstructFormats a elmo:Representation;
-	elmo:url-pattern "/query/ConstructFormats";
+stage:Sesame_ConstructFormats a elmo:Representation;
+	elmo:url-pattern "/query/sesame/ConstructFormats";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:contains stage:Formats_tab;
 	elmo:contains stage:ConstructFormats_content;
 	elmo:index "0";
 	elmo:appearance elmo:HiddenAppearance;
+	elmo:endpoint <http://localhost:7200/repositories/data>;
 	elmo:query '''
 		prefix dbo: <http://dbpedia.org/ontology/>
 		construct {
@@ -63,7 +65,7 @@ stage:ConstructFormats a elmo:Representation;
 		}
 	''';
 .
-stage:Formats_constructTabs elmo:index "1";
+stage:Sesame_Formats_constructTabs elmo:index "1";
 	elmo:appearance elmo:IndexAppearance;
 	elmo:data [
 		html:link "#";
@@ -72,8 +74,9 @@ stage:Formats_constructTabs elmo:index "1";
 		rdf:value "rdf|json|ttl|csv|excel";
 	];
 .
-stage:ConstructFormats_content a elmo:Representation;
+stage:Sesame_ConstructFormats_content a elmo:Representation;
 	elmo:index "2";
+	elmo:endpoint <http://localhost:7200/repositories/data>;
 	elmo:query '''
 		prefix dbo: <http://dbpedia.org/ontology/>
 		construct {
@@ -84,18 +87,4 @@ stage:ConstructFormats_content a elmo:Representation;
 			?s?p?o.
 		}
 	''';
-.
-
-dbpedia:Amersfoort a dbo:City;
-	rdfs:label "Amersfoort";
-	dbo:isPartOf <http://dbpedia.org/resource/Utrecht_(province)>;
-	dbp:east dbpedia:Amsterdam;
-
-dbpedia:Amsterdam a dbo:City;
-	rdfs:label "Amsterdam";
-.
-
-<http://dbpedia.org/resource/Utrecht_(province)> a dbo:Location;
-	rdfs:label "Utrecht (province)"@en;
-	rdfs:label "Utrecht (provincie)"@en;
 .

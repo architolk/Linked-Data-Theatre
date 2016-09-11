@@ -1,0 +1,18 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dbo: <http://dbpedia.org/ontology/>.
+@prefix dbpedia: <http://dbpedia.org/resource/>.
+@prefix dbp: <http://dbpedia.org/property/>.
+
+dbpedia:Amersfoort a dbo:City;
+	rdfs:label "Amersfoort";
+	dbo:isPartOf <http://dbpedia.org/resource/Utrecht_(province)>;
+	dbp:east dbpedia:Amsterdam;
+.
+dbpedia:Amsterdam a dbo:City;
+	rdfs:label "Amsterdam";
+.
+
+<http://dbpedia.org/resource/Utrecht_(province)> a dbo:Location;
+	rdfs:label "Utrecht (province)"@en;
+	rdfs:label "Utrecht (provincie)"@en;
+.
