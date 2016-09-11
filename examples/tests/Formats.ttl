@@ -85,17 +85,3 @@ stage:ConstructFormats_content a elmo:Representation;
 		}
 	''';
 .
-
-dbpedia:Amersfoort a dbo:City;
-	rdfs:label "Amersfoort";
-	dbo:isPartOf <http://dbpedia.org/resource/Utrecht_(province)>;
-	dbp:east dbpedia:Amsterdam;
-
-dbpedia:Amsterdam a dbo:City;
-	rdfs:label "Amsterdam";
-.
-
-<http://dbpedia.org/resource/Utrecht_(province)> a dbo:Location;
-	rdfs:label "Utrecht (province)"@en;
-	rdfs:label "Utrecht (provincie)"@en;
-.

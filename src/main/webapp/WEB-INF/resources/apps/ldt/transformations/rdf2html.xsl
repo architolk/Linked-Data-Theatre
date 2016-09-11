@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.10.2-SNAPSHOT
-    DATE     2016-09-09
+    DATE     2016-09-11
 
     Copyright 2012-2016
 
@@ -57,7 +57,7 @@
 <xsl:key name="resource" match="results/rdf:RDF/rdf:Description" use="@rdf:about"/>
 <xsl:key name="nav-bnode" match="results/rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarSearchAppearance']/rdf:Description" use="@rdf:nodeID"/>
 
-<xsl:variable name="serverdomain"><xsl:value-of select="substring-before(substring-after(/results/context/url,'http://'),'/')"/></xsl:variable>
+<xsl:variable name="serverdomain"><xsl:value-of select="substring-before(replace(/results/context/url,'^((http|https)://)',''),'/')"/></xsl:variable>
 <xsl:variable name="docroot"><xsl:value-of select="/results/context/@docroot"/></xsl:variable>
 <xsl:variable name="staticroot"><xsl:value-of select="/results/context/@staticroot"/></xsl:variable>
 <xsl:variable name="subdomain"><xsl:value-of select="/results/context/subdomain"/></xsl:variable>
@@ -96,7 +96,7 @@
 	<xsl:param name="var"><none/></xsl:param>
 	<xsl:param name="params"/>
 	
-	<xsl:variable name="urlpart"><xsl:value-of select="replace($uri,'^([http|https]://)','')"/></xsl:variable>
+	<xsl:variable name="urlpart"><xsl:value-of select="replace($uri,'^((http|https)://)','')"/></xsl:variable>
 	<xsl:variable name="domain"><xsl:value-of select="substring-before($urlpart,'/')"/></xsl:variable>
 	<xsl:choose>
 		<xsl:when test="$var/@elmo:link!=''">
@@ -125,10 +125,10 @@
 <xsl:template name="cross-site-marker">
 	<xsl:param name="url"/>
 	
-	<xsl:variable name="urlpart"><xsl:value-of select="replace($url,'^([http|https]://)','')"/></xsl:variable>
+	<xsl:variable name="urlpart"><xsl:value-of select="replace($url,'^((http|https)://)','')"/></xsl:variable>
 	<xsl:variable name="domain"><xsl:value-of select="substring-before($urlpart,'/')"/></xsl:variable>
 
-	<xsl:if test="$urlpart!='' and $domain!=$serverdomain">
+	<xsl:if test="$domain!='' and $domain!=$serverdomain">
 		<span class="glyphicon glyphicon-share-alt" aria-hidden="true"/>
 	</xsl:if>
 </xsl:template>
