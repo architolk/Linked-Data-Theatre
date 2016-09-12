@@ -19,7 +19,7 @@ Create the file `properties-local.xml` in the directory `\WEB-INF\resources\conf
             xmlns:oxf="http://www.orbeon.com/oxf/processors">
 
 		<property as="xs:string" name="oxf.http.ssl.hostname-verifier" value="allow-all"/>
-		<property as="xs:anyURI" name="oxf.http.ssl.keystore.uri" value="file:/{TOMCAT-DIR}/web-apps/ROOT/WEB-INF/resources/config/pdok.jks"/>
+		<property as="xs:anyURI" name="oxf.http.ssl.keystore.uri" value="file:/{TOMCAT-DIR}/webapps/ROOT/WEB-INF/resources/config/ldt.jks"/>
 		<property as="xs:string" name="oxf.http.ssl.keystore.password" value="{PASSWORD}"/>
 	</properties>
 
