@@ -1,4 +1,6 @@
 @echo off
+echo Elmo vocabulary
+curl.exe -X PUT -T ../vocabulary/elmo.ttl http://localhost:8890/sparql-graph-crud?graph-uri=http://bp4mc2.org/elmo/def
 echo Empty graph
 curl.exe -X PUT -T empty.ttl http://localhost:8890/sparql-graph-crud?graph-uri=http://localhost:8080/stage
 cd tests

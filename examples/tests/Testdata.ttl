@@ -39,6 +39,7 @@ lotro:Wizard rdf:type owl:Class;
 .
 lotro:Dwarf rdf:type owl:Class;
 	rdfs:label "Dwarf";
+	rdfs:subClassOf lotro:Mortal;
 .
 lotro:Elf rdf:type owl:Class;
 	rdfs:label "Elf";
@@ -46,11 +47,19 @@ lotro:Elf rdf:type owl:Class;
 lotro:Halfelf rdf:type owl:Class;
 	rdfs:label "Halfelf";
 .
+lotro:Mortal rdf:type owl:Class;
+	rdfs:label "Mortal";
+.
 lotro:Man rdf:type owl:Class;
 	rdfs:label "Man";
+	rdfs:subClassOf lotro:Mortal;
 .
 lotro:Elf rdf:type owl:Class;
 	rdfs:label "Elf";
+.
+
+lotro:founded rdf:type owl:ObjectProperty;
+	rdfs:label "founded";
 .
 
 lotrc:Bilbo rdf:type lotro:Hobbit;
