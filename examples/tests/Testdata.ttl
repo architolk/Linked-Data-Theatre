@@ -29,10 +29,16 @@ dbpedia:Amsterdam a dbo:City;
 #
 #LOTR testdata
 #
+#<http://localhost:8080/def/lotr#> a owl:Ontology;
+#	rdfs:label "The LOTR Vocabulary";
+#	rdfs:comment "blablabla";
+#.
+
 foaf:Group rdfs:label "Group".
 
 lotro:Hobbit rdf:type owl:Class;
 	rdfs:label "Hobbit";
+	rdfs:subClassOf lotro:Mortal;
 .
 lotro:Wizard rdf:type owl:Class;
 	rdfs:label "Wizard";
@@ -44,8 +50,10 @@ lotro:Dwarf rdf:type owl:Class;
 lotro:Elf rdf:type owl:Class;
 	rdfs:label "Elf";
 .
-lotro:Halfelf rdf:type owl:Class;
-	rdfs:label "Halfelf";
+lotro:Half-elf rdf:type owl:Class;
+	rdfs:label "Half-elf";
+	rdfs:subClassOf lotro:Elf;
+	rdfs:subClassOf lotro:Man;
 .
 lotro:Mortal rdf:type owl:Class;
 	rdfs:label "Mortal";

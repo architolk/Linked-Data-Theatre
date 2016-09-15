@@ -4,7 +4,7 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 
 stage:VocabularyAppearance	a	elmo:Representation;
-	elmo:uri-pattern	"^http://localhost:8080/def/lotr$";
+	elmo:uri-pattern	"^http://localhost:8080/def/lotr(\\.(xml|ttl|json))?$";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:appearance elmo:VocabularyAppearance;
@@ -27,6 +27,7 @@ stage:VocabularyAppearance	a	elmo:Representation;
 			GRAPH <http://localhost:8080/stage> {
 				?element rdf:type ?type.
 				OPTIONAL {?element rdfs:label ?label}
+				OPTIONAL {?element rdfs:comment ?def}
 				OPTIONAL {
 					?element dcterms:subject ?begrip.
 					?begrip skos:definition ?def.
