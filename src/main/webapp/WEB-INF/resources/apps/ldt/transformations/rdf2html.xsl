@@ -266,9 +266,10 @@
 </xsl:template>
 
 <xsl:template match="rdf:Description" mode="PropertyTable">
-	<div class="panel panel-primary">
+	<div class="panel panel-primary {../@elmo:name}">
 		<div class="panel-heading">
 			<h3 class="panel-title">
+				<span><xsl:value-of select="../@elmo:label"/></span>
 				<a href="{@rdf:about}">
 					<xsl:choose>
 						<xsl:when test="exists(rdfs:label)"><xsl:value-of select="rdfs:label"/></xsl:when>
