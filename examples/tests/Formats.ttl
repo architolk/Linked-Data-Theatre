@@ -79,11 +79,15 @@ stage:ConstructFormats_content a elmo:Representation;
 	elmo:query '''
 		prefix dbo: <http://dbpedia.org/ontology/>
 		construct {
-			?s?p?o
+			?s?p?o.
+			?p rdfs:label ?plabel.
+			?p rdfs:comment ?pcomment.
 		}
 		where {
 			?s rdf:type dbo:City.
 			?s?p?o.
+			OPTIONAL {?p rdfs:label ?plabel}
+			OPTIONAL {?p rdfs:comment ?pcomment}
 		}
 	''';
 .

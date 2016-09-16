@@ -17,6 +17,7 @@
 testo:capitalCity a rdf:Property;
 	rdfs:label "capital city"@en;
 	rdfs:label "hoofdstad"@nl;
+	rdfs:comment "De hoofdstad van een land"@nl;
 .
 
 dbpedia:Amersfoort a dbo:City;
