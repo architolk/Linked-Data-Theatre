@@ -1,6 +1,7 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 @prefix skos: <http://www.w3.org/2004/02/skos/core#>.
 @prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix testo: <http://localhost:8080/def/test#>.
 @prefix lotro: <http://localhost:8080/def/lotr#>.
 @prefix lotrc: <http://localhost:8080/id/character/>.
 @prefix lotrg: <http://localhost:8080/id/group/>.
@@ -8,17 +9,29 @@
 @prefix dbo: <http://dbpedia.org/ontology/>.
 @prefix dbpedia: <http://dbpedia.org/resource/>.
 @prefix dbp: <http://dbpedia.org/property/>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 #
 #DBPedia testdata
 #
+testo:capitalCity a rdf:Property;
+	rdfs:label "capital city"@en;
+	rdfs:label "hoofdstad"@nl;
+.
+
 dbpedia:Amersfoort a dbo:City;
 	rdfs:label "Amersfoort";
 	dbo:isPartOf <http://dbpedia.org/resource/Utrecht_(province)>;
+	dbo:abstract "Amersfoort is een stad en gemeente in het oosten van de Nederlandse provincie Utrecht. Het is in bevolkingsaantal de tweede stad van de provincie Utrecht en de veertiende van Nederland. Amersfoort is een groeistad en vervult economisch een regiofunctie met een sterk gegroeid bedrijfsleven, heeft een van de grootste spoorwegknooppunten van Nederland en is een belangrijke garnizoensstad. De binnenstad bezit een middeleeuws karakter met grachten"@nl;
 	dbp:east dbpedia:Amsterdam;
+	dbo:population 153773;
+	dbo:populationAsOf "2016-04-01"^^xsd:date;
+	dbo:altitude 2.9;
+	testo:capitalCity false;
 .
 dbpedia:Amsterdam a dbo:City;
 	rdfs:label "Amsterdam";
+	testo:capitalCity true;
 .
 
 <http://dbpedia.org/resource/Utrecht_(province)> a dbo:Location;
