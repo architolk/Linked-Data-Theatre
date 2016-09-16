@@ -28,6 +28,10 @@ stage:ElmoVocabulary	a	elmo:Representation;
 				?element rdf:type ?type.
 				OPTIONAL {?element rdfs:label ?label}
 				OPTIONAL {
+					?element rdfs:comment ?def
+					filter (lang(?def)="" || lang(?def)="@LANGUAGE@")
+				}
+				OPTIONAL {
 					?element dcterms:subject ?begrip.
 					?begrip skos:definition ?def.
 				}
