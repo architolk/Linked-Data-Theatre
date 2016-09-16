@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.10.2-SNAPSHOT
-    DATE     2016-09-11
+    DATE     2016-09-16
 
     Copyright 2012-2016
 
@@ -837,13 +837,20 @@
 	<xsl:if test="exists(rdfs:label)">
 		<xsl:variable name="label"><xsl:call-template name="normalize-language"><xsl:with-param name="text" select="rdfs:label"/></xsl:call-template></xsl:variable>
 		<!-- This sets the menu to the active menu, but is not full proof! -->
+		<xsl:variable name="url" select="/results/context/url"/>
+		<xsl:variable name="url-domain" select="replace($url,'^([^/]+//[^/]+).*','$1')"/>
+		<xsl:variable name="active-child">
+			<xsl:for-each select="key('nav-bnode',elmo:data/@rdf:nodeID)">
+				<xsl:if test="($url=html:link) or ($url=concat($url-domain,html:link))">a</xsl:if>
+			</xsl:for-each>
+		</xsl:variable>
 		<xsl:variable name="active">
-			<xsl:if test="(/results/context/subject=html:link) or (/results/context/subject=concat(replace(/results/context/url,'^([^/]+//[^/]+).*','$1'),html:link))">active</xsl:if>
+			<xsl:if test="($active-child!='') or ($url=html:link) or ($url=concat($url-domain,html:link))">active</xsl:if>
 		</xsl:variable>
 		<li class="{$active}">
 			<xsl:choose>
 				<xsl:when test="exists(elmo:data)">
-					<xsl:attribute name="class">dropdown</xsl:attribute>
+					<xsl:attribute name="class">dropdown <xsl:value-of select="$active"/></xsl:attribute>
 					<a class="dropdown-toggle" role="button" aria-expanded="false" href="#" data-toggle="dropdown"><xsl:value-of select="$label"/><span class="caret"/></a>
 					<ul class="dropdown-menu" role="menu">
 						<xsl:for-each select="elmo:data"><xsl:sort select="key('nav-bnode',@rdf:nodeID)/elmo:index"/>
