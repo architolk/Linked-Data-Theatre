@@ -1,7 +1,7 @@
 --
 -- NAME     dump_graphs.sql
--- VERSION  1.10.2-SNAPSHOT
--- DATE     2016-09-05
+-- VERSION  1.11.0
+-- DATE     2016-09-18
 --
 -- Copyright 2012-2016
 --

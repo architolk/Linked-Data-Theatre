@@ -1,8 +1,8 @@
 <!--
 
     NAME     VocabularyAppearance.xsl
-    VERSION  1.10.2-SNAPSHOT
-    DATE     2016-09-15
+    VERSION  1.11.0
+    DATE     2016-09-18
 
     Copyright 2012-2016
 

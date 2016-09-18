@@ -1,7 +1,7 @@
 /*
  * NAME     d3graphs-inner.js
- * VERSION  1.10.1
- * DATE     2016-08-30
+ * VERSION  1.11.0
+ * DATE     2016-09-18
  *
  * Copyright 2012-2016
  *
