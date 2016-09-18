@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.10.2-SNAPSHOT
-    DATE     2016-09-16
+    DATE     2016-09-18
 
     Copyright 2012-2016
 
@@ -33,10 +33,13 @@
 	- TableAppearance: default appearance for SELECT queries
 	- CarouselAppearance: a twist at the ContentAppearance: every resource at a different page
 	- ShortTableAppearance: a twist at the TableAppearance, for short tables only
+	- TextSearchAppearance: a twist at the TableAppearance, for text searches only
 	For navigation
 	- HeaderAppearance
 	- NavbarAppearance and NavbarSearchAppearance
 	- IndexAppearance
+	Special:
+	- HiddenAppearance (an appearance for a representation which content is hidden)
 	
 	Other appearances should be placed into a separate file. Please include a <xsl:include> entry at the bottom of this file
 -->
@@ -90,7 +93,6 @@
 	</xsl:choose>
 </xsl:template>
 
-<!-- TODO: $var is nu geoptimaliseerd, maar werkt dit wel? (het zou een default moeten zijn? -->
 <xsl:template name="resource-uri">
 	<xsl:param name="uri"/>
 	<xsl:param name="var"><none/></xsl:param>
@@ -150,8 +152,7 @@
 	</xsl:variable>
 	<xsl:choose>
 		<xsl:when test="$tokenizer!=''">
-			<!-- De tekst worden nu van elkaar gescheiden obv de relevantie woorden. Om de scheiding op leestekens te houden, moet elk -->
-			<!-- woord beginnen en eindigen met een spatie, daarom ook extra spaties toevoegen bij leestekens "," en "." -->
+			<!-- Tokenizer works for terms separated with spaces. To fix the problem with ',' and '.', spaces are added before the ',' and '.' -->
 			<xsl:for-each select="tokenize(replace(replace(concat(' ',.,' '),'(,|\.)',' $0'),substring($tokenizer,2,9999),'@@$0@@','i'),'@@')">
 				<xsl:variable name="term" select="substring(.,2,string-length(.)-2)"/>
 				<xsl:variable name="termlink" select="$termlist/rdf:Description[upper-case(elmo:name[1])=upper-case($term)]"/>
@@ -202,7 +203,7 @@
 			<xsl:variable name="resource-uri">
 				<xsl:call-template name="resource-uri">
 					<xsl:with-param name="uri" select="rdf:Description/@rdf:about"/>
-					<xsl:with-param name="var" select="."/> <!-- Was rdf:Description, maar dit lijkt beter -->
+					<xsl:with-param name="var" select="."/>
 				</xsl:call-template>
 			</xsl:variable>
 			<a href="{$resource-uri}">
@@ -292,7 +293,6 @@
 									</xsl:when>
 									<xsl:otherwise>
 										<xsl:for-each select="current-group()">
-											<!-- <xsl:if test="position()!=1">;<br/></xsl:if>-->
 											<p><xsl:apply-templates select="." mode="object"/></p>
 										</xsl:for-each>
 									</xsl:otherwise>
@@ -483,13 +483,13 @@
 			<xsl:apply-templates select="." mode="html-head"/>
 			<body>
 				<div id="page">
-					<!-- Meerdere queries zijn mogelijk -->
-					<!-- Eerst de headerstuf -->
-					<!-- Meer dan 1 navbar leid tot niet-gedefinieerd gedrag -->
+					<!-- More than one query is possible -->
+					<!-- First header appearances -->
+					<!-- More than one navbar leads to non-defined behaviour -->
 					<xsl:apply-templates select="rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#HeaderAppearance']" mode="HeaderAppearance"/>
 					<xsl:apply-templates select="rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarAppearance']" mode="NavbarAppearance"/>
 					<xsl:apply-templates select="rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarSearchAppearance']" mode="NavbarSearchAppearance"/>
-					<!-- Dan de echte inhoud -->
+					<!-- Real content -->
 					<div class="content">
 						<div class="container">
 							<xsl:choose>
@@ -528,7 +528,7 @@
 		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/ldt-theme.min.css"/>
 		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/font-awesome.min.css"/>
 
-		<!-- Alternatieve stijlen -->
+		<!-- Alternative styling -->
 		<xsl:for-each select="context/stylesheet">
 			<link rel="stylesheet" type="text/css" href="{@href}"/>
 		</xsl:for-each>
@@ -623,14 +623,6 @@
 <xsl:template match="rdf:RDF" mode="TableAppearance">
 	<xsl:param name="paging"/>
 	<!-- Link for other formats -->
-	<!-- Original, changed
-	<xsl:variable name="original-link">
-		<xsl:value-of select="$docroot"/>
-		<xsl:text>/resource?subject=</xsl:text><xsl:value-of select="encode-for-uri(../context/subject)"/>
-		<xsl:text>&amp;representation=</xsl:text><xsl:value-of select="encode-for-uri(@elmo:query)"/>
-		<xsl:text>&amp;format=</xsl:text>
-	</xsl:variable>
-	-->
 	<xsl:variable name="original-link">
 		<xsl:value-of select="../context/url"/>
 		<xsl:text>?</xsl:text>
@@ -810,25 +802,11 @@
 				</xsl:if>
 			</div>
 			<div id="navbar" class="collapse navbar-collapse">
-				<!--
-				<ul class="nav navbar-nav">
-					<xsl:for-each select="rdf:Description[exists(rdfs:label)]"><xsl:sort select="elmo:index"/>
-						<li><a href="{html:link}"><xsl:value-of select="rdfs:label"/></a></li>
-					</xsl:for-each>
-				</ul>
-				-->
 				<ul class="nav navbar-nav">
 					<xsl:for-each select="rdf:Description[exists(rdfs:label)]"><xsl:sort select="elmo:index"/>
 						<xsl:apply-templates select="." mode="nav"/>
 					</xsl:for-each>
 				</ul>
-				<!--
-				<ul class="nav navbar-nav">
-					<xsl:for-each select="rdf:Description[1]/elmo:data"><xsl:sort select="key('nav-bnode',@rdf:nodeID)/elmo:index"/>
-						<xsl:apply-templates select="key('nav-bnode',@rdf:nodeID)" mode="nav"/>
-					</xsl:for-each>
-				</ul>
-				-->
 			</div>
 		</div>
 	</nav>
@@ -922,15 +900,15 @@
 <!--
 	Included appearances. Should be the same number as the files in the /appearances directory
 -->
+<xsl:include href="appearances/CesiumAppearance.xsl"/>
+<xsl:include href="appearances/ChartAppearance.xsl"/>
+<xsl:include href="appearances/FormAppearance.xsl"/>
+<xsl:include href="appearances/GeoAppearance.xsl"/>
+<xsl:include href="appearances/GraphAppearance.xsl"/>
 <xsl:include href="appearances/HtmlAppearance.xsl"/>
 <xsl:include href="appearances/LoginAppearance.xsl"/>
 <xsl:include href="appearances/TextAppearance.xsl"/>
-<xsl:include href="appearances/FormAppearance.xsl"/>
-<xsl:include href="appearances/GraphAppearance.xsl"/>
-<xsl:include href="appearances/GeoAppearance.xsl"/>
-<xsl:include href="appearances/ChartAppearance.xsl"/>
 <xsl:include href="appearances/TreeAppearance.xsl"/>
-<xsl:include href="appearances/CesiumAppearance.xsl"/>
 <xsl:include href="appearances/VocabularyAppearance.xsl"/>
 
 </xsl:stylesheet>

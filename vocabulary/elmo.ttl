@@ -75,6 +75,10 @@ RepresentationShape:uri-pattern	a	sh:PropertyConstraint;
 	sh:predicate	elmo:uri-pattern;
 	sh:nodeKind		sh:Literal;
 .
+RepresentationShape:index	a	sh:PropertyConstraint;
+	sh:predicate	elmo:index;
+	sh:nodeKind		sh:Literal;
+.
 RepresentationShape:contains	a	sh:PropertyConstraint;
 	sh:predicate	elmo:contains;
 	sh:nodeKind		sh:IRI;
@@ -84,6 +88,24 @@ RepresentationShape:contains	a	sh:PropertyConstraint;
 RepresentationShape:stylesheet	a	sh:PropertyConstraint;
 	sh:predicate	html:stylesheet;
 	sh:nodeKind		sh:Literal;
+.
+RepresentationShape:applies-to	a	sh:PropertyConstraint;
+	sh:predicate	elmo:applies-to;
+	sh:nodeKind		sh:BlankNode;
+.
+RepresentationShape:data	a	sh:PropertyConstraint;
+	sh:predicate	elmo:data;
+	sh:nodeKind		sh:BlankNode;
+.
+RepresentationShape:endpoint	a	sh:PropertyConstraint;
+	sh:predicate	elmo:endpoint;
+	sh:nodeKind		sh:IRI;
+.
+RepresentationShape:queryForm	a	sh:PropertyConstraint;
+	sh:predicate	elmo:queryForm;
+	sh:nodeKind		sh:IRI;
+	sh:valueClass	elmo:Form;
+	sh:valueShape	<http://bp4mc2.org/elmo/def/shape/Form#>
 .
 
 # Fragment #
@@ -191,32 +213,65 @@ elmo:GeoLocator		a	rdfs:Class;
 	rdfs:comment		"A resource that is a GeoLocator will be used to center a geographical map to the coordinates of the GeoLocator"@en;
 	rdfs:comment		"Een resource die een GeoLocator is, wordt gebruikt om de geografische map te centreren op de coordinaten van de GeoLocator"@nl;
 .
-
+elmo:Production		a	owl:Class;
+	rdfs:label			"Production"@en;
+	rdfs:label			"Productie"@nl;
+	rdfs:comment		"The class of productions. A production is a list of scenes that creates or deletes a set of triples"@en;
+	rdfs:comment		"The klasse van producties. Een productie is een lijst van scenes die een verzameling triples toevoegen of verwijderen"@nl;
+.
+elmo:Scene			a	owl:Class;
+	rdfs:label			"Scene"@en;
+	rdfs:label			"Scene"@nl;
+	rdfs:comment		"The class of scenes. A scene is a single transformation of the triplestore. A scene defines a single SPARUL statement"@en;
+	rdfs:comment		"De klasse van scenes. Een scene is een enkelvoudige transformatie van de triplestore. Een scene definieert een enkelvoudig SPARUL statement"@nl;
+.
+	
 # Appearance subclasses #
-elmo:TableAppearance	a	owl:Class;
+elmo:CoreAppearance		a	owl:Class;
 	rdfs:subClassOf			elmo:Appearance;
+	rdfs:label				"Core appearance"@en;
+	rdfs:label				"Kernverschijning"@nl;
+	rdfs:comment			"A core appearance. Six appearances are part of the core of the LDT."@en;
+	rdfs:comment			"Een kernverschijning. Zes verschijningen zijn onderdeel van de kern van het LDT"@nl;
+.
+elmo:ExtensionAppearance	a	owl:Class;
+	rdfs:subClassOf			elmo:Appearance;
+	rdfs:label				"Extension appearance"@en;
+	rdfs:label				"Aanvullende verschijning"@nl;
+	rdfs:comment			"An extension appearance. The LDT can be extended with a particular appearance, which should always be a subclass of the extension appearance"@en;
+	rdfs:comment			"Een aanvullende verschijning. Het LDT kan aangevuld worden met een specifieke verschijning, die altijd een subklasse behoord te zijn van de aanvullende verschijning"@nl;
+.
+elmo:FragmentAppearance	a	owl:Class;
+	rdfs:subClassOf			elmo:Appearance;
+	rdfs:label				"Fragment appearance"@en;
+	rdfs:label				"Fragmentverschijning"@nl;
+	rdfs:comment			"An appearance used for fragments."@en;
+	rdfs:comment			"Een verschijning die voor fragmenten wordt gebruikt"@nl;
+.
+elmo:TableAppearance	a	owl:Class;
+	rdfs:subClassOf			elmo:CoreAppearance;
 	rdfs:label				"Table appearance"@en;
 	rdfs:label				"Tabelverschijning"@nl;
 .
 elmo:ShortTableAppearance	a	owl:Class;
-	rdfs:subClassOf			elmo:Appearance;
+	rdfs:subClassOf			elmo:TableAppearance;
 	rdfs:label				"Short table appearance"@en;
 	rdfs:label				"Minimale tabelverschijning"@nl;
 .
 elmo:ContentAppearance	a	owl:Class;
-	rdfs:subClassOf			elmo:Appearance;
+	rdfs:subClassOf			elmo:CoreAppearance;
 	rdfs:label				"Content appearance"@en;
 	rdfs:label				"Eigenschappenverschijning"@nl;
 .
 elmo:HeaderAppearance	a	owl:Class;
-	rdfs:subClassOf			elmo:Appearance;
+	rdfs:subClassOf			elmo:CoreAppearance;
 	rdfs:label				"Header appearance"@en;
 	rdfs:label				"Kopverschijning"@nl;
 	rdfs:comment			"An appearance used for the header of a page. Usually contains an image and a pay-off text."@en;
 	rdfs:comment			"Een verschijning te gebruiken voor de kop van een pagina. Meestal bevat deze een plaatje en een pay-off tekst."@nl;
 .
 elmo:NavbarAppearance	a	owl:Class;
-	rdfs:subClassOf			elmo:Appearance;
+	rdfs:subClassOf			elmo:CoreAppearance;
 	rdfs:label				"Navigation bar appearance"@en;
 	rdfs:label				"Navigatiebalkverschijning"@nl;
 	rdfs:comment			"An appearance used for the navigation bar"@en;
@@ -230,90 +285,105 @@ elmo:NavbarSearchAppearance	a	owl:Class;
 	rdfs:comment			"Een verschijning te gebruiken voor een navigatiebalk, inclusief een zoekformulier."@nl;
 .
 elmo:HiddenAppearance	a	owl:Class;
-	rdfs:subClassOf			elmo:Appearance;
+	rdfs:subClassOf			elmo:CoreAppearance;
 	rdfs:label				"Hidden appearance"@en;
 	rdfs:label				"Verborgen verschijning"@nl;
 	rdfs:comment			"An appearance that is actually hidden. These seems paradoxical, but can be usefull if some data should not be shown in a html view, but should be used otherwise"@en;
 	rdfs:comment			"Een verschijning die verborgen is. Dit lijkt paradoxaal, maar kan bruikbaar zijn indien bepaalde gegevens niet getoond moeten worden in de html weergave, maar op een andere manier worden gebruikt"@nl;
 .
 elmo:LoginAppearance	a	owl:Class;
-	rdfs:subClassOf			elmo:Appearance;
+	rdfs:subClassOf			elmo:ExtensionAppearance;
 	rdfs:label				"Login appearance"@en;
 	rdfs:label				"Login verschijning"@nl;
 	rdfs:comment			"An appearance used for a login page"@en;
 	rdfs:comment			"Een verschijning te gebruiken voor een login pagina"@nl;
 .
 elmo:CarouselAppearance	a	owl:Class;
-	rdfs:subClassOf			elmo:Appearance;
+	rdfs:subClassOf			elmo:ContentAppearance;
 	rdfs:label				"Carousel appearance"@en;
 	rdfs:label				"Carrouselverschijning"@nl;
 .
 elmo:IndexAppearance	a	owl:Class;
-	rdfs:subClassOf			elmo:Appearance;
+	rdfs:subClassOf			elmo:CoreAppearance;
 	rdfs:label				"Index appearance"@en;
 	rdfs:label				"Indexverschijning"@nl;
 .
 elmo:HtmlAppearance		a	owl:Class;
-	rdfs:subClassOf			elmo:Appearance;
+	rdfs:subClassOf			elmo:ExtensionAppearance;
 	rdfs:label				"HTML appearance"@en;
 	rdfs:label				"HTML verschijning"@nl;
 	rdfs:comment			"An appearance used for displaying a piece of html. Mostly used for literal representations of a piece of text"@en;
 	rdfs:comment			"Een verschijning te gebruiken voor het tonen van een stukje html. Meestal gebruikt voor letterlijke representaties van een stukje tekst"@nl;
 .
 elmo:GraphAppearance	a	owl:Class;
-	rdfs:subClassOf			elmo:Appearance;
+	rdfs:subClassOf			elmo:ExtensionAppearance;
 	rdfs:label				"Graph appearance"@en;
 	rdfs:label				"Grafische verschijning"@nl;
 .
 elmo:TextAppearance	a	owl:Class;
-	rdfs:subClassOf			elmo:Appearance;
+	rdfs:subClassOf			elmo:ExtensionAppearance;
 	rdfs:label				"Text appearance"@en;
 	rdfs:label				"Tekstuele verschijning"@nl;
 .
 elmo:FormAppearance	a	owl:Class;
-	rdfs:subClassOf			elmo:Appearance;
+	rdfs:subClassOf			elmo:ExtensionAppearance;
 	rdfs:label				"Form appearance"@en;
 	rdfs:label				"Formulierverschijning"@nl;
 .
 elmo:GeoAppearance	a	owl:Class;
-	rdfs:subClassOf			elmo:Appearance;
+	rdfs:subClassOf			elmo:ExtensionAppearance;
 	rdfs:label				"Geographical appearance"@en;
 	rdfs:label				"Geografische verschijning"@nl;
 .
 elmo:ImageAppearance	a	owl:Class;
-	rdfs:subClassOf			elmo:Appearance;
+	rdfs:subClassOf			elmo:GraphAppearance;
 	rdfs:label				"Image appearance"@en;
 	rdfs:label				"Plaatjes-verschijning"@nl;
 .
 elmo:ChartAppearance	a	owl:Class;
-	rdfs:subClassOf			elmo:Appearance;
+	rdfs:subClassOf			elmo:ExtensionAppearance;
 	rdfs:label				"Chart appearance"@en;
 	rdfs:label				"Diagramverschijning"@nl;
 .
 elmo:TextSearchAppearance	a	owl:Class;
-	rdfs:subClassOf			elmo:Appearance;
+	rdfs:subClassOf			elmo:TableAppearance;
 	rdfs:label				"Text search appearance"@en;
 	rdfs:label				"Zoeken naar tekst verschijning"@nl;
 .
 elmo:GlobalLink			a	owl:Class;
-	rdfs:subClassOf			elmo:Appearance;
+	rdfs:subClassOf			elmo:FragmentAppearance;
 	rdfs:label				"Global link"@en;
 	rdfs:label				"Internetverwijzing"@nl;
 	rdfs:comment			"A global links states that a fragment should contain hyperlinks to the real URL, even if its outside the Linked Data Theatre application"@en;
 	rdfs:comment			"Een internetverwijzing stelt dat een fragment hyperlinks bevat die verwijzen naar de echte URL, zelfs als deze URL zich bevindt buiten de Linked Data Theater applicatie"@nl;
 .
 elmo:FilteredGlossaryAppearance	a	owl:Class;
-	rdfs:subClassOf			elmo:Appearance;
+	rdfs:subClassOf			elmo:FragmentAppearance;
 	rdfs:label				"Filtered glossary appearance";
 	rdfs:label				"Gefilterde woordenlijst verschijning";
 .
 elmo:SubmitAppearance	a	owl:Class;
-	rdfs:subClassOf			elmo:Appearance;
+	rdfs:subClassOf			elmo:FragmentAppearance;
 	rdfs:label				"Submit appearance"@en;
 	rdfs:label				"Submit verschijning"@nl;
 	rdfs:comment			"A fragment that appears as a submit button"@en;
 	rdfs:comment			"Een fragment dat er uit ziet als een submit-knop"@nl;
 .
+elmo:CesiumAppearance	a	owl:Class;
+	rdfs:subClassOf			elmo:ExtensionAppearance;
+	rdfs:label				"Cesium appearance"@en;
+	rdfs:label				"Cesium-verschijning"@nl;
+	rdfs:comment			"An appearance using the Cesium framework"@en;
+	rdfs:comment			"Een verschijning die het Cesium raamwerk gebruikt"@nl;
+.
+elmo:VocabularyAppearance a owl:Class;
+	rdfs:subClassOf			elmo:ExtensionAppearance;
+	rdfs:label				"Vocabulary appearance"@en;
+	rdfs:label				"Vocabulaire-verschijning"@nl;
+	rdfs:comment			"An appearance designed for representing a vocabulary or ontology"@en;
+	rdfs:comment			"Een verschijning die specifiek is ontworpen om een vocabulaire of ontologie te vertonen"@nl;
+.
+
 elmo:Style				a	owl:Class;
 	rdfs:label				"Style"@en;
 	rdfs:label				"Stijl"@nl;
