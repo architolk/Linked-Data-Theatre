@@ -52,6 +52,7 @@ import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpOptions;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
@@ -67,6 +68,12 @@ import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.HttpHost;
 import java.net.URL;
+
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import java.util.List;
+import org.apache.http.NameValuePair;
+import java.util.ArrayList;
+import org.apache.http.message.BasicNameValuePair;
 
 import org.apache.log4j.Logger;
 import org.orbeon.oxf.util.LoggerFactory;
@@ -99,7 +106,7 @@ public class HttpClientProcessor extends SimpleProcessor {
 				Document configDocument = readInputAsDOM4J(context, INPUT_CONFIG);
 				Node configNode = configDocument.selectSingleNode("//config");
 
-				if (!configNode.valueOf("username").equals("")) {
+				if (configNode.valueOf("auth-method").equals("basic")) {
 					URL theURL = new URL(configNode.valueOf("url"));
 					HttpHost targetHost = new HttpHost(theURL.getHost(),theURL.getPort(),theURL.getProtocol());
 					//Authentication support
@@ -117,27 +124,28 @@ public class HttpClientProcessor extends SimpleProcessor {
 					httpContext = HttpClientContext.create();
 					httpContext.setCredentialsProvider(credsProvider);
 					httpContext.setAuthCache(authCache);
+				} else if (configNode.valueOf("auth-method").equals("form")) {
+					//Sign in. Cookie will be remembered bij httpclient
+					HttpPost authpost = new HttpPost(configNode.valueOf("auth-url"));
+					List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+					nameValuePairs.add(new BasicNameValuePair("userName", configNode.valueOf("username")));
+					nameValuePairs.add(new BasicNameValuePair("password", configNode.valueOf("password")));
+					authpost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+					CloseableHttpResponse httpResponse = httpclient.execute(authpost);
+					logger.info("Signin response:"+Integer.toString(httpResponse.getStatusLine().getStatusCode()));
 				}
 				
 				CloseableHttpResponse response;
 				if (configNode.valueOf("method").equals("post")) {
 					// POST
-					// Read content of input pipe
-					String jsonstr = determineJsonBody(context, configNode);					
 					HttpPost httpRequest = new HttpPost(configNode.valueOf("url"));
-					StringEntity body = new StringEntity(jsonstr);
-					httpRequest.setEntity(body);
-
+					setBody(httpRequest,context,configNode);
 					response = executeRequest(httpRequest, httpclient);
-					logger.debug("With body: " + jsonstr);
 				} else if (configNode.valueOf("method").equals("put")) {
 					// PUT
-					String jsonstr = determineJsonBody(context, configNode);					
 					HttpPut httpRequest = new HttpPut(configNode.valueOf("url"));
-					StringEntity body = new StringEntity(jsonstr);
-					httpRequest.setEntity(body);
+					setBody(httpRequest,context,configNode);
 					response = executeRequest(httpRequest, httpclient);
-					logger.debug("With body: " + jsonstr);
 				} else if (configNode.valueOf("method").equals("delete")) {
 					//DELETE
 					HttpDelete httpRequest = new HttpDelete(configNode.valueOf("url"));
@@ -147,7 +155,7 @@ public class HttpClientProcessor extends SimpleProcessor {
 					HttpHead httpRequest = new HttpHead(configNode.valueOf("url"));
 					response = executeRequest(httpRequest, httpclient);
 				} else if (configNode.valueOf("method").equals("options")) {
-					//HEAD
+					//OPTIONS
 					HttpOptions httpRequest = new HttpOptions(configNode.valueOf("url"));
 					response = executeRequest(httpRequest, httpclient);
 				} else {
@@ -202,21 +210,31 @@ public class HttpClientProcessor extends SimpleProcessor {
 		}
     }
     
-    private String determineJsonBody(PipelineContext context, Node configNode) {
-    	Document dataDocument = readInputAsDOM4J(context, INPUT_DATA);
-		String jsonstr;
-		if (configNode.valueOf("input-type").equals("json")) {
-			//Conversion of XML input to JSON
-			JSONObject jsondata = new JSONObject();
-			populateJSONObject(jsondata,dataDocument);
-			jsonstr = jsondata.toString();
+	private void setBody(HttpEntityEnclosingRequestBase httpRequest, PipelineContext context, Node configNode) throws IOException {
+		Document dataDocument = readInputAsDOM4J(context, INPUT_DATA);
+		if (configNode.valueOf("input-type").equals("form")) {
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			Element rootElement = dataDocument.getRootElement();
+			Iterator<?> elit = rootElement.elementIterator();
+			while (elit.hasNext()) {
+				Element child = (Element) elit.next();
+				nameValuePairs.add(new BasicNameValuePair(child.getQName().getName(), child.getText()));
+			}
+			httpRequest.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 		} else {
-			//No conversion, just use plain text in input
-			jsonstr = dataDocument.getRootElement().getText();
+			String jsonstr;
+			if (configNode.valueOf("input-type").equals("json")) {
+				//Conversion of XML input to JSON
+				JSONObject jsondata = new JSONObject();
+				populateJSONObject(jsondata,dataDocument);
+				jsonstr = jsondata.toString();
+			} else {
+				//No conversion, just use plain text in input
+				jsonstr = dataDocument.getRootElement().getText();
+			}
+			httpRequest.setEntity(new StringEntity(jsonstr));
 		}
-		
-		return jsonstr;
-    }
+	}
 	
 	private void parseJSONObject(ContentHandler contentHandler, JSONObject json) throws SAXException {
 		Object[] names = json.names().toArray();
