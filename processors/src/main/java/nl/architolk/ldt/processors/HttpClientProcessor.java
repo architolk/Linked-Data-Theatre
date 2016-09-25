@@ -1,7 +1,7 @@
 /**
  * NAME     HttpClientProcessor.java
  * VERSION  1.10.0
- * DATE     2016-07-01
+ * DATE     2016-09-25
  *
  * Copyright 2012-2016
  *
@@ -57,6 +57,17 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.apache.http.entity.StringEntity;
 
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.AuthCache;
+import org.apache.http.impl.client.BasicAuthCache;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.HttpHost;
+import java.net.URL;
+
 import org.apache.log4j.Logger;
 import org.orbeon.oxf.util.LoggerFactory;
 
@@ -66,6 +77,8 @@ import net.sf.json.JSONArray;
 public class HttpClientProcessor extends SimpleProcessor {
 
     private static final Logger logger = LoggerFactory.createLogger(HttpClientProcessor.class);
+	
+	private HttpClientContext httpContext = null;
 	
 	// NAMESPACE_URI should be added to the properties (as stated in http://wiki.orbeon.com/forms/doc/developer-guide/api-xpl-processor-api)
 	// Won't do this time: no validation of CONFIG
@@ -86,6 +99,26 @@ public class HttpClientProcessor extends SimpleProcessor {
 				Document configDocument = readInputAsDOM4J(context, INPUT_CONFIG);
 				Node configNode = configDocument.selectSingleNode("//config");
 
+				if (!configNode.valueOf("username").equals("")) {
+					URL theURL = new URL(configNode.valueOf("url"));
+					HttpHost targetHost = new HttpHost(theURL.getHost(),theURL.getPort(),theURL.getProtocol());
+					//Authentication support
+					CredentialsProvider credsProvider = new BasicCredentialsProvider();
+					credsProvider.setCredentials(
+						AuthScope.ANY, 
+						new UsernamePasswordCredentials(configNode.valueOf("username"), configNode.valueOf("password"))
+					);
+					logger.info("Credentials: "+configNode.valueOf("username")+"/"+configNode.valueOf("password"));
+					// Create AuthCache instance
+					AuthCache authCache = new BasicAuthCache();
+					authCache.put(targetHost,new BasicScheme());
+
+					// Add AuthCache to the execution context
+					httpContext = HttpClientContext.create();
+					httpContext.setCredentialsProvider(credsProvider);
+					httpContext.setAuthCache(authCache);
+				}
+				
 				CloseableHttpResponse response;
 				if (configNode.valueOf("method").equals("post")) {
 					// POST
@@ -161,7 +194,12 @@ public class HttpClientProcessor extends SimpleProcessor {
     
     private CloseableHttpResponse executeRequest(HttpRequestBase httpRequest, CloseableHttpClient httpclient) throws ClientProtocolException, IOException {
     	logger.info("Executing request " + httpRequest.getRequestLine());
-		return httpclient.execute(httpRequest);
+		if (httpContext!=null) {
+			logger.info("With httpContext" + httpContext.toString());
+			return httpclient.execute(httpRequest,httpContext);
+		} else {
+			return httpclient.execute(httpRequest);
+		}
     }
     
     private String determineJsonBody(PipelineContext context, Node configNode) {
