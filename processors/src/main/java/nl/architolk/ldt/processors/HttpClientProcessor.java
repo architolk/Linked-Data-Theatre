@@ -1,7 +1,7 @@
 /**
  * NAME     HttpClientProcessor.java
  * VERSION  1.10.0
- * DATE     2016-09-25
+ * DATE     2016-09-27
  *
  * Copyright 2012-2016
  *
@@ -81,7 +81,69 @@ import org.orbeon.oxf.util.LoggerFactory;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONArray;
 
+import org.apache.any23.Any23;
+import org.apache.any23.writer.RDFXMLWriter;
+import org.apache.any23.writer.TripleHandler;
+import org.apache.any23.source.DocumentSource;
+import org.apache.any23.source.StringDocumentSource;
+import java.io.ByteArrayOutputStream;
+
+import java.io.ByteArrayInputStream;
+import org.xml.sax.Attributes;
+import org.xml.sax.XMLReader;
+import org.xml.sax.InputSource;
+import org.xml.sax.helpers.DefaultHandler;
+import org.orbeon.oxf.xml.XMLParsing;
+import org.xml.sax.Locator;
+
 public class HttpClientProcessor extends SimpleProcessor {
+
+	//The ParseHandler is a ContentHandler that doesn't forward the startDocument and endDocument events.
+	//This means that it can be used to insert a parsed document into an existing XML element
+	protected static class ParseHandler implements ContentHandler {
+	
+		private ContentHandler myContentHandler;
+		private Logger myLogger;
+	
+		public ParseHandler(ContentHandler contentHandler) {
+			super();
+			this.myContentHandler = contentHandler;
+		}
+	
+		//Ignore startDocument and endDocument
+		public void startDocument() throws SAXException {};
+		public void endDocument() throws SAXException {};
+		
+		//Forward all other events to the real ContentHandler
+		public void startElement(String uri, String localname, String qName, Attributes attributes) throws SAXException {
+			myContentHandler.startElement(uri, localname, qName, attributes);
+		}
+		public void endElement(String uri, String localname, String qName) throws SAXException {
+			myContentHandler.endElement(uri, localname, qName);
+		}
+		public void characters(char[] chars, int start, int length) throws SAXException {
+			myContentHandler.characters(chars, start, length);
+		}
+		public void setDocumentLocator(Locator locator) {
+			myContentHandler.setDocumentLocator(locator);
+		}
+		public void startPrefixMapping(java.lang.String prefix, java.lang.String uri) throws SAXException {
+			myContentHandler.startPrefixMapping(prefix,uri);
+		}
+		public void endPrefixMapping(java.lang.String prefix) throws SAXException {
+			myContentHandler.endPrefixMapping(prefix);
+		}
+		public void ignorableWhitespace(char[] ch,int start,int length) throws SAXException {
+			myContentHandler.ignorableWhitespace(ch,start,length);
+		}
+		public void processingInstruction(java.lang.String target,java.lang.String data) throws SAXException {
+			myContentHandler.processingInstruction(target,data);
+		}
+		public void skippedEntity(java.lang.String name) throws SAXException {
+			myContentHandler.skippedEntity(name);
+		}
+		
+	}
 
     private static final Logger logger = LoggerFactory.createLogger(HttpClientProcessor.class);
 	
@@ -180,6 +242,34 @@ public class HttpClientProcessor extends SimpleProcessor {
 							if (configNode.valueOf("output-type").equals("json")) {
 								JSONObject json = JSONObject.fromObject(responseBody);
 								parseJSONObject(contentHandler,json);
+							} else if (configNode.valueOf("output-type").equals("xml")) {
+								try {
+									ByteArrayInputStream inStream = new ByteArrayInputStream(responseBody.getBytes("UTF-8"));
+									XMLReader saxParser = XMLParsing.newXMLReader(new XMLParsing.ParserConfiguration(false,false,false));
+									saxParser.setContentHandler(new ParseHandler(contentHandler));
+									saxParser.parse(new InputSource(inStream));
+								} catch (Exception e) {
+									throw new OXFException(e);
+								}
+							} else if (configNode.valueOf("output-type").equals("rdf")) {
+								try {
+									Any23 runner = new Any23();
+									DocumentSource source = new StringDocumentSource(responseBody,"http://localhost");
+									ByteArrayOutputStream out = new ByteArrayOutputStream();
+									TripleHandler handler = new RDFXMLWriter(out);
+									try {
+										runner.extract(source,handler);
+									} finally {
+										handler.close();
+									}
+									ByteArrayInputStream inStream = new ByteArrayInputStream(out.toByteArray());
+									XMLReader saxParser = XMLParsing.newXMLReader(new XMLParsing.ParserConfiguration(false,false,false));
+									saxParser.setContentHandler(new ParseHandler(contentHandler));
+									saxParser.parse(new InputSource(inStream));
+
+								} catch (Exception e) {
+									throw new OXFException(e);
+								}
 							} else {
 								contentHandler.characters(responseBody.toCharArray(), 0, responseBody.length());
 							}
