@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2graphjson.xsl
-    VERSION  1.11.0
-    DATE     2016-09-18
+    VERSION  1.11.1-SNAPSHOT
+    DATE     2016-09-26
 
     Copyright 2012-2016
 
@@ -55,8 +55,11 @@
 		<xsl:value-of select="$rdfs-label"/>
 		<xsl:if test="$rdfs-label=''"><xsl:value-of select="$uri"/></xsl:if>
 	</xsl:variable>
-	<xsl:variable name="style"><xsl:value-of select="key('resource',$uri)/elmo:style/@rdf:resource"/></xsl:variable>
-	<xsl:variable name="class"><xsl:value-of select="key('resource',$style)/elmo:name"/></xsl:variable>
+	<xsl:variable name="class">
+		<xsl:for-each select="key('resource',$uri)/elmo:style">
+			<xsl:value-of select="key('resource',@rdf:resource)/elmo:name"/>
+		</xsl:for-each>
+	</xsl:variable>
 	<xsl:text>"nodes":[</xsl:text>
 	<xsl:text>{"@id":"</xsl:text><xsl:value-of select="$uri"/><xsl:text>"</xsl:text>
 	<xsl:text>,"label":"</xsl:text><xsl:value-of select="translate($label,$dblquote,$quote)"/><xsl:text>"</xsl:text>
@@ -79,8 +82,11 @@
 			<xsl:value-of select="$ordfs-label"/>
 			<xsl:if test="$ordfs-label=''"><xsl:value-of select="$ouri"/></xsl:if>
 		</xsl:variable>
-		<xsl:variable name="ostyle"><xsl:value-of select="key('resource',$ouri)/elmo:style/@rdf:resource"/></xsl:variable>
-		<xsl:variable name="oclass"><xsl:value-of select="key('resource',$ostyle)/elmo:name"/></xsl:variable>
+		<xsl:variable name="oclass">
+			<xsl:for-each select="key('resource',$ouri)/elmo:style">
+				<xsl:value-of select="key('resource',@rdf:resource)/elmo:name"/>
+			</xsl:for-each>
+		</xsl:variable>
 		<xsl:text>,{"@id":"</xsl:text><xsl:value-of select="$ouri"/><xsl:text>"</xsl:text>
 		<xsl:text>,"label":"</xsl:text><xsl:value-of select="translate($olabel,$dblquote,$quote)"/><xsl:text>"</xsl:text>
 		<xsl:if test="$oclass!=''">
@@ -105,8 +111,11 @@
 				<xsl:value-of select="$ordfs-label"/>
 				<xsl:if test="$ordfs-label=''"><xsl:value-of select="$ouri"/></xsl:if>
 			</xsl:variable>
-			<xsl:variable name="ostyle"><xsl:value-of select="key('resource',$ouri)/elmo:style/@rdf:resource"/></xsl:variable>
-			<xsl:variable name="oclass"><xsl:value-of select="key('resource',$ostyle)/elmo:name"/></xsl:variable>
+			<xsl:variable name="oclass">
+				<xsl:for-each select="key('resource',$ouri)/elmo:style">
+					<xsl:value-of select="key('resource',@rdf:resource)/elmo:name"/>
+				</xsl:for-each>
+			</xsl:variable>
 			<xsl:text>,{"@id":"</xsl:text><xsl:value-of select="$ouri"/><xsl:text>"</xsl:text>
 			<xsl:text>,"label":"</xsl:text><xsl:value-of select="translate($olabel,$dblquote,$quote)"/><xsl:text>"</xsl:text>
 			<xsl:if test="$oclass!=''">
