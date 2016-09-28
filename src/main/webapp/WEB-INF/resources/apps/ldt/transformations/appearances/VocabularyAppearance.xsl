@@ -1,8 +1,8 @@
 <!--
 
     NAME     VocabularyAppearance.xsl
-    VERSION  1.11.0
-    DATE     2016-09-18
+    VERSION  1.11.1-SNAPSHOT
+    DATE     2016-09-28
 
     Copyright 2012-2016
 
@@ -57,6 +57,7 @@
 			<term id="Properties">Eigenschappen</term>
 			<term id="Classes:">Klassen:</term>
 			<term id="Properties:">Eigenschappen:</term>
+			<term id="Subproperty of:">Subeigenschap van:</term>
 			<term id="Properties include:">Eigenschappen:</term>
 			<term id="Property of:">Eigenschap van:</term>
 			<term id="Class of object:">Gerelateerde klasse:</term>
@@ -73,15 +74,22 @@
 
 <xsl:template match="@rdf:resource|@rdf:about|@uri" mode="link">
 	<xsl:param name="prefix"/>
+	<xsl:param name="label"/>
 	
-	<xsl:variable name="name" select="replace(.,'^.*(#|/)([^(#|/)]+)$','$2')"/>
+	<xsl:variable name="name">
+		<xsl:value-of select="$label"/>
+		<xsl:if test="not($label!='')"><xsl:value-of select="replace(.,'^.*(#|/)([^(#|/)]+)$','$2')"/></xsl:if>
+	</xsl:variable>
 	<xsl:choose>
 		<xsl:when test="$name=substring-after(.,$prefix)">
 			<a href="#{$name}"><xsl:value-of select="$name"/></a>
 		</xsl:when>
 		<xsl:otherwise>
+			<!--
 			<xsl:variable name="resource-uri"><xsl:call-template name="resource-uri"><xsl:with-param name="uri" select="."/></xsl:call-template></xsl:variable>
 			<a href="{$resource-uri}"><xsl:value-of select="$name"/></a>
+			-->
+			<a href="{.}"><xsl:value-of select="$name"/></a>
 		</xsl:otherwise>
 	</xsl:choose>
 </xsl:template>
@@ -108,7 +116,10 @@
 			<td>
 				<xsl:for-each select="super"><xsl:sort select="@uri"/>
 					<xsl:if test="position()!=1">, </xsl:if>
-					<xsl:apply-templates select="@uri" mode="link"><xsl:with-param name="prefix" select="$prefix"/></xsl:apply-templates>
+					<xsl:apply-templates select="@uri" mode="link">
+						<xsl:with-param name="prefix" select="$prefix"/>
+						<xsl:with-param name="label" select="@label"/>
+					</xsl:apply-templates>
 				</xsl:for-each>
 			</td>
 		</tr>
@@ -120,6 +131,20 @@
 				<xsl:for-each select="sub"><xsl:sort select="@uri"/>
 					<xsl:if test="position()!=1">, </xsl:if>
 					<xsl:apply-templates select="@uri" mode="link"><xsl:with-param name="prefix" select="$prefix"/></xsl:apply-templates>
+				</xsl:for-each>
+			</td>
+		</tr>
+	</xsl:if>
+	<xsl:if test="exists(seeAlso)">
+		<tr>
+			<td><xsl:value-of select="ldt:label('See also:')"/></td>
+			<td>
+				<xsl:for-each select="seeAlso"><xsl:sort select="@uri"/>
+					<xsl:if test="position()!=1">, </xsl:if>
+					<xsl:apply-templates select="@uri" mode="link">
+						<xsl:with-param name="prefix" select="$prefix"/>
+						<xsl:with-param name="label" select="@label"/>
+					</xsl:apply-templates>
 				</xsl:for-each>
 			</td>
 		</tr>
@@ -251,14 +276,24 @@
 		<xsl:for-each-group select="rdf:Description[rdf:type/@rdf:resource='http://www.w3.org/2002/07/owl#Class' or rdf:type/@rdf:resource='http://www.w3.org/2000/01/rdf-schema#Class']" group-by="@rdf:about">
 			<xsl:variable name="about" select="@rdf:about"/>
 			<class uri="{$about}">
+				<xsl:if test="not(exists(* except rdf:type))"><xsl:attribute name="ref">true</xsl:attribute></xsl:if>
 				<xsl:for-each select="current-group()/rdfs:subClassOf">
-					<super uri="{@rdf:resource}"/>
+					<super uri="{@rdf:resource}">
+						<xsl:variable name="ref" select="@rdf:resource"/>
+						<xsl:if test="not(exists(../../rdf:Description[@rdf:about=$ref]/(* except rdf:type)))"><xsl:attribute name="label" select="$ref"/></xsl:if>
+					</super>
 				</xsl:for-each>
 				<xsl:for-each select="../rdf:Description[rdfs:subClassOf/@rdf:resource=$about]">
 					<sub uri="{@rdf:about}"/>
 				</xsl:for-each>
 				<xsl:for-each select="current-group()/rdfs:comment">
 					<comment><xsl:value-of select="."/></comment>
+				</xsl:for-each>
+				<xsl:for-each select="current-group()/rdfs:seeAlso">
+					<seeAlso uri="{@rdf:resource}">
+						<xsl:variable name="ref" select="@rdf:resource"/>
+						<xsl:if test="not(exists(../../rdf:Description[@rdf:about=$ref]/(* except rdf:type)))"><xsl:attribute name="label" select="$ref"/></xsl:if>
+					</seeAlso>
 				</xsl:for-each>
 				<xsl:copy-of select="$all-shapes/shape[@class-uri=$about]/property"/>
 			</class>
@@ -269,6 +304,7 @@
 		<xsl:for-each-group select="rdf:Description[rdf:type/@rdf:resource='http://www.w3.org/2002/07/owl#DatatypeProperty' or rdf:type/@rdf:resource='http://www.w3.org/2002/07/owl#ObjectProperty' or rdf:type/@rdf:resource='http://www.w3.org/1999/02/22-rdf-syntax-ns#Property']" group-by="@rdf:about">
 			<xsl:variable name="about" select="@rdf:about"/>
 			<property uri="{$about}">
+				<xsl:if test="not(exists(* except rdf:type))"><xsl:attribute name="ref">true</xsl:attribute></xsl:if>
 				<xsl:for-each select="$all-classes/class/property[@uri=$about]">
 					<scope-class uri="{../@uri}"/>
 				</xsl:for-each>
@@ -281,6 +317,15 @@
 				<xsl:for-each-group select="$all-predicates/property[@predicate=$about]/domain" group-by="@uri">
 					<domain uri="{@uri}"/>
 				</xsl:for-each-group>
+				<xsl:for-each select="current-group()/rdfs:subPropertyOf">
+					<super uri="{@rdf:resource}">
+						<xsl:variable name="ref" select="@rdf:resource"/>
+						<xsl:if test="not(exists(../../rdf:Description[@rdf:about=$ref]/(* except rdf:type)))"><xsl:attribute name="label" select="$ref"/></xsl:if>
+					</super>
+				</xsl:for-each>
+				<xsl:for-each select="../rdf:Description[rdfs:subPropertyOf/@rdf:resource=$about]">
+					<sub uri="{@rdf:about}"/>
+				</xsl:for-each>
 				<xsl:for-each select="current-group()/rdfs:comment">
 					<comment><xsl:value-of select="."/></comment>
 				</xsl:for-each>
@@ -362,7 +407,7 @@
 			<h3 class="panel-title"><xsl:value-of select="ldt:label('Classes')"/></h3>
 		</div>
 		<div class="panel-body">
-			<xsl:for-each select="$all-classes/class[exists(property)]"><xsl:sort select="@uri"/>
+			<xsl:for-each select="$all-classes/class[exists(property) and not(exists(@ref))]"><xsl:sort select="@uri"/>
 				<xsl:apply-templates select="." mode="class-header2">
 					<xsl:with-param name="prefix" select="$prefix"/>
 				</xsl:apply-templates>
@@ -383,7 +428,7 @@
 					</tbody>
 				</table>
 			</xsl:for-each>
-			<xsl:for-each select="$all-classes/class[not(exists(property))]"><xsl:sort select="@uri"/>
+			<xsl:for-each select="$all-classes/class[not(exists(property)) and not(exists(@ref))]"><xsl:sort select="@uri"/>
 				<xsl:apply-templates select="." mode="class-header2">
 					<xsl:with-param name="prefix" select="$prefix"/>
 				</xsl:apply-templates>
@@ -403,7 +448,7 @@
 			<h3 class="panel-title"><xsl:value-of select="ldt:label('Properties')"/></h3>
 		</div>
 		<div class="panel-body">
-			<xsl:for-each select="$all-properties/property"><xsl:sort select="@uri"/>
+			<xsl:for-each select="$all-properties/property[not(exists(@ref))]"><xsl:sort select="@uri"/>
 				<xsl:variable name="puri" select="@uri"/>
 				<xsl:variable name="name" select="replace(@uri,'^.*(#|/)([^(#|/)]+)$','$2')"/>
 				<xsl:variable name="resource-uri"><xsl:call-template name="resource-uri"><xsl:with-param name="uri" select="@uri"/></xsl:call-template></xsl:variable>
@@ -424,6 +469,20 @@
 								</xsl:for-each>
 							</td>
 						</tr>
+						<xsl:if test="exists(super)">
+							<tr>
+								<td><xsl:value-of select="ldt:label('Subproperty of:')"/></td>
+								<td>
+									<xsl:for-each select="super"><xsl:sort select="@uri"/>
+										<xsl:if test="position()!=1">, </xsl:if>
+										<xsl:apply-templates select="@uri" mode="link">
+											<xsl:with-param name="prefix" select="$prefix"/>
+											<xsl:with-param name="label" select="@label"/>
+										</xsl:apply-templates>
+									</xsl:for-each>
+								</td>
+							</tr>
+						</xsl:if>
 						<xsl:if test="exists(class)">
 							<tr>
 								<td><xsl:value-of select="ldt:label('Class of object:')"/></td>
@@ -474,6 +533,26 @@
 				node.parentElement.children[2].className='hide'
 			}
 		};
+		function expandShallowNodes(cnt,node) {
+			if ($(node).children("li").length+cnt&lt;20) {
+				if (cnt!=0) {
+					node.className='';
+					node.parentElement.className='has-child';
+					node.parentElement.children[1].children[0].className='fa fa-minus-square';
+				}
+				$(node).children("li").each(function() {
+					if(this.children[2]) {
+						cnt = expandShallowNodes($(node).children("li").length+cnt,this.children[2]);
+					}
+				});
+			}
+			return cnt
+		}
+		$(".nav-tree").each(function() {
+			if ($(this).children("ul")) {
+				expandShallowNodes(0,$(this).children("ul")[0]);
+			}
+		});
 	</script>
 </xsl:template>
 
