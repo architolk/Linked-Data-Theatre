@@ -1,0 +1,37 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+stage:GraphAppearanceSimple	a	elmo:Representation;
+	elmo:url-pattern	"/query/GraphAppearanceSimple$";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:GraphAppearance;
+	elmo:query '''
+		construct {
+			<@SUBJECT@> rdfs:label ?subjectlabel.
+
+			<@SUBJECT@> ?torelation ?toperson.
+			?toperson rdfs:label ?topersonlabel.
+
+			?fromperson ?fromrelation <@SUBJECT@>.
+			?fromperson rdfs:label ?frompersonlabel.
+		}
+		where {
+			{
+				<@SUBJECT@> rdfs:label ?subjectlabel.
+			}
+			UNION
+			{
+				<@SUBJECT@> ?torelation ?toperson.
+				?toperson rdfs:label ?topersonlabel.
+			}
+			UNION
+			{
+				?fromperson ?fromrelation <@SUBJECT@>.
+				?fromperson rdfs:label ?frompersonlabel.
+			}
+		}
+	''';
+.
