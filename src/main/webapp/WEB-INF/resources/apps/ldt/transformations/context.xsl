@@ -1,8 +1,8 @@
 <!--
 
     NAME     context.xsl
-    VERSION  1.10.0
-    DATE     2016-08-29
+    VERSION  1.11.0
+    DATE     2016-09-18
 
     Copyright 2012-2016
 
@@ -59,8 +59,8 @@
 			<xsl:value-of select="$subdomain1"/>
 		</xsl:variable>
 		<xsl:variable name="url-stage" select="replace($subdomain,'^/([^/]+)','$1')"/>
-		<xsl:variable name="stage" select="theatre/site[@domain=$domain]/stage[not(@name!='') or @name=$url-stage]"/>
-		<xsl:variable name="backstage" select="theatre/site[@backstage=$domain]/stage[not(@name!='') or @name=$url-stage]"/>
+		<xsl:variable name="stage" select="theatre/site[@domain=$domain]/stage[not(@name!='') or @name=substring($subdomain,2,string-length(@name))][1]"/>
+		<xsl:variable name="backstage" select="theatre/site[@backstage=$domain]/stage[not(@name!='') or @name=substring($subdomain,2,string-length(@name))][1]"/>
 		<xsl:variable name="config">
 			<xsl:choose>
 				<xsl:when test="exists($stage)">
@@ -163,8 +163,10 @@
 					<xsl:when test="theatre/format='csv'">text/csv</xsl:when>
 					<xsl:when test="theatre/format='ttl'">text/turtle</xsl:when>
 					<xsl:when test="theatre/format='json'">application/json</xsl:when>
+					<xsl:when test="theatre/format='jsonld'">application/json</xsl:when>
 					<xsl:when test="theatre/format='xlsx'">application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</xsl:when>
 					<xsl:when test="theatre/format='docx'">application/vnd.openxmlformats-officedocument.wordprocessingml.document</xsl:when>
+					<xsl:when test="theatre/format='pdf'">application/rdf</xsl:when>
 					<xsl:when test="theatre/format='xmi'">application/vnd.xmi+xml</xsl:when>
 					<xsl:when test="theatre/format='svgi'">application/x.elmo.svg+xml</xsl:when> <!-- Application specific mime-type -->
 					<xsl:when test="theatre/format='d3json'">application/x.elmo.d3+json</xsl:when> <!-- Application specific mime-type -->
@@ -174,7 +176,10 @@
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'text/turtle')">text/turtle</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'text/csv')">text/csv</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/json')">application/json</xsl:when>
+					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/ld+json')">application/json</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')">application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</xsl:when>
+					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/vnd.openxmlformats-officedocument.wordprocessingml.document')">application/vnd.openxmlformats-officedocument.wordprocessingml.document</xsl:when>
+					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/rdf')">application/rdf</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/vnd.xmi+xml')">application/vnd.xmi+xml</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'text/html')">text/html</xsl:when>
 					<xsl:otherwise>text/html</xsl:otherwise> <!-- If all fails: simply html -->

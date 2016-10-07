@@ -1,0 +1,42 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+stage:NavbarSearchAppearance a elmo:Part;
+	elmo:appearance elmo:NavbarSearchAppearance;
+	elmo:index "~";
+	elmo:data [
+		rdfs:label "Linked Data Theater"@nl;
+		rdfs:label "Linked Data Theatre"@en;
+		elmo:data [
+			elmo:index "1";
+			rdfs:label "Appearances";
+			elmo:data [elmo:index "1"; rdfs:label "HtmlAppearance"; html:link "/"];
+			elmo:data [elmo:index "2"; rdfs:label "MarkdownAppearance"; html:link "/query/MarkdownAppearance"];
+			elmo:data [elmo:index "3"; rdfs:label "GraphAppearance"; html:link "/query/GraphAppearance?subject=http://localhost:8080/id/character/Bilbo"];
+			elmo:data [elmo:index "4"; rdfs:label "VocabularyAppearance"; html:link "/def/lotr"];
+		];
+		elmo:data [
+			elmo:index "2";
+			rdfs:label "Specific tests"@en;
+			rdfs:label "Specifieke testen"@nl;
+			elmo:data [elmo:index "1"; rdfs:label "Global links"; html:link "/query/GlobalLinks"];
+			elmo:data [elmo:index "2"; rdfs:label "Formats - SELECT"; html:link "/query/SelectFormats"];
+			elmo:data [elmo:index "3"; rdfs:label "Formats - CONSTRUCT"; html:link "/query/ConstructFormats"];
+			elmo:data [elmo:index "4"; rdfs:label "Stylesheet"; html:link "/query/StylesheetTest"];
+			elmo:data [elmo:index "5"; rdfs:label "Simple graph appearance"; html:link "/query/GraphAppearanceSimple?subject=http://localhost:8080/id/character/Bilbo"];
+		];
+		elmo:data [
+			elmo:index "3";
+			rdfs:label "Triplestore tests";
+			elmo:data [elmo:index "1"; rdfs:label "Formats - SELECT"; html:link "/query/sesame/SelectFormats"];
+			elmo:data [elmo:index "1"; rdfs:label "Formats - CONSTRUCT"; html:link "/query/sesame/ConstructFormats"];
+		];
+		elmo:data [
+			elmo:index "4";
+			rdfs:label "Vocabulary";
+			html:link "/query/elmo";
+		]
+	];
+.

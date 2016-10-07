@@ -1,8 +1,8 @@
 <!--
 
     NAME     config.xml
-    VERSION  1.10.0
-    DATE     2016-08-29
+    VERSION  1.11.0
+    DATE     2016-09-18
 
     Copyright 2012-2016
 
@@ -84,11 +84,12 @@
 		<stage/>
 	</site>
 	<!-- Optional: include a third site, with two stages and a backstage for every stage -->
+	<!-- PLEASE NOTE that the order of stages is important: if two stages are a possible match for a URL, the first stage will be used. This means that the "mainstage" should always be the last stage! -->
 	<!-- Example -->
 	<!--
 	<site domain="localhost:8080" backstage="localhost:8080">
-		<stage name=""/>
 		<stage name="stage2"/>
+		<stage name=""/>
 	</site>
 	-->
 	<!-- End example -->

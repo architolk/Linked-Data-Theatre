@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2rdfa.xsl
-    VERSION  1.10.0
-    DATE     2016-08-29
+    VERSION  1.11.0
+    DATE     2016-09-18
 
     Copyright 2012-2016
 
@@ -170,6 +170,8 @@
 	</xsl:variable>
 	<rdf:RDF elmo:appearance="{$appearance}" elmo:query="{$representation-uri}">
 		<xsl:if test="exists(@container)"><xsl:attribute name="elmo:container"><xsl:value-of select="@container"/></xsl:attribute></xsl:if>
+		<xsl:if test="exists(@name)"><xsl:attribute name="elmo:name"><xsl:value-of select="@name"/></xsl:attribute></xsl:if>
+		<xsl:if test="exists(@label)"><xsl:attribute name="elmo:label"><xsl:value-of select="@label"/></xsl:attribute></xsl:if>
 		<xsl:choose>
 			<xsl:when test="queryForm/@satisfied!='' and queryForm/@geo='yes'">
 				<!-- If nothing is available, show center of the map (Netherlands, RD Amersfoort) -->

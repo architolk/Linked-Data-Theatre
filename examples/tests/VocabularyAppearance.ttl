@@ -1,0 +1,48 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+stage:VocabularyAppearance	a	elmo:Representation;
+	elmo:uri-pattern	"^http://localhost:8080/def/lotr(\\.(xml|ttl|json))?$";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:VocabularyAppearance;
+	elmo:query '''
+		prefix dcterms: <http://purl.org/dc/terms/>
+		prefix shacl: <http://www.w3.org/ns/shacl#>
+		CONSTRUCT {
+			?element rdf:type ?type.
+			?element rdfs:label ?label.
+			?element rdfs:comment ?def.
+			?element rdfs:subClassOf ?super.
+			?shape shacl:scopeClass ?element.
+			?shape shacl:property ?pc.
+			?pc shacl:predicate ?pred.
+			?pc shacl:class ?class.
+			?pc shacl:datatype ?datatype.
+			?pc shacl:in ?collection.
+		}
+		WHERE {
+			GRAPH <http://localhost:8080/stage> {
+				?element rdf:type ?type.
+				OPTIONAL {?element rdfs:label ?label}
+				OPTIONAL {?element rdfs:comment ?def}
+				OPTIONAL {
+					?element dcterms:subject ?begrip.
+					?begrip skos:definition ?def.
+				}
+				OPTIONAL {?element rdfs:subClassOf ?super}
+				OPTIONAL {
+					?shape shacl:scopeClass ?element.
+					?shape shacl:property ?pc.
+					?pc shacl:predicate ?pred.
+					OPTIONAL {?pc shacl:class ?class}
+					OPTIONAL {?pc shacl:datatype ?datatype}
+					OPTIONAL {?pc shacl:in ?collection}
+				}
+				FILTER (?type = owl:Class || ?type = owl:DatatypeProperty || ?type = owl:ObjectProperty || ?type = owl:Ontology)
+			}
+		}
+	'''
+.

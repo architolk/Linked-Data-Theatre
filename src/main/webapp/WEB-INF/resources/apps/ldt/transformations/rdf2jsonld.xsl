@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2jsonld.xsl
-    VERSION  1.10.0
-    DATE     2016-08-29
+    VERSION  1.11.0
+    DATE     2016-09-18
 
     Copyright 2012-2016
 
@@ -48,13 +48,32 @@
 	</xsl:for-each-group>
 	<!-- Prefixes used in local xlmns properties -->
 	<xsl:for-each-group select="results/rdf:RDF[1]/rdf:Description/*[substring-before(name(),':')='']" group-by="namespace-uri()">
-		<xsl:variable name="prefix" select="replace(namespace-uri(),'.*/([^/]*)#','$1')"/>
+		<xsl:variable name="prefix" select="replace(namespace-uri(),'.*/([^/]*)(#|/)','$1')"/>
 		<xsl:choose>
 			<xsl:when test="$prefix!=''"><prefix name="{$prefix}"><xsl:value-of select="namespace-uri()"/></prefix></xsl:when>
 			<xsl:otherwise><prefix name="n{position()}"><xsl:value-of select="namespace-uri()"/></prefix></xsl:otherwise>
 		</xsl:choose>
 	</xsl:for-each-group>
 </xsl:variable>
+
+<xsl:template match="*" mode="constructliteral">
+	<xsl:choose>
+		<xsl:when test="exists(@rdf:resource)">"<xsl:value-of select="@rdf:resource"/>"</xsl:when>
+		<xsl:when test="@rdf:datatype='http://www.w3.org/2001/XMLSchema#integer'"><xsl:value-of select="."/></xsl:when>
+		<xsl:when test="@rdf:datatype='http://www.w3.org/2001/XMLSchema#decimal'"><xsl:value-of select="."/></xsl:when>
+		<xsl:when test="@rdf:datatype='http://www.w3.org/2001/XMLSchema#boolean'"><xsl:value-of select="."/></xsl:when>
+		<xsl:otherwise>"<xsl:value-of select="translate(.,$dblquote,$quote)"/>"</xsl:otherwise>
+	</xsl:choose>
+</xsl:template>
+<xsl:template match="*" mode="selectliteral">
+	<xsl:choose>
+		<xsl:when test="exists(res:uri)">"<xsl:value-of select="res:uri"/>"</xsl:when>
+		<xsl:when test="res:literal/@datatype='http://www.w3.org/2001/XMLSchema#integer'"><xsl:value-of select="."/></xsl:when>
+		<xsl:when test="res:literal/@datatype='http://www.w3.org/2001/XMLSchema#decimal'"><xsl:value-of select="."/></xsl:when>
+		<xsl:when test="res:literal/@datatype='http://www.w3.org/2001/XMLSchema#boolean'"><xsl:value-of select="."/></xsl:when>
+		<xsl:otherwise>"<xsl:value-of select="translate(res:literal,$dblquote,$quote)"/>"</xsl:otherwise>
+	</xsl:choose>
+</xsl:template>
 
 <!-- Select -->
 <xsl:template match="res:sparql">
@@ -65,7 +84,7 @@
 ,"graph":
 [<xsl:for-each select="res:results/res:result"><xsl:if test="position()!=1">,</xsl:if>
 	{<xsl:for-each select="res:binding"><xsl:if test="position()!=1">
-	,</xsl:if>"<xsl:value-of select="@name"/>": "<xsl:value-of select="translate(res:literal,$dblquote,$quote)"/><xsl:value-of select="res:uri"/>"</xsl:for-each>
+	,</xsl:if>"<xsl:value-of select="@name"/>": <xsl:apply-templates select="." mode="selectliteral"/></xsl:for-each>
 	}</xsl:for-each>
 ]
 }
@@ -99,7 +118,7 @@
 	,"<xsl:apply-templates select="." mode="property"/>": <xsl:choose><xsl:when test="exists(@rdf:nodeID)">
 		{<xsl:for-each select="key('bnodes',@rdf:nodeID)/*"><xsl:if test="position()!=1">
 		,</xsl:if>"<xsl:apply-templates select="." mode="property"/>": "<xsl:value-of select="."/>"</xsl:for-each>
-		}</xsl:when><xsl:otherwise>"<xsl:value-of select="translate(.,$dblquote,$quote)"/><xsl:value-of select="@rdf:resource"/>"</xsl:otherwise></xsl:choose></xsl:for-each>
+		}</xsl:when><xsl:otherwise><xsl:apply-templates select="." mode="constructliteral"/></xsl:otherwise></xsl:choose></xsl:for-each>
 	}</xsl:for-each-group>
 ]
 }</xsl:when>
@@ -108,7 +127,7 @@
 ,"<xsl:apply-templates select="." mode="property"/>": <xsl:choose><xsl:when test="exists(@rdf:nodeID)">
 	{<xsl:for-each select="key('bnodes',@rdf:nodeID)/*"><xsl:if test="position()!=1">
 	,</xsl:if>"<xsl:apply-templates select="." mode="property"/>": "<xsl:value-of select="."/>"</xsl:for-each>
-	}</xsl:when><xsl:otherwise>"<xsl:value-of select="translate(.,$dblquote,$quote)"/><xsl:value-of select="@rdf:resource"/>"</xsl:otherwise></xsl:choose></xsl:for-each>
+	}</xsl:when><xsl:otherwise><xsl:apply-templates select="." mode="constructliteral"/></xsl:otherwise></xsl:choose></xsl:for-each>
 		</xsl:for-each-group>
 }</xsl:otherwise>
 </xsl:choose>

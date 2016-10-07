@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2ttl.xsl
-    VERSION  1.10.0
-    DATE     2016-08-29
+    VERSION  1.11.0
+    DATE     2016-09-18
 
     Copyright 2012-2016
 
@@ -53,9 +53,20 @@
 			</xsl:for-each>
 		</xsl:otherwise>
 	</xsl:choose>
+	<prefix name="xsd">http://www.w3.org/2001/XMLSchema#</prefix>
 	<!-- Prefixes used in properties -->
 	<xsl:for-each-group select="results/rdf:RDF[1]/rdf:Description/*|xmlresult/rdf:RDF[1]/rdf:Description/*" group-by="substring-before(name(),':')">
-		<prefix name="{substring-before(name(),':')}"><xsl:value-of select="namespace-uri()"/></prefix>
+		<xsl:variable name="prefix" select="substring-before(name(),':')"/>
+		<xsl:choose>
+			<xsl:when test="$prefix!=''"><prefix name="{substring-before(name(),':')}"><xsl:value-of select="namespace-uri()"/></prefix></xsl:when>
+			<xsl:otherwise>
+				<xsl:for-each-group select="current-group()" group-by="namespace-uri()">
+					<xsl:if test="namespace-uri()!=''">
+						<prefix name="ns{position()}"><xsl:value-of select="namespace-uri()"/></prefix>
+					</xsl:if>
+				</xsl:for-each-group>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:for-each-group>
 	<!-- Prefixes used in about -->
 	<xsl:for-each-group select="results/rdf:RDF[1]/rdf:Description|xmlresult/rdf:RDF[1]/rdf:Description" group-by="replace(@rdf:about,'(/|#|\\)([0-9A-Za-z-_~]+)$','$1')"><xsl:sort select="replace(@rdf:about,'(/|#|\\)([0-9A-Za-z-_~]+)$','$1')" order="descending"/>
@@ -78,11 +89,42 @@
 	</xsl:choose>
 </xsl:template>
 
+<xsl:template match="*" mode="property">
+	<xsl:choose>
+		<xsl:when test="contains(name(),':') or namespace-uri()=''"><xsl:value-of select="name()"/></xsl:when>
+		<xsl:otherwise>
+			<xsl:variable name="ns" select="namespace-uri()"/>
+			<xsl:value-of select="$prefix/prefix[.=$ns]/@name"/>:<xsl:value-of select="name()"/>
+		</xsl:otherwise>
+	</xsl:choose>
+</xsl:template>
+
+<xsl:template match="*" mode="literal">
+	<xsl:choose>
+		<xsl:when test="contains(.,'&#10;') or contains(.,'&quot;')">'''<xsl:value-of select="."/>'''<xsl:apply-templates select="." mode="datatype"/></xsl:when>
+		<xsl:when test="@rdf:datatype='http://www.w3.org/2001/XMLSchema#integer'"><xsl:value-of select="."/></xsl:when>
+		<xsl:when test="@rdf:datatype='http://www.w3.org/2001/XMLSchema#decimal'"><xsl:value-of select="."/></xsl:when>
+		<xsl:when test="@rdf:datatype='http://www.w3.org/2001/XMLSchema#boolean'"><xsl:value-of select="."/></xsl:when>
+		<xsl:otherwise>"<xsl:value-of select="."/>"<xsl:apply-templates select="." mode="datatype"/></xsl:otherwise>
+	</xsl:choose>
+	<xsl:if test="not(@rdf:datatype!='') and @xml:lang!=''">@<xsl:value-of select="@xml:lang"/></xsl:if>
+</xsl:template>
+
+<xsl:template match="*" mode="datatype">
+	<xsl:if test="@rdf:datatype!=''">
+		<xsl:text>^^</xsl:text>
+		<xsl:choose>
+			<xsl:when test="matches(@rdf:datatype,'^http://www\.w3\.org/2001/XMLSchema#.+')">xsd:<xsl:value-of select="replace(@rdf:datatype,'^http://www\.w3\.org/2001/XMLSchema#(.+)','$1')"/></xsl:when>
+			<xsl:otherwise>&lt;<xsl:value-of select="@rdf:datatype"/>&gt;</xsl:otherwise>
+		</xsl:choose>
+	</xsl:if>
+</xsl:template>
+
 <xsl:template match="*" mode="triple"><xsl:param name="tab"/>
-<xsl:value-of select="name()"/><xsl:text> </xsl:text><xsl:choose><xsl:when test="exists(@rdf:resource)"><xsl:apply-templates select="@rdf:resource" mode="uri"/></xsl:when><xsl:when test="exists(@rdf:nodeID)">[
+<xsl:apply-templates select="." mode="property"/><xsl:text> </xsl:text><xsl:choose><xsl:when test="exists(@rdf:resource)"><xsl:apply-templates select="@rdf:resource" mode="uri"/></xsl:when><xsl:when test="exists(@rdf:nodeID)">[
 <xsl:for-each select="key('bnodes',@rdf:nodeID)/*"><xsl:if test="position()!=1">;
 </xsl:if><xsl:value-of select="substring($spaces,2,$tab)"/><xsl:apply-templates select="." mode="triple"><xsl:with-param name="tab" select="$tab+4"/></xsl:apply-templates></xsl:for-each><xsl:text>
-</xsl:text><xsl:value-of select="substring($spaces,2,-4+$tab)"/>]</xsl:when><xsl:when test="contains(.,'&#10;') or contains(.,'&quot;')">'''<xsl:value-of select="."/>'''<xsl:if test="@xml:lang!=''">@<xsl:value-of select="@xml:lang"/></xsl:if></xsl:when><xsl:otherwise>"<xsl:value-of select="."/>"<xsl:if test="@xml:lang!=''">@<xsl:value-of select="@xml:lang"/></xsl:if></xsl:otherwise></xsl:choose>
+</xsl:text><xsl:value-of select="substring($spaces,2,-4+$tab)"/>]</xsl:when><xsl:otherwise><xsl:apply-templates select="." mode="literal"/></xsl:otherwise></xsl:choose>
 </xsl:template>
 
 <xsl:template match="rdf:RDF">

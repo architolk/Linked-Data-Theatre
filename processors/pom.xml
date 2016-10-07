@@ -64,6 +64,16 @@
 			<version>2.4</version>
 			<classifier>jdk15</classifier>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.any23</groupId>
+			<artifactId>apache-any23-api</artifactId>
+			<version>1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.any23</groupId>
+			<artifactId>apache-any23-core</artifactId>
+			<version>1.1</version>
+		</dependency>
 		<!-- Dependencies MarkDownConverter -->
 		<dependency>
 			<groupId>com.github.rjeschke</groupId>

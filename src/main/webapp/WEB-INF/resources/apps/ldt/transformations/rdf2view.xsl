@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2view.xsl
-    VERSION  1.10.0
-    DATE     2016-08-29
+    VERSION  1.11.0
+    DATE     2016-09-18
 
     Copyright 2012-2016
 
@@ -103,6 +103,17 @@
 	<stylesheet href="{.}"/>
 </xsl:template>
 
+<xsl:template match="*" mode="label">
+	<xsl:variable name="language" select="/root/context/language"/>
+	<xsl:choose>
+		<xsl:when test="rdfs:label[@xml:lang=$language]!=''"><xsl:value-of select="rdfs:label[@xml:lang=$language]"/></xsl:when> <!-- First choice: language of browser -->
+		<xsl:when test="rdfs:label[not(exists(@xml:lang))]!=''"><xsl:value-of select="rdfs:label[not(exists(@xml:lang))]"/></xsl:when> <!-- Second choice: no language -->
+		<xsl:when test="rdfs:label[@xml:lang='nl']!=''"><xsl:value-of select="rdfs:label[@xml:lang='nl']"/></xsl:when> <!-- Third choice: dutch -->
+		<xsl:when test="rdfs:label[@xml:lang='en']!=''"><xsl:value-of select="rdfs:label[@xml:lang='en']"/></xsl:when> <!-- Fourth choice: english -->
+		<xsl:otherwise><xsl:value-of select="rdfs:label[1]"/></xsl:otherwise> <!-- If all fails, the first label -->
+	</xsl:choose>
+</xsl:template>
+
 <xsl:template match="/root">
 	<view>
 		<xsl:apply-templates select="rdf:RDF/rdf:Description[rdf:type/@rdf:resource!='http://bp4mc2.org/elmo/def#fragment']/html:stylesheet"/>
@@ -122,7 +133,7 @@
 					<xsl:if test="exists(elmo:query[1])">
 						<scene uri="{@rdf:about}" index="{position()}">
 							<xsl:if test="exists(elmo:endpoint[1])"><xsl:attribute name="endpoint"><xsl:value-of select="elmo:endpoint[1]/@rdf:resource"/></xsl:attribute></xsl:if>
-							<xsl:if test="exists(rdfs:label[1])"><label><xsl:value-of select="rdfs:label"/></label></xsl:if>
+							<xsl:if test="exists(rdfs:label)"><xsl:attribute name="label"><xsl:apply-templates select="." mode="label"/></xsl:attribute></xsl:if>
 							<query><xsl:value-of select="elmo:query[1]"/></query>
 						</scene>
 					</xsl:if>
@@ -131,6 +142,8 @@
 				<xsl:when test="exists(elmo:file[1])">
 					<representation uri="{@rdf:about}" index="{position()}">
 						<xsl:if test="exists(elmo:appearance[1])"><xsl:attribute name="appearance"><xsl:value-of select="elmo:appearance[1]/@rdf:resource"/></xsl:attribute></xsl:if>
+						<xsl:if test="exists(elmo:name[1])"><xsl:attribute name="name"><xsl:value-of select="elmo:name[1]"/></xsl:attribute></xsl:if>
+						<xsl:if test="exists(rdfs:label)"><xsl:attribute name="label"><xsl:apply-templates select="." mode="label"/></xsl:attribute></xsl:if>
 						<xsl:apply-templates select="elmo:queryForm"/>
 						<xsl:apply-templates select="elmo:fragment"/>
 						<file><xsl:value-of select="elmo:file[1]"/></file>
@@ -140,6 +153,8 @@
 					<!-- Als er letterlijke data wordt opgevraagd, dan deze straks ophalen via de query -->
 					<representation uri="{@rdf:about}" index="{position()}" endpoint="{/root/context/configuration-endpoint}">
 						<xsl:if test="exists(elmo:appearance[1])"><xsl:attribute name="appearance"><xsl:value-of select="elmo:appearance[1]/@rdf:resource"/></xsl:attribute></xsl:if>
+						<xsl:if test="exists(elmo:name[1])"><xsl:attribute name="name"><xsl:value-of select="elmo:name[1]"/></xsl:attribute></xsl:if>
+						<xsl:if test="exists(rdfs:label)"><xsl:attribute name="label"><xsl:apply-templates select="." mode="label"/></xsl:attribute></xsl:if>
 						<xsl:apply-templates select="elmo:queryForm"/>
 						<xsl:apply-templates select="elmo:fragment"/>
 						<query>
@@ -171,6 +186,8 @@
 						<xsl:if test="exists(elmo:endpoint[1])"><xsl:attribute name="endpoint"><xsl:value-of select="elmo:endpoint[1]/@rdf:resource"/></xsl:attribute></xsl:if>
 						<xsl:if test="exists(elmo:appearance[1])"><xsl:attribute name="appearance"><xsl:value-of select="elmo:appearance[1]/@rdf:resource"/></xsl:attribute></xsl:if>
 						<xsl:if test="exists(elmo:container[1])"><xsl:attribute name="container"><xsl:value-of select="elmo:container[1]/@rdf:resource"/></xsl:attribute></xsl:if>
+						<xsl:if test="exists(elmo:name[1])"><xsl:attribute name="name"><xsl:value-of select="elmo:name[1]"/></xsl:attribute></xsl:if>
+						<xsl:if test="exists(rdfs:label)"><xsl:attribute name="label"><xsl:apply-templates select="." mode="label"/></xsl:attribute></xsl:if>
 						<xsl:apply-templates select="elmo:queryForm"/>
 						<xsl:apply-templates select="elmo:fragment"/>
 						<query><xsl:value-of select="elmo:query[1]"/></query>
@@ -187,6 +204,7 @@
 				<xsl:when test="exists(elmo:service[1])">
 					<representation uri="{@rdf:about}" index="{position()}">
 						<xsl:if test="exists(elmo:appearance[1])"><xsl:attribute name="appearance"><xsl:value-of select="elmo:appearance[1]/@rdf:resource"/></xsl:attribute></xsl:if>
+						<xsl:if test="exists(elmo:name[1])"><xsl:attribute name="name"><xsl:value-of select="elmo:name[1]"/></xsl:attribute></xsl:if>
 						<xsl:apply-templates select="elmo:queryForm"/>
 						<xsl:apply-templates select="elmo:fragment"/>
 						<service>

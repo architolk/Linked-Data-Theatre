@@ -1,0 +1,121 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+stage:GraphAppearance	a	elmo:Representation;
+	elmo:url-pattern	"/query/GraphAppearance$";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:contains stage:GraphAppearance_tab;
+	elmo:contains stage:GraphAppearance_content;
+.
+stage:GraphAppearance_tab elmo:index "1";
+	elmo:appearance elmo:IndexAppearance;
+	elmo:data [
+		html:link "/resource?representation=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GraphAppearance_content&subject=http://localhost:8080/id/character/Bilbo";
+		elmo:name "format";
+		rdfs:label "xml|json|ttl|csv|txt|excel|word|pdf|xmi|svgi|d3json|graphml|yed|query|exml|rdfa";
+		rdf:value "xml|json|ttl|csv|txt|xlsx|docx|pdf|xmi|svgi|d3json|graphml|yed|query|exml|rdfa";
+	];
+.
+stage:GraphAppearance_content elmo:index "2";
+	elmo:appearance elmo:GraphAppearance;
+	elmo:fragment [
+		elmo:applies-to "Species";
+		html:stylesheet '''
+			fill: #E0E0E0;
+			fill-opacity: .3;
+			stroke: #666;
+		''';
+	];
+	elmo:fragment [
+		elmo:applies-to "Hobbit";
+		html:stylesheet '''
+			fill: red;
+			fill-opacity: .3;
+			stroke: #666;
+		''';
+	];
+	elmo:fragment [
+		elmo:applies-to "Group";
+		html:stylesheet '''
+			fill: gray;
+			fill-opacity: .3;
+			stroke: #666;
+		''';
+	];
+	elmo:fragment [
+		elmo:applies-to "Wizard";
+		html:stylesheet '''
+			fill: blue;
+			fill-opacity: .3;
+			stroke: #666;
+		''';
+	];
+	elmo:fragment [
+		elmo:applies-to "Dwarf";
+		html:stylesheet '''
+			fill: brown;
+			fill-opacity: .3;
+			stroke: #666;
+		''';
+	];
+	elmo:fragment [
+		elmo:applies-to "Elf";
+		html:stylesheet '''
+			fill: green;
+			fill-opacity: .3;
+			stroke: #666;
+		''';
+	];
+	elmo:fragment [
+		elmo:applies-to "Man";
+		html:stylesheet '''
+			fill: orange;
+			fill-opacity: .3;
+			stroke: #666;
+		''';
+	];
+	elmo:query '''
+		construct {
+			<@SUBJECT@> elmo:style ?subjecttype.
+			<@SUBJECT@> rdfs:label ?subjectlabel.
+			?subjecttype elmo:name ?subjecttypelabel.
+
+			<@SUBJECT@> ?torelation ?toperson.
+			?toperson rdfs:label ?topersonlabel.
+			?toperson elmo:style ?topersontype.
+			?topersontype elmo:name ?topersontypelabel.
+
+			?fromperson ?fromrelation <@SUBJECT@>.
+			?fromperson rdfs:label ?frompersonlabel.
+			?fromperson elmo:style ?frompersontype.
+			?frompersontype elmo:name ?frompersontypelabel.
+
+			owl:Class elmo:name "Species".
+		}
+		where {
+			{
+				<@SUBJECT@> rdfs:label ?subjectlabel.
+				<@SUBJECT@> rdf:type ?subjecttype.
+				?subjecttype rdfs:label ?subjecttypelabel.
+			}
+			UNION
+			{
+				<@SUBJECT@> ?torelation ?toperson.
+				?toperson rdfs:label ?topersonlabel.
+				?toperson rdf:type ?topersontype.
+				?topersontype rdfs:label ?topersontypelabel.
+			}
+			UNION
+			{
+				?fromperson ?fromrelation <@SUBJECT@>.
+				?fromperson rdfs:label ?frompersonlabel.
+				?fromperson rdf:type ?frompersontype.
+				?frompersontype rdfs:label ?frompersontypelabel.
+			}
+		}
+	''';
+.
+

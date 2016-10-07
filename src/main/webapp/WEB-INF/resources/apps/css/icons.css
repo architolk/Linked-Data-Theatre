@@ -1,0 +1,30 @@
+/**
+ * NAME     icons.css
+ * VERSION  1.11.0
+ * DATE     2016-09-18
+ *
+ * Copyright 2012-2016
+ *
+ * This file is part of the Linked Data Theatre.
+ *
+ * The Linked Data Theatre is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Linked Data Theatre is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Linked Data Theatre.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/**
+ * DESCRIPTION 
+ * CSS with icons to be used for a specific style class (and elmo:name at elmo:Representation level)
+ *
+ **/
+.city  h3>span:before {content: "\f192";
+	display:inline-block;font:normal normal normal 14px/1 FontAwesome;font-size:inherit;text-rendering:auto;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale; margin-right: 4px;
+}

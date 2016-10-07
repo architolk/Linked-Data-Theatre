@@ -1,0 +1,58 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix exont: <http://localhost:8080/def#>.
+
+stage:GlobalLinks a elmo:Representation;
+	elmo:url-pattern "/query/GlobalLinks$";
+	elmo:index "1";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:fragment [
+		elmo:applies-to exont:link;
+		elmo:appearance elmo:GlobalLink;
+	];
+	elmo:fragment [
+		elmo:applies-to exont:linklabel;
+		elmo:appearance elmo:GlobalLink;
+	];
+	elmo:fragment [
+		elmo:applies-to exont:linkmulti;
+		elmo:appearance elmo:GlobalLink;
+	];
+	elmo:fragment [
+		elmo:applies-to exont:linkdef;
+		elmo:appearance elmo:GlobalLink;
+	];
+	elmo:fragment [
+		elmo:applies-to exont:linkhttps;
+		elmo:appearance elmo:GlobalLink;
+	];
+	elmo:fragment [
+		elmo:applies-to exont:linkhttpslabel;
+		elmo:appearance elmo:GlobalLink;
+	];
+	elmo:query '''
+		prefix ex: <http://localhost:8080/id/item/>
+		prefix exont: <http://localhost:8080/def#>
+		prefix dbpedia: <http://dbpedia.org/resource/>
+		prefix dbpedias: <https://dbpedia.org/resource/>
+		construct {
+			ex:t1 a exont:Example.
+			ex:t1 rdfs:label "Global link test".
+			ex:t1 exont:link dbpedia:Amsterdam.
+			ex:t1 exont:linklabel dbpedia:Amersfoort.
+			dbpedia:Amersfoort rdfs:label "Amersfoort".
+			ex:t1 exont:linkmulti dbpedia:Amersfoort.
+			ex:t1 exont:linkmulti dbpedia:Amsterdam.
+			ex:t1 exont:linkdef rdfs:label.
+			ex:t1 exont:ref ex:t2.
+			ex:t1 exont:ref dbpedia:Amersfoort.
+			ex:t1 exont:linkhttps dbpedias:Amsterdam.
+			ex:t1 exont:linkhttpslabel dbpedias:Amersfoort.
+			dbpedias:Amersfoort rdfs:label "Amersfoort(s)".
+		}
+		where {}
+	''';
+.

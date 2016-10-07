@@ -1,7 +1,7 @@
 #
 # NAME     basic-configuration.ttl
-# VERSION  1.10.0
-# DATE     2016-08-29
+# VERSION  1.11.0
+# DATE     2016-09-18
 #
 # Copyright 2012-2016
 #
@@ -35,10 +35,11 @@
 # Homepage, including header and menu
 # ======================================================================
 stage:Home	a	elmo:Representation;
-	elmo:url-pattern	"^http(s|)://[^/]+(/|)$";
+	elmo:url-pattern	"^http(s|)://[^/]+(/[^/]+)?(/|)$";
 	elmo:contains	stage:Header;
 	elmo:contains	stage:Menu;
 	elmo:contains	stage:Home_content;
+	elmo:layer elmo:BottomLayer;
 .
 stage:Header elmo:appearance elmo:HeaderAppearance;
 	elmo:index "~";
@@ -364,7 +365,6 @@ stage:Resource rdf:type elmo:Representation;
 	elmo:contains stage:Header;
 	elmo:contains stage:Menu;
 	elmo:contains stage:Resource_content;
-	elmo:layer elmo:BottomLayer;
 .
 stage:Resource_content elmo:index "1";
 	elmo:query '''

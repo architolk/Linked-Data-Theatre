@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>nl.architolk.ldt</groupId>
 	<artifactId>ldt</artifactId>
-	<version>1.10.1-SNAPSHOT</version>
+	<version>1.11.1-SNAPSHOT</version>
 	<name>ldt</name>
 	<packaging>war</packaging>
 	<properties>
@@ -10,9 +10,9 @@
 		<buildTimestamp>${maven.build.timestamp}</buildTimestamp>
 		<license-maven-plugin.version>2.11</license-maven-plugin.version>
 		<license.failIfMissing>false</license.failIfMissing>
-		<release.version>1.10.0</release.version>
-		<release.date>2016-08-29</release.date>
-		<patch.date>2016-08-29</patch.date>
+		<release.version>1.11.0</release.version>
+		<release.date>2016-09-18</release.date>
+		<patch.date>2016-09-18</patch.date>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -81,6 +81,7 @@
 						<exclude>**/*.bat</exclude>
 						<exclude>**/pom.xml</exclude>
 						<exclude>images/**</exclude>
+						<exclude>**/robots.txt</exclude>
 					</excludes>
 				</configuration>
 				<dependencies>

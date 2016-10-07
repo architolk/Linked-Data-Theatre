@@ -1,8 +1,8 @@
 <!--
 
     NAME     update.xpl
-    VERSION  1.10.0
-    DATE     2016-08-29
+    VERSION  1.11.0
+    DATE     2016-09-18
 
     Copyright 2012-2016
 
@@ -296,7 +296,7 @@
 		</p:when>
 		<p:otherwise>
 			<!-- Transform -->
-			<p:processor name="oxf:xslt">
+			<p:processor name="oxf:unsafe-xslt">
 				<p:input name="data" href="#rdfa"/>
 				<p:input name="config" href="../transformations/rdf2html.xsl"/>
 				<p:output name="data" id="html"/>

@@ -1,8 +1,8 @@
 <!--
 
     NAME     query.xpl
-    VERSION  1.10.1-SNAPSHOT
-    DATE     2016-08-30
+    VERSION  1.11.0
+    DATE     2016-09-18
 
     Copyright 2012-2016
 
@@ -797,7 +797,7 @@
 			</p:processor>
 		</p:when>
 		<!-- Check if there is any result, return 404 if no resource could be found and a subject is expected -->
-		<p:when test="root/context/subject!='' and exists(root/results/rdf:RDF[1]) and not(exists(root/results/rdf:RDF[1]/*))">
+		<p:when test="root/context/representation='' and root/context/subject!='' and exists(root/results/rdf:RDF[1]) and not(exists(root/results/rdf:RDF[1]/*))">
 			<p:processor name="oxf:xslt">
 				<p:input name="data">
 					<results>
@@ -1202,6 +1202,38 @@
 							</config>
 						</p:input>
 						<p:input name="data" href="#docxml"/>
+					</p:processor>
+				</p:when>
+				<!-- PDF -->
+				<p:when test="context/format='application/rdf'">
+					<!-- Transform -->
+					<p:processor name="oxf:xslt">
+						<p:input name="data" href="#sparql"/>
+						<p:input name="config" href="../transformations/rdf2fo.xsl"/>
+						<p:output name="data" id="fo"/>
+					</p:processor>
+					<!-- Create pdf -->
+					<p:processor name="oxf:xmlfo-processor">    
+						<p:input name="config">
+							<config>
+								<content-type>application/pdf</content-type>
+							</config>
+						</p:input>
+						<p:input name="data" href="#fo"/>
+						<p:output name="data" id="document"/>
+					</p:processor>
+					<!-- Serialize -->
+					<p:processor name="oxf:http-serializer">
+					   <p:input name="config">
+							<config>
+								<cache-control><use-local-cache>false</use-local-cache></cache-control>
+								<header>
+									<name>Content-Disposition</name>
+									<value>attachment; filename=results.pdf</value>
+								</header>
+							</config>
+						</p:input>
+					   <p:input name="data" href="#document" />
 					</p:processor>
 				</p:when>
 				<!-- HTML -->
