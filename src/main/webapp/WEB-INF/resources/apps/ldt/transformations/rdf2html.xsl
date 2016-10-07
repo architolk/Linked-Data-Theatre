@@ -641,6 +641,7 @@
 					elmo_language.paging = <xsl:value-of select="$paging"/>;
 					elmo_language.searching = <xsl:value-of select="$paging"/>;
 					elmo_language.info = <xsl:value-of select="$paging"/>;
+					elmo_language.order = [];
 					$('#datatable<xsl:value-of select="generate-id()"/>').dataTable(elmo_language);
 				} );
 			</script>
