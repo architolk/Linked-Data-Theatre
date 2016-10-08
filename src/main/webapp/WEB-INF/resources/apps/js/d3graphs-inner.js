@@ -1,7 +1,7 @@
 /*
  * NAME     d3graphs-inner.js
- * VERSION  1.11.0
- * DATE     2016-09-18
+ * VERSION  1.11.1-SNAPSHOT
+ * DATE     2016-10-08
  *
  * Copyright 2012-2016
  *
@@ -31,6 +31,9 @@ var width = $("#graph").width(),
 
 //Maximum number of nodes allowed before links and nodes are aggregated
 var maxNodes = 10;
+
+//Full screen toggle
+var fullScreenFlag = false;
 	
 // zoom features
 var zoom = d3.behavior.zoom()
@@ -48,6 +51,12 @@ var svg = d3.select("#graph").append("svg")
 
 // detailbox div
 var detailBox = d3.select("#graphtitle");
+	
+// propertybox div
+var pt = document.getElementsByTagName('svg')[0].createSVGPoint();
+var propertyBox = d3.select("#propertybox");
+var propertyNode = null;
+var propertyBoxVisible = false;
 	
 //Rectangle area for panning		
 var rect = svg.append("rect")
@@ -148,6 +157,54 @@ d3.json(jsonApiCall+jsonApiSubject, function(error, json) {
 
 });
 
+function movePropertyBox() {
+	if (propertyBoxVisible && propertyNode) {
+		if (propertyNode.arect) {
+			propertyBox.style("display","block");
+			//Get absolute position
+			var matrix  = propertyNode.arect.getScreenCTM();
+			pt.x = propertyNode.arect.x.animVal.value+propertyNode.arect.width.animVal.value;
+			pt.y = propertyNode.arect.y.animVal.value;
+			var divrect = pt.matrixTransform(matrix);
+			//Correct for offset and scroll
+			var theX = divrect.x-$('#graphcanvas').offset().left+$(window).scrollLeft();
+			var theY = divrect.y-$('#graphcanvas').offset().top+$(window).scrollTop();
+			//Set position
+			propertyBox.style("left",theX+"px");
+			propertyBox.style("top",theY+"px");
+		}
+	}
+}
+
+function mouseoverNode(d) {
+	if (!propertyBoxVisible) {
+		if (!d.expanded) {
+			propertyNode = d;
+			propertyBoxVisible = true;
+			movePropertyBox();
+		}
+	}
+}
+
+function mouseoutNode(d) {
+	if (propertyBoxVisible) {
+		propertyBoxVisible = false;
+		propertyBox.style("display","none");
+	}
+}
+
+function mouseoverPropertyBox() {
+	if (!propertyBoxVisible) {
+		propertyBox.style("display","block");
+		propertyBoxVisible = true;
+	}
+}
+
+function mouseoutPropertyBox() {
+	propertyBox.style("display","none");
+	propertyBoxVisible = false;
+}
+
 function createAggregateNodes() {
 
 	//Add an aggregateNode for any node that has more than maxNodes outgoing OR ingoing links
@@ -200,10 +257,23 @@ function updateTitle(d) {
 		};
 		html+='<span class="glyphicon glyphicon-zoom-in"/></a>';
 	}
+	html+='<span class="glyphicon glyphicon-fullscreen" style="position:absolute;right:10px;margin-top:10px;cursor:pointer" onclick="togglefullscreen()"/>';
 	html+='</h3>';
 	detailBox.html(html);
 }
-	
+
+function togglefullscreen() {
+	if (fullScreenFlag) {
+		$('#graphcanvas').css({position:'relative',left:'',top:'',width:'',height:'',zIndex:''});
+		//d3.select('#graphcanvas').setAttribute("style","relative");
+	} else {
+		$('#graphcanvas').css({position:'absolute',left:0,top:0,width: $(window).width(), height: $(window).height(), zIndex: 1000});
+		//d3.select('#graphcanvas').setAttribute("style","position:absolute;left:0;top:0;width:100%;height:100%");
+		d3.select("#graph").select("svg").attr("height",$(window).height()-100);
+	}
+	fullScreenFlag = !fullScreenFlag;
+}
+
 function dragstart(d) {
 	d3.event.sourceEvent.stopPropagation();
 	force.stop();
@@ -277,7 +347,10 @@ function update() {
 	var newNodes = allNodes
 		.enter().append("g")
 		.attr("class", function(d) { return (d["class"] ? "node t"+d["class"] : "node")})
+		.on("mouseover",mouseoverNode)
+		.on("mouseout",mouseoutNode)
 		.call(node_drag);
+
 
 	newNodes.append("text")
 		.attr("dx", 0)
@@ -292,14 +365,15 @@ function update() {
 		.attr("y", function(d) { return d.rect.y-5})
 		.attr("width", function(d) { return d.rect.width+10 })
 		.attr("height", function(d) { return d.rect.height+10 })
-		.attr("class", function(d) { return (d["class"] ? "s"+d["class"] : "default") });
+		.attr("class", function(d) { return (d["class"] ? "s"+d["class"] : "default") })
+		.each(function(d) {d.arect = this;});
 
 	newNodes.filter(function(d) {return d.elementType==="circle"}).append("circle")
 		.attr("cx", function(d) { return d.rect.x+5})
 		.attr("cy", function(d) { return d.rect.y+5})
 		.attr("r", function(d) { return 5+d.rect.height/2 })
 		.attr("class", function(d) { return (d["class"] ? "s"+d["class"] : "default") });
-
+		
 	force
 		.nodes(nodes)
 		.links(links)
@@ -310,6 +384,12 @@ function update() {
 function togglenode(show,nodeclass) {
 	var selectednodes = container.selectAll(".t"+nodeclass)
 	selectednodes.style("visibility",show ? "visible" : "hidden");
+}
+
+function clickPropertyBox() {
+	if (propertyNode) {
+		dblclick(propertyNode);
+	}
 }
 	  
 function tick(e) {
@@ -370,6 +450,7 @@ function tick(e) {
 	})
 
     allNodes.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+	movePropertyBox();
 
 }
 

@@ -1,8 +1,8 @@
 <!--
 
     NAME     query.xpl
-    VERSION  1.11.0
-    DATE     2016-09-18
+    VERSION  1.11.1-SNAPSHOT
+    DATE     2016-10-08
 
     Copyright 2012-2016
 
@@ -1136,7 +1136,7 @@
 				<p:when test="context/format='application/x.elmo.d3+json'">
 					<!-- Transform -->
 					<p:processor name="oxf:xslt">
-						<p:input name="data" href="aggregate('root',#context,#sparql)"/>
+						<p:input name="data" href="aggregate('root',#context,#sparql,#querytext)"/>
 						<p:input name="config" href="../transformations/rdf2graphjson.xsl"/>
 						<p:output name="data" id="graphjson"/>
 					</p:processor>

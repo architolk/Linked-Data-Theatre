@@ -57,15 +57,15 @@
 	</xsl:variable>
 	<xsl:variable name="styles">
 		<xsl:for-each select="key('resource',$uri)/elmo:style">
-			<xsl:if test="key('resource',@rdf:resource)/elmo:name!=''">
-				<style><xsl:value-of select="key('resource',@rdf:resource)/elmo:name"/></style>
+			<xsl:variable name="style"><xsl:value-of select="key('resource',@rdf:resource)/elmo:name"/></xsl:variable>
+			<xsl:if test="$style!=''">
+				<style index="{/root/view/representation/fragment[@applies-to=$style]/elmo:index}"><xsl:value-of select="key('resource',@rdf:resource)/elmo:name"/></style>
 			</xsl:if>
 		</xsl:for-each>
 	</xsl:variable>
 	<xsl:variable name="class">
-		<xsl:for-each select="$styles/style">
-			<xsl:if test="position()!=1"><xsl:text> </xsl:text></xsl:if>
-			<xsl:value-of select="."/>
+		<xsl:for-each select="$styles/style"><xsl:sort select="@index"/>
+			<xsl:if test="position()=1"><xsl:value-of select="."/></xsl:if>
 		</xsl:for-each>
 	</xsl:variable>
 	<xsl:text>"nodes":[</xsl:text>
@@ -92,15 +92,15 @@
 		</xsl:variable>
 		<xsl:variable name="styles">
 			<xsl:for-each select="key('resource',$ouri)/elmo:style">
-				<xsl:if test="key('resource',@rdf:resource)/elmo:name!=''">
-					<style><xsl:value-of select="key('resource',@rdf:resource)/elmo:name"/></style>
+				<xsl:variable name="style"><xsl:value-of select="key('resource',@rdf:resource)/elmo:name"/></xsl:variable>
+				<xsl:if test="$style!=''">
+					<style index="{/root/view/representation/fragment[@applies-to=$style]/elmo:index}"><xsl:value-of select="key('resource',@rdf:resource)/elmo:name"/></style>
 				</xsl:if>
 			</xsl:for-each>
 		</xsl:variable>
 		<xsl:variable name="oclass">
-			<xsl:for-each select="$styles/style">
-				<xsl:if test="position()!=1"><xsl:text> </xsl:text></xsl:if>
-				<xsl:value-of select="."/>
+			<xsl:for-each select="$styles/style"><xsl:sort select="@index"/>
+				<xsl:if test="position()=1"><xsl:value-of select="."/></xsl:if>
 			</xsl:for-each>
 		</xsl:variable>
 		<xsl:text>,{"@id":"</xsl:text><xsl:value-of select="$ouri"/><xsl:text>"</xsl:text>
@@ -129,15 +129,15 @@
 			</xsl:variable>
 			<xsl:variable name="styles">
 				<xsl:for-each select="key('resource',$ouri)/elmo:style">
-					<xsl:if test="key('resource',@rdf:resource)/elmo:name!=''">
-						<style><xsl:value-of select="key('resource',@rdf:resource)/elmo:name"/></style>
+					<xsl:variable name="style"><xsl:value-of select="key('resource',@rdf:resource)/elmo:name"/></xsl:variable>
+					<xsl:if test="$style!=''">
+						<style index="{/root/view/representation/fragment[@applies-to=$style]/elmo:index}"><xsl:value-of select="key('resource',@rdf:resource)/elmo:name"/></style>
 					</xsl:if>
 				</xsl:for-each>
 			</xsl:variable>
 			<xsl:variable name="oclass">
-				<xsl:for-each select="$styles/style">
-					<xsl:if test="position()!=1"><xsl:text> </xsl:text></xsl:if>
-					<xsl:value-of select="."/>
+				<xsl:for-each select="$styles/style"><xsl:sort select="@index"/>
+					<xsl:if test="position()=1"><xsl:value-of select="."/></xsl:if>
 				</xsl:for-each>
 			</xsl:variable>
 			<xsl:text>,{"@id":"</xsl:text><xsl:value-of select="$ouri"/><xsl:text>"</xsl:text>

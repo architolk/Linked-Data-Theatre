@@ -2,7 +2,7 @@
 
     NAME     GraphAppearance.xsl
     VERSION  1.11.1-SNAPSHOT
-    DATE     2016-09-29
+    DATE     2016-10-08
 
     Copyright 2012-2016
 
@@ -42,12 +42,12 @@
 <xsl:output method="xml" indent="yes"/>
 
 <xsl:template match="rdf:RDF" mode="GraphAppearance">
-	<div style="position: relative">
+	<div id="graphcanvas" style="position: relative">
 		<xsl:if test="exists(rdf:Description[html:stylesheet!='' and elmo:applies-to!=''])">
 			<div class="panel panel-primary" style="position:absolute;right:20px;top:50px">
 				<div class="panel-heading"><span class="glyphicon glyphicon-off" style="position:absolute;right:5px;margin-top:2px;cursor:pointer" onclick="this.parentNode.parentNode.style.display='none'"/></div>	
 				<table style="margin-left:10px">
-					<xsl:for-each select="rdf:Description[html:stylesheet!='' and elmo:applies-to!='']">
+					<xsl:for-each select="rdf:Description[html:stylesheet!='' and elmo:applies-to!='']"><xsl:sort select="elmo:index"/>
 						<tr>
 							<td><input name="{elmo:applies-to}" type="checkbox" checked="checked" onclick="togglenode(this.checked,this.name);"/></td>
 							<td><svg style="display: inline;" width="140" height="30"><g><rect x="5" y="5" width="120" height="20" class="s{elmo:applies-to}"/><text x="15" y="18" style="line-height: normal; font-family: sans-serif; font-size: 10px; font-style: normal; font-variant: normal; font-weight: normal; font-size-adjust: none; font-stretch: normal;"><xsl:value-of select="elmo:applies-to"/></text></g></svg></td>
@@ -56,6 +56,11 @@
 				</table>
 			</div>
 		</xsl:if>
+		<div id="propertybox" style="position:absolute; display:none" onmouseover="mouseoverPropertyBox();" onmouseout="mouseoutPropertyBox();" onclick="clickPropertyBox();">
+			<i class="btn btn-primary" style="padding: 1px 4px;">
+				<span class="glyphicon glyphicon-zoom-in" style="cursor:pointer"/>
+			</i>
+		</div>
 		<div class="panel panel-primary panel-secondary">
 			<div id="graphtitle" class="panel-heading"/>
 			<div id="graph" class="panel-body"/>
