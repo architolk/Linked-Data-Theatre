@@ -1,8 +1,8 @@
 <!--
 
     NAME     ttl2rdfaform.xsl
-    VERSION  1.11.0
-    DATE     2016-09-18
+    VERSION  1.11.1-SNAPSHOT
+    DATE     2016-10-08
 
     Copyright 2012-2016
 
@@ -67,11 +67,19 @@
 				<elmo:appearance rdf:resource="http://bp4mc2.org/elmo/def#HiddenAppearance"/>
 				<rdf:value><xsl:value-of select="root/context/subject"/></rdf:value>
 			</rdf:Description>
-			<rdf:Description rdf:nodeID="f1">
-				<rdfs:label>Upload</rdfs:label>
-				<elmo:applies-to>file</elmo:applies-to>
-				<elmo:valueDatatype rdf:resource="http://purl.org/dc/dcmitype/Dataset"/>
-			</rdf:Description>
+			<xsl:if test="root/container/representation!='http://bp4mc2.org/elmo/def#DownloadRepresentation'">
+				<rdf:Description rdf:nodeID="f1">
+					<rdfs:label>Upload</rdfs:label>
+					<elmo:applies-to>file</elmo:applies-to>
+					<elmo:valueDatatype rdf:resource="http://purl.org/dc/dcmitype/Dataset"/>
+				</rdf:Description>
+			</xsl:if>
+			<xsl:if test="root/container/representation='http://bp4mc2.org/elmo/def#DownloadRepresentation'">
+				<rdf:Description rdf:nodeID="f1a">
+					<rdfs:label>URL</rdfs:label>
+					<elmo:applies-to>url</elmo:applies-to>
+				</rdf:Description>
+			</xsl:if>
 			<xsl:if test="exists(root/response)">
 				<rdf:Description rdf:nodeID="f2">
 					<rdfs:label>Error</rdfs:label>
@@ -81,7 +89,7 @@
 					<html:stylesheet>height:40px; background:red; color:white;</html:stylesheet>
 				</rdf:Description>
 			</xsl:if>
-			<xsl:if test="root/container/representation!='http://bp4mc2.org/elmo/def#UploadRepresentation'">
+			<xsl:if test="root/container/representation!='http://bp4mc2.org/elmo/def#UploadRepresentation' and root/container/representation!='http://bp4mc2.org/elmo/def#DownloadRepresentation'">
 				<rdf:Description rdf:nodeID="f3">
 					<rdfs:label>Content</rdfs:label>
 					<elmo:applies-to>content</elmo:applies-to>

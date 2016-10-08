@@ -1,8 +1,8 @@
 <!--
 
     NAME     container.xpl
-    VERSION  1.11.0
-    DATE     2016-09-18
+    VERSION  1.11.1-SNAPSHOT
+    DATE     2016-10-08
 
     Copyright 2012-2016
 
@@ -476,6 +476,53 @@
 									</xsl:stylesheet>
 								</p:input>
 								<p:input name="data" href="#context"/>
+								<p:output name="data" id="filelist"/>
+							</p:processor>
+						</p:when>
+						<!-- Download from URL -->
+						<p:when test="context/parameters/parameter[name='url']/value!=''">
+							<!-- Fetch file -->
+							<p:processor name="oxf:httpclient-processor">
+								<p:input name="config" transform="oxf:xslt" href="#context">
+									<config xsl:version="2.0">
+										<input-type>text</input-type>
+										<output-type>rdf</output-type>
+										<url><xsl:value-of select="context/parameters/parameter[name='url']/value"/></url>
+										<method>get</method>
+									</config>
+								</p:input>
+								<p:output name="data" id="output"/>
+							</p:processor>
+							<p:processor name="oxf:xml-converter">
+								<p:input name="config">
+									<config>
+										<encoding>utf-8</encoding>
+									</config>
+								</p:input>
+								<p:input name="data" href="#output#xpointer(response/rdf:RDF)" />
+								<p:output name="data" id="converted" />
+							</p:processor>
+							<p:processor name="oxf:file-serializer">
+								<p:input name="config">
+									<config>
+										<scope>session</scope>
+									</config>
+								</p:input>
+								<p:input name="data" href="#converted"/>
+								<p:output name="data" id="urlfile"/>
+							</p:processor>
+							<!-- Put filename in filelist -->
+							<p:processor name="oxf:xslt">
+								<p:input name="config">
+									<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+										<xsl:template match="/">
+											<files>
+												<file name="content.xml"><xsl:value-of select="url"/></file>
+											</files>
+										</xsl:template>
+									</xsl:stylesheet>
+								</p:input>
+								<p:input name="data" href="#urlfile"/>
 								<p:output name="data" id="filelist"/>
 							</p:processor>
 						</p:when>

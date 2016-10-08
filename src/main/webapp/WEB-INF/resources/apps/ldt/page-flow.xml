@@ -1,8 +1,8 @@
 <!--
 
     NAME     page-flow.xml
-    VERSION  1.11.0
-    DATE     2016-09-18
+    VERSION  1.11.1-SNAPSHOT
+    DATE     2016-10-08
 
     Copyright 2012-2016
 
@@ -99,6 +99,11 @@
 		<setvalue ref="theatre/date" parameter="date"/>
 	</page>
 	
+	<!-- federated query (virtual sparql endpoint) -->
+	<page path="(((?!vsparql).)*)/vsparql" model="pipelines/vsparql.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/query" parameter="query"/>
+	</page>
+	
 	<!-- container -->
 	<page path="(((?!container).)*)/container/([^ ]*)" model="pipelines/container.xpl" default-submission="config.xml" public-methods="#all">
 		<setvalue ref="theatre/subdomain" matcher-group="1"/>
@@ -107,6 +112,12 @@
 	<!-- update -->
 	<page path="(((?!update).)*)/update/([^ ]*)" model="pipelines/update.xpl" default-submission="config.xml" public-methods="#all">
 		<setvalue ref="theatre/subdomain" matcher-group="1"/>
+	</page>
+	
+	<!-- edit -->
+	<page path="(((?!edit).)*)/edit/([^ ]*)" model="pipelines/edit.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
+		<setvalue ref="theatre/subject" parameter="subject"/>
 	</page>
 	
 	<!-- conversion -->
