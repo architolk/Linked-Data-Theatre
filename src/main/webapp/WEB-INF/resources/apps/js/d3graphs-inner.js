@@ -1,7 +1,7 @@
 /*
  * NAME     d3graphs-inner.js
  * VERSION  1.11.1-SNAPSHOT
- * DATE     2016-10-08
+ * DATE     2016-10-13
  *
  * Copyright 2012-2016
  *
@@ -55,9 +55,12 @@ var detailBox = d3.select("#graphtitle");
 // propertybox div
 var pt = document.getElementsByTagName('svg')[0].createSVGPoint();
 var propertyBox = d3.select("#propertybox");
+var infoBox = propertyBox.append("div");
+infoBox.attr("class","infobox");
 var propertyNode = null;
+var infoNode = null;
 var propertyBoxVisible = false;
-	
+
 //Rectangle area for panning		
 var rect = svg.append("rect")
     .attr("width", "100%")
@@ -178,10 +181,12 @@ function movePropertyBox() {
 
 function mouseoverNode(d) {
 	if (!propertyBoxVisible) {
-		if (!d.expanded) {
-			propertyNode = d;
-			propertyBoxVisible = true;
-			movePropertyBox();
+		propertyNode = d;
+		propertyBoxVisible = true;
+		movePropertyBox();
+		if (infoNode!=propertyNode) {
+			var html='';
+			infoBox.html(html);
 		}
 	}
 }
@@ -190,6 +195,10 @@ function mouseoutNode(d) {
 	if (propertyBoxVisible) {
 		propertyBoxVisible = false;
 		propertyBox.style("display","none");
+		if (infoNode!=propertyNode) {
+			var html='';
+			infoBox.html(html);
+		}
 	}
 }
 
@@ -203,6 +212,10 @@ function mouseoverPropertyBox() {
 function mouseoutPropertyBox() {
 	propertyBox.style("display","none");
 	propertyBoxVisible = false;
+	if (infoNode!=propertyNode) {
+		var html='';
+		infoBox.html(html);
+	}
 }
 
 function createAggregateNodes() {
@@ -391,7 +404,19 @@ function clickPropertyBox() {
 		dblclick(propertyNode);
 	}
 }
-	  
+
+function clickInfoBox() {
+	if (propertyNode) {
+		infoNode = propertyNode;
+		var html = '<table>';
+		for (var key in propertyNode.data) {
+			html += '<tr><td>'+key+'</td><td class="data">'+propertyNode.data[key]+"</td></tr>";
+		}
+		html += "</table>";
+		infoBox.html(html);
+	}
+}
+  
 function tick(e) {
 	//Extra: Calculate change
 	if (typeof e != "undefined") {

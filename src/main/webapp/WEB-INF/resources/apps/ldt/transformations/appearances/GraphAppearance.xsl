@@ -2,7 +2,7 @@
 
     NAME     GraphAppearance.xsl
     VERSION  1.11.1-SNAPSHOT
-    DATE     2016-10-08
+    DATE     2016-10-12
 
     Copyright 2012-2016
 
@@ -56,8 +56,11 @@
 				</table>
 			</div>
 		</xsl:if>
-		<div id="propertybox" style="position:absolute; display:none" onmouseover="mouseoverPropertyBox();" onmouseout="mouseoutPropertyBox();" onclick="clickPropertyBox();">
-			<i class="btn btn-primary" style="padding: 1px 4px;">
+		<div id="propertybox" style="position:absolute; display:none" onmouseover="mouseoverPropertyBox();" onmouseout="mouseoutPropertyBox();">
+			<i id="mbtninfo" class="btn btn-primary" style="padding: 1px 4px;" onclick="clickInfoBox();">
+				<span class="glyphicon glyphicon-info-sign" style="cursor:pointer"/>
+			</i>
+			<i id="mbtnexpand" class="btn btn-primary" style="padding: 1px 4px;" onclick="clickPropertyBox();">
 				<span class="glyphicon glyphicon-zoom-in" style="cursor:pointer"/>
 			</i>
 		</div>
@@ -141,6 +144,22 @@
 		text-indent: -10px;
 		font-weight: bold;
 	}
+	div.infobox {
+		background-color: #808080;
+		border-color: #808080;
+		color: white;
+		cursor: pointer;
+		border-radius: 5px;
+		-moz-border-radius: 5px;
+	}
+	div.infobox table {
+		margin-top: 5px;
+		margin-bottom: 5px;
+	}
+	div.infobox table tr td {
+		padding-left: 5px;
+		padding-right: 5px;
+	}
 	<xsl:for-each select="rdf:Description[html:stylesheet!='' and elmo:applies-to!='']">
 		.s<xsl:value-of select="elmo:applies-to"/> {
 		<xsl:value-of select="html:stylesheet"/>
@@ -152,10 +171,11 @@
 		}
 	</xsl:for-each>
 	</style>
+	<xsl:variable name="jsonParams"><xsl:for-each select="/results/context/parameters/parameter"><xsl:value-of select="name"/>=<xsl:value-of select="encode-for-uri(value)"/>&amp;</xsl:for-each></xsl:variable>
 	<script type="text/javascript">
 		var jsonApiSubject = "<xsl:value-of select="/results/context/subject"/>";
-		var jsonApiCall = "<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource.d3json?representation=<xsl:value-of select="encode-for-uri(@elmo:query)"/>&amp;subject=";
-		var uriEndpoint = "<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource?subject=";
+		var jsonApiCall = "<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource.d3json?representation=<xsl:value-of select="encode-for-uri(@elmo:query)"/>&amp;<xsl:value-of select="$jsonParams"/>subject=";
+		var uriEndpoint = "<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource?<xsl:value-of select="$jsonParams"/>subject=";
 	</script>
 	<script src="{$staticroot}/js/d3graphs-inner.min.js" type="text/javascript"/>
 </xsl:template>

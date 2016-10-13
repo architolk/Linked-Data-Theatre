@@ -2,7 +2,7 @@
 
     NAME     rdf2graphjson.xsl
     VERSION  1.11.1-SNAPSHOT
-    DATE     2016-09-30
+    DATE     2016-10-13
 
     Copyright 2012-2016
 
@@ -78,7 +78,7 @@
 		<xsl:for-each select="key('resource',$uri)/*[not(exists(@rdf:resource)) and local-name()!='label']">
 			<xsl:if test="position()!=1">,</xsl:if>
 			<xsl:text>"</xsl:text><xsl:value-of select="local-name()"/><xsl:text>":"</xsl:text>
-			<xsl:value-of select="."/><xsl:text>"</xsl:text>
+			<xsl:value-of select="translate(.,$dblquote,$quote)"/><xsl:text>"</xsl:text>
 		</xsl:for-each>
 	<xsl:text>}</xsl:text>
 	<xsl:text>}</xsl:text>
@@ -112,7 +112,7 @@
 			<xsl:for-each select="key('resource',$ouri)/*[not(exists(@rdf:resource)) and local-name()!='label']">
 				<xsl:if test="position()!=1">,</xsl:if>
 				<xsl:text>"</xsl:text><xsl:value-of select="local-name()"/><xsl:text>":"</xsl:text>
-				<xsl:value-of select="."/><xsl:text>"</xsl:text>
+				<xsl:value-of select="translate(.,$dblquote,$quote)"/><xsl:text>"</xsl:text>
 			</xsl:for-each>
 		<xsl:text>}</xsl:text>
 		<xsl:text>}</xsl:text>
@@ -145,7 +145,13 @@
 			<xsl:if test="$oclass!=''">
 				<xsl:text>,"class":"</xsl:text><xsl:value-of select="$oclass"/><xsl:text>"</xsl:text>
 			</xsl:if>
-			<xsl:text>,"data":{}</xsl:text>
+			<xsl:text>,"data":{</xsl:text>
+				<xsl:for-each select="key('resource',$ouri)/*[not(exists(@rdf:resource)) and local-name()!='label']">
+					<xsl:if test="position()!=1">,</xsl:if>
+					<xsl:text>"</xsl:text><xsl:value-of select="local-name()"/><xsl:text>":"</xsl:text>
+					<xsl:value-of select="translate(.,$dblquote,$quote)"/><xsl:text>"</xsl:text>
+				</xsl:for-each>
+			<xsl:text>}</xsl:text>
 			<xsl:text>}</xsl:text>
 		</xsl:if>
 	</xsl:for-each-group>

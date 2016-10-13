@@ -1,8 +1,8 @@
 <!--
 
     NAME     context.xsl
-    VERSION  1.11.0
-    DATE     2016-09-18
+    VERSION  1.11.1-SNAPSHOT
+    DATE     2016-10-13
 
     Copyright 2012-2016
 
@@ -32,7 +32,7 @@
 	<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="no"/>
 	
 	<xsl:template match="/root|/croot">
-		<xsl:variable name="uri-filter">[^a-zA-Z0-9:\.\-_~/()#]</xsl:variable>
+		<xsl:variable name="uri-filter">[^a-zA-Z0-9:\.\-_~/()#&amp;=]</xsl:variable> <!-- ampersand and equal-sign added for Juriconnect -->
 		<xsl:variable name="x-forwarded-host"><xsl:value-of select="replace(request/headers/header[name='x-forwarded-host']/value,'^([^,]+).*$','$1')"/></xsl:variable>
 		<xsl:variable name="domain">
 			<xsl:value-of select="$x-forwarded-host"/> <!-- Use original hostname in case of proxy, first one in case of multiple proxies -->
