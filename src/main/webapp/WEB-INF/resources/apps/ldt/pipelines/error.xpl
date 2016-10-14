@@ -1,8 +1,8 @@
 <!--
 
     NAME     error.xpl
-    VERSION  1.11.0
-    DATE     2016-09-18
+    VERSION  1.11.1-SNAPSHOT
+    DATE     2016-10-14
 
     Copyright 2012-2016
 
@@ -78,7 +78,8 @@
 	<p:processor name="oxf:identity">
 		<p:input name="data">
 			<parameters>
-				<error>Oeps.. er ging iets fout</error>
+				<error-nr>500</error-nr>
+				<error>Oeps.. er ging iets mis.</error>
 			</parameters>
 		</p:input>
 		<p:output name="data" id="errortext"/>

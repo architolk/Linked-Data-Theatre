@@ -2,7 +2,7 @@
 
     NAME     query.xpl
     VERSION  1.11.1-SNAPSHOT
-    DATE     2016-10-08
+    DATE     2016-10-14
 
     Copyright 2012-2016
 
@@ -798,14 +798,16 @@
 		</p:when>
 		<!-- Check if there is any result, return 404 if no resource could be found and a subject is expected -->
 		<p:when test="root/context/representation='' and root/context/subject!='' and exists(root/results/rdf:RDF[1]) and not(exists(root/results/rdf:RDF[1]/*))">
-			<p:processor name="oxf:xslt">
+			<p:processor name="oxf:identity">
 				<p:input name="data">
-					<results>
-						<parameters>
-							<error>Resource niet gevonden.</error>
-						</parameters>
-					</results>
+					<parameters>
+							<error-nr>404</error-nr>
+					</parameters>
 				</p:input>
+				<p:output name="data" id="errortext"/>
+			</p:processor>
+			<p:processor name="oxf:xslt">
+				<p:input name="data" href="aggregate('results',#context,#errortext)"/>
 				<p:input name="config" href="../transformations/error2html.xsl"/>
 				<p:output name="data" id="html"/>
 			</p:processor>

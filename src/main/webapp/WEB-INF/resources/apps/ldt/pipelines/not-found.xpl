@@ -1,8 +1,8 @@
 <!--
 
     NAME     not-found.xpl
-    VERSION  1.11.0
-    DATE     2016-09-18
+    VERSION  1.11.1-SNAPSHOT
+    DATE     2016-10-14
 
     Copyright 2012-2016
 
@@ -74,7 +74,7 @@
 	<p:processor name="oxf:identity">
 		<p:input name="data">
 			<parameters>
-					<error>Het antwoord op uw verzoek kan niet worden gevonden.</error>
+					<error-nr>404</error-nr>
 			</parameters>
 		</p:input>
 		<p:output name="data" id="errortext"/>

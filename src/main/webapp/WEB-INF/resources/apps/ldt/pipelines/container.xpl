@@ -2,7 +2,7 @@
 
     NAME     container.xpl
     VERSION  1.11.1-SNAPSHOT
-    DATE     2016-10-08
+    DATE     2016-10-14
 
     Copyright 2012-2016
 
@@ -410,14 +410,18 @@
 				<!-- When a user-role is defined, the user should have that role -->
 				<p:when test="root/container/user-role!='' and not(contains(root/context/user-role,root/container/user-role))">
 					<!-- User-role incorrect: 403 return code -->
-					<p:processor name="oxf:xslt">
+					<p:processor name="oxf:identity">
 						<p:input name="data">
-							<results>
-								<parameters>
-									<error>Forbidden.</error>
-								</parameters>
-							</results>
+							<parameters>
+								<error-nr>403</error-nr>
+								<error-title>Forbidden</error-title>
+								<error>You are not autorised to access this page.</error>
+							</parameters>
 						</p:input>
+						<p:output name="data" id="errortext"/>
+					</p:processor>
+					<p:processor name="oxf:xslt">
+						<p:input name="data" href="aggregate('results',#context,#errortext)"/>
 						<p:input name="config" href="../transformations/error2html.xsl"/>
 						<p:output name="data" id="html"/>
 					</p:processor>
@@ -1165,14 +1169,16 @@
 		</p:when>
 		<p:otherwise>
 			<!-- Container doesn't exist in definition: 404 return code -->
-			<p:processor name="oxf:xslt">
+			<p:processor name="oxf:identity">
 				<p:input name="data">
-					<results>
-						<parameters>
-							<error>Resource niet gevonden.</error>
-						</parameters>
-					</results>
+					<parameters>
+							<error-nr>404</error-nr>
+					</parameters>
 				</p:input>
+				<p:output name="data" id="errortext"/>
+			</p:processor>
+			<p:processor name="oxf:xslt">
+				<p:input name="data" href="aggregate('results',#context,#errortext)"/>
 				<p:input name="config" href="../transformations/error2html.xsl"/>
 				<p:output name="data" id="html"/>
 			</p:processor>

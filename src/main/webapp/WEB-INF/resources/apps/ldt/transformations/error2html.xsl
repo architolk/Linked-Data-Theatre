@@ -1,8 +1,8 @@
 <!--
 
     NAME     error2html.xsl
-    VERSION  1.11.0
-    DATE     2016-09-18
+    VERSION  1.11.1-SNAPSHOT
+    DATE     2016-10-14
 
     Copyright 2012-2016
 
@@ -33,12 +33,25 @@
 
 <xsl:template match="/">
 
+	<xsl:variable name="title">
+		<xsl:choose>
+			<xsl:when test="results/parameters/error-nr='404'">404 Niet gevonden</xsl:when>
+			<xsl:otherwise>
+				<xsl:if test="results/parameters/error-nr!=''"><xsl:value-of select="results/parameters/error-nr"/><xsl:text> </xsl:text></xsl:if>
+				<xsl:choose>
+					<xsl:when test="results/parameters/error-title!=''"><xsl:value-of select="results/parameters/error-title"/></xsl:when>
+					<xsl:otherwise>Oeps - er ging iets mis</xsl:otherwise>
+				</xsl:choose>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:variable>
+
 	<html>
 			<head>
 			<meta charset="utf-8"/>
 			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-			<title>Oeps - er ging iets mis</title>
+			<title><xsl:value-of select="$title"/></title>
 
 			<link rel="stylesheet" type="text/css" href="{$staticroot}/css/bootstrap.min.css"/>
 			<link rel="stylesheet" type="text/css" href="{$staticroot}/css/dataTables.bootstrap.min.css"/>
@@ -70,14 +83,22 @@
 						<div class="row">
 							<div class="panel panel-primary">
 								<div class="panel-heading">
-									<h3 class="panel-title">Oeps - er ging iets mis</h3>
+									<h3 class="panel-title"><xsl:value-of select="$title"/><a href="#" onclick="document.getElementById('errors').className = 'row';">.</a></h3>
 								</div>
 								<div class="panel-body">
 									<xsl:for-each select="results/parameters">
-										<p>
-											<xsl:if test="error/@type!=''">(<xsl:value-of select="error/@type"/>)</xsl:if>
-											<xsl:value-of select="error"/>
-										</p>
+										<xsl:choose>
+											<xsl:when test="error-nr='404'">
+												<p>Het antwoord op uw verzoek kan niet worden gevonden.</p>
+												<a href="#" class="btn btn-default" onclick="window.history.back();">Terug naar de vorige pagina.</a>
+											</xsl:when>
+											<xsl:otherwise>
+												<p>
+													<xsl:if test="error/@type!=''">(<xsl:value-of select="error/@type"/>)</xsl:if>
+													<xsl:value-of select="error"/>
+												</p>
+											</xsl:otherwise>
+										</xsl:choose>
 									</xsl:for-each>
 								</div>
 							</div>
@@ -89,7 +110,7 @@
 							</xsl:choose>
 						</xsl:variable>
 						<xsl:if test="exists(results/exceptions)">
-							<div class="{$divclass}">
+							<div class="{$divclass}" id="errors">
 								<script type="text/javascript" charset="utf-8">
 									$(document).ready(function() {$('#errortable').dataTable(elmo_language);} );
 								</script>
