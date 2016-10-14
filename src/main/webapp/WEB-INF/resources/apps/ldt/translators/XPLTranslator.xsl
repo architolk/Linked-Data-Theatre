@@ -1,8 +1,8 @@
 <!--
 
     NAME     XPLTranslator.xsl
-    VERSION  1.11.0
-    DATE     2016-09-18
+    VERSION  1.11.1-SNAPSHOT
+    DATE     2016-10-14
 
     Copyright 2012-2016
 
@@ -78,7 +78,7 @@
 	<xsl:apply-templates select="p:processor|p:choose"/>
 </xsl:template>
 
-<xsl:template match="/">
+<xsl:template match="/root">
 	<rdf:RDF>
 		<xsl:apply-templates select="p:config"/>
 	</rdf:RDF>
