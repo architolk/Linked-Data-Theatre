@@ -1,8 +1,8 @@
 <!--
 
     NAME     config.xml
-    VERSION  1.11.0
-    DATE     2016-09-18
+    VERSION  1.11.1-SNAPSHOT
+    DATE     2016-10-14
 
     Copyright 2012-2016
 
@@ -52,6 +52,7 @@
 	  - the <stage> node contains the configuration for every stage within the specific domain. At least one stage should be present.
 		- name: (optional) the name of the stage
 		- title: (optional) the title of any page on that stage (as displayed in the tab of your browser)
+		- css: (optional) an alternative css stylesheet for this site. This will override the css declaration at site-level
 		- backstage-role: (optional) the role for anybody that can enter the backstage (to update or view the stage configuration)
 	- the <endpoint> node(s) contain extra information uses for sparql-endpoint, currently only for basic-authentication:
 		- username: the username for the endpoint
