@@ -32,6 +32,9 @@
 	<!-- Robots.txt -->
 	<files path="/robots.txt"/>
 
+	<!-- Changelog -->
+	<files path="/changelog.txt"/>
+	
 	<!-- Favicon -->
 	<page path="/favicon.ico" model="pipelines/favicon.xpl" default-submission="config.xml" public-methods="#all"/>
 
