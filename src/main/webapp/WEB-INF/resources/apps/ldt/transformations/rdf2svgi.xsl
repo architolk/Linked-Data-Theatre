@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2svgi.xsl
-    VERSION  1.11.0
-    DATE     2016-09-18
+    VERSION  1.11.1-SNAPSHOT
+    DATE     2016-10-15
 
     Copyright 2012-2016
 
@@ -22,119 +22,70 @@
     along with the Linked Data Theatre.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-﻿<!--
+<!--
     DESCRIPTION
 	Transformation of RDF document to interactive SVG+HTML representation
 	
 -->
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+<xsl:stylesheet version="2.0"
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:elmo="http://bp4mc2.org/elmo/def#"
+>
+
+<xsl:variable name="docroot"><xsl:value-of select="context/@docroot"/></xsl:variable>
+<xsl:variable name="staticroot"><xsl:value-of select="context/@staticroot"/></xsl:variable>
+<xsl:variable name="subdomain"><xsl:value-of select="context/subdomain"/></xsl:variable>
+<xsl:variable name="subject"><xsl:value-of select="context/subject"/></xsl:variable>
 
 <xsl:template match="/">
 <html>
-<style>
-<!-- Styling for the edge between nodes -->
-.link line.border {
-  stroke: #fff;
-  stroke-opacity: 0;
-  stroke-width: 8px;
-}
-.link line.stroke {
-  pointer-events: none;
-}
-.link text {
-  pointer-events: none;
-}
-<!-- Styling of nodes -->
-.node text {
-  pointer-events: none;
-}
-<!-- Styling of tooltip --> <!-- Deprecated? Tooltip is still part of d3graphs.js, but not in use?? -->
-div.tooltip {   
-  position: absolute;           
-  text-align: left;           
-  padding: 2px;             
-  display: inline;
-  display: inline-block;
-  font: 12px sans-serif;        
-  background: #FFFFE0;   
-  border: 1px solid black;
-  pointer-events: none;
-}
-div.tooltip table tr td {
-  vertical-align: top;
-}
-div.tooltip table tr td.data {
-  width: 300px;
-}
-<!-- Styling of canvas -->
-.canvas {
-  fill: none;
-  pointer-events: all;         
-}
-<!-- Default styling (should be part of node or edge??) -->
-.default {
-	fill: white;
-	fill-opacity: .3;
-	stroke: #666;
-}
-<!-- DIV Detailbox -->
-div.detailbox {
-	font-family: Lucida Grande, sans-serif;
-	background-color: black;
-	border-radius: 5px;
-	-moz-border-radius: 5px;
-	font-size: 0.8em;
-	position:absolute;
-	top: 5px;
-	right: 5px;
-	width: 300px;
-	display: hidden;
-	padding: 5px;
-}
-div.detailbox div.header {
-	color: white;
-	font-weight: bold;
-	margin: 0px 0px 5px;
-}
-div.detailbox div.button {
-	height: 30px;
-	padding: 0px;
-}
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title><xsl:value-of select="context/title"/></title>
 
-div.detailbox table {
-	width:100%;
-	background-color:white;
-	table-layout: fixed;
-	word-wrap:break-word;
-}
-div.detailbox table tr td.data {
-	width:80%;
-}
+	<link rel="stylesheet" type="text/css" href="{$staticroot}/css/bootstrap.min.css"/>
+	<link rel="stylesheet" type="text/css" href="{$staticroot}/css/ldt-theme.min.css"/>
+	<link rel="stylesheet" type="text/css" href="{$staticroot}/css/font-awesome.min.css"/>
 
-div.detailbox div.button #expand {
-	padding: 5px;
-	float: right;
-	text-align: right;
-	z-index: 5000;
-	background-color: #808080;
-	border-color: #808080;
-	color: white;
-	cursor: pointer;
-	border-radius: 5px;
-	-moz-border-radius: 5px;
-	padding-left: 15px;
-	text-indent: -10px;
-	font-weight: bold;
-}
-</style>
+	<!-- Alternative styling -->
+	<xsl:for-each select="context/stylesheet">
+		<link rel="stylesheet" type="text/css" href="{@href}"/>
+	</xsl:for-each>
+	
+	<script type="text/javascript" src="{$staticroot}/js/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="{$staticroot}/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="{$staticroot}/js/d3.v3.min.js"></script>
+
+</head>
 <body>
+	<div id="graphcanvas" style="position: relative">
+		<div id="propertybox" style="position:absolute; display:none" onmouseover="mouseoverPropertyBox();" onmouseout="mouseoutPropertyBox();">
+			<i id="mbtninfo" class="btn btn-primary" style="padding: 1px 4px;" onclick="clickInfoBox();">
+				<span class="glyphicon glyphicon-info-sign" style="cursor:pointer"/>
+			</i>
+			<i id="mbtnexpand" class="btn btn-primary" style="padding: 1px 4px;" onclick="clickPropertyBox();">
+				<span class="glyphicon glyphicon-zoom-in" style="cursor:pointer"/>
+			</i>
+		</div>
+		<div class="panel panel-primary panel-secondary">
+			<div id="graphtitle" class="panel-heading"/>
+			<div id="graph" class="panel-body"/>
+		</div>
+	</div>
+	<xsl:variable name="jsonParams"><xsl:for-each select="context/parameters/parameter"><xsl:value-of select="name"/>=<xsl:value-of select="encode-for-uri(value)"/>&amp;</xsl:for-each></xsl:variable>
+	<script type="text/javascript">
+		var jsonApiSubject = "<xsl:value-of select="context/subject"/>";
+		var jsonApiCall = "<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource.d3json?q=&amp;<xsl:value-of select="$jsonParams"/>subject=";
+		var uriEndpoint = "<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource?<xsl:value-of select="$jsonParams"/>subject=";
+	</script>
+	<script src="{$staticroot}/js/d3graphs-inner.min.js" type="text/javascript"/>
+	<script type="text/javascript">
+		togglefullscreen();
+	</script>
 </body>
-<script src="/config/js/d3.min.js" type="text/javascript"/>
-<script type="text/javascript">
-	var jsonApiSubject = "<xsl:value-of select="context/subject"/>";
-	var jsonApiCall = "resource.d3json?subject=";
-</script>
-<script src="/config/js/d3graphs.js" type="text/javascript"/>
 </html>
 </xsl:template>
 

@@ -1,7 +1,7 @@
 /**
  * NAME     ldt-theme.css
- * VERSION  1.11.0
- * DATE     2016-09-18
+ * VERSION  1.11.1-SNAPSHOT
+ * DATE     2016-10-15
  *
  * Copyright 2012-2016
  *
@@ -182,5 +182,154 @@
   border-top: 1px solid #C9C9C9;
   margin-left: -1em;
   padding-left: 2em; 
+}
+/* ------------------- */
+
+/*ChartAppearance styling*/
+#chart .bar {
+  fill: steelblue;
+}
+
+#chart .axis text {
+  font: 10px sans-serif;
+}
+
+#chart .axis path,
+#chart .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+#chart .x.axis path {
+  display: none;
+}
+/* ------------------- */
+
+/*TextAppearance styling*/
+#textdoc p.title {
+	font-weight: bold;
+}
+
+#textdoc tr.title {
+	font-weight: bold;
+}
+
+#textdoc p.break {
+	margin-bottom: 0.5em;
+}
+
+#textdoc ul.fragment {
+	list-style-type: none;
+}
+
+#textdoc table.fragment{
+	margin-bottom: 10px;
+}
+
+#textdoc table.fragment tr td{
+	padding: 3px;
+    border:1px solid #d9d9d9;
+}
+#textdoc .marker {
+	display:-moz-inline-block; display:-moz-inline-box; display:inline-block; 
+	font-weight: bold;
+	left: -40px;
+	width: 40px;
+	margin-right: -40px;
+	position: relative;
+}
+/* ------------------- */
+
+/*GraphAppearance styling (and svgi) */
+/* Styling for the edge between nodes */
+.link line.border {
+  stroke: #fff;
+  stroke-opacity: 0;
+  stroke-width: 8px;
+}
+.link line.stroke {
+  pointer-events: none;
+}
+.link text {
+  pointer-events: none;
+}
+/* Styling of nodes */
+.node text {
+  pointer-events: none;
+}
+/* Styling of canvas */
+.canvas {
+  fill: none;
+  pointer-events: all;
+}
+/* Default styling (should be part of node or edge??) */
+.default {
+	fill: white;
+	fill-opacity: .3;
+	stroke: #666;
+}
+/* DIV Detailbox */
+div.detailbox {
+	background-color: black;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	font-size: 0.8em;
+	top: 5px;
+	right: 5px;
+	width: 300px;
+	padding: 5px;
+	position: absolute;
+}
+div.detailbox div.header {
+	color: white;
+	font-weight: bold;
+	margin: 0px 0px 5px;
+}
+div.detailbox div.button {
+	height: 30px;
+	padding: 0px;
+}
+
+div.detailbox table {
+	width:100%;
+	background-color:white;
+	table-layout: fixed;
+	word-wrap:break-word;
+}
+div.detailbox table tr td.data {
+	width:80%;
+}
+
+div.detailbox div.button #expand {
+	padding: 5px;
+	float: right;
+	text-align: right;
+	z-index: 5000;
+	background-color: #808080;
+	border-color: #808080;
+	color: white;
+	cursor: pointer;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	padding-left: 15px;
+	text-indent: -10px;
+	font-weight: bold;
+}
+div.infobox {
+	background-color: #808080;
+	border-color: #808080;
+	color: white;
+	cursor: pointer;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+}
+div.infobox table {
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+div.infobox table tr td {
+	padding-left: 5px;
+	padding-right: 5px;
 }
 /* ------------------- */

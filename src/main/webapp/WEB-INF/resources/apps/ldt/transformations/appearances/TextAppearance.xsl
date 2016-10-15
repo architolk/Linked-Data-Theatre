@@ -1,8 +1,8 @@
 <!--
 
     NAME     TextAppearance.xsl
-    VERSION  1.11.0
-    DATE     2016-09-18
+    VERSION  1.11.1-SNAPSHOT
+    DATE     2016-10-15
 
     Copyright 2012-2016
 
@@ -30,7 +30,6 @@
 	with a specific XML document, and NOT a Linked Data dataset.
 	
 	TODO: TextAppearance is a depricated appearance, only available because of the previous LDT version. It should be deleted or updated.
-	TODO: Including a <style> element within a <div> is not compliant to html5: this has to change
 	
 -->
 <xsl:stylesheet version="2.0"
@@ -84,43 +83,9 @@
 </xsl:template>
 
 <xsl:template match="rdf:RDF" mode="TextAppearance">
-	<style>
-p.title {
-	font-weight: bold;
-}
-
-tr.title {
-	font-weight: bold;
-}
-
-p.break {
-	margin-bottom: 0.5em;
-}
-
-ul.fragment {
-	list-style-type: none;
-}
-
-table.fragment{
-	margin-bottom: 10px;
-}
-
-table.fragment tr td{
-	padding: 3px;
-    border:1px solid #d9d9d9;
-}
-.marker {
-	display:-moz-inline-block; display:-moz-inline-box; display:inline-block; 
-	font-weight: bold;
-	left: -40px;
-	width: 40px;
-	margin-right: -40px;
-	position: relative;
-}
-	</style>
 	<div class="panel panel-primary">
-		<div id="graphtitle" class="panel-heading"><xsl:value-of select="xmldocs/xmldoc/document/*[1]/*[@class='title']"/></div>
-		<div id="graph" class="panel-body">
+		<div class="panel-heading"><xsl:value-of select="xmldocs/xmldoc/document/*[1]/*[@class='title']"/></div>
+		<div id="textdoc" class="panel-body">
 			<xsl:for-each select="xmldocs/xmldoc/document">
 				<xsl:choose>
 					<xsl:when test="exists(*[@class='container']/*[@class='marker'])">

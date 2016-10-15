@@ -1,8 +1,8 @@
 <!--
 
     NAME     GeoAppearance.xsl
-    VERSION  1.11.0
-    DATE     2016-09-18
+    VERSION  1.11.1-SNAPSHOT
+    DATE     2016-10-15
 
     Copyright 2012-2016
 
@@ -30,6 +30,7 @@
 	This file is also used for the ImageAppearance
 
 	TODO: Including a <style> element within a <div> is not compliant to html5: this has to change
+		  The best way is to migrate this to the javascript part of the code
 	
 -->
 <xsl:stylesheet version="2.0"
