@@ -133,7 +133,7 @@
 				<version>1.13.3</version>
 				<configuration>
 					<reportTitle>Changelog for the Linked Data Theatre</reportTitle>
-					<outputDirectory>${project.build.directory}/${artifactId}-${version}/WEB-INF/resources/apps</outputDirectory>
+					<outputDirectory>${project.build.directory}/${project.artifactId}-${project.version}/WEB-INF/resources/apps</outputDirectory>
 					<generateJSONChangeLog>false</generateJSONChangeLog>
 					<generateSimpleHTMLChangeLog>false</generateSimpleHTMLChangeLog>
 				</configuration>
