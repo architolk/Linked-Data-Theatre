@@ -1,0 +1,8 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix container: <http://localhost:8080/container/>.
+
+container:excel a elmo:Container;
+	elmo:translator elmo:TableExcelTranslator;
+	rdfs:label "Upload Linked Data (Excel fie)";
+.

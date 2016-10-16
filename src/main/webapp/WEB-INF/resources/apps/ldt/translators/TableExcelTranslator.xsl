@@ -1,8 +1,8 @@
 <!--
 
     NAME     TableExcelTranslator.xsl
-    VERSION  1.11.0
-    DATE     2016-09-18
+    VERSION  1.11.1-SNAPSHOT
+    DATE     2016-10-16
 
     Copyright 2012-2016
 
@@ -228,7 +228,8 @@
 										<xsl:otherwise />
 									</xsl:choose>
 								</xsl:variable>
-								<xsl:if test="exists($columns[@id=$column])">
+								<xsl:variable name="value"><xsl:value-of select="$columns[@id=$column]"/></xsl:variable>
+								<xsl:if test="exists($columns[@id=$column]) and ($objecturi='' or normalize-space($value)!='')">
 									<xsl:variable name="prefix" select="replace(@uri,'(/|#|\\)[0-9A-Za-z-._~()@]+$','$1')"/>
 									<xsl:choose>
 										<xsl:when test="$prefix=@uri">
