@@ -3,19 +3,21 @@
 @prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 
-stage:DefaultResource a elmo:Representation;
-	elmo:uri-pattern "^http://localhost:8080/id/";
-	elmo:url-pattern "/resource";
+stage:BlankNodes a elmo:Representation;
+	elmo:url-pattern "/query/BlankNodes$";
 	elmo:index "1";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
-	elmo:layer elmo:BottomLayer;
 	elmo:query '''
+		prefix testo: <http://localhost:8080/def/test#>
 		construct {
-			<@SUBJECT@> ?p ?o
+			?s rdfs:label ?label.
+			?s testo:largestCities ?city
 		}
 		where {
-			<@SUBJECT@> ?p ?o
+			?s rdfs:label ?label.
+			?s testo:largestCities/rdf:rest*/rdf:first ?city
+			FILTER (?s = <http://dbpedia.org/resource/Utrecht_(province)>)
 		}
 	''';
 .

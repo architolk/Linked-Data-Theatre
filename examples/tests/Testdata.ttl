@@ -35,9 +35,15 @@ dbpedia:Amsterdam a dbo:City;
 	testo:capitalCity true;
 .
 
+dbpedia:Utrecht a dbo:City;
+	rdfs:label "Utrecht";
+	testo:capitalCity false;
+.
+
 <http://dbpedia.org/resource/Utrecht_(province)> a dbo:Location;
 	rdfs:label "Utrecht (province)"@en;
-	rdfs:label "Utrecht (provincie)"@en;
+	rdfs:label "Utrecht (provincie)"@nl;
+	testo:largestCities (dbpedia:Amersfoort dbpedia:Utrecht)
 .
 
 #
