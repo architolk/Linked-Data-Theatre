@@ -1,8 +1,8 @@
 <!--
 
     NAME     BackstageRepresentation.xml
-    VERSION  1.11.0
-    DATE     2016-09-18
+    VERSION  1.11.1-SNAPSHOT
+    DATE     2016-10-16
 
     Copyright 2012-2016
 
@@ -39,7 +39,7 @@
 			prefix elmo: <http://bp4mc2.org/elmo/def#>
 			prefix html: <http://www.w3.org/1999/xhtml/vocab#>
 			construct {
-				<header> elmo:html "<img src='/images/ldt-logo.png'/>"
+				<urn:header> elmo:html "<img src='/images/ldt-logo.png'/>"
 			}
 			where {}
 			]]>
@@ -92,6 +92,7 @@
 		<elmo:fragment rdf:nodeID="furlpattern"/>
 		<elmo:fragment rdf:nodeID="fobject"/>
 		<elmo:index>2</elmo:index>
+		<elmo:endpoint rdf:resource="http://bp4mc2.org/elmo/def#Backstage"/>
 		<elmo:query>
 			<![CDATA[
 			prefix elmo: <http://bp4mc2.org/elmo/def#>

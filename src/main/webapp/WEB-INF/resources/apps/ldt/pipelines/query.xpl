@@ -2,7 +2,7 @@
 
     NAME     query.xpl
     VERSION  1.11.1-SNAPSHOT
-    DATE     2016-10-14
+    DATE     2016-10-16
 
     Copyright 2012-2016
 
@@ -648,8 +648,11 @@
 						<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 							<xsl:template match="/root">
 								<xsl:variable name="endpoint">
-									<xsl:value-of select="representation/@endpoint"/>
-									<xsl:if test="not(representation/@endpoint!='')"><xsl:value-of select="context/local-endpoint"/></xsl:if>
+									<xsl:choose>
+										<xsl:when test="representation/@endpoint='http://bp4mc2.org/elmo/def#Backstage'"><xsl:value-of select="context/configuration-endpoint"/></xsl:when>
+										<xsl:when test="representation/@endpoint!=''"><xsl:value-of select="representation/@endpoint"/></xsl:when>
+										<xsl:otherwise><xsl:value-of select="context/local-endpoint"/></xsl:otherwise>
+									</xsl:choose>
 								</xsl:variable>
 								<endpoint>
 									<url><xsl:value-of select="$endpoint"/></url>
