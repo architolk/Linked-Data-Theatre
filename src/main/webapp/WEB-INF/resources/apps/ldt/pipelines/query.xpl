@@ -800,7 +800,7 @@
 			</p:processor>
 		</p:when>
 		<!-- Check if there is any result, return 404 if no resource could be found and a subject is expected -->
-		<p:when test="root/context/representation='' and root/context/subject!='' and exists(root/results/rdf:RDF[1]) and not(exists(root/results/rdf:RDF[1]/*))">
+		<p:when test="root/context/representation='' and root/context/subject!='' and root/context/format!='application/x.elmo.query' and exists(root/results/rdf:RDF[1]) and not(exists(root/results/rdf:RDF[1]/*))">
 			<p:processor name="oxf:identity">
 				<p:input name="data">
 					<parameters>
@@ -862,7 +862,7 @@
 						<p:input name="config">
 							<config/>
 						</p:input>
-						<p:input name="data" href="#querytext"/>
+						<p:input name="data" href="aggregate('query',#context,#representations,#querytext)"/>
 					</p:processor>
 				</p:when>
 				<!-- Plain text -->

@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2html.xsl
-    VERSION  1.11.0-SNAPSHOT
-    DATE     2016-09-18
+    VERSION  1.11.1-SNAPSHOT
+    DATE     2016-10-16
 
     Copyright 2012-2016
 
@@ -103,7 +103,7 @@
 	<xsl:choose>
 		<xsl:when test="$var/@elmo:link!=''">
 			<xsl:value-of select="$docroot"/>
-			<xsl:if test="not(starts-with($var/elmo:link,'/'))">
+			<xsl:if test="not(starts-with($var/@elmo:link,'/'))">
 				<xsl:value-of select="$subdomain"/>
 				<xsl:if test="$docroot!='' or $subdomain!=''">/</xsl:if>
 			</xsl:if>
