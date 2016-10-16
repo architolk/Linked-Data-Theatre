@@ -1,8 +1,8 @@
 <!--
 
     NAME     ChartAppearance.xsl
-    VERSION  1.11.1-SNAPSHOT
-    DATE     2016-10-15
+    VERSION  1.12.0
+    DATE     2016-10-16
 
     Copyright 2012-2016
 
