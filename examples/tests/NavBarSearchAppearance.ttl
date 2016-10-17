@@ -17,6 +17,8 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:data [elmo:index "3"; rdfs:label "GraphAppearance"; html:link "/query/GraphAppearance?subject=http://localhost:8080/id/character/Bilbo"];
 			elmo:data [elmo:index "4"; rdfs:label "VocabularyAppearance"; html:link "/def/lotr"];
 			elmo:data [elmo:index "5"; rdfs:label "ChartAppearance"; html:link "/query/ChartAppearance"];
+			elmo:data [elmo:index "6"; rdfs:label "GeoAppearance (OpenStreetMap)"; html:link "/query/GeoAppearance"];
+			elmo:data [elmo:index "7"; rdfs:label "GeoAppearance (BRT)"; html:link "/query/GeoAppearanceBrt"];
 		];
 		elmo:data [
 			elmo:index "2";
