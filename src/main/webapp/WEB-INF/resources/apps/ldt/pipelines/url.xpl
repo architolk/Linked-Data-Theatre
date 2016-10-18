@@ -1,8 +1,8 @@
 <!--
 
-    NAME     vsparql.xpl
-    VERSION  1.12.0
-    DATE     2016-10-16
+    NAME     url.xpl
+    VERSION  1.12.1-SNAPSHOT
+    DATE     2016-10-18
 
     Copyright 2012-2016
 
@@ -25,9 +25,13 @@
 <!--
     DESCRIPTION
     Virtual sparql endpoint. This service looks at the query, and distilles the subject-resource from the query.
-	The subject-resource is then requested from a document-store and returned
+	The subject-resource is then requested from its original location
 	
-	The document store could also be just a regular website, by using the "graph" pattern.
+	Two possible queries are allowed:
+	1. SELECT ?s?p?o WHERE {?s rdfs:isDefinedBy <URL>. ?s?p?o} => Show all resources at <URL>
+	2. SELECT ?s?p?o WHERE {<URL> ?p ?o} => Show triples at <URL> (deferenced URI)
+	
+	The first statement is more appropiate for vocabulaires, the latter for simple resources.
 	
 -->
 <p:config xmlns:p="http://www.orbeon.com/oxf/pipeline"
@@ -49,15 +53,22 @@
 		<p:input name="config">
 			<xsl:stylesheet version="2.0">
 				<xsl:template match="/">
-					<xsl:variable name="subject"><xsl:value-of select="replace(theatre/query,'^[^&lt;]*&lt;([^&gt;]*)&gt;.*$','$1')"/></xsl:variable>
-					<xsl:variable name="domain"><xsl:value-of select="replace($subject,'^http(s|)://([^/]+).*$','$2')"/></xsl:variable>
-					<xsl:variable name="fullpath"><xsl:value-of select="replace($subject,'^http(s|)://([^/]+)(.*)$','$3')"/></xsl:variable>
-					<xsl:variable name="path"><xsl:value-of select="replace($fullpath,'[^/]+$','')"/></xsl:variable>
+					<xsl:variable name="firstsubject"><xsl:value-of select="replace(theatre/query,'^[^&lt;]*&lt;([^&gt;]*)&gt;[^@]*$','$1')"/></xsl:variable>
 					<filecontext>
-						<subject><xsl:value-of select="$subject"/></subject>
-						<domain><xsl:value-of select="$domain"/></domain>
-						<path><xsl:value-of select="$path"/></path>
-						<filename><xsl:value-of select="substring-after($fullpath,$path)"/></filename>
+						<type>
+							<xsl:choose>
+								<xsl:when test="$firstsubject='http://www.w3.org/2000/01/rdf-schema#isDefinedBy'">dataset</xsl:when>
+								<xsl:otherwise>resource</xsl:otherwise>
+							</xsl:choose>
+						</type>
+						<subject>
+							<xsl:choose>
+								<xsl:when test="$firstsubject='http://www.w3.org/2000/01/rdf-schema#isDefinedBy'">
+									<xsl:value-of select="replace(substring-after(theatre/query,'&lt;http://www.w3.org/2000/01/rdf-schema#isDefinedBy&gt;'),'^[^&lt;]*&lt;([^&gt;]*)&gt;[^@]*$','$1')"/>
+								</xsl:when>
+								<xsl:otherwise><xsl:value-of select="$firstsubject"/></xsl:otherwise>
+							</xsl:choose>
+						</subject>
 					</filecontext>
 				</xsl:template>
 			</xsl:stylesheet>
@@ -71,7 +82,7 @@
 			<config xsl:version="2.0">
 				<input-type>text</input-type>
 				<output-type>rdf</output-type>
-				<url>http://git.localhost:8080/root/<xsl:value-of select="filecontext/domain"/>/raw/master<xsl:value-of select="filecontext/path"/><xsl:value-of select="filecontext/filename"/>.ttl</url>
+				<url><xsl:value-of select="filecontext/subject"/></url>
 				<method>get</method>
 			</config>
 		</p:input>
@@ -85,15 +96,18 @@
 			<xsl:stylesheet version="2.0">
 				<xsl:template match="root">
 					<xsl:variable name="uri" select="filecontext/subject"/>
+					<xsl:variable name="type" select="filecontext/type"/>
 					<sparql:sparql>
 						<sparql:head>
+							<xsl:if test="$type='dataset'"><sparql:variable name="s"/></xsl:if>
 							<sparql:variable name="p"/>
 							<sparql:variable name="o"/>
 						</sparql:head>
 						<sparql:results distinct="false" ordered="true">
-							<xsl:for-each-group select="response/rdf:RDF/rdf:Description[@rdf:about=$uri]" group-by="@rdf:about">
+							<xsl:for-each-group select="response/rdf:RDF/rdf:Description[$type='dataset' or @rdf:about=$uri]" group-by="@rdf:about">
 								<xsl:for-each select="current-group()/*">
 									<sparql:result>
+										<xsl:if test="$type='dataset'"><sparql:binding name="s"><sparql:uri><xsl:value-of select="../@rdf:about"/></sparql:uri></sparql:binding></xsl:if>
 										<sparql:binding name="p"><sparql:uri><xsl:value-of select="namespace-uri()"/><xsl:value-of select="local-name()"/></sparql:uri></sparql:binding>
 										<sparql:binding name="o">
 											<xsl:choose>
@@ -112,35 +126,12 @@
 		<p:output name="data" id="result"/>
 	</p:processor>
 	
-	<!-- Debugging: store result -->
-	<!--
-	<p:processor name="oxf:xml-converter">
-		<p:input name="config">
-			<config>
-				<encoding>utf-8</encoding>
-			</config>
-		</p:input>
-		<p:input name="data" href="#result"/>
-		<p:output name="data" id="xmldoc"/>
-	</p:processor>
-	<p:processor name="oxf:file-serializer">
-		<p:input name="config">
-			<config>
-				<scope>session</scope>
-			</config>
-		</p:input>
-		<p:input name="data" href="#xmldoc"/>
-		<p:output name="data" id="url-written"/>
-	</p:processor>
-	-->
-	
 	<p:processor name="oxf:xml-serializer">
 		<p:input name="config">
 			<config>
 				<content-type>application/sparql-results+xml</content-type>
 			</config>
 		</p:input>
-		<!--<p:input name="data" href="aggregate('root',#url-written,#result)#xpointer(root/sparql:sparql)"/>-->
 		<p:input name="data" href="#result"/>
 	</p:processor>
 	
