@@ -1,8 +1,8 @@
 <!--
 
     NAME     context.xsl
-    VERSION  1.12.0
-    DATE     2016-10-16
+    VERSION  1.12.1-SNAPSHOT
+    DATE     2016-10-18
 
     Copyright 2012-2016
 
@@ -32,7 +32,7 @@
 	<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="no"/>
 	
 	<xsl:template match="/root|/croot">
-		<xsl:variable name="uri-filter">[^a-zA-Z0-9:\.\-_~/()#&amp;=]</xsl:variable> <!-- ampersand and equal-sign added for Juriconnect -->
+		<xsl:variable name="uri-filter">[^a-zA-Z0-9:\.\-_~/()#&amp;=,]</xsl:variable> <!-- ampersand and equal-sign added for Juriconnect -->
 		<xsl:variable name="x-forwarded-host"><xsl:value-of select="replace(request/headers/header[name='x-forwarded-host']/value,'^([^,]+).*$','$1')"/></xsl:variable>
 		<xsl:variable name="domain">
 			<xsl:value-of select="$x-forwarded-host"/> <!-- Use original hostname in case of proxy, first one in case of multiple proxies -->
@@ -100,8 +100,6 @@
 		<xsl:variable name="url-with-domain">
 			<xsl:choose>
 				<xsl:when test="$x-forwarded-host!=''"><xsl:value-of select="replace(request/request-url,'^([a-z]+://)([^/]+)(.*)',concat('$1',$x-forwarded-host,'$3'))"/></xsl:when>
-				<!-- TODO: Maybe http is not realy correct: what if it should be https?? -->
-<!--				<xsl:when test="$x-forwarded-host!=''">http://<xsl:value-of select="$x-forwarded-host"/><xsl:value-of select="request/request-path"/></xsl:when>-->
 				<xsl:otherwise><xsl:value-of select="request/request-url"/></xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
@@ -109,7 +107,7 @@
 		<xsl:variable name="url">
 			<xsl:choose>
 				<xsl:when test="$docroot=''"><xsl:value-of select="$url-with-domain"/></xsl:when>
-				<xsl:when test="matches(request/request-path,concat('^',$docroot))"><xsl:value-of select="$url-with-domain"/></xsl:when>
+				<xsl:when test="matches(request/request-url,concat('^([a-z]+://[^/]+)',$docroot))"><xsl:value-of select="$url-with-domain"/></xsl:when>
 				<xsl:otherwise><xsl:value-of select="replace($url-with-domain,'^([a-z]+://[^/]+)(.*)$',concat('$1',$docroot,'$2'))"/></xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
