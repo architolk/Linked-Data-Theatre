@@ -70,7 +70,7 @@
 					<xsl:variable name="location" select="@rdf:resource"/>
 					<xsl:for-each select="../../rdf:Description[@rdf:about=$location and exists(xhtml:stylesheet) and exists(dc:title)]">
 						<tr>
-							<td><svg width="25" height="15"><rect x="2" y="5" width="20" height="10" class="{xhtml:stylesheet}"/></svg></td>
+							<td><svg width="25" height="15"><rect x="2" y="5" width="20" height="10" class="s{xhtml:stylesheet}"/></svg></td>
 							<td><xsl:value-of select="dc:title"/></td>
 						</tr>
 					</xsl:for-each>
@@ -83,7 +83,7 @@
 			<xsl:if test="rdf:value!=''">addWKT(<xsl:value-of select="$mapid"/>,'<xsl:value-of select="rdf:value"/>');</xsl:if>
 			<xsl:for-each select="geosparql:sfContains">
 				<xsl:variable name="location" select="@rdf:resource"/>
-				<xsl:for-each select="../../rdf:Description[@rdf:about=$location]/rdf:value">addWKT(<xsl:value-of select="$mapid"/>,'<xsl:value-of select="."/>','<xsl:value-of select="../xhtml:stylesheet"/>');</xsl:for-each>
+				<xsl:for-each select="../../rdf:Description[@rdf:about=$location]/rdf:value">addWKT(<xsl:value-of select="$mapid"/>,'<xsl:value-of select="."/>','<xsl:if test="../xhtml:stylesheet!=''">s<xsl:value-of select="../xhtml:stylesheet"/></xsl:if>');</xsl:for-each>
 			</xsl:for-each>
 			<xsl:text>showMap(</xsl:text><xsl:value-of select="$mapid"/>);</script>
 	</div>

@@ -67,12 +67,12 @@ doc:f2f2f1 a geosparql:Feature;
 .
 doc:binnenstadsmuren a geosparql:Feature;
 	dc:title "Binnen de stadsmuren";
-	xhtml:stylesheet "sbinnen";
+	xhtml:stylesheet "binnen";
 	geosparql:hasGeometry <http://brt.basisregistraties.overheid.nl/top10nl/id/geometry/23d44a1b417b71cd21699e005123a697>;
 	geosparql:hasGeometry <http://brt.basisregistraties.overheid.nl/top10nl/id/geometry/9f24b93d200a41de677f715c840d1ec1>;
 .
 doc:buitenstadsmuren a geosparql:Feature;
 	dc:title "Buiten de stadsmuren";
-	xhtml:stylesheet "sbuiten";
+	xhtml:stylesheet "buiten";
 	geosparql:hasGeometry <http://brt.basisregistraties.overheid.nl/top10nl/id/geometry/307812ac9c7e057fbb9fd1eec10fddcb>;
 .
