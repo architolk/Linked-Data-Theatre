@@ -1,8 +1,8 @@
 <!--
 
     NAME     query.xpl
-    VERSION  1.12.0
-    DATE     2016-10-16
+    VERSION  1.12.1-SNAPSHOT
+    DATE     2016-10-23
 
     Copyright 2012-2016
 
@@ -702,72 +702,6 @@
 	
 	</p:for-each>
 
-	<!-- Look up fragments if applicable (TextAppearance) -->
-	<p:for-each href="#querytext" select="view/representation[@appearance='http://bp4mc2.org/elmo/def#TextAppearance']" root="docs" id="text">
-		<!-- Splits document URL van fragment xpath -->
-		<p:processor name="oxf:xslt">
-			<p:input name="data" href="aggregate('root',current(),#sparql)"/>
-			<p:input name="config">
-				<xsl:stylesheet version="2.0">
-					<xsl:template match="/root">
-						<xsl:variable name="representation-uri" select="representation/@uri"/>
-						<xsl:variable name="index" select="representation/@index"/>
-						<xsl:variable name="fragment"><xsl:value-of select="results/rdf:RDF[position()=$index]/rdf:Description[1]/@rdf:about"/></xsl:variable>
-						<params>
-							<fragment>
-								<xsl:text>//fragment</xsl:text>
-								<xsl:if test="substring-after($fragment,'#')!=''">/<xsl:value-of select="substring-after($fragment,'#')"/></xsl:if>
-							</fragment>
-							<publication-uri>
-								<xsl:value-of select="substring-before(concat($fragment,'#'),'#')"/>
-							</publication-uri>
-							<representation-uri>
-								<xsl:value-of select="representation/@uri"/>
-							</representation-uri>
-						</params>
-					</xsl:template>
-				</xsl:stylesheet>
-			</p:input>
-			<p:output name="data" id="params"/>
-		</p:processor>
-		<!-- Ophalen document uit relationele database -->
-		<p:processor name="oxf:sql">
-			<p:input name="data" href="#params"/>
-			<p:input name="config" transform="oxf:xslt" href="#params">
-				<sql:config xsl:version="2.0">
-					<xmldocs uri="{params/representation-uri}">
-						<sql:connection>
-						<sql:datasource>virtuoso</sql:datasource>
-							<sql:execute>
-								<sql:query>
-									select publication_uri,publication_datetime,part from xmldoc
-									where xpath_contains(document,<sql:param type="xs:string" select="params/fragment"/>,part)
-									and publication_uri=<sql:param type="xs:string" select="params/publication-uri"/>
-								</sql:query>
-								<sql:result-set>
-									<sql:row-iterator>
-										<xmldoc>
-											<publication-uri>
-												<sql:get-column-value type="xs:string" column="publication_uri"/>
-											</publication-uri>
-											<publication-datetime>
-												<sql:get-column-value type="xs:dateTime" column="publication_datetime"/>
-											</publication-datetime>
-											<document>
-												<sql:get-column-value type="odt:xmlFragment" column="part" xmlns:odt="http://orbeon.org/oxf/xml/datatypes"/>
-											</document>
-										</xmldoc>
-									</sql:row-iterator>
-								</sql:result-set>
-							</sql:execute>
-						</sql:connection>
-					</xmldocs>
-				</sql:config>
-			</p:input>
-			<p:output name="data" ref="text"/>
-		</p:processor>
-	</p:for-each>
-	
 	<p:choose href="aggregate('root',#context,#sparql)">
 		<!-- Check for errors -->
 		<p:when test="exists(root/results/parameters/error)">
@@ -1245,7 +1179,7 @@
 				<p:otherwise>
 					<!-- Transform to annotated rdf -->
 					<p:processor name="oxf:xslt">
-						<p:input name="data" href="aggregate('root',#context,#querytext,#sparql,#text)"/>
+						<p:input name="data" href="aggregate('root',#context,#querytext,#sparql)"/>
 						<p:input name="config" href="../transformations/rdf2rdfa.xsl"/>
 						<p:output name="data" id="rdfa"/>
 					</p:processor>

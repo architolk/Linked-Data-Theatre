@@ -19,6 +19,7 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:data [elmo:index "5"; rdfs:label "ChartAppearance"; html:link "/query/ChartAppearance"];
 			elmo:data [elmo:index "6"; rdfs:label "GeoAppearance (OpenStreetMap)"; html:link "/query/GeoAppearance"];
 			elmo:data [elmo:index "7"; rdfs:label "GeoAppearance (BRT)"; html:link "/query/GeoAppearanceBrt"];
+			elmo:data [elmo:index "8"; rdfs:label "TextAppearance"; html:link "/query/TextAppearance"];
 		];
 		elmo:data [
 			elmo:index "2";

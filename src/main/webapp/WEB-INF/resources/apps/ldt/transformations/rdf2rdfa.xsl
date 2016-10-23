@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2rdfa.xsl
-    VERSION  1.12.0
-    DATE     2016-10-16
+    VERSION  1.12.1-SNAPSHOT
+    DATE     2016-10-23
 
     Copyright 2012-2016
 
@@ -204,9 +204,6 @@
 					</xsl:if>
 				</xsl:for-each-group>
 			</xsl:when>
-			<xsl:when test="$appearance='http://bp4mc2.org/elmo/def#TextAppearance'">
-				<xsl:copy-of select="/root/docs/xmldocs[@uri=$representation-uri]"/>
-			</xsl:when>
 			<xsl:when test="$appearance='http://bp4mc2.org/elmo/def#FormAppearance'">
 				<xsl:for-each select="queryForm">
 					<rdf:Description rdf:nodeID="form">
@@ -255,6 +252,24 @@
 						<xsl:copy-of select="current-group()/*"/>
 					</rdf:Description>
 				</xsl:for-each-group>
+			</xsl:when>
+			<xsl:when test="$appearance='http://bp4mc2.org/elmo/def#TextAppearance'">
+				<xsl:for-each-group select="/root/results/rdf:RDF[position()=$index]/rdf:Description" group-by="@rdf:about">
+					<rdf:Description rdf:about="{@rdf:about}">
+						<xsl:copy-of select="current-group()/*"/>
+					</rdf:Description>
+				</xsl:for-each-group>
+				<xsl:for-each-group select="/root/results/rdf:RDF[position()=$index]/rdf:Description" group-by="@rdf:nodeID">
+					<rdf:Description rdf:nodeID="{@rdf:nodeID}">
+						<xsl:copy-of select="current-group()/*"/>
+					</rdf:Description>
+				</xsl:for-each-group>
+				<xsl:for-each select="fragment">
+					<rdf:Description rdf:nodeID="f{position()}">
+						<xsl:if test="@applies-to!=''"><elmo:applies-to><xsl:value-of select="@applies-to"/></elmo:applies-to></xsl:if>
+						<xsl:copy-of select="*"/>
+					</rdf:Description>
+				</xsl:for-each>
 			</xsl:when>
 			<xsl:when test="$appearance='http://bp4mc2.org/elmo/def#GeoSelectAppearance' or $appearance='http://bp4mc2.org/elmo/def#GeoAppearance' or $appearance='http://bp4mc2.org/elmo/def#ImageAppearance'">
 				<xsl:if test="$appearance='http://bp4mc2.org/elmo/def#GeoSelectAppearance' and not(exists(/root/results/rdf:RDF[position()=$index]/*))">

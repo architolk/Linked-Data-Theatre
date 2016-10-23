@@ -1,0 +1,114 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix xhtml: <http://www.w3.org/1999/xhtml/vocab#>.
+
+stage:TextAppearance a elmo:Representation;
+	elmo:url-pattern "/query/TextAppearance$";
+	elmo:index "1";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:TextAppearance;
+	elmo:fragment [
+		elmo:applies-to "binnen";
+		xhtml:stylesheet "fill: red; fill-opacity: 1.0; stroke: red;";
+	];
+	elmo:fragment [
+		elmo:applies-to "buiten";
+		xhtml:stylesheet "fill: blue; fill-opacity: 1.0; stroke: blue;";
+	];
+	elmo:query '''
+		prefix geosparql: <http://www.opengis.net/ont/geosparql#>
+		prefix xhtml: <http://www.w3.org/1999/xhtml/vocab#>
+		construct {
+			<http://localhost:8080/id/fragment/doc1> dc:title ?doctitle.
+			?container xhtml:subsection ?fragment.
+			?fragment rdf:type ?type.
+			?fragment dc:title ?title.
+			?fragment rdf:value ?block.
+			?fragment geosparql:sfContains ?feature.
+			?feature rdf:value ?wkt.
+			?feature xhtml:stylesheet ?stylesheet.
+			?head rdf:rest ?tail.
+			?head rdf:first ?content.
+			?content dc:title ?ctitle.
+		}
+		where {
+			<http://localhost:8080/id/fragment/doc1> dc:title ?doctitle.
+			<http://localhost:8080/id/fragment/doc1> xhtml:subsection* ?container.
+			?container xhtml:subsection ?fragment.
+			?fragment rdf:type ?type.
+			OPTIONAL {?fragment dc:title ?title}
+			OPTIONAL {
+				?fragment rdf:value ?block.
+				OPTIONAL {
+					?block rdf:rest* ?head.
+					?head rdf:first ?content.
+					?head rdf:rest ?tail.
+					OPTIONAL {?content dc:title ?ctitle}
+				}
+			}
+			OPTIONAL {
+				?fragment geosparql:sfContains* ?feature.
+				?feature geosparql:hasGeometry ?geo.
+				?geo geosparql:asWKT ?wkt.
+				OPTIONAL {?feature xhtml:stylesheet ?stylesheet}
+			}
+		}
+	''';
+.
+
+stage:SectionTextAppearance a elmo:Representation;
+	elmo:applies-to [rdf:type xhtml:section];
+	elmo:index "1";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:TextAppearance;
+	elmo:fragment [
+		elmo:applies-to "binnen";
+		xhtml:stylesheet "fill: red; fill-opacity: 1.0; stroke: red;";
+	];
+	elmo:fragment [
+		elmo:applies-to "buiten";
+		xhtml:stylesheet "fill: blue; fill-opacity: 1.0; stroke: blue;";
+	];
+	elmo:query '''
+		prefix geosparql: <http://www.opengis.net/ont/geosparql#>
+		prefix xhtml: <http://www.w3.org/1999/xhtml/vocab#>
+		construct {
+			<@SUBJECT@> dc:title ?doctitle.
+			?container xhtml:subsection ?fragment.
+			?fragment rdf:type ?type.
+			?fragment dc:title ?title.
+			?fragment rdf:value ?block.
+			?fragment geosparql:sfContains ?feature.
+			?feature rdf:value ?wkt.
+			?feature xhtml:stylesheet ?stylesheet.
+			?head rdf:rest ?tail.
+			?head rdf:first ?content.
+			?content dc:title ?ctitle.
+		}
+		where {
+			<@SUBJECT@> dc:title ?doctitle.
+			<@SUBJECT@> xhtml:subsection* ?container.
+			?container xhtml:subsection ?fragment.
+			?fragment rdf:type ?type.
+			OPTIONAL {?fragment dc:title ?title}
+			OPTIONAL {
+				?fragment rdf:value ?block.
+				OPTIONAL {
+					?block rdf:rest* ?head.
+					?head rdf:first ?content.
+					?head rdf:rest ?tail.
+					OPTIONAL {?content dc:title ?ctitle}
+				}
+			}
+			OPTIONAL {
+				?fragment geosparql:sfContains* ?feature.
+				?feature geosparql:hasGeometry ?geo.
+				?geo geosparql:asWKT ?wkt.
+				OPTIONAL {?feature xhtml:stylesheet ?stylesheet}
+			}
+		}
+	''';
+.
