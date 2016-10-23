@@ -108,10 +108,10 @@ The Linked Data Theatre comes with a couple of examples. You can download the tu
 
 Upload to the triple store (put your virtuoso password at the placeholder `<<virtuosopassword>>`):
 ```
-curl -X POST http://localhost:8890/sparql-graph-crud-auth?graph-uri=http:8080/stage --user dba:<<virtuosopassword>> --digest -T amersfoort.ttl
-curl -X POST http://localhost:8890/sparql-graph-crud-auth?graph-uri=http:8080/stage --user dba:<<virtuosopassword>> --digest -T dbpedia.ttl
-curl -X POST http://localhost:8890/sparql-graph-crud-auth?graph-uri=http:8080/stage --user dba:<<virtuosopassword>> --digest -T helloWorld.ttl
-curl -X POST http://localhost:8890/sparql-graph-crud-auth?graph-uri=http:8080/stage --user dba:<<virtuosopassword>> --digest -T showGraphs.ttl
+curl -X POST http://localhost:8890/sparql-graph-crud-auth?graph-uri=http://localhost:8080/stage --user dba:<<virtuosopassword>> --digest -T amersfoort.ttl
+curl -X POST http://localhost:8890/sparql-graph-crud-auth?graph-uri=http://localhost:8080/stage --user dba:<<virtuosopassword>> --digest -T dbpedia.ttl
+curl -X POST http://localhost:8890/sparql-graph-crud-auth?graph-uri=http://localhost:8080/stage --user dba:<<virtuosopassword>> --digest -T helloWorld.ttl
+curl -X POST http://localhost:8890/sparql-graph-crud-auth?graph-uri=http://localhost:8080/stage --user dba:<<virtuosopassword>> --digest -T showGraphs.ttl
 ```
 You can test the examples by visiting the Theatre pages:
 
