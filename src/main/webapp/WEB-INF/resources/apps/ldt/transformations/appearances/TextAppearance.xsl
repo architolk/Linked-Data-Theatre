@@ -2,7 +2,7 @@
 
     NAME     TextAppearance.xsl
     VERSION  1.12.1-SNAPSHOT
-    DATE     2016-10-23
+    DATE     2016-10-29
 
     Copyright 2012-2016
 
@@ -44,6 +44,7 @@
 	xmlns:xhtml="http://www.w3.org/1999/xhtml/vocab#"
 	xmlns:geosparql="http://www.opengis.net/ont/geosparql#"
 	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
 >
 
 <xsl:output method="xml" indent="yes"/>
@@ -51,7 +52,7 @@
 <xsl:template match="rdf:Description[exists(xhtml:subsection)]" mode="makedoc">
 	<xsl:param name="parent"/>
 	
-	<xsl:if test="dc:title!='' and not($parent='root')">
+	<xsl:if test="dc:title!='' and not($parent='root' or $parent='li')">
 		<p class="title"><xsl:value-of select="dc:title"/></p>
 	</xsl:if>
 	<xsl:for-each select="xhtml:subsection"><xsl:sort select="@rdf:resource"/>
@@ -70,7 +71,18 @@
 					<xsl:variable name="location" select="@rdf:resource"/>
 					<xsl:for-each select="../../rdf:Description[@rdf:about=$location and exists(xhtml:stylesheet) and exists(dc:title)]">
 						<tr>
-							<td><svg width="25" height="15"><rect x="2" y="5" width="20" height="10" class="s{xhtml:stylesheet}"/></svg></td>
+							<td>
+								<svg width="25" height="20">
+									<xsl:if test="exists(xhtml:icon)">
+										<defs>
+											<pattern id="{xhtml:stylesheet}" patternUnits="userSpaceOnUse" width="48" height="48">
+												<image xlink:href="/images/patterns/{xhtml:icon}" x="0" y="0" width="48" height="48" />
+											</pattern>
+										</defs>
+									</xsl:if>
+									<rect x="2" y="5" width="20" height="15" class="s{xhtml:stylesheet}"/>
+								</svg>
+							</td>
 							<td><xsl:value-of select="dc:title"/></td>
 						</tr>
 					</xsl:for-each>
@@ -95,7 +107,9 @@
 			<xsl:variable name="fragment" select="@rdf:resource"/>
 			<li>
 				<span class="marker"><xsl:value-of select="../../rdf:Description[@rdf:about=$fragment]/dc:title"/></span>
-				<xsl:apply-templates select="../../rdf:Description[@rdf:about=$fragment]" mode="makedoc"/>
+				<xsl:apply-templates select="../../rdf:Description[@rdf:about=$fragment]" mode="makedoc">
+					<xsl:with-param name="parent">li</xsl:with-param>
+				</xsl:apply-templates>
 			</li>
 		</xsl:for-each>
 	</ul>
@@ -120,7 +134,6 @@
 		<xsl:otherwise><xsl:value-of select="rdf:first"/></xsl:otherwise>
 	</xsl:choose>
 	<xsl:variable name="tail" select="rdf:rest/@rdf:nodeID"/>
-	<xsl:text> </xsl:text>
 	<xsl:apply-templates select="../rdf:Description[@rdf:nodeID=$tail]" mode="reclist"/>
 </xsl:template>
 
