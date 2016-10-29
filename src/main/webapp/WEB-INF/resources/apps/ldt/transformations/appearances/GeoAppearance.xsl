@@ -1,8 +1,8 @@
 <!--
 
     NAME     GeoAppearance.xsl
-    VERSION  1.12.0
-    DATE     2016-10-16
+    VERSION  1.12.1-SNAPSHOT
+    DATE     2016-10-29
 
     Copyright 2012-2016
 
@@ -191,6 +191,7 @@
 						<xsl:variable name="styleclass">
 							<xsl:choose>
 								<xsl:when test="elmo:style/@rdf:resource='http://bp4mc2.org/elmo/def#HiddenStyle'">hidden-object</xsl:when>
+								<xsl:when test="html:stylesheet!=''"><xsl:value-of select="html:stylesheet"/></xsl:when>
 								<xsl:otherwise><xsl:value-of select="key('resource',elmo:style[1]/@rdf:resource)/elmo:name[1]"/></xsl:otherwise>
 							</xsl:choose>
 						</xsl:variable>
