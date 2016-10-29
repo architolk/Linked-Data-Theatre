@@ -27,3 +27,23 @@ stage:ChartAppearance a elmo:Representation;
 		}
 	''';
 .
+stage:ChartAppearanceQuery a elmo:Query;
+	rdfs:label "Max 30 classes with number of instances";
+	elmo:query '''
+		construct {
+			?class rdfs:label ?label.
+			?class rdf:value ?cnt
+		}
+		where {
+			?class rdfs:label ?label
+			{
+				select distinct ?class (count(?s) as ?cnt)
+				where {
+					?s rdf:type ?class
+				}
+				group by ?class
+				limit 30
+			}
+		}
+	'''
+.

@@ -24,6 +24,19 @@ stage:SelectFormats a elmo:Representation;
 		}
 	''';
 .
+stage:SelectFormatsQuery a elmo:Query;
+	rdfs:label "Cities with populations";
+	elmo:query '''
+		prefix dbo: <http://dbpedia.org/ontology/>
+		select ?s ?s_label (dbo:City as ?type) ?s_count
+		where {
+			?s rdf:type dbo:City.
+			?s rdfs:label ?s_label.
+			OPTIONAL {?s dbo:population ?s_count}
+		}
+	''';
+.
+
 stage:Formats_tab elmo:index "1";
 	elmo:appearance elmo:IndexAppearance;
 	elmo:data [

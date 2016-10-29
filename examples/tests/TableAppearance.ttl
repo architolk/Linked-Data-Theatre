@@ -1,0 +1,32 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dbo: <http://dbpedia.org/ontology/>.
+@prefix dbpedia: <http://dbpedia.org/resource/>.
+@prefix dbp: <http://dbpedia.org/property/>.
+
+stage:TableAppearance a elmo:Representation;
+	elmo:url-pattern "/query/TableAppearance";
+	elmo:query '''
+		select distinct ?class ?class_label (count(*) as ?class_count)
+		where {
+			graph <http://localhost:8080/stage> {
+				?item rdf:type ?class.
+				OPTIONAL {?class rdfs:label ?class_label}
+			}
+		}
+	''';
+.
+stage:TableAppearanceQuery a elmo:Query;
+	rdfs:label "All classes within the test dataset";
+	elmo:query '''
+		select distinct ?class ?class_label (count(*) as ?class_count)
+		where {
+			graph <http://localhost:8080/stage> {
+				?item rdf:type ?class.
+				OPTIONAL {?class rdfs:label ?class_label}
+			}
+		}
+	''';
+.

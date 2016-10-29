@@ -1,0 +1,44 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix geosparql: <http://www.opengis.net/ont/geosparql#>.
+
+stage:GeoAppearanceBrtFeature a elmo:Representation;
+	elmo:applies-to [rdf:type geosparql:Feature];
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:GeoAppearance;
+	elmo:fragment [
+		elmo:applies-to elmo:Appearance;
+		elmo:backmap "brt";
+	];
+	html:stylesheet "/css/Symboolcodelijst.css";
+	elmo:query '''
+		prefix geosparql: <http://www.opengis.net/ont/geosparql#>
+		prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+		prefix xhtml: <http://www.w3.org/1999/xhtml/vocab#>
+		construct {
+			?geo geo:geometry ?wkt.
+			?geo rdfs:label ?label.
+			?geo xhtml:stylesheet ?stylesheet.
+		}
+		WHERE {
+			{
+				?feature geosparql:hasGeometry ?geo.
+				?geo geosparql:asWKT ?wkt.
+				OPTIONAL {?feature rdfs:label ?label}
+				OPTIONAL {?feature xhtml:stylesheet ?stylesheet}
+				FILTER (?feature = <@SUBJECT@>)
+			}
+			UNION
+			{
+				<@SUBJECT@> geosparql:sfContains ?feature.
+				?feature geosparql:hasGeometry ?geo.
+				OPTIONAL {?feature rdfs:label ?label}
+				OPTIONAL {?feature xhtml:stylesheet ?stylesheet}
+				?geo geosparql:asWKT ?wkt.
+			}
+		}
+	''';
+.

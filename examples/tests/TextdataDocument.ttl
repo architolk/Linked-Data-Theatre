@@ -27,18 +27,36 @@ doc:f1f2 a xhtml:section;
 	xhtml:subsection doc:f1f2f1,doc:f1f2f2;
 .
 doc:f1f2f1 a xhtml:contents;
-	rdf:value ("De objecten op" doc:f2f2f1 "bij" doc:f2f2 "zijn monumenten. De volgende richtlijnen gelden:");
+	rdf:value ("De objecten op " doc:f2f2f1 " bij " doc:f2f2 " zijn monumenten. De volgende richtlijnen gelden:");
 .
 doc:f1f2f2 a xhtml:list;
-	xhtml:subsection doc:f1f2f2f1,doc:f1f2f2f2;
+	xhtml:subsection doc:f1f2f2f1,doc:f1f2f2f2,doc:f1f2f2f3;
 .
 doc:f1f2f2f1 a xhtml:contents;
 	dc:title "1";
-	rdf:value ("Voor gebieden aangeduid met" doc:binnenstadsmuren ": 100 meter");
+	rdf:value ("Voor gebieden aangeduid met " doc:binnenstadsmuren ": 100 meter");
 .
 doc:f1f2f2f2 a xhtml:contents;
 	dc:title "2";
-	rdf:value ("Voor gebieden aangeduid met" doc:buitenstadsmuren ": 50 meter");
+	rdf:value ("Voor gebieden aangeduid met " doc:buitenstadsmuren ": 50 meter");
+.
+doc:f1f2f2f3 a xhtml:section;
+	dc:title "3";
+	xhtml:subsection doc:f1f2f2f3f1,doc:f1f2f2f3f2;
+.
+doc:f1f2f2f3f1 a xhtml:contents;
+	rdf:value "Voor de overige gebieden:";
+.
+doc:f1f2f2f3f2 a xhtml:list;
+	xhtml:subsection doc:f1f2f2f3f2f1,doc:f1f2f2f3f2f2;
+.
+doc:f1f2f2f3f2f1 a xhtml:contents;
+	dc:title "a";
+	rdf:value "Niets";
+.
+doc:f1f2f2f3f2f2 a xhtml:contents;
+	dc:title "b";
+	rdf:value "En nog minder";
 .
 doc:f2 a xhtml:section;
 	dc:title "Hoofdstuk 2";
@@ -49,7 +67,7 @@ doc:f2f1 a xhtml:section;
 	xhtml:subsection doc:f2f1f1,doc:f2f1f2;
 .
 doc:f2f1f1 a xhtml:contents;
-	rdf:value ("De tekst genoemd in" doc:f2f1f1l1 "en in" doc:f2f1 "is foutief");
+	rdf:value ("De tekst genoemd in " doc:f2f1f1l1 " en in " doc:f2f1 " is foutief");
 .
 doc:f2f1f1l1 a xhtml:link;
 	dc:title "Artikel 3 Wet Awb";

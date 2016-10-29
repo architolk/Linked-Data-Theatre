@@ -9,6 +9,7 @@ stage:TextAppearance a elmo:Representation;
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:appearance elmo:TextAppearance;
+	xhtml:stylesheet "/css/Symboolcodelijst.css";
 	elmo:fragment [
 		elmo:applies-to "binnen";
 		xhtml:stylesheet "fill: red; fill-opacity: 1.0; stroke: red;";
@@ -63,7 +64,9 @@ stage:SectionTextAppearance a elmo:Representation;
 	elmo:index "1";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
+	elmo:contains stage:SectionTextAppearanceTree;
 	elmo:appearance elmo:TextAppearance;
+	xhtml:stylesheet "/css/Symboolcodelijst.css";
 	elmo:fragment [
 		elmo:applies-to "binnen";
 		xhtml:stylesheet "fill: red; fill-opacity: 1.0; stroke: red;";
@@ -84,6 +87,7 @@ stage:SectionTextAppearance a elmo:Representation;
 			?fragment geosparql:sfContains ?feature.
 			?feature rdf:value ?wkt.
 			?feature xhtml:stylesheet ?stylesheet.
+			?feature dc:title ?ftitle.
 			?head rdf:rest ?tail.
 			?head rdf:first ?content.
 			?content dc:title ?ctitle.
@@ -108,7 +112,29 @@ stage:SectionTextAppearance a elmo:Representation;
 				?feature geosparql:hasGeometry ?geo.
 				?geo geosparql:asWKT ?wkt.
 				OPTIONAL {?feature xhtml:stylesheet ?stylesheet}
+				OPTIONAL {?feature dc:title ?ftitle}
 			}
 		}
 	''';
+.
+stage:SectionTextAppearanceTree a elmo:Part;
+	elmo:appearance elmo:TreeAppearance;
+	elmo:query '''
+		prefix xhtml: <http://www.w3.org/1999/xhtml/vocab#>
+		construct {
+			?fragment xhtml:section ?container.
+			?container rdfs:label ?clabel.
+			?fragment rdfs:label ?flabel.
+		}
+		where {
+			{
+				{<@SUBJECT@> xhtml:subsection* ?container}
+				UNION
+				{?container xhtml:subsection* <@SUBJECT@>}
+			}
+			?container xhtml:subsection ?fragment.
+			?container dc:title ?clabel.
+			?fragment dc:title ?flabel.
+		}
+	'''
 .
