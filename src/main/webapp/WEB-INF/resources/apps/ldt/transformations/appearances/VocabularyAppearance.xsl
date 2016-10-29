@@ -1,8 +1,8 @@
 <!--
 
     NAME     VocabularyAppearance.xsl
-    VERSION  1.12.0
-    DATE     2016-10-16
+    VERSION  1.12.1-SNAPSHOT
+    DATE     2016-10-29
 
     Copyright 2012-2016
 
@@ -483,11 +483,11 @@
 								</td>
 							</tr>
 						</xsl:if>
-						<xsl:if test="exists(class)">
+						<xsl:if test="exists(ref-class)">
 							<tr>
 								<td><xsl:value-of select="ldt:label('Class of object:')"/></td>
 								<td>
-									<xsl:for-each select="class"><xsl:sort select="@uri"/>
+									<xsl:for-each select="ref-class"><xsl:sort select="@uri"/>
 										<xsl:if test="position()!=1">, </xsl:if>
 										<xsl:apply-templates select="@uri" mode="link"><xsl:with-param name="prefix" select="$prefix"/></xsl:apply-templates>
 									</xsl:for-each>
