@@ -2,7 +2,7 @@
 
     NAME     VocabularyAppearance.xsl
     VERSION  1.12.1-SNAPSHOT
-    DATE     2016-10-29
+    DATE     2016-11-01
 
     Copyright 2012-2016
 
@@ -52,18 +52,19 @@
 			<term id="URI:">URI:</term>
 			<term id="Subclass of:">Subklasse van:</term>
 			<term id="Has subclasses:">Heeft subklassen:</term>
-			<term id="Used with:">Gebruikt bij:</term>
 			<term id="Classes">Klassen</term>
 			<term id="Properties">Eigenschappen</term>
 			<term id="Classes:">Klassen:</term>
 			<term id="Properties:">Eigenschappen:</term>
 			<term id="Subproperty of:">Subeigenschap van:</term>
 			<term id="Properties include:">Eigenschappen:</term>
+			<term id="Inherited properties:">Geërfde eigenschappen:</term>
 			<term id="Property of:">Eigenschap van:</term>
 			<term id="Class of object:">Gerelateerde klasse:</term>
 			<term id="Datatype:">Datatype:</term>
 			<term id="Values from:">Waarden uit:</term>
 			<term id="Classes and properties">Klassen en eigenschappen</term>
+			<term id="Used with property:">Gebruikt bij eigenschap:</term>
 		</list>
 	</xsl:variable>
 
@@ -92,6 +93,21 @@
 			<a href="{.}"><xsl:value-of select="$name"/></a>
 		</xsl:otherwise>
 	</xsl:choose>
+</xsl:template>
+
+<xsl:template match="rdf:Description" mode="shape-propertyrec">
+<!-- Input: class, Output: all properties of the supertype of the shape of the class, recursive -->
+<!-- WARNING: No check is made regarding loops!!! -->
+	<xsl:for-each select="rdfs:subClassOf">
+		<xsl:variable name="super" select="@rdf:resource"/>
+		<xsl:for-each select="../../rdf:Description[shacl:scopeClass/@rdf:resource=$super]">
+			<xsl:for-each select="shacl:property">
+				<xsl:variable name="property" select="@rdf:resource"/>
+				<inherited-property uri="{../../rdf:Description[@rdf:about=$property]/shacl:predicate/@rdf:resource}"/>
+			</xsl:for-each>
+		</xsl:for-each>
+		<xsl:apply-templates select="../../rdf:Description[@rdf:about=$super]" mode="shape-propertyrec"/>
+	</xsl:for-each>
 </xsl:template>
 
 <xsl:template match="class" mode="class-header2">
@@ -149,19 +165,6 @@
 			</td>
 		</tr>
 	</xsl:if>
-	<!--
-	<xsl:if test="exists(key('property-class',@rdf:about))">
-		<tr>
-			<td><xsl:value-of select="ldt:label('Used with:')"/></td>
-			<td>
-				<xsl:for-each select="key('property-class',@rdf:about)"><xsl:sort select="shacl:predicate/@rdf:resource"/>
-					<xsl:if test="position()!=1">, </xsl:if>
-					<xsl:apply-templates select="shacl:predicate/@rdf:resource" mode="link"><xsl:with-param name="prefix" select="$prefix"/></xsl:apply-templates>
-				</xsl:for-each>
-			</td>
-		</tr>
-	</xsl:if>
-	-->
 </xsl:template>
 
 <xsl:template match="class" mode="makeClassTree2">
@@ -243,7 +246,7 @@
 			<xsl:otherwise><xsl:value-of select="/results/context/url"/>#</xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>
-
+	
 	<!-- All predicates -->
 	<xsl:variable name="all-predicates">
 		<xsl:for-each-group select="rdf:Description[exists(shacl:predicate)]" group-by="@rdf:about">
@@ -263,11 +266,18 @@
 	<!-- All shapes -->
 	<xsl:variable name="all-shapes">
 		<xsl:for-each-group select="rdf:Description[exists(shacl:scopeClass) or exists(shacl:property)]" group-by="@rdf:about">
-			<shape class-uri="{current-group()/shacl:scopeClass[1]/@rdf:resource}">
+			<xsl:variable name="class" select="current-group()/shacl:scopeClass[1]/@rdf:resource"/>
+			<shape class-uri="{$class}">
 				<xsl:for-each select="current-group()/shacl:property">
 					<xsl:variable name="property" select="@rdf:resource"/>
-					<property uri="{$all-predicates/property[@uri=$property]/@predicate}"/>
+					<xsl:variable name="predicate" select="$all-predicates/property[@uri=$property]"/>
+					<property uri="{$predicate/@predicate}">
+						<xsl:if test="$predicate/ref-class/@uri!=''">
+							<xsl:attribute name="refclass"><xsl:value-of select="$predicate/ref-class/@uri"/></xsl:attribute>
+						</xsl:if>
+					</property>
 				</xsl:for-each>
+				<xsl:apply-templates select="../rdf:Description[@rdf:about=$class]" mode="shape-propertyrec"/>
 			</shape>
 		</xsl:for-each-group>
 	</xsl:variable>
@@ -296,6 +306,12 @@
 					</seeAlso>
 				</xsl:for-each>
 				<xsl:copy-of select="$all-shapes/shape[@class-uri=$about]/property"/>
+				<xsl:for-each-group select="$all-shapes/shape/property[@refclass=$about]" group-by="@uri">
+					<refproperty uri="{@uri}" predicate="{@predicate}"/>
+				</xsl:for-each-group>
+				<xsl:for-each-group select="$all-shapes/shape[@class-uri=$about]/inherited-property" group-by="@uri">
+					<inherited-property uri="{@uri}"/>
+				</xsl:for-each-group>
 			</class>
 		</xsl:for-each-group>
 	</xsl:variable>
@@ -332,9 +348,7 @@
 			</property>
 		</xsl:for-each-group>
 	</xsl:variable>
-	
-	<xsl:copy-of select="$all-shapes"/>
-	
+
 	<xsl:variable name="ontology" select="rdf:Description[rdf:type/@rdf:resource='http://www.w3.org/2002/07/owl#Ontology'][1]"/>
 	<xsl:variable name="title">
 		<xsl:choose>
@@ -344,6 +358,12 @@
 			<xsl:otherwise><xsl:value-of select="ldt:label('Classes and properties')"/></xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>
+
+	<ul class="nav nav-tabs">
+		<li><a href="?format=ttl">ttl</a></li>
+		<li><a href="?format=xml">xml</a></li>
+		<li><a href="?format=json">json</a></li>
+	</ul>
 	
 	<div class="panel panel-primary">
 		<div class="panel-heading">
@@ -425,6 +445,28 @@
 								</xsl:for-each>
 							</td>
 						</tr>
+						<xsl:if test="exists(inherited-property)">
+							<tr>
+								<td><xsl:value-of select="ldt:label('Inherited properties:')"/></td>
+								<td>
+									<xsl:for-each select="inherited-property"><xsl:sort select="@uri"/>
+										<xsl:if test="position()!=1">, </xsl:if>
+										<xsl:apply-templates select="@uri" mode="link"><xsl:with-param name="prefix" select="$prefix"/></xsl:apply-templates>
+									</xsl:for-each>
+								</td>
+							</tr>
+						</xsl:if>
+						<xsl:if test="exists(refproperty)">
+							<tr>
+								<td><xsl:value-of select="ldt:label('Used with property:')"/></td>
+								<td>
+									<xsl:for-each select="refproperty"><xsl:sort select="@uri"/>
+										<xsl:if test="position()!=1">, </xsl:if>
+										<xsl:apply-templates select="@uri" mode="link"><xsl:with-param name="prefix" select="$prefix"/></xsl:apply-templates>
+									</xsl:for-each>
+								</td>
+							</tr>
+						</xsl:if>
 					</tbody>
 				</table>
 			</xsl:for-each>
