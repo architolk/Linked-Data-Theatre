@@ -12,7 +12,7 @@ A step-by-step guide for a clean install of the Linked Data Theatre and a Virtuo
 You should have a working version of the Java Runtime Environment.
 
 ### 1. Install a triple store
-The configuration of the LDT should be stored in a triple store. The LDT uses a SPARQL endpoint to query for the configuration. And, naturally, the LDT uses one or more triple stores to fetch the data that is presented by the LDT. The LDT can use any SPARQL 1.1 endpoint, but is optimized for use with Virtuoso.
+The configuration of the LDT is stored in a triple store. The LDT uses a SPARQL endpoint to query for the configuration. And, naturally, the LDT uses one or more triple stores to fetch the data that is presented by the LDT. The LDT can use any SPARQL 1.1 endpoint, but is optimized for use with Virtuoso.
 
 You can download Virtuoso from this location: [http://virtuoso.openlinksw.com/dataspace/doc/dav/wiki/Main](http://virtuoso.openlinksw.com/dataspace/doc/dav/wiki/Main).
 Prebuild versions are available, you can also try to build virtuoso yourself.
@@ -28,9 +28,9 @@ Execute `\stored-procs\install.bat`, located in your git repository. If you have
 4. Click on the `Execute` button.
 
 ### 2. Install Tomcat
-You need an installation of Tomcat to run Orbeon, and within Orbeon the Linked Data Theatre.
+You need an installation of Tomcat to run Orbeon, and within Orbeon the Linked Data Theatre. Orbeon is included within the LDT.war file, but you need to install Tomcat.
+
 You can download Tomcat from this location: [https://tomcat.apache.org/](https://tomcat.apache.org/).
-The LDT is tested with Tomcat version 7.0.33.
 
 ### 3. Install the Linked Data Theatre
 Stop your Tomcat service. Delete all files in the \webapps\ROOT directory and unpack the LDT.war into the \webapps\ROOT directory. Restart your Tomcat service.
