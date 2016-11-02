@@ -786,8 +786,8 @@
 					<p:processor name="oxf:xml-serializer">
 						<p:input name="config">
 							<config>
-                                <content-type>application/rdf+xml</content-type>
-                            </config>
+								<content-type>application/rdf+xml</content-type>
+							</config>
 						</p:input>
 						<p:input name="data" href="#sparql#xpointer((/results/res:sparql|/results/rdf:RDF)[1])"/>
 					</p:processor>
