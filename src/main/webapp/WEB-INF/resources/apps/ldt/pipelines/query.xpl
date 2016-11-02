@@ -2,7 +2,7 @@
 
     NAME     query.xpl
     VERSION  1.12.1-SNAPSHOT
-    DATE     2016-10-23
+    DATE     2016-11-02
 
     Copyright 2012-2016
 
@@ -1144,7 +1144,7 @@
 					</p:processor>
 				</p:when>
 				<!-- PDF -->
-				<p:when test="context/format='application/rdf'">
+				<p:when test="context/format='application/pdf'">
 					<!-- Transform -->
 					<p:processor name="oxf:xslt">
 						<p:input name="data" href="#sparql"/>
