@@ -785,7 +785,9 @@
 				<p:when test="context/format='application/rdf+xml'">
 					<p:processor name="oxf:xml-serializer">
 						<p:input name="config">
-							<config/>
+							<config>
+								<content-type>application/rdf+xml</content-type>
+							</config>
 						</p:input>
 						<p:input name="data" href="#sparql#xpointer((/results/res:sparql|/results/rdf:RDF)[1])"/>
 					</p:processor>
@@ -838,6 +840,7 @@
 					<p:processor name="oxf:text-converter">
 						<p:input name="config">
 							<config>
+                                <content-type>text/turtle</content-type>
 								<encoding>utf-8</encoding>
 							</config>
 						</p:input>
@@ -904,8 +907,10 @@
 					<p:processor name="oxf:http-serializer">
 						<p:input name="config">
 							<config>
+								<content-type>application/ld+json</content-type>
+								<force-content-type>true</force-content-type>
 								<cache-control><use-local-cache>false</use-local-cache></cache-control>
-								<header>
+ 								<header>
 									<name>Access-Control-Allow-Origin</name>
 									<value>*</value>
 								</header>
@@ -936,6 +941,8 @@
 					<p:processor name="oxf:http-serializer">
 						<p:input name="config">
 							<config>
+								<content-type>application/ld+json</content-type>
+								<force-content-type>true</force-content-type>
 								<cache-control><use-local-cache>false</use-local-cache></cache-control>
 								<header>
 									<name>Access-Control-Allow-Origin</name>
@@ -969,6 +976,7 @@
 						<p:input name="config">
 							<config>
 								<content-type>application/xml</content-type>
+								<force-content-type>true</force-content-type>
 								<header>
 									<name>Content-Disposition</name>
 									<value>attachment; filename=result.graphml</value>
@@ -1001,6 +1009,7 @@
 						<p:input name="config">
 							<config>
 								<content-type>application/xml</content-type>
+								<force-content-type>true</force-content-type>
 								<header>
 									<name>Content-Disposition</name>
 									<value>attachment; filename=result.graphml</value>
@@ -1033,6 +1042,7 @@
 						<p:input name="config">
 							<config>
 								<content-type>application/xml</content-type>
+								<force-content-type>true</force-content-type>
 								<header>
 									<name>Content-Disposition</name>
 									<value>attachment; filename=result.xmi.xml</value>
