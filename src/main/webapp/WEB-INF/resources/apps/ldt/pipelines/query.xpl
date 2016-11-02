@@ -907,8 +907,8 @@
 					<p:processor name="oxf:http-serializer">
 						<p:input name="config">
 							<config>
-                                <content-type>application/ld+json</content-type>
-                                <force-content-type>true</force-content-type>
+								<content-type>application/ld+json</content-type>
+								<force-content-type>true</force-content-type>
 								<cache-control><use-local-cache>false</use-local-cache></cache-control>
  								<header>
 									<name>Access-Control-Allow-Origin</name>
@@ -942,8 +942,8 @@
 						<p:input name="config">
 							<config>
 								<content-type>application/ld+json</content-type>
-                                <force-content-type>true</force-content-type>
-                                <cache-control><use-local-cache>false</use-local-cache></cache-control>
+								<force-content-type>true</force-content-type>
+								<cache-control><use-local-cache>false</use-local-cache></cache-control>
 								<header>
 									<name>Access-Control-Allow-Origin</name>
 									<value>*</value>
@@ -976,7 +976,7 @@
 						<p:input name="config">
 							<config>
 								<content-type>application/xml</content-type>
-                                <force-content-type>true</force-content-type>
+								<force-content-type>true</force-content-type>
 								<header>
 									<name>Content-Disposition</name>
 									<value>attachment; filename=result.graphml</value>
@@ -1009,7 +1009,7 @@
 						<p:input name="config">
 							<config>
 								<content-type>application/xml</content-type>
-                                <force-content-type>true</force-content-type>
+								<force-content-type>true</force-content-type>
 								<header>
 									<name>Content-Disposition</name>
 									<value>attachment; filename=result.graphml</value>
@@ -1042,7 +1042,7 @@
 						<p:input name="config">
 							<config>
 								<content-type>application/xml</content-type>
-                                <force-content-type>true</force-content-type>
+								<force-content-type>true</force-content-type>
 								<header>
 									<name>Content-Disposition</name>
 									<value>attachment; filename=result.xmi.xml</value>
