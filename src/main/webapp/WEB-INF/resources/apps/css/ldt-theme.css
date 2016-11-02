@@ -1,7 +1,7 @@
 /**
  * NAME     ldt-theme.css
  * VERSION  1.12.1-SNAPSHOT
- * DATE     2016-10-23
+ * DATE     2016-11-02
  *
  * Copyright 2012-2016
  *
@@ -240,13 +240,13 @@
 	position: relative;
 }
 #textdoc .mapbody {
-	height:300px;
-	width:300px;
+	height:400px;
+	width:600px;
 	margin-bottom: 10px;
 }
 #textdoc .maptitle {
 	background: lightgray;
-	width:300px;
+	width:600px;
 }
 /* ------------------- */
 
