@@ -12,15 +12,16 @@ stage:NavbarSearchAppearance a elmo:Part;
 		elmo:data [
 			elmo:index "1";
 			rdfs:label "Appearances";
-			elmo:data [elmo:index "1"; rdfs:label "HtmlAppearance"; html:link "/"];
-			elmo:data [elmo:index "2"; rdfs:label "MarkdownAppearance"; html:link "/query/MarkdownAppearance"];
-			elmo:data [elmo:index "3"; rdfs:label "GraphAppearance"; html:link "/query/GraphAppearance?subject=http://localhost:8080/id/character/Bilbo"];
-			elmo:data [elmo:index "4"; rdfs:label "VocabularyAppearance"; html:link "/def/lotr"];
-			elmo:data [elmo:index "5"; rdfs:label "ChartAppearance"; html:link "/query/ChartAppearance"];
-			elmo:data [elmo:index "6"; rdfs:label "GeoAppearance (OpenStreetMap)"; html:link "/query/GeoAppearance"];
-			elmo:data [elmo:index "7"; rdfs:label "GeoAppearance (BRT)"; html:link "/query/GeoAppearanceBrt"];
-			elmo:data [elmo:index "8"; rdfs:label "TextAppearance"; html:link "/query/TextAppearance"];
-			elmo:data [elmo:index "9"; rdfs:label "TableAppearance"; html:link "/query/TableAppearance"];
+			elmo:data [elmo:index "01"; rdfs:label "HtmlAppearance"; html:link "/"];
+			elmo:data [elmo:index "02"; rdfs:label "MarkdownAppearance"; html:link "/query/MarkdownAppearance"];
+			elmo:data [elmo:index "03"; rdfs:label "GraphAppearance"; html:link "/query/GraphAppearance?subject=http://localhost:8080/id/character/Bilbo"];
+			elmo:data [elmo:index "04"; rdfs:label "VocabularyAppearance"; html:link "/def/lotr"];
+			elmo:data [elmo:index "05"; rdfs:label "ChartAppearance"; html:link "/query/ChartAppearance"];
+			elmo:data [elmo:index "06"; rdfs:label "GeoAppearance (OpenStreetMap)"; html:link "/query/GeoAppearance"];
+			elmo:data [elmo:index "07"; rdfs:label "GeoAppearance (BRT)"; html:link "/query/GeoAppearanceBrt"];
+			elmo:data [elmo:index "08"; rdfs:label "GeoAppearance (Pointer)"; html:link "/query/GeoAppearancePointer"];
+			elmo:data [elmo:index "09"; rdfs:label "TextAppearance"; html:link "/query/TextAppearance"];
+			elmo:data [elmo:index "10"; rdfs:label "TableAppearance"; html:link "/query/TableAppearance"];
 		];
 		elmo:data [
 			elmo:index "2";

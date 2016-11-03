@@ -12,6 +12,14 @@ stage:GeoAppearanceBrt a elmo:Representation;
 		elmo:applies-to elmo:Appearance;
 		elmo:backmap "brt";
 	];
+	elmo:fragment [
+		elmo:applies-to "gemeente";
+		html:stylesheet '''
+			fill: red;
+			fill-opacity: .3;
+			stroke: #666;
+		''';
+	];
 	elmo:query '''
 		prefix geosparql: <http://www.opengis.net/ont/geosparql#>
 		prefix brt: <http://brt.basisregistraties.overheid.nl/def/top10nl#>
@@ -19,6 +27,8 @@ stage:GeoAppearanceBrt a elmo:Representation;
 		construct {
 			?municipal geo:geometry ?wkt.
 			?municipal rdfs:label ?label.
+			?municipal elmo:style brt:Gemeente.
+			brt:Gemeente elmo:name "gemeente".
 		}
 		WHERE {
 			select *
