@@ -446,7 +446,7 @@ function addPoint(latCor, longCor, text, url)
 	var location = L.marker();
 	
 	//Eerst stellen we de locatie in waarop de marker moet worden weergegeven, waarbij we hier kiezen voor simpele Latitude/Longitude coördinaten die ook gebruikt worden door GPS.
-	//location.setLatLng([latCor, longCor]);
+	location.setLatLng([latCor, longCor]);
 	//Daarna geven we aan welke informatie moet worden weergegeven wanneer de gebruiker op de locatie klikt.
 	var html = "";
 	if (url!="") {
