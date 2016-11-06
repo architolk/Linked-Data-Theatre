@@ -2,7 +2,7 @@
 
     NAME     TextAppearance.xsl
     VERSION  1.12.1-SNAPSHOT
-    DATE     2016-10-29
+    DATE     2016-11-06
 
     Copyright 2012-2016
 
@@ -126,10 +126,15 @@
 	<p class="break"/>
 </xsl:template>
 <xsl:template match="rdf:Description" mode="reclist">
-	<xsl:variable name="link" select="rdf:first/@rdf:resource"/>
+	<xsl:variable name="uri" select="rdf:first/@rdf:resource"/>
+	<xsl:variable name="link">
+		<xsl:call-template name="resource-uri">
+			<xsl:with-param name="uri" select="$uri"/>
+		</xsl:call-template>
+	</xsl:variable>
 	<xsl:choose>
-		<xsl:when test="$link!=''">
-			<a href="{$link}"><xsl:value-of select="../rdf:Description[@rdf:about=$link]/dc:title"/></a>
+		<xsl:when test="$uri!=''">
+			<a href="{$uri}" onclick="gotoFrame('{$link}');return false;"><xsl:value-of select="../rdf:Description[@rdf:about=$uri]/dc:title"/></a>
 		</xsl:when>
 		<xsl:otherwise><xsl:value-of select="rdf:first"/></xsl:otherwise>
 	</xsl:choose>
@@ -154,6 +159,21 @@
 	<script src="/js/proj4-compressed.js"></script>
 	<script src="/js/proj4leaflet.js"></script>
 	<script src="/js/rdfmap.min.js"></script>
+	<script>
+		function gotoFrame(link) {
+			if (window.name.substring(0,5)==='frame') {
+				siblingname = "frame" + String(Number(window.name.substring(5))+1);
+				sibling = parent.document.getElementsByName(siblingname)[0];
+				if (sibling) {
+					sibling.src = link
+				} else {
+					parent.window.location = link
+				}
+			} else {
+				window.location = link
+			}
+		}
+	</script>
 	<style>
 			<xsl:for-each select="rdf:Description[xhtml:stylesheet!='' and elmo:applies-to!='']">
 				.s<xsl:value-of select="elmo:applies-to"/> {

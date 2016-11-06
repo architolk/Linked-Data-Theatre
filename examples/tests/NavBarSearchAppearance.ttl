@@ -22,6 +22,7 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:data [elmo:index "08"; rdfs:label "GeoAppearance (Pointer)"; html:link "/query/GeoAppearancePointer"];
 			elmo:data [elmo:index "09"; rdfs:label "TextAppearance"; html:link "/query/TextAppearance"];
 			elmo:data [elmo:index "10"; rdfs:label "TableAppearance"; html:link "/query/TableAppearance"];
+			elmo:data [elmo:index "11"; rdfs:label "FrameAppearance"; html:link "/query/FrameAppearance"];
 		];
 		elmo:data [
 			elmo:index "2";

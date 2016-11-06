@@ -1,0 +1,48 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+stage:FrameAppearance a elmo:Representation;
+	elmo:url-pattern "/query/FrameAppearance";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:contains stage:FrameAppearance_Frame;
+.
+
+stage:FrameAppearance_Frame a elmo:Part;
+	elmo:appearance elmo:FrameAppearance;
+	elmo:data [
+		elmo:data [
+			html:link "/query/TextAppearance";
+			elmo:index "1";
+		];
+		elmo:data [
+			html:link "/query/FrameRight";
+			elmo:index "2";
+		]
+	]
+.
+
+stage:FrameAppearance_Left a elmo:Representation;
+	elmo:url-pattern "/query/FrameLeft";
+	elmo:appearance elmo:HtmlAppearance;
+	elmo:data [
+		rdfs:label "Left";
+		elmo:html '''
+			<p>Frame left</p>
+			<a href="#" onclick="parent.document.getElementsByName('frame2')[0].src='/query/FrameLeft'; return false;">BLUB</a>
+		''';
+	]
+.
+
+stage:FrameAppearance_Right a elmo:Representation;
+	elmo:url-pattern "/query/FrameRight";
+	elmo:appearance elmo:HtmlAppearance;
+	elmo:data [
+		rdfs:label "Right";
+		elmo:html '''
+			<p>Frame right</p>
+		''';
+	]
+.
