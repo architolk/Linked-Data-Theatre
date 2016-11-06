@@ -63,31 +63,12 @@
 	<p:choose href="#instance">
 		<!-- Only show header information in development-mode -->
 		<p:when test="theatre/@env='dev'">
-			<!-- Transform header to json object-->
-			<p:processor name="oxf:xslt">
-				<p:input name="data" href="#request"/>
-				<p:input name="config" href="../transformations/header2html.xsl"/>
-				<p:output name="data" id="html"/>
-			</p:processor>
-			<!-- Convert XML result to HTML -->
-			<p:processor name="oxf:html-converter">
+			<p:processor name="oxf:xml-serializer">
 				<p:input name="config">
 					<config>
-						<encoding>utf-8</encoding>
-						<version>5.0</version>
 					</config>
 				</p:input>
-				<p:input name="data" href="#html" />
-				<p:output name="data" id="converted" />
-			</p:processor>
-			<!-- Serialize -->
-			<p:processor name="oxf:http-serializer">
-				<p:input name="config">
-					<config>
-						<cache-control><use-local-cache>false</use-local-cache></cache-control>
-					</config>
-				</p:input>
-				<p:input name="data" href="#converted"/>
+				<p:input name="data" href="aggregate('root',#request,#roles)"/>
 			</p:processor>
 		</p:when>
 		<p:otherwise>
