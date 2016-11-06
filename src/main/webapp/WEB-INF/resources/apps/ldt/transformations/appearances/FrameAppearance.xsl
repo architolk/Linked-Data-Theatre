@@ -24,9 +24,9 @@
 -->
 <!--
     DESCRIPTION
-	HtmlAppearance, add-on of rdf2html.xsl
+	FrameAppearance, add-on of rdf2html.xsl
 	
-	A Html appearance assumes that the linked data contains literals as html. It will present the html within these literals.
+	A Frame appearance makes it possible to show multiple resources, using iframes
 	
 -->
 <xsl:stylesheet version="2.0"
@@ -41,54 +41,17 @@
 <xsl:output method="xml" indent="yes"/>
 
 <xsl:template match="rdf:RDF" mode="FrameAppearance">
-	<script>
-function getDocHeight(doc) {
-    doc = doc || document;
-    // stackoverflow.com/questions/1145850/
-    var body = doc.body, html = doc.documentElement;
-    var height = Math.max( body.scrollHeight, body.offsetHeight, 
-        html.clientHeight, html.scrollHeight, html.offsetHeight );
-    return height;
-}
-function setHeight(id) {
-    var ifrm = document.getElementById(id);
-    var doc = ifrm.contentDocument? ifrm.contentDocument: 
-        ifrm.contentWindow.document;
-    ifrm.style.visibility = 'hidden';
-    ifrm.style.height = "10px"; // reset to minimal height ...
-    // IE opt. for bing/msn needs a bit added or scrollbar appears
-    ifrm.style.height = getDocHeight( doc ) + 4 + "px";
-    ifrm.style.visibility = 'visible';
-}
-	</script>
-	<style>
-		.innerFrame {
-			width: 100%;
-			height: 400px;
-			border: 0;
-			overflow: hidden;
-		}
-		.frameScroll {
-			width: 50%;
-			float: left;
-		}
-		.frameFixed {
-			width: 50%;
-			float: right;
-			right: 15px;
-			position:fixed;
-		}
-	</style>
 	<div style="row">
 		<xsl:for-each select="rdf:Description[html:link!='']"><xsl:sort select="elmo:index"/>
 			<xsl:variable name="frameclass">
 				<xsl:choose>
-					<xsl:when test="position()=1">frameScroll</xsl:when>
-					<xsl:otherwise>frameFixed</xsl:otherwise>
+					<xsl:when test="elmo:appearance/@rdf:resource='http://bp4mc2.org/elmo/def#ScrollAppearance'">frameScrollAppearance</xsl:when>
+					<xsl:when test="elmo:appearance/@rdf:resource='http://bp4mc2.org/elmo/def#FixedAppearance'">frameFixedAppearance</xsl:when>
+					<xsl:otherwise>frameScrollAppearance</xsl:otherwise>
 				</xsl:choose>
 			</xsl:variable>
 			<div class="{$frameclass}">
-				<iframe class="innerFrame" src="{html:link}" scrolling="no" id="frame{position()}" name="frame{position()}" onload="setHeight(this.id);"/>
+				<iframe class="innerFrame" src="{html:link}" scrolling="no" name="frame{position()}" onload="setFrameHeight(this);"/>
 			</div>
 		</xsl:for-each>
 	</div>

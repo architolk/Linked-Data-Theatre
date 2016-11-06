@@ -159,21 +159,6 @@
 	<script src="/js/proj4-compressed.js"></script>
 	<script src="/js/proj4leaflet.js"></script>
 	<script src="/js/rdfmap.min.js"></script>
-	<script>
-		function gotoFrame(link) {
-			if (window.name.substring(0,5)==='frame') {
-				siblingname = "frame" + String(Number(window.name.substring(5))+1);
-				sibling = parent.document.getElementsByName(siblingname)[0];
-				if (sibling) {
-					sibling.src = link
-				} else {
-					parent.window.location = link
-				}
-			} else {
-				window.location = link
-			}
-		}
-	</script>
 	<style>
 			<xsl:for-each select="rdf:Description[xhtml:stylesheet!='' and elmo:applies-to!='']">
 				.s<xsl:value-of select="elmo:applies-to"/> {

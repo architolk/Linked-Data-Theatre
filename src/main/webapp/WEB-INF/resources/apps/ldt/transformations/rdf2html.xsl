@@ -548,6 +548,7 @@
 		<script type="text/javascript" src="{$staticroot}/js/bootstrap-datepicker.min.js"></script>
 		<script type="text/javascript" src="{$staticroot}/js/locales/bootstrap-datepicker.nl.min.js"></script>
 		<script type="text/javascript" src="{$staticroot}/js/d3.v3.min.js"></script>
+		<script type="text/javascript" src="{$staticroot}/js/ldt.min.js"></script>
 
 		<xsl:apply-templates select="context" mode="datatable-languageset"/>
 		

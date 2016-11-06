@@ -49,6 +49,24 @@
 	padding: 2px;
 }
 
+.innerFrame{
+	width: 100%;
+	height: 50px;
+	border: 0;
+	overflow: hidden;
+}
+.frameScrollAppearance {
+	width: 50%;
+	float: left;
+}
+.frameFixedAppearance {
+	width: 50%;
+	float: right;
+	right: 15px;
+	position:fixed;
+}
+
+
 .leaflet-label {
 	color: #111;
 	display: block;
