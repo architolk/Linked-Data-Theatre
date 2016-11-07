@@ -1,8 +1,8 @@
 <!--
 
     NAME     FrameAppearance.xsl
-    VERSION  1.12.1-SNAPSHOT
-    DATE     2016-11-06
+    VERSION  1.12.1
+    DATE     2016-11-07
 
     Copyright 2012-2016
 
