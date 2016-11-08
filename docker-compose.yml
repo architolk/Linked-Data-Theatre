@@ -1,0 +1,37 @@
+version: '2'
+
+services:
+  ldt:
+    container_name: ldt
+    image: tomcat:7-jre8
+    hostname: ldt.local
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./webapps:/usr/local/tomcat/webapps
+      - ./shared_import:/usr/local/tomcat/temp:z
+    networks:
+      - ldt
+
+  virtuoso:
+    container_name: virtuoso
+    build:
+      context: virtuoso
+    hostname: virtuoso.local
+    ports:
+      - "1111:1111"
+      - "8890:8890"
+    environment:
+      DBA_PASSWORD: "dba"
+      SPARQL_UPDATE: "true"
+      VIRTUOSO_DBA_PWD: dba
+    volumes:
+      - ./virtuoso_data:/var/lib/virtuoso/db:z
+      - ./shared_import:/var/lib/virtuoso/usr/local/tomcat/temp:z
+    networks:
+      - ldt
+
+networks:
+  ldt:
+    external:
+      name: ldt

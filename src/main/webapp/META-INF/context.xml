@@ -25,9 +25,9 @@
 <!--
     DESCRIPTION
     Configuration of Virtuoso JDBC
-	
+
     WARNING: reloadable is set to true for development and testing purposes. Set to false in production environments!
-    
+
 	Set username and password to the username and password for your environment
 -->
 <Context reloadable="true">
@@ -39,9 +39,9 @@
 		username="dba"
 		password="dba"
 		charset="UTF-8"
-		serverName="localhost"
+		serverName="virtuoso"
 		portNumber="1111"
-		url="jdbc:virtuoso://localhost:1111/"
+		url="jdbc:virtuoso://virtuoso:1111/"
 	/>
 	<Resource name="ldt/converter" auth="Container" type="nl.architolk.ldt.rdbprocessors.RDB2RDFExecutor" factory="org.apache.naming.factory.BeanFactory"/>
 </Context>
