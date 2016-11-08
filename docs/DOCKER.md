@@ -28,3 +28,9 @@ to
 Now virtuoso should be running (http://localhost:8890/conductor/) and Tomcat should be running but without LDT yet. For building the LDT with Maven do (TODO implement in Maven in stead of seperate script):
 
 	bash build.sh
+
+Now ldt is up and running so open the backstage in your browser with the url:
+http://localhost:8080/ldt/backstage, press import and select the file the basic-configuration.ttl press Upload.
+
+Now LDT front could be opened in your browser with:
+http://localhost:8080/ldt/
