@@ -39,9 +39,9 @@
 		username="dba"
 		password="dba"
 		charset="UTF-8"
-		serverName="virtuoso"
+		serverName="localhost"
 		portNumber="1111"
-		url="jdbc:virtuoso://virtuoso:1111/"
+		url="jdbc:virtuoso://localhost:1111/"
 	/>
 	<Resource name="ldt/converter" auth="Container" type="nl.architolk.ldt.rdbprocessors.RDB2RDFExecutor" factory="org.apache.naming.factory.BeanFactory"/>
 </Context>
