@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2html.xsl
-    VERSION  1.12.1
-    DATE     2016-11-07
+    VERSION  1.12.2-SNAPSHOT
+    DATE     2016-11-08
 
     Copyright 2012-2016
 
@@ -71,8 +71,14 @@
 	Helper templates
 -->
 <xsl:template match="*" mode="predicate">
-	<xsl:variable name="predicate"><xsl:value-of select="namespace-uri()"/><xsl:value-of select="local-name()"/></xsl:variable>
+	<xsl:variable name="predicate">
+		<xsl:choose>
+			<xsl:when test="@html:meta!='' and @html:meta!='http://www.w3.org/1999/02/22-rdf-syntax-ns#nil'"><xsl:value-of select="@html:meta"/></xsl:when>
+			<xsl:otherwise><xsl:value-of select="namespace-uri()"/><xsl:value-of select="local-name()"/></xsl:otherwise>
+		</xsl:choose>
+	</xsl:variable>
 	<a href="{$predicate}">
+		<xsl:if test="@html:meta='http://www.w3.org/1999/02/22-rdf-syntax-ns#nil'"><xsl:attribute name="onclick">return false;</xsl:attribute></xsl:if>
 		<xsl:if test="@elmo:comment!=''"><xsl:attribute name="title"><xsl:value-of select="@elmo:comment"/></xsl:attribute></xsl:if>
 		<xsl:choose>
 			<xsl:when test="@elmo:label!=''"><xsl:value-of select="@elmo:label"/></xsl:when>

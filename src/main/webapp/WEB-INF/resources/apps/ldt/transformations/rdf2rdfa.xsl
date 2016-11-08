@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2rdfa.xsl
-    VERSION  1.12.1
-    DATE     2016-11-07
+    VERSION  1.12.2-SNAPSHOT
+    DATE     2016-11-08
 
     Copyright 2012-2016
 
@@ -50,6 +50,8 @@
 	<xsl:element name="{name()}" namespace="{namespace-uri()}">
 		<!-- full uri of the property -->
 		<xsl:variable name="uri"><xsl:value-of select="namespace-uri()"/><xsl:value-of select="local-name()"/></xsl:variable>
+		<!-- Default fragment -->
+		<xsl:variable name="defaultFragment" select="$fragments[@applies-to='http://bp4mc2.org/elmo/def#Fragment']"/>
 		<!-- Find an applicable fragment -->
 		<xsl:variable name="fragment" select="$fragments[@applies-to=$uri]"/>
 		<!-- If the label of the property exists, include it (priority for a fragment, then the property-label in the query result -->
@@ -83,6 +85,11 @@
 		<xsl:if test="$fragment/html:link[1]!=''"><xsl:attribute name="elmo:link"><xsl:value-of select="$fragment/html:link[1]"/></xsl:attribute></xsl:if>
 		<xsl:if test="$fragment/elmo:index[1]!=''"><xsl:attribute name="elmo:index"><xsl:value-of select="$fragment/elmo:index[1]"/></xsl:attribute></xsl:if>
 		<xsl:if test="$fragment/html:glossary[1]/@rdf:resource!=''"><xsl:attribute name="html:glossary"><xsl:value-of select="$fragment/html:glossary[1]/@rdf:resource"/></xsl:attribute></xsl:if>
+		<xsl:choose>
+			<xsl:when test="$fragment/html:meta[1]/@rdf:resource!=''"><xsl:attribute name="html:meta"><xsl:value-of select="$fragment/html:meta[1]/@rdf:resource"/></xsl:attribute></xsl:when>
+			<xsl:when test="$defaultFragment/html:meta[1]/@rdf:resource!=''"><xsl:attribute name="html:meta"><xsl:value-of select="$defaultFragment/html:meta[1]/@rdf:resource"/></xsl:attribute></xsl:when>
+			<xsl:otherwise />
+		</xsl:choose>
 		<xsl:choose>
 			<xsl:when test="exists(@rdf:resource)">
 				<xsl:variable name="olabels">
