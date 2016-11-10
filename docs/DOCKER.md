@@ -37,24 +37,23 @@ Execute `\stored-procs\install.bat`, located in your git repository. If you have
 4. Click on the `Execute` button.
 
 ### Adapt config for Docker
-(The default setup assumes Virtuoso and Tomcat run at the same server)
+The default setup assumes Virtuoso and Tomcat run at the same server, but with Docker they communicate through the docker network. The LDT should be configured to use virtuoso (hostname) in stead of localhost.
 
 #### Adapt Context.xml
-Adapt context.xml (in META-INF)
-  Replace localhost with virtuoso
-	serverName="localhost" -> serverName="virtuoso"
-	url="jdbc:virtuoso://localhost:1111/" -> url="jdbc:virtuoso://virtuoso:1111/"
+In the file src/main/webapp/META-INF/context.xml replace localhost with virtuoso:
+- serverName="localhost" -> serverName="virtuoso"
+- url="jdbc:virtuoso://localhost:1111/" -> url="jdbc:virtuoso://virtuoso:1111/"
 
 #### Adapt config.xml
-Adapt config.xml (in WEB-INF/resources/apps/ldt/config.xml)
-<theatre env="dev" configuration-endpoint="http://127.0.0.1:8890/sparql" local-endpoint="http://127.0.0.1:8890/sparql" sparql="yes">
-to
+In the file src/main/webapp/WEB-INF/resources/apps/ldt/config.xml:
+Replace <theatre env="dev" configuration-endpoint="http://127.0.0.1:8890/sparql" local-endpoint="http://127.0.0.1:8890/sparql" sparql="yes">
+with
 <theatre env="dev" configuration-endpoint="http://virtuoso:8890/sparql" local-endpoint="http://virtuoso:8890/sparql" sparql="yes">
 
 ## Build LDT
 (For this step Maven should be installed, another options is to download the LDT war release, see DEPLOY.md)
 
-For building the LDT with Maven do (TODO implement in Maven in stead of seperate script):
+For building the LDT with Maven do (TODO implement in Maven in stead of separate script):
 
 	bash build.sh
 
