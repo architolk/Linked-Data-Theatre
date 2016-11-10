@@ -1,34 +1,64 @@
 #Docker build instructions
-A complete dockercompose file is already part of the Linked Data Theatre. The dockercompose file exists of 2 services:
+This document describes the steps to run the Linked Data Theatre with Docker.
+
+A complete dockercompose file is already part of the Linked Data Theatre. The dockercompose file exists of 2 services/Docker containers:
 - Tomcat container
 - Virtuoso container
 
-Make sure you have a recent docker installation ([www.docker.com](https://www.docker.com)), and proceed by creating the network:
+### Prerequisites
+
+- Make sure you have a recent docker installation ([www.docker.com](https://www.docker.com))
+- Install Maven
+
+## Create network in Docker
+
+At the command line execute the following command:
 
 	docker network create ldt
 
-Start the containers with:
+## Build and start the Docker containers
+
+Start the containers with (the first time, the containers will be build, this can take some time):
 
   docker-compose up
 
-Also do (TODO automate this step):
-	execute create_procedure.sql
+Now virtuoso should be running (http://localhost:8890/conductor/) and Tomcat should be running but without LDT yet.
 
+## Prepare the LDT
+
+### Update stored procedures
+(This step is only necessary if you use Virtuoso as a backend. Note that some functionality (mainly backstage and containers) is not available if you use different backend).
+
+Execute `\stored-procs\install.bat`, located in your git repository. If you have only downloaded the war from the release, follow these steps:
+
+1. Download the file [create_procedures.sql](stored-procs/create_procedures.sql);
+2. Open your browser at [http://localhost:8890/conductor](http://localhost:8890/conductor), login as dba and navigate to the interactive SQL module;
+3. Paste the content of the create_procedures.sql file into the interactive SQL editor;
+4. Click on the `Execute` button.
+
+### Adapt config for Docker
+(The default setup assumes Virtuoso and Tomcat run at the same server)
+
+#### Adapt Context.xml
 Adapt context.xml (in META-INF)
   Replace localhost with virtuoso
 	serverName="localhost" -> serverName="virtuoso"
 	url="jdbc:virtuoso://localhost:1111/" -> url="jdbc:virtuoso://virtuoso:1111/"
 
+#### Adapt config.xml
 Adapt config.xml (in WEB-INF/resources/apps/ldt/config.xml)
 <theatre env="dev" configuration-endpoint="http://127.0.0.1:8890/sparql" local-endpoint="http://127.0.0.1:8890/sparql" sparql="yes">
 to
 <theatre env="dev" configuration-endpoint="http://virtuoso:8890/sparql" local-endpoint="http://virtuoso:8890/sparql" sparql="yes">
 
+## Build LDT
+(For this step Maven should be installed, another options is to download the LDT war release, see DEPLOY.md)
 
-Now virtuoso should be running (http://localhost:8890/conductor/) and Tomcat should be running but without LDT yet. For building the LDT with Maven do (TODO implement in Maven in stead of seperate script):
+For building the LDT with Maven do (TODO implement in Maven in stead of seperate script):
 
 	bash build.sh
 
+## Run LDT
 Now ldt is up and running so open the backstage in your browser with the url:
 http://localhost:8080/ldt/backstage, press import and select the file the basic-configuration.ttl press Upload.
 
