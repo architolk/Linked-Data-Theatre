@@ -46,8 +46,11 @@ In the file src/main/webapp/META-INF/context.xml replace localhost with virtuoso
 
 #### Adapt config.xml
 In the file src/main/webapp/WEB-INF/resources/apps/ldt/config.xml:
+
 Replace &lsaquo;theatre env="dev" configuration-endpoint="http://127.0.0.1:8890/sparql" local-endpoint="http://127.0.0.1:8890/sparql" sparql="yes"&rsaquo;
+
 with
+
 &lsaquo;theatre env="dev" configuration-endpoint="http://virtuoso:8890/sparql" local-endpoint="http://virtuoso:8890/sparql" sparql="yes"&rsaquo;
 
 ## Build LDT
