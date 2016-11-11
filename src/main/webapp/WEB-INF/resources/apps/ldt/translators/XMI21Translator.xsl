@@ -226,6 +226,16 @@
 			<xsl:element name="ea:{local-name(.)}"><xsl:value-of select="."/></xsl:element>
 		</xsl:for-each>
 	</rdf:Description>
+	<xsl:if test="source/documentation/@value!=''">
+		<rdf:Description rdf:about="{$domain}{replace(@xmi:idref,'(EAID_..)','EAID_src')}"> <!-- Hack: ea uses src -->
+			<ea:documentation><xsl:value-of select="source/documentation/@value"/></ea:documentation>
+		</rdf:Description>
+	</xsl:if>
+	<xsl:if test="target/documentation/@value!=''">
+		<rdf:Description rdf:about="{$domain}{replace(@xmi:idref,'(EAID_..)','EAID_dst')}"> <!-- Hack: ea uses dst -->
+			<ea:documentation><xsl:value-of select="target/documentation/@value"/></ea:documentation>
+		</rdf:Description>
+	</xsl:if>
 </xsl:template>
 
 <xsl:template match="xmi:Extension[@extender='Enterprise Architect']">
