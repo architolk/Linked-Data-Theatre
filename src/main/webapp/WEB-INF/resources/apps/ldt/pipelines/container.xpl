@@ -1,8 +1,8 @@
 <!--
 
     NAME     container.xpl
-    VERSION  1.12.0
-    DATE     2016-10-16
+    VERSION  1.12.2-SNAPSHOT
+    DATE     2016-11-13
 
     Copyright 2012-2016
 
@@ -26,6 +26,8 @@
     DESCRIPTION
     Pipeline to manage updating an inserting triples into a container
 
+	(this file contains rdfs:label annotations. These annotations can be used to automatically create documentation)
+	
 	Structure of this pipeline:
 	1. Process the http request, results in context and containercontext pipes
 	2. Check if a container exists in the configuration, if not: return 404 (resource not found)
@@ -86,13 +88,16 @@
 		  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 		  xmlns:elmo="http://bp4mc2.org/elmo/def#"
 		  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-		  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+		  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		  
+		  rdfs:label="Container pipeline"
+		  >
 
 	<!-- Configuration> -->
 	<p:param type="input" name="instance"/>
 		  
 	<!-- Generate original request -->
-	<p:processor name="oxf:request">
+	<p:processor name="oxf:request" rdfs:label="retrieve http-request">
 		<p:input name="config">
 			<config stream-type="xs:anyURI">
 				<include>/request/headers/header</include>
@@ -107,7 +112,7 @@
 	</p:processor>
 
 	<!-- /request/body can only be obtained when no parameters are serialized within the body! -->
-	<p:choose href="#request">
+	<p:choose href="#request" rdfs:label="get request body, if available">
 		<p:when test="not(exists(/request/parameters))">
 			<p:processor name="oxf:request">
 				<p:input name="config">
@@ -129,7 +134,7 @@
 	</p:choose>
 	
 	<!-- Get credentials and user roles -->
-	<p:processor name="oxf:request-security">
+	<p:processor name="oxf:request-security" rdfs:label="get request security context">
 		<p:input name="config" transform="oxf:xslt" href="#instance">        
 			<config xsl:version="2.0">
 				<xsl:for-each select="theatre/roles/role">
@@ -141,7 +146,7 @@
 	</p:processor>
 
 	<!-- Default namespaces -->
-	<p:processor name="oxf:url-generator">
+	<p:processor name="oxf:url-generator" rdfs:label="get default namespaces">
 		<p:input name="config">
 			<config>
 				<url>../namespaces.xml</url>
@@ -152,15 +157,15 @@
 	</p:processor>
 	
 	<!-- Create context -->
-	<p:processor name="oxf:xslt">
+	<p:processor name="oxf:xslt" rdfs:label="create context">
 		<p:input name="data" href="aggregate('croot',#instance,#request,#requestbody,#roles)"/>
 		<p:input name="config" href="../transformations/context.xsl"/>
 		<p:output name="data" id="context"/>
 	</p:processor>
 
 
-	<p:choose href="#context">
-		<p:when test="matches(context/subject,'backstage/rep$') and context/back-of-stage!=''">
+	<p:choose href="#context" rdfs:label="create container context">
+		<p:when test="matches(context/subject,'backstage/rep$') and context/back-of-stage!=''" rdfs:label="backstage, edit representation">
 			<!-- Special container: backstage! -->
 			<p:processor name="oxf:xslt">
 				<p:input name="config">
@@ -221,7 +226,7 @@
 				<p:output name="data" id="containercontext"/>
 			</p:processor>
 		</p:when>
-		<p:when test="matches(context/subject,'backstage/import$') and context/back-of-stage!=''">
+		<p:when test="matches(context/subject,'backstage/import$') and context/back-of-stage!=''" rdfs:label="backstage, import">
 			<!-- Special container: backstage import! -->
 			<p:processor name="oxf:xslt">
 				<p:input name="config">
@@ -247,7 +252,7 @@
 				<p:output name="data" id="containercontext"/>
 			</p:processor>
 		</p:when>
-		<p:otherwise>
+		<p:otherwise rdfs:label="normal container">
 			<!-- Look for container definition in configuration -->
 			<p:processor name="oxf:xforms-submission">
 				<p:input name="submission" transform="oxf:xslt" href="#context">
@@ -404,11 +409,11 @@
 -->
 	<p:choose href="#containercontext">
 		<!-- Container should exist in configuration, or return 404 -->
-		<p:when test="exists(container/url)">
+		<p:when test="exists(container/url)" rdfs:label="container-configuration found">
 			<!-- Container exists -->
 			<p:choose href="aggregate('root',#context,#containercontext)">
 				<!-- When a user-role is defined, the user should have that role -->
-				<p:when test="root/container/user-role!='' and not(contains(root/context/user-role,root/container/user-role))">
+				<p:when test="root/container/user-role!='' and not(contains(root/context/user-role,root/container/user-role))" rdfs:label="unauthorized role: 403">
 					<!-- User-role incorrect: 403 return code -->
 					<p:processor name="oxf:identity">
 						<p:input name="data">
@@ -447,10 +452,10 @@
 					</p:processor>
 				</p:when>
 				<!-- Submission of new data, result of this branche = new data is uploaded -->
-				<p:when test="root/context/parameters/parameter[name='container']/value=root/context/subject">
-					<p:choose href="#context">
+				<p:when test="root/context/parameters/parameter[name='container']/value=root/context/subject" rdfs:label="upload via user-interface">
+					<p:choose href="#context" rdfs:label="create upload filelist">
 						<!-- Upload file, zip -->
-						<p:when test="ends-with(context/parameters/parameter[name='file']/filename,'.zip') or context/parameters/parameter[name='file']/content-type='multipart/x-zip'">
+						<p:when test="ends-with(context/parameters/parameter[name='file']/filename,'.zip') or context/parameters/parameter[name='file']/content-type='multipart/x-zip'" rdfs:label="upload zip file">
 							<!-- Fetch zipfile -->
 							<p:processor name="oxf:url-generator">
 								<p:input name="config" transform="oxf:xslt" href="#context">
@@ -467,7 +472,7 @@
 							</p:processor>
 						</p:when>
 						<!-- Upload file, not a zip -->
-						<p:when test="context/parameters/parameter[name='file']/filename!=''">
+						<p:when test="context/parameters/parameter[name='file']/filename!=''" rdfs:label="upload file, not a zip">
 							<!-- Put filename in filelist -->
 							<p:processor name="oxf:xslt">
 								<p:input name="config">
@@ -484,7 +489,7 @@
 							</p:processor>
 						</p:when>
 						<!-- Download from URL -->
-						<p:when test="context/parameters/parameter[name='url']/value!=''">
+						<p:when test="context/parameters/parameter[name='url']/value!=''" rdfs:label="download file from url">
 							<!-- Fetch file -->
 							<p:processor name="oxf:httpclient-processor">
 								<p:input name="config" transform="oxf:xslt" href="#context">
@@ -531,7 +536,7 @@
 							</p:processor>
 						</p:when>
 						<!-- Upload form -->
-						<p:when test="exists(context/parameters/parameter[name='content']/value)">
+						<p:when test="exists(context/parameters/parameter[name='content']/value)" rdfs:label="upload via form">
 							<p:processor name="oxf:xslt">
 								<p:input name="config">
 									<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -582,7 +587,7 @@
 							</p:processor>
 						</p:when>
 						<!-- Something else, just create an empty filelist -->
-						<p:otherwise>
+						<p:otherwise rdfs:label="no valid situation, empty upload">
 							<p:processor name="oxf:identity">
 								<p:input name="data">
 									<files />
@@ -599,7 +604,7 @@
 	<p:input name="data" href="#filelist"/>
 </p:processor>
 -->
-					<p:for-each href="#filelist" select="/files/file" root="results" id="rdffile">
+					<p:for-each href="#filelist" select="/files/file" root="results" id="rdffile" rdfs:label="read and convert each file in filelist to rdf">
 						<p:choose href="#containercontext">
 							<!-- Translator is used -->
 							<p:when test="container/translator!=''">
@@ -642,7 +647,7 @@
 										</p:processor>
 									</p:when>
 									<!-- Upload XML file -->
-									<p:when test="ends-with(file/@name,'.xml')">
+									<p:when test="ends-with(file/@name,'.xml') or ends-with(file/@name,'.xpl')">
 										<!-- Fetch file -->
 										<p:processor name="oxf:url-generator">
 											<p:input name="config" transform="oxf:xslt" href="current()">
@@ -723,7 +728,7 @@
 						</p:choose>
 					</p:for-each>
 					<!-- Put rdffiles in one string -->
-					<p:processor name="oxf:xslt">
+					<p:processor name="oxf:xslt" rdfs:label="combine rdf files">
 						<p:input name="config">
 							<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 								<xsl:template match="/">
@@ -747,7 +752,7 @@
 					<!--         DirsAllowed			= ., ../vad, ../../Tomcat/temp -->
 					
 					<!-- Check if extension is xml or ttl, return error if not -->
-					<p:choose href="#rdffilelist">
+					<p:choose href="#rdffilelist" rdfs:label="upload to virtuoso, check xml or ttl">
 						<p:when test="filelist/firstformat='xml' or filelist/firstformat='ttl'">
 							<p:processor name="oxf:sql">
 								<p:input name="data" href="aggregate('root',#rdffilelist,#containercontext)"/>
@@ -795,8 +800,8 @@
 </p:processor>
 -->
 					<!-- Cool URI implementation: respond with HTML or with JSON -->
-					<p:choose href="#context">
-						<p:when test="context/format='application/json'">
+					<p:choose href="#context" rdfs:label="build userinterface">
+						<p:when test="context/format='application/json'" rdfs:label="json response">
 							<p:processor name="oxf:xslt">
 								<p:input name="config">
 									<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -827,10 +832,10 @@
 								<p:input name="data" href="#htmlres"/>
 							</p:processor>
 						</p:when>
-						<p:otherwise>
+						<p:otherwise rdfs:label="html response">
 							<p:choose href="#result">
 								<!-- Succes, so redirect back to original site -->
-								<p:when test="response='succes'">
+								<p:when test="response='succes'" rdfs:label="succes, redirect back to original site">
 									<p:processor name="oxf:html-converter">
 										<p:input name="config">
 											<config>
@@ -855,10 +860,10 @@
 										<p:output name="data" id="htmlres" />
 									</p:processor>
 								</p:when>
-								<p:otherwise>
+								<p:otherwise rdfs:label="error: show error page">
 									<!-- Convert result to turtle -->
 									<!-- This branch is only active when an error occurs: not very nice, the code is a duplicate of the code in the other branch ("show old data") -->
-									<p:processor name="oxf:xslt">
+									<p:processor name="oxf:xslt" rdfs:label="create data from form input">
 										<p:input name="config">
 											<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 												<xsl:template match="/">
@@ -875,8 +880,8 @@
 									<!-- If the container contains some representations, we should also get those representations! -->
 									<!-- TODO: A better solution should be the integration of container.xpl and query.xpl, this needs refactoring -->
 									<!-- TODO: The p:choose also exists in the "show old data" branch: duplicate code, this needs refactoring -->
-									<p:choose href="#containercontext">
-										<p:when test="substring-after(contains/representation[1]/@uri,'http://bp4mc2.org/elmo/def#')!=''">
+									<p:choose href="#containercontext" rdfs:label="look for representations">
+										<p:when test="substring-after(contains/representation[1]/@uri,'http://bp4mc2.org/elmo/def#')!=''" rdfs:label="load representation from file (LDT backstage)">
 											<!-- Special case: representation is a file (LDT backstage) -->
 											<p:processor name="oxf:url-generator">
 												<p:input name="config" transform="oxf:xslt" href="#context">
@@ -888,7 +893,7 @@
 												<p:output name="data" id="representations"/>
 											</p:processor>
 										</p:when>
-										<p:when test="exists(container/contains/representation)">
+										<p:when test="exists(container/contains/representation)" rdfs:label="fetch representations specified in containerspec">
 											<p:processor name="oxf:xforms-submission">
 												<p:input name="submission" transform="oxf:xslt" href="#context">
 													<xforms:submission method="get" xsl:version="2.0" action="{context/configuration-endpoint}">
@@ -934,7 +939,7 @@
 												<p:output name="response" id="representations"/>
 											</p:processor>
 										</p:when>
-										<p:otherwise>
+										<p:otherwise rdfs:label="no representations, empty pipe">
 											<p:processor name="oxf:identity">
 												<p:input name="data">
 													<representations />
@@ -945,14 +950,14 @@
 									</p:choose>
 					
 									<!-- Convert turtle to rdfa -->
-									<p:processor name="oxf:xslt">
+									<p:processor name="oxf:xslt" rdfs:label="convert data to rdfa">
 										<p:input name="data" href="aggregate('root',#context,#turtle,#containercontext,#result,#representations)"/>
 										<p:input name="config" href="../transformations/ttl2rdfaform.xsl"/>
 										<p:output name="data" id="rdfa"/>
 									</p:processor>
 
 									<!-- Transform rdfa to html -->
-									<p:processor name="oxf:unsafe-xslt">
+									<p:processor name="oxf:unsafe-xslt" rdfs:label="convert rdfa to html">
 										<p:input name="data" href="#rdfa"/>
 										<p:input name="config" href="../transformations/rdf2html.xsl"/>
 										<p:output name="data" id="html"/>
@@ -984,7 +989,7 @@
 					</p:choose>
 				</p:when>
 				<!-- Upload via REST service: separate routine (TODO: should be incorporated!) -->
-				<p:when test="exists(root/context/upload-file/@action)">
+				<p:when test="exists(root/context/upload-file/@action)" rdfs:label="upload via REST service">
 					<p:processor name="oxf:sql">
 						<p:input name="data" href="#context"/>
 						<p:input name="config">
@@ -1032,8 +1037,8 @@
 					</p:processor>
 				</p:when>
 				<!-- Show old data -->
-				<p:otherwise>
-					<p:processor name="oxf:xforms-submission">
+				<p:otherwise rdfs:label="show container data, no upload">
+					<p:processor name="oxf:xforms-submission" rdfs:label="fetch container content from triplestore">
 						<p:input name="submission" transform="oxf:xslt" href="#context">
 							<xforms:submission method="get" xsl:version="2.0" action="{context/configuration-endpoint}">
 								<xforms:header>
@@ -1055,7 +1060,7 @@
 					</p:processor>
 
 					<!-- Convert result to turtle -->
-					<p:processor name="oxf:xslt">
+					<p:processor name="oxf:xslt" rdfs:label="create data from container content">
 						<p:input name="data" href="aggregate('xmlresult',#sparql,#containercontext)"/>
 						<p:input name="config" href="../transformations/rdf2ttl.xsl"/>
 						<p:output name="data" id="ttl"/>
@@ -1063,7 +1068,7 @@
 
 					<!-- If the container contains some representations, we should also get those representations! -->
 					<!-- TODO: A better solution should be the integration of container.xpl and query.xpl, this needs refactoring -->
-					<p:choose href="#containercontext">
+					<p:choose href="#containercontext" rdfs:label="look for representations">
 						<p:when test="substring-after(container/contains/representation[1]/@uri,'http://bp4mc2.org/elmo/def#')!=''">
 							<!-- Special case: representation is a file (LDT backstage) -->
 							<p:processor name="oxf:url-generator">
@@ -1133,13 +1138,13 @@
 					</p:choose>
 									
 					<!-- Convert turtle to rdfa -->
-					<p:processor name="oxf:xslt">
+					<p:processor name="oxf:xslt" rdfs:label="convert data to rdfa">
 						<p:input name="data" href="aggregate('root',#context,#ttl,aggregate('sparql',#sparql),#containercontext,#representations)"/>
 						<p:input name="config" href="../transformations/ttl2rdfaform.xsl"/>
 						<p:output name="data" id="rdfa"/>
 					</p:processor>
 					<!-- Transform rdfa to html -->
-					<p:processor name="oxf:unsafe-xslt">
+					<p:processor name="oxf:unsafe-xslt" rdfs:label="convert rdfa to html">
 						<p:input name="data" href="#rdfa"/>
 						<p:input name="config" href="../transformations/rdf2html.xsl"/>
 						<p:output name="data" id="html"/>
@@ -1167,7 +1172,7 @@
 				</p:otherwise>
 			</p:choose>
 		</p:when>
-		<p:otherwise>
+		<p:otherwise rdfs:label="container-configuration not found: 404">
 			<!-- Container doesn't exist in definition: 404 return code -->
 			<p:processor name="oxf:identity">
 				<p:input name="data">
