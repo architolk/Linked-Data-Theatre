@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2view.xsl
-    VERSION  1.12.0
-    DATE     2016-10-16
+    VERSION  1.12.2-SNAPSHOT
+    DATE     2016-11-13
 
     Copyright 2012-2016
 
@@ -131,11 +131,18 @@
 				<!-- Scene -->
 				<xsl:when test="rdf:type/@rdf:resource='http://bp4mc2.org/elmo/def#Scene'">
 					<xsl:if test="exists(elmo:query[1])">
-						<scene uri="{@rdf:about}" index="{position()}">
-							<xsl:if test="exists(elmo:endpoint[1])"><xsl:attribute name="endpoint"><xsl:value-of select="elmo:endpoint[1]/@rdf:resource"/></xsl:attribute></xsl:if>
-							<xsl:if test="exists(rdfs:label)"><xsl:attribute name="label"><xsl:apply-templates select="." mode="label"/></xsl:attribute></xsl:if>
-							<query><xsl:value-of select="elmo:query[1]"/></query>
-						</scene>
+						<xsl:variable name="uri" select="@rdf:about"/>
+						<xsl:variable name="queryForm">
+							<xsl:apply-templates select="../rdf:Description[elmo:contains/@rdf:resource=$uri]/elmo:queryForm"/>
+						</xsl:variable>
+						<!-- Don't include the scene if the queryForm is not satisfied -->
+						<xsl:if test="not($queryForm/queryForm/@satisfied!='')">
+							<scene uri="{@rdf:about}" index="{position()}">
+								<xsl:if test="exists(elmo:endpoint[1])"><xsl:attribute name="endpoint"><xsl:value-of select="elmo:endpoint[1]/@rdf:resource"/></xsl:attribute></xsl:if>
+								<xsl:if test="exists(rdfs:label)"><xsl:attribute name="label"><xsl:apply-templates select="." mode="label"/></xsl:attribute></xsl:if>
+								<query><xsl:value-of select="elmo:query[1]"/></query>
+							</scene>
+						</xsl:if>
 					</xsl:if>
 				</xsl:when>
 				<!-- Special: data is available in a file (used only for ELMO-LDT related content -->
