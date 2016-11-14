@@ -25,9 +25,9 @@
 <!--
     DESCRIPTION
     Configuration of Virtuoso JDBC
-	
+
     WARNING: reloadable is set to true for development and testing purposes. Set to false in production environments!
-    
+
 	Set username and password to the username and password for your environment
 -->
 <Context reloadable="true">

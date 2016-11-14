@@ -1,8 +1,8 @@
 <!--
 
     NAME     TreeAppearance.xsl
-    VERSION  1.12.0
-    DATE     2016-10-16
+    VERSION  1.12.2-SNAPSHOT
+    DATE     2016-11-13
 
     Copyright 2012-2016
 
@@ -74,7 +74,7 @@
 		<xsl:if test="exists($new/uri)">
 			<a class="" href="#" onclick="toggleNode(this);return false;"><i class="fa fa-plus-square"></i></a>
 			<ul class="hide"> <!-- Default: collapsed tree -->
-				<xsl:for-each select="../rdf:Description[*/@rdf:resource=$uri]">
+				<xsl:for-each select="../rdf:Description[*/@rdf:resource=$uri]"><xsl:sort select="@rdf:about"/>
 					<xsl:variable name="about" select="@rdf:about"/>
 					<xsl:if test="not(exists($done[uri=$about]))">
 						<xsl:apply-templates select="." mode="makeTree">
