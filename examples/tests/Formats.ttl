@@ -36,6 +36,20 @@ stage:SelectFormatsQuery a elmo:Query;
 		}
 	''';
 .
+stage:GeoQuery a elmo:Query;
+	rdfs:label "A geometry result";
+	elmo:query '''
+		prefix geosparql: <http://www.opengis.net/ont/geosparql#>
+		select ?p ?p_label ?p_geo
+		where {
+			graph <http://localhost:8080/stage> {
+				?p geosparql:hasGeometry ?geo.
+				?p rdfs:label ?p_label.
+				?geo geosparql:asWKT ?p_geo.
+			}
+		}
+  ''';
+.
 
 stage:Formats_tab elmo:index "1";
 	elmo:appearance elmo:IndexAppearance;
