@@ -29,12 +29,9 @@ Now virtuoso should be running (http://localhost:8890/conductor/) and Tomcat sho
 ### Update stored procedures
 (This step is only necessary if you use Virtuoso as a backend. Note that some functionality (mainly backstage and containers) is not available if you use different backend).
 
-Execute `\stored-procs\install.bat`, located in your git repository. If you have only downloaded the war from the release, follow these steps:
-
-1. Download the file [create_procedures.sql](stored-procs/create_procedures.sql);
-2. Open your browser at [http://localhost:8890/conductor](http://localhost:8890/conductor), login as dba and navigate to the interactive SQL module;
-3. Paste the content of the create_procedures.sql file into the interactive SQL editor;
-4. Click on the `Execute` button.
+Execute the following commands from your local machine:
+1. docker cp stored-procs/create_procedures.sql virtuoso:/var/tmp
+2. docker exec -it virtuoso sh -c 'isql -U dba -P dba < /var/tmp/create_procedures.sql'
 
 ### Adapt config for Docker
 The default setup assumes Virtuoso and Tomcat run at the same server, but with Docker they communicate through the docker network. The LDT should be configured to use virtuoso (hostname) in stead of localhost.

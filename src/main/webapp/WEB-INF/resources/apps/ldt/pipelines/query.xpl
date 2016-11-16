@@ -25,7 +25,7 @@
 <!--
     DESCRIPTION
 	Pipeline to proces read-request to the linked data theatre
-	
+
 -->
 <p:config xmlns:p="http://www.orbeon.com/oxf/pipeline"
 		  xmlns:xforms="http://www.w3.org/2002/xforms"
@@ -44,7 +44,7 @@
 
 	<!-- Configuration> -->
 	<p:param type="input" name="instance"/>
-		  
+
 	<!-- Generate original request -->
 	<p:processor name="oxf:request">
 		<p:input name="config">
@@ -65,7 +65,7 @@
 		<p:input name="config" href="../transformations/context.xsl"/>
 		<p:output name="data" id="context"/>
 	</p:processor>
-	
+
 	<!-- Look for possible query in query graph -->
 	<!-- Execute SPARQL statement -->
 	<p:choose href="#context">
@@ -157,7 +157,7 @@
 			</p:processor>
 		</p:otherwise>
 	</p:choose>
-	
+
 	<p:choose href="#context">
 		<!-- Use predefined representation from LDT for elmo-representations -->
 		<p:when test="substring-after(context/representation,'http://bp4mc2.org/elmo/def#')!=''">
@@ -234,6 +234,8 @@
 										?fragmentchild ?fragmentchildp ?fragmentchildo.
 										?form ?formp ?formo.
 										?ff ?ffp ?ffo.
+                    ?rep elmo:query ?query.
+                    ?repchild elmo:query ?querychild.
 									}
 									WHERE {
 										GRAPH <]]><xsl:value-of select="root/context/representation-graph/@uri"/><![CDATA[>{
@@ -246,7 +248,8 @@
 												OPTIONAL {
 													?rep elmo:contains ?repchild.
 													?repchild ?repchildp ?repchildo.
-													OPTIONAL { ?repchild elmo:fragment ?fragmentchild. ?fragmentchild ?fragmentchildp ?fragmentchildo } 
+													OPTIONAL { ?repchild elmo:fragment ?fragmentchild. ?fragmentchild ?fragmentchildp ?fragmentchildo }
+                          OPTIONAL { ?repchild elmo:query ?queryname. ?queryname elmo:query ?querychild }
 												}
 												OPTIONAL {
 													?rep elmo:queryForm ?form.
@@ -254,6 +257,7 @@
 													?form elmo:fragment ?ff.
 													?ff ?ffp ?ffo.
 												}
+                        OPTIONAL { ?rep elmo:query ?queryname. ?queryname elmo:query ?query }
 											}]]></xsl:for-each><![CDATA[
 										}
 									}
@@ -268,7 +272,7 @@
 				<p:input name="data" href="aggregate('root',#context,#representations)"/>
 				<p:output name="data" id="defquerytext"/>
 			</p:processor>
-			
+
 			<!-- Fetch query definition(s) -->
 			<p:processor name="oxf:xforms-submission">
 				<p:input name="submission" transform="oxf:xslt" href="#context">
@@ -286,7 +290,7 @@
 			</p:processor>
 		</p:otherwise>
 	</p:choose>
-							
+
 	<!-- Query from graph representation -->
 	<p:processor name="oxf:xslt">
 		<p:input name="data" href="aggregate('root',#defquery,#context)"/>
@@ -303,7 +307,7 @@
 -->
 	<!-- More than one query is possible -->
 	<p:for-each href="#querytext" select="/view/representation" root="results" id="sparql">
-	
+
 		<p:choose href="current()">
 			<!-- queryForm constraint not satisfied, so query won't succeed: show form -->
 			<p:when test="representation/queryForm/@satisfied!=''">
@@ -497,14 +501,14 @@
 					</p:input>
 					<p:output name="response" id="metadata"/>
 				</p:processor>
-				
+
 				<!-- Transform SQL to RDF -->
 				<p:processor name="oxf:xslt">
 					<p:input name="data" href="aggregate('root',#data,#metadata)"/>
 					<p:input name="config" href="../transformations/sql2rdf.xsl"/>
 					<p:output name="data" ref="sparql"/>
 				</p:processor>
-				
+
 			</p:when>
 			<p:otherwise>
 				<!-- Execute service if any -->
@@ -641,7 +645,7 @@
 					<p:input name="data" href="aggregate('root',current(),#context,#sparqlinput)"/>
 					<p:output name="data" id="query"/>
 				</p:processor>
-				
+
 				<!-- Get endpoint -->
 				<p:processor name="oxf:xslt">
 					<p:input name="config">
@@ -699,7 +703,7 @@
 				</p:processor>
 			</p:otherwise>
 		</p:choose>
-	
+
 	</p:for-each>
 
 	<p:choose href="aggregate('root',#context,#sparql)">
@@ -1152,7 +1156,7 @@
 						<p:output name="data" id="fo"/>
 					</p:processor>
 					<!-- Create pdf -->
-					<p:processor name="oxf:xmlfo-processor">    
+					<p:processor name="oxf:xmlfo-processor">
 						<p:input name="config">
 							<config>
 								<content-type>application/pdf</content-type>
