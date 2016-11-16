@@ -1,7 +1,7 @@
 #
 # NAME     basic-configuration.ttl
-# VERSION  1.12.0
-# DATE     2016-10-16
+# VERSION  1.12.2-SNAPSHOT
+# DATE     2016-11-16
 #
 # Copyright 2012-2016
 #
@@ -172,7 +172,7 @@ stage:Configs_list a elmo:Part;
 	elmo:endpoint elmo:Backstage;
 	elmo:query stage:ConfigQuery
 .
-stage:ConfigQuery a elmo:query;
+stage:ConfigQuery a elmo:Query;
 	elmo:query '''
 		prefix elmo: <http://bp4mc2.org/elmo/def#>
 		select distinct ?graph (count(?r) as ?representationcount)
@@ -411,23 +411,23 @@ stage:GeoAppearance a elmo:Representation;
 	elmo:queryForm elmo:GeoForm;
 	elmo:query stage:HopitalQuery
 .
-	stage:HospitalQuery a elmo:query;
-		elmo:query '''
-			Prefix lgdo:<http://linkedgeodata.org/ontology/>
-			Prefix geom:<http://geovocab.org/geometry#>
-			Prefix ogc: <http://www.opengis.net/ont/geosparql#>
-			prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
-			construct {
-			#	?h ogc:asWKT ?hgv
-				?s geo:geometry ?g
-			}
-			WHERE {
-			?s a lgdo:Hospital ;
-				rdfs:label ?l ;
-				geom:geometry [ ogc:asWKT ?g]
+stage:HospitalQuery a elmo:Query;
+	elmo:query '''
+		Prefix lgdo:<http://linkedgeodata.org/ontology/>
+		Prefix geom:<http://geovocab.org/geometry#>
+		Prefix ogc: <http://www.opengis.net/ont/geosparql#>
+		prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+		construct {
+		#	?h ogc:asWKT ?hgv
+			?s geo:geometry ?g
+		}
+		WHERE {
+		?s a lgdo:Hospital ;
+			rdfs:label ?l ;
+			geom:geometry [ ogc:asWKT ?g]
 
-				Filter(bif:st_intersects(?g, bif:st_point(@LONG@,@LAT@), 10))
-			 }
-			LIMIT 10
-		''';
+			Filter(bif:st_intersects(?g, bif:st_point(@LONG@,@LAT@), 10))
+		 }
+		LIMIT 10
+	''';
 .
