@@ -249,7 +249,7 @@
 													?rep elmo:contains ?repchild.
 													?repchild ?repchildp ?repchildo.
 													OPTIONAL { ?repchild elmo:fragment ?fragmentchild. ?fragmentchild ?fragmentchildp ?fragmentchildo }
-                          OPTIONAL { ?repchild elmo:query ?queryname. ?queryname elmo:query ?querychild }
+                          OPTIONAL { ?repchild elmo:queryName/elmo:queryContent ?querychild }
 												}
 												OPTIONAL {
 													?rep elmo:queryForm ?form.
@@ -257,7 +257,7 @@
 													?form elmo:fragment ?ff.
 													?ff ?ffp ?ffo.
 												}
-                        OPTIONAL { ?rep elmo:query ?queryname. ?queryname elmo:query ?query }
+                        OPTIONAL { ?rep elmo:queryName/elmo:queryContent ?query }
 											}]]></xsl:for-each><![CDATA[
 										}
 									}

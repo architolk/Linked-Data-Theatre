@@ -170,10 +170,10 @@ stage:Configs_list a elmo:Part;
 		rdfs:label "Aantal representaties"@nl;
 	];
 	elmo:endpoint elmo:Backstage;
-	elmo:query stage:ConfigQuery
+	elmo:queryName stage:ConfigQuery
 .
-stage:ConfigQuery a elmo:query;
-	elmo:query '''
+stage:ConfigQuery a elmo:Query;
+	elmo:queryContent '''
 		prefix elmo: <http://bp4mc2.org/elmo/def#>
 		select distinct ?graph (count(?r) as ?representationcount)
 		where {
@@ -409,25 +409,26 @@ stage:GeoAppearance a elmo:Representation;
 	elmo:endpoint <http://linkedgeodata.org/sparql>;
 	elmo:appearance elmo:GeoSelectAppearance;
 	elmo:queryForm elmo:GeoForm;
-	elmo:query stage:HopitalQuery
+	elmo:queryName stage:HospitalQuery;
 .
-	stage:HospitalQuery a elmo:query;
-		elmo:query '''
-			Prefix lgdo:<http://linkedgeodata.org/ontology/>
-			Prefix geom:<http://geovocab.org/geometry#>
-			Prefix ogc: <http://www.opengis.net/ont/geosparql#>
-			prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
-			construct {
-			#	?h ogc:asWKT ?hgv
-				?s geo:geometry ?g
-			}
-			WHERE {
-			?s a lgdo:Hospital ;
-				rdfs:label ?l ;
-				geom:geometry [ ogc:asWKT ?g]
 
-				Filter(bif:st_intersects(?g, bif:st_point(@LONG@,@LAT@), 10))
-			 }
-			LIMIT 10
-		''';
+# Get hospitals query
+stage:HospitalQuery a elmo:Query;
+	elmo:queryContent '''
+		Prefix lgdo:<http://linkedgeodata.org/ontology/>
+		Prefix geom:<http://geovocab.org/geometry#>
+		Prefix ogc: <http://www.opengis.net/ont/geosparql#>
+		prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+		construct {
+			?s geo:geometry ?g
+		}
+		WHERE {
+		?s a lgdo:Hospital ;
+			rdfs:label ?l ;
+			geom:geometry [ ogc:asWKT ?g]
+
+			Filter(bif:st_intersects(?g, bif:st_point(@LONG@,@LAT@), 10))
+		 }
+		LIMIT 10
+	''';
 .
