@@ -1,8 +1,8 @@
 <!--
 
     NAME     query.xpl
-    VERSION  1.12.1
-    DATE     2016-11-07
+    VERSION  1.12.2-SNAPSHOT
+    DATE     2016-11-16
 
     Copyright 2012-2016
 
@@ -780,7 +780,9 @@
 				<p:when test="context/format='application/xml'">
 					<p:processor name="oxf:xml-serializer">
 						<p:input name="config">
-							<config/>
+							<config>
+								<encoding>utf-8</encoding>
+							</config>
 						</p:input>
 						<p:input name="data" href="aggregate('results',#sparql#xpointer(/results/*))"/>
 					</p:processor>
@@ -789,7 +791,22 @@
 				<p:when test="context/format='application/rdf+xml'">
 					<p:processor name="oxf:xml-serializer">
 						<p:input name="config">
-							<config/>
+							<config>
+								<encoding>utf-8</encoding>
+								<content-type>application/rdf+xml</content-type>
+							</config>
+						</p:input>
+						<p:input name="data" href="#sparql#xpointer((/results/res:sparql|/results/rdf:RDF)[1])"/>
+					</p:processor>
+				</p:when>
+				<!-- SPARQL/XML -->
+				<p:when test="context/format='application/sparql-results+xml'">
+					<p:processor name="oxf:xml-serializer">
+						<p:input name="config">
+							<config>
+								<encoding>utf-8</encoding>
+								<content-type>application/sparql-results+xml</content-type>
+							</config>
 						</p:input>
 						<p:input name="data" href="#sparql#xpointer((/results/res:sparql|/results/rdf:RDF)[1])"/>
 					</p:processor>
@@ -798,7 +815,9 @@
 				<p:when test="context/format='application/x.elmo.query'">
 					<p:processor name="oxf:xml-serializer">
 						<p:input name="config">
-							<config/>
+							<config>
+								<encoding>utf-8</encoding>
+							</config>
 						</p:input>
 						<p:input name="data" href="aggregate('query',#context,#representations,#querytext)"/>
 					</p:processor>
@@ -843,6 +862,7 @@
 						<p:input name="config">
 							<config>
 								<encoding>utf-8</encoding>
+								<content-type>text/turtle</content-type>
 							</config>
 						</p:input>
 						<p:input name="data" href="#ttl" />
@@ -871,6 +891,7 @@
 						<p:input name="config">
 							<config>
 								<encoding>utf-8</encoding>
+								<content-type>text/csv</content-type>
 							</config>
 						</p:input>
 						<p:input name="data" href="#csv" />
@@ -899,6 +920,7 @@
 						<p:input name="config">
 							<config>
 								<encoding>utf-8</encoding>
+								<content-type>application/ld+json</content-type>
 							</config>
 						</p:input>
 						<p:input name="data" href="#jsonld" />
@@ -931,6 +953,7 @@
 						<p:input name="config">
 							<config>
 								<encoding>utf-8</encoding>
+								<content-type>application/ld+json</content-type>
 							</config>
 						</p:input>
 						<p:input name="data" href="#jsonld" />
@@ -1088,6 +1111,7 @@
 						<p:input name="config">
 							<config>
 								<encoding>utf-8</encoding>
+								<content-type>application/ld+json</content-type>
 							</config>
 						</p:input>
 						<p:input name="data" href="#graphjson" />
@@ -1156,7 +1180,7 @@
 						<p:output name="data" id="fo"/>
 					</p:processor>
 					<!-- Create pdf -->
-					<p:processor name="oxf:xmlfo-processor">
+					<p:processor name="oxf:xmlfo-processor">    
 						<p:input name="config">
 							<config>
 								<content-type>application/pdf</content-type>
@@ -1191,7 +1215,9 @@
 						<p:when test="context/format='application/x.elmo.rdfa'">
 							<p:processor name="oxf:xml-serializer">
 								<p:input name="config">
-									<config/>
+									<config>
+										<encoding>utf-8</encoding>
+									</config>
 								</p:input>
 								<p:input name="data" href="#rdfa"/>
 							</p:processor>

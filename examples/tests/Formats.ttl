@@ -14,15 +14,7 @@ stage:SelectFormats a elmo:Representation;
 	elmo:contains stage:SelectFormats_content;
 	elmo:index "0";
 	elmo:appearance elmo:HiddenAppearance;
-	elmo:query '''
-		prefix dbo: <http://dbpedia.org/ontology/>
-		select ?s ?s_label (dbo:City as ?type) ?s_count
-		where {
-			?s rdf:type dbo:City.
-			?s rdfs:label ?s_label.
-			OPTIONAL {?s dbo:population ?s_count}
-		}
-	''';
+	elmo:query stage:SelectFormatsQuery;
 .
 stage:SelectFormatsQuery a elmo:Query;
 	rdfs:label "Cities with populations";
@@ -35,6 +27,20 @@ stage:SelectFormatsQuery a elmo:Query;
 			OPTIONAL {?s dbo:population ?s_count}
 		}
 	''';
+.
+stage:GeoQuery a elmo:Query;
+	rdfs:label "A geometry result";
+	elmo:query '''
+		prefix geosparql: <http://www.opengis.net/ont/geosparql#>
+		select ?p ?p_label ?p_geo
+		where {
+			graph <http://localhost:8080/stage> {
+				?p geosparql:hasGeometry ?geo.
+				?p rdfs:label ?p_label.
+				?geo geosparql:asWKT ?p_geo.
+			}
+		}
+  ''';
 .
 
 stage:Formats_tab elmo:index "1";

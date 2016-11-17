@@ -1,7 +1,7 @@
 <!--
 
     NAME     sparql.xpl
-    VERSION  1.12.0
+    VERSION  1.12.2-SNAPSHOT
     DATE     2016-10-16
 
     Copyright 2012-2016
@@ -122,6 +122,28 @@
 					<p:processor name="oxf:xml-serializer">
 						<p:input name="config">
 							<config/>
+						</p:input>
+						<p:input name="data" href="#sparql"/>
+					</p:processor>
+				</p:when>
+				<!-- SPARQL/XML -->
+				<p:when test="context/format='application/sparql-results+xml'">
+					<p:processor name="oxf:xml-serializer">
+						<p:input name="config">
+							<config>
+								<content-type>application/sparql-results+xml</content-type>
+							</config>
+						</p:input>
+						<p:input name="data" href="#sparql"/>
+					</p:processor>
+				</p:when>
+				<!-- RDF/XML -->
+				<p:when test="context/format='application/rdf+xml'">
+					<p:processor name="oxf:xml-serializer">
+						<p:input name="config">
+							<config>
+								<content-type>application/rdf+xml</content-type>
+							</config>
 						</p:input>
 						<p:input name="data" href="#sparql"/>
 					</p:processor>

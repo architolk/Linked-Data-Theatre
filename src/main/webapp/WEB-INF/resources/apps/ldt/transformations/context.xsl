@@ -1,8 +1,8 @@
 <!--
 
     NAME     context.xsl
-    VERSION  1.12.1
-    DATE     2016-11-07
+    VERSION  1.12.2-SNAPSHOT
+    DATE     2016-11-16
 
     Copyright 2012-2016
 
@@ -162,6 +162,8 @@
 					<xsl:when test="theatre/format='yed'">application/x.elmo.yed</xsl:when> <!-- Application specific mime-type -->
 					<xsl:when test="theatre/format='exml'">application/xml</xsl:when> <!-- Full XML, all resultsets -->
 					<xsl:when test="theatre/format='xml'">application/rdf+xml</xsl:when> <!-- Only first resultset, like ttl and json -->
+					<xsl:when test="theatre/format='rdf'">application/rdf+xml</xsl:when>
+					<xsl:when test="theatre/format='sparql'">application/sparql-results+xml</xsl:when>
 					<xsl:when test="theatre/format='txt'">text/plain</xsl:when>
 					<xsl:when test="theatre/format='csv'">text/csv</xsl:when>
 					<xsl:when test="theatre/format='ttl'">text/turtle</xsl:when>
@@ -175,6 +177,7 @@
 					<xsl:when test="theatre/format='d3json'">application/x.elmo.d3+json</xsl:when> <!-- Application specific mime-type -->
 					<xsl:when test="theatre/format='query'">application/x.elmo.query</xsl:when> <!-- Application specific mime-type -->
 					<xsl:when test="theatre/format='rdfa'">application/x.elmo.rdfa</xsl:when> <!-- Application specific mime-type -->
+					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/sparql-results+xml')">application/sparql-results+xml</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/rdf+xml')">application/rdf+xml</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'text/turtle')">text/turtle</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'text/csv')">text/csv</xsl:when>

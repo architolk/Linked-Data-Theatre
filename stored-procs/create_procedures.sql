@@ -214,3 +214,10 @@ create procedure GetMD5Hash (in fragment varchar)
 	return md5(fragment);
 };
 grant execute on GetMD5Hash to public;
+
+-- One problem with the routine below: it doesn't work correctly for (some?) UTF-8 characters, only ascii will work
+drop procedure StrSelect;
+create procedure StrSelect(in istr varchar, in caption varchar) {
+	return regexp_replace(regexp_replace(istr,concat('^.*-- ',caption,' --')),'-- .*$');
+};
+grant execute on StrSelect to public;

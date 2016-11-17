@@ -1,8 +1,8 @@
 <!--
 
     NAME     header.xpl
-    VERSION  1.12.2-SNAPSHOT
-    DATE     2016-11-16
+    VERSION  1.12.1
+    DATE     2016-11-07
 
     Copyright 2012-2016
 
@@ -60,34 +60,43 @@
 		<p:output name="data" id="roles"/>
 	</p:processor>
 
+	<!-- Create context -->
+	<p:processor name="oxf:xslt">
+		<p:input name="data" href="aggregate('root',#instance,#request)"/>
+		<p:input name="config" href="../transformations/context.xsl"/>
+		<p:output name="data" id="context"/>
+	</p:processor>
+	
 	<p:choose href="#instance">
 		<!-- Only show header information in development-mode -->
 		<p:when test="theatre/@env='dev'">
-			<!-- Transform header to html page -->
-			<p:processor name="oxf:xslt">
-				<p:input name="data" href="#request"/>
-				<p:input name="config" href="../transformations/header2html.xsl"/>
-				<p:output name="data" id="html"/>
-			</p:processor>
-			<!-- Convert XML result to HTML -->
-			<p:processor name="oxf:html-converter">
+
+			<p:processor name="oxf:xml-converter">
 				<p:input name="config">
 					<config>
 						<encoding>utf-8</encoding>
-						<version>5.0</version>
 					</config>
 				</p:input>
-				<p:input name="data" href="#html" />
-				<p:output name="data" id="converted" />
+				<p:input name="data" href="#context"/>
+				<p:output name="data" id="xmldoc"/>
 			</p:processor>
-			<!-- Serialize -->
-			<p:processor name="oxf:http-serializer">
+			<p:processor name="oxf:file-serializer">
 				<p:input name="config">
 					<config>
-						<cache-control><use-local-cache>false</use-local-cache></cache-control>
+						<scope>session</scope>
 					</config>
 				</p:input>
-				<p:input name="data" href="#converted"/>
+				<p:input name="data" href="#xmldoc"/>
+				<p:output name="data" id="url-written"/>
+			</p:processor>
+
+			<p:processor name="oxf:xml-serializer">
+				<p:input name="config">
+					<config>
+						<content-type>application/sparql-results+xml</content-type>
+					</config>
+				</p:input>
+				<p:input name="data" href="aggregate('root',#request,#roles,#url-written)"/>
 			</p:processor>
 		</p:when>
 		<p:otherwise>

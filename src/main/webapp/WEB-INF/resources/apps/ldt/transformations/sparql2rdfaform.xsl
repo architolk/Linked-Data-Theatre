@@ -1,8 +1,8 @@
 <!--
 
     NAME     sparql2rdfaform.xsl
-    VERSION  1.12.0
-    DATE     2016-10-16
+    VERSION  1.12.2-SNAPSHOT
+    DATE     2016-11-16
 
     Copyright 2012-2016
 
@@ -34,6 +34,7 @@
 	xmlns:elmo="http://bp4mc2.org/elmo/def#"
 	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 	xmlns:res="http://www.w3.org/2005/sparql-results#"
+	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
 	xmlns:dcterms="http://purl.org/dc/terms/"
 >
 
@@ -44,6 +45,14 @@
 </xsl:template>
 
 <xsl:template match="res:sparql">
+	<xsl:variable name="geo-item">
+		<xsl:for-each select="res:head/res:variable">
+			<xsl:variable name="geoname"><xsl:value-of select="@name"/>_geo</xsl:variable>
+			<xsl:if test="exists(../res:variable[@name=$geoname])">
+				<item obj="{@name}" geo="{$geoname}"/>
+			</xsl:if>
+		</xsl:for-each>
+	</xsl:variable>
 	<rdf:RDF elmo:appearance="http://bp4mc2.org/elmo/def#TableAppearance">
 		<rdf:Description rdf:nodeID="rset">
 			<rdf:type rdf:resource="http://www.w3.org/2005/sparql-results#ResultSet"/>
@@ -55,11 +64,16 @@
 				<res:solution rdf:nodeID="r{$row}">
 					<xsl:for-each select="res:binding">
 						<xsl:variable name="column" select="position()-1"/>
+						<xsl:variable name="varname" select="@name"/>
 						<res:binding rdf:nodeID="r{$row}c{$column}">
-							<res:variable><xsl:value-of select="@name"/></res:variable>
+							<res:variable><xsl:value-of select="$varname"/></res:variable>
 							<res:value>
-								<xsl:if test="exists(res:uri)"><xsl:attribute name="rdf:resource"><xsl:value-of select="res:uri"/></xsl:attribute></xsl:if>
-								<xsl:if test="exists(res:literal)"><xsl:attribute name="datatype"><xsl:value-of select="res:literal/@datatype"/></xsl:attribute><xsl:value-of select="res:literal"/></xsl:if>
+								<xsl:choose>
+									<xsl:when test="exists($geo-item/item[@geo=$varname])">GEO</xsl:when>
+									<xsl:when test="exists(res:uri)"><xsl:attribute name="rdf:resource"><xsl:value-of select="res:uri"/></xsl:attribute></xsl:when>
+									<xsl:when test="exists(res:literal)"><xsl:attribute name="datatype"><xsl:value-of select="res:literal/@datatype"/></xsl:attribute><xsl:value-of select="res:literal"/></xsl:when>
+									<xsl:otherwise />
+								</xsl:choose>
 							</res:value>
 						</res:binding>
 					</xsl:for-each>
@@ -67,6 +81,26 @@
 			</xsl:for-each>
 		</rdf:Description>
 	</rdf:RDF>
+	<!-- Voorlopig maar 1 geo-item toestaan, in principe zou meer ook prima kunnen op dezelfde manier -->
+	<xsl:if test="exists($geo-item/item[1])">
+		<rdf:RDF elmo:appearance="http://bp4mc2.org/elmo/def#GeoAppearance">
+			<xsl:for-each select="res:results/res:result">
+				<xsl:if test="exists(res:binding[@name=$geo-item/item[1]/@geo])">
+					<rdf:Description rdf:about="{res:binding[@name=$geo-item/item[1]/@obj]/res:uri}">
+						<xsl:variable name="varlabel"><xsl:value-of select="$geo-item/item[1]/@obj"/>_label</xsl:variable>
+						<xsl:variable name="label"><xsl:value-of select="res:binding[@name=$varlabel]/res:literal"/></xsl:variable>
+						<rdfs:label>
+							<xsl:choose>
+								<xsl:when test="$label!=''"><xsl:value-of select="$label"/></xsl:when>
+								<xsl:otherwise>GEO</xsl:otherwise>
+							</xsl:choose>
+						</rdfs:label>
+						<geo:geometry><xsl:value-of select="res:binding[@name=$geo-item/item[1]/@geo]/res:literal"/></geo:geometry>
+					</rdf:Description>
+				</xsl:if>
+			</xsl:for-each>
+		</rdf:RDF>
+	</xsl:if>
 </xsl:template>
 
 <xsl:template match="/">
@@ -102,6 +136,10 @@
 				<rdf:value><xsl:value-of select="root/context/parameters/parameter[name='query']/value"/></rdf:value>
 			</rdf:Description>
 			<rdf:Description rdf:nodeID="f4">
+				<rdfs:label>Format</rdfs:label>
+				<elmo:applies-to>format</elmo:applies-to>
+			</rdf:Description>
+			<rdf:Description rdf:nodeID="f5">
 				<rdfs:label>Go!</rdfs:label>
 				<elmo:appearance rdf:resource="http://bp4mc2.org/elmo/def#SubmitAppearance"/>
 				<html:link><xsl:value-of select="root/context/@docroot"/>/sparql</html:link>
