@@ -2,7 +2,7 @@
 
     NAME     query.xpl
     VERSION  1.12.2-SNAPSHOT
-    DATE     2016-11-16
+    DATE     2016-11-19
 
     Copyright 2012-2016
 
@@ -249,7 +249,7 @@
 													?rep elmo:contains ?repchild.
 													?repchild ?repchildp ?repchildo.
 													OPTIONAL { ?repchild elmo:fragment ?fragmentchild. ?fragmentchild ?fragmentchildp ?fragmentchildo }
-                          OPTIONAL { ?repchild elmo:query ?queryname. ?queryname elmo:query ?querychild }
+                          OPTIONAL { ?repchild elmo:query/elmo:query ?querychild }
 												}
 												OPTIONAL {
 													?rep elmo:queryForm ?form.
@@ -257,7 +257,7 @@
 													?form elmo:fragment ?ff.
 													?ff ?ffp ?ffo.
 												}
-                        OPTIONAL { ?rep elmo:query ?queryname. ?queryname elmo:query ?query }
+                        OPTIONAL { ?rep elmo:query/elmo:query ?query }
 											}]]></xsl:for-each><![CDATA[
 										}
 									}
