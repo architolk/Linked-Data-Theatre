@@ -409,7 +409,7 @@ stage:GeoAppearance a elmo:Representation;
 	elmo:endpoint <http://linkedgeodata.org/sparql>;
 	elmo:appearance elmo:GeoSelectAppearance;
 	elmo:queryForm elmo:GeoForm;
-	elmo:query stage:HopitalQuery
+	elmo:query stage:HospitalQuery
 .
 stage:HospitalQuery a elmo:Query;
 	elmo:query '''
