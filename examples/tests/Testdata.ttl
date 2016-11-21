@@ -2,6 +2,8 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#>.
 @prefix foaf: <http://xmlns.com/foaf/0.1/>.
 @prefix testo: <http://localhost:8080/def/test#>.
+@prefix story: <http://localhost:8080/id/user-story/>.
+@prefix storystatus: <http://localhost:8080/id/status/>.
 @prefix lotro: <http://localhost:8080/def/lotr#>.
 @prefix lotrc: <http://localhost:8080/id/character/>.
 @prefix lotrg: <http://localhost:8080/id/group/>.
@@ -10,6 +12,36 @@
 @prefix dbpedia: <http://dbpedia.org/resource/>.
 @prefix dbp: <http://dbpedia.org/property/>.
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
+
+#
+# Scrumboard testdata
+#
+testo:UserStory a owl:Class;
+	rdfs:label "user story";
+.
+testo:status a rdf:Property;
+	rdfs:label "status";
+.
+testo:prevStatus a rdf:Property;
+	rdfs:label "previous status"@en;
+	rdfs:label "vorige status"@nl;
+.
+
+story:item1 a testo:UserStory;
+	rdfs:label "Item 1";
+	testo:status storystatus:todo;
+	testo:prevStatus storystatus:backlog;
+.
+
+storystatus:backlog a testo:Status;
+	rdfs:label "Backlog";
+	geo:geometry "CIRCLE(120 -20,4)";
+.
+storystatus:todo a testo:Status;
+	rdfs:label "To do";
+	geo:geometry "CIRCLE(200 -20,4)";
+.
 
 #
 #DBPedia testdata
