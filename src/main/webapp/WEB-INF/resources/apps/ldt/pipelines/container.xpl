@@ -27,7 +27,7 @@
     Pipeline to manage updating an inserting triples into a container
 
 	(this file contains rdfs:label annotations. These annotations can be used to automatically create documentation)
-	
+
 	Structure of this pipeline:
 	1. Process the http request, results in context and containercontext pipes
 	2. Check if a container exists in the configuration, if not: return 404 (resource not found)
@@ -76,7 +76,7 @@
 	|
 	+~~~B. (Container itself is request)
 		Check what the request wants: html or json, and return appropriate result.
-	
+
 -->
 <p:config xmlns:p="http://www.orbeon.com/oxf/pipeline"
 		  xmlns:xforms="http://www.w3.org/2002/xforms"
@@ -89,13 +89,13 @@
 		  xmlns:elmo="http://bp4mc2.org/elmo/def#"
 		  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 		  xmlns:xs="http://www.w3.org/2001/XMLSchema"
-		  
+
 		  rdfs:label="Container pipeline"
 		  >
 
 	<!-- Configuration> -->
 	<p:param type="input" name="instance"/>
-		  
+
 	<!-- Generate original request -->
 	<p:processor name="oxf:request" rdfs:label="retrieve http-request">
 		<p:input name="config">
@@ -132,15 +132,15 @@
 			</p:processor>
 		</p:otherwise>
 	</p:choose>
-	
+
 	<!-- Get credentials and user roles -->
 	<p:processor name="oxf:request-security" rdfs:label="get request security context">
-		<p:input name="config" transform="oxf:xslt" href="#instance">        
+		<p:input name="config" transform="oxf:xslt" href="#instance">
 			<config xsl:version="2.0">
 				<xsl:for-each select="theatre/roles/role">
 					<role><xsl:value-of select="."/></role>
 				</xsl:for-each>
-			</config>    
+			</config>
 		</p:input>
 		<p:output name="data" id="roles"/>
 	</p:processor>
@@ -155,7 +155,7 @@
 		</p:input>
 		<p:output name="data" id="namespaces"/>
 	</p:processor>
-	
+
 	<!-- Create context -->
 	<p:processor name="oxf:xslt" rdfs:label="create context">
 		<p:input name="data" href="aggregate('croot',#instance,#request,#requestbody,#roles)"/>
@@ -273,11 +273,13 @@
 							CONSTRUCT {
 								<]]><xsl:value-of select="context/subject"/><![CDATA[> rdf:type ?type.
 								<]]><xsl:value-of select="context/subject"/><![CDATA[> ?p ?s.
+								<]]><xsl:value-of select="context/subject"/><![CDATA[> elmo:query ?query.
 							}
 							WHERE {
 								GRAPH <]]><xsl:value-of select="context/representation-graph/@uri"/><![CDATA[> {
 									<]]><xsl:value-of select="context/subject"/><![CDATA[> rdf:type ?type.
 									<]]><xsl:value-of select="context/subject"/><![CDATA[> ?p ?s.
+									OPTIONAL { <]]><xsl:value-of select="context/subject"/><![CDATA[> elmo:query/elmo:query ?query }.
 									FILTER (?type = elmo:Container or ?type = elmo:VersionContainer)
 								}
 							}
@@ -354,9 +356,9 @@
 									<!-- Create query (replace parameters and default settings) -->
 									<xsl:variable name="query1">
 										<xsl:apply-templates select="/root/context/parameters/parameter[1]" mode="replace">
-											<xsl:with-param name="text" select="elmo:query"/>
+											<xsl:with-param name="text" select="elmo:query[.!=''][1]"/>
 										</xsl:apply-templates>
-										<xsl:if test="not(exists(/root/context/parameters/parameter))"><xsl:value-of select="elmo:query"/></xsl:if>
+										<xsl:if test="not(exists(/root/context/parameters/parameter))"><xsl:value-of select="elmo:query[.!=''][1]"/></xsl:if>
 									</xsl:variable>
 									<xsl:variable name="query2" select="replace($query1,'@LANGUAGE@',/root/context/language)"/>
 									<xsl:variable name="query3" select="replace($query2,'@USER@',/root/context/user)"/>
@@ -750,7 +752,7 @@
 					<!-- Upload of file: via Virtuoso stored procedure -->
 					<!-- Please change authorization in virtuoso.ini: -->
 					<!--         DirsAllowed			= ., ../vad, ../../Tomcat/temp -->
-					
+
 					<!-- Check if extension is xml or ttl, return error if not -->
 					<p:choose href="#rdffilelist" rdfs:label="upload to virtuoso, check xml or ttl">
 						<p:when test="filelist/firstformat='xml' or filelist/firstformat='ttl'">
@@ -948,7 +950,7 @@
 											</p:processor>
 										</p:otherwise>
 									</p:choose>
-					
+
 									<!-- Convert turtle to rdfa -->
 									<p:processor name="oxf:xslt" rdfs:label="convert data to rdfa">
 										<p:input name="data" href="aggregate('root',#context,#turtle,#containercontext,#result,#representations)"/>
@@ -1136,7 +1138,7 @@
 							</p:processor>
 						</p:otherwise>
 					</p:choose>
-									
+
 					<!-- Convert turtle to rdfa -->
 					<p:processor name="oxf:xslt" rdfs:label="convert data to rdfa">
 						<p:input name="data" href="aggregate('root',#context,#ttl,aggregate('sparql',#sparql),#containercontext,#representations)"/>
@@ -1209,5 +1211,5 @@
 			</p:processor>
 		</p:otherwise>
 	</p:choose>
-	
+
 </p:config>
