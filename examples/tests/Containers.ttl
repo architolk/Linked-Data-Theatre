@@ -15,3 +15,45 @@ container:xpl a elmo:Container;
 	elmo:representation elmo:UploadRepresentation;
 	rdfs:label "Upload XPL (zip file or XPL file)";
 .
+
+container:query a elmo:Container;
+	elmo:contains stage:NavbarSearchAppearance;
+	rdfs:label "Upload with post query";
+	elmo:query '''
+		prefix container: <http://localhost:8080/container/>
+		insert into container:query {
+			container:query void:triples ?count
+		}
+		where {
+			select (count(*) as ?count)
+			where {
+				graph container:query {
+					?s?p?o
+				}
+			}
+		}
+	''';
+.
+
+container:defquery a elmo:Container;
+	elmo:contains stage:NavbarSearchAppearance;
+	rdfs:label "Upload with predefined post query";
+	elmo:query stage:ContainerQuery;
+.
+
+stage:ContainerQuery a elmo:Query;
+	elmo:query '''
+		prefix container: <http://localhost:8080/container/>
+		insert into container:defquery {
+			container:defquery void:triples ?count
+		}
+		where {
+			select (count(*) as ?count)
+			where {
+				graph container:defquery {
+					?s?p?o
+				}
+			}
+		}
+	''';
+.

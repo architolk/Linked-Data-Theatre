@@ -49,6 +49,9 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:index "4";
 			rdfs:label "Containers";
 			elmo:data [elmo:index "1"; rdfs:label "Excel container"; html:link "/container/excel"];
+			elmo:data [elmo:index "2"; rdfs:label "XPL container"; html:link "/container/xpl"];
+			elmo:data [elmo:index "3"; rdfs:label "Container with post query"; html:link "/container/query"];
+			elmo:data [elmo:index "4"; rdfs:label "Container with predef post query"; html:link "/container/defquery"];
 		];
 		elmo:data [
 			elmo:index "5";
