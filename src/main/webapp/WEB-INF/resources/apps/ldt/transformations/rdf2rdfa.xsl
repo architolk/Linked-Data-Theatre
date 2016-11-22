@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2rdfa.xsl
-    VERSION  1.12.2-SNAPSHOT
-    DATE     2016-11-08
+    VERSION  1.12.2
+    DATE     2016-11-22
 
     Copyright 2012-2016
 

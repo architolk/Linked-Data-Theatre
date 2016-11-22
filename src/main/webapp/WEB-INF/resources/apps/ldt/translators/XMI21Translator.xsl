@@ -1,8 +1,8 @@
 <!--
 
     NAME     XMI21Translator.xsl
-    VERSION  1.12.2-SNAPSHOT
-    DATE     2016-11-11
+    VERSION  1.12.2
+    DATE     2016-11-22
 
     Copyright 2012-2016
 

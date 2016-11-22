@@ -1,8 +1,8 @@
 <!--
 
-    NAME     header.xpl
-    VERSION  1.12.1
-    DATE     2016-11-07
+    NAME     sparqlheader.xpl
+    VERSION  1.12.2
+    DATE     2016-11-22
 
     Copyright 2012-2016
 
