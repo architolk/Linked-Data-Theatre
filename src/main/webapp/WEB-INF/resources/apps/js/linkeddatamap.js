@@ -1,7 +1,7 @@
 /*
  * NAME     linkeddatamap.js
- * VERSION  1.12.1
- * DATE     2016-11-07
+ * VERSION  1.12.2-SNAPSHOT
+ * DATE     2016-11-22
  *
  * Copyright 2012-2016
  *
@@ -40,6 +40,9 @@ var res = [3440.640, 1720.320, 860.160, 430.080, 215.040, 107.520, 53.760, 26.88
 
 // Relative sizing of circles
 var circleQuotient = 0.7;
+
+// Minimum length of edge (squared value, so 36 actually means a minium value of 6)
+var minEdgeLength = 100;
 
 var numberRegexp = /^[-+]?([0-9]*\.[0-9]+|[0-9]+)([eE][-+]?[0-9]+)?/;
 
@@ -293,6 +296,12 @@ function resetHighlight(e) {
 
 function circleMoveStart(e) {
 	movedItem = e.target;
+	//Remove arrowhead (IE Bugfix)
+	if (movedItem.edge!=undefined) {
+		d3.select(movedItem.edge._path)
+			.attr("marker-end","none")
+		;
+	}
 	map.on('mousemove',circleMove);
 	map.on('mouseup',circleMoveEnd);
 }
@@ -334,6 +343,13 @@ function circleMove(e) {
 }
 function circleMoveEnd(e) {
 	map.removeEventListener('mousemove');
+	if (movedItem.edge!=undefined) {
+		//Redisplay the arrowheads after zoom
+		//We might use this in the future to resize the arrowheads according to the zoomlevel!
+		d3.select(movedItem.edge._path)
+			.attr("marker-end","url(#ArrowHead)")
+		;
+	}
 }
 
 function onEachFeature(feature, layer) {
@@ -352,11 +368,32 @@ function pointToLayer(feature, latlng) {
 	}
 }
 
+function removeArrowheads(e){
+	// Remove arrowheads before zoom (IE has a SVG bug that will separate the arrowhead from the edge!)
+	for(i = 0; i < listOfGeoObjects.length; ++i) {
+		var layer = listOfGeoObjects[i].getLayers()[0];
+		if (layer instanceof L.CircleMarker) {
+			if (layer.edge!=undefined) {
+				d3.select(layer.edge._path)
+					.attr("marker-end","none")
+				;
+			}
+		}
+	}
+}
+
 function resizeCircle(e) {
 	for(i = 0; i < listOfGeoObjects.length; ++i) {
 		var layer = listOfGeoObjects[i].getLayers()[0];
 		if (layer instanceof L.CircleMarker) {
 			layer.setStyle({radius: res[0]*layer.feature.geometry.radius/res[map.getZoom()]});
+			if (layer.edge!=undefined) {
+				//Redisplay the arrowheads after zoom
+				//We might use this in the future to resize the arrowheads according to the zoomlevel!
+				d3.select(layer.edge._path)
+					.attr("marker-end","url(#ArrowHead)")
+				;
+			}
 		}
 	}
 }
@@ -411,12 +448,20 @@ function addEdge(subject,predicate,object) {
 	if (sSub!=undefined && sObj!=undefined) {
 		latlngs.push(sSub.getLayers()[0].getLatLng());
 		latlngs.push(sObj.getLayers()[0].getLatLng());
-		var polyline = L.polyline(latlngs, {className: 'edgestyle'}).addTo(map);
-		d3.select(polyline._path)
-			.attr("marker-end","url(#ArrowHead)")
-			.attr("stroke","#606060")
-		;
-		sSub.getLayers()[0].edge = polyline;
+
+		//Get edge length
+		dx = latlngs[0].lat-latlngs[1].lat;
+		dy = latlngs[0].lng-latlngs[1].lng;
+		
+		//Add edge only if the edge is actually visible (long enough)
+		if (dx*dx+dy*dy>minEdgeLength) {
+			var polyline = L.polyline(latlngs, {className: 'edgestyle'}).addTo(map);
+			d3.select(polyline._path)
+				.attr("marker-end","url(#ArrowHead)")
+				.attr("stroke","#606060")
+			;
+			sSub.getLayers()[0].edge = polyline;
+		}
 	}
 
 }
@@ -569,6 +614,7 @@ function initMap(staticroot, startZoom, latCor, longCor, baseLayer, imageMapURL,
 	}
 
 	//Zoom option for circlemarkers
+	map.on('zoomstart',removeArrowheads);
 	map.on('zoomend',resizeCircle);
 	map.invalidateSize();
 }
