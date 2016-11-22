@@ -30,6 +30,7 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
 @prefix stage: <http://localhost#>.
+@prefix container: <http://localhost:8080/ldt/container/>.
 
 # ======================================================================
 # Homepage, including header and menu
@@ -56,12 +57,13 @@ stage:Menu a elmo:Part;
 		elmo:data [elmo:index "1"; rdfs:label "Datasets"; xhtml:link "/ldt/query/datasets"];
 		elmo:data [elmo:index "2"; rdfs:label "Graphs"; xhtml:link "/ldt/query/graphs"];
 		elmo:data [elmo:index "3"; rdfs:label "Configs"; xhtml:link "/ldt/query/configs"];
+		elmo:data [elmo:index "4"; rdfs:label "Upload container"; xhtml:link "/ldt/container/ttlupload"];
 		elmo:data [
-			elmo:index "4";
+			elmo:index "5";
 			rdfs:label "Examples";
 			elmo:data [elmo:index "1"; rdfs:label "Hospitals within 10km"; xhtml:link "/ldt/query/geo"];
 		];
-		elmo:data [elmo:index "5"; rdfs:label "Backstage"; xhtml:link "/ldt/backstage"];
+		elmo:data [elmo:index "6"; rdfs:label "Backstage"; xhtml:link "/ldt/backstage"];
 	];
 .
 stage:Home_content a elmo:Part;
@@ -183,6 +185,27 @@ stage:ConfigQuery a elmo:Query;
 		}
 		group by ?graph
 	'''
+.
+
+# ======================================================================
+# Uploadcontainer ttl
+# (test upload container)
+# ======================================================================
+container:ttlupload rdf:type elmo:Container;
+	elmo:contains stage:Header;
+	elmo:contains stage:Menu;
+	elmo:representation elmo:UploadRepresentation;
+	rdfs:label "Upload Turtle (.ttl)";
+	elmo:replaces <http://localhost:8080/ldt/container/generiek>;
+	elmo:query stage:ContainerPostQuery;
+.
+  stage:ContainerPostQuery a elmo:query;
+	elmo:query '''
+		prefix prov: <http://www.w3.org/ns/prov/#>
+		INSERT INTO <http://localhost:8080/ldt/container/test/@CURRENTMOMENT@> {
+            <http://localhost:8080/ldt/container/id/dataset/concepten> rdfs:isDefinedBy <http://localhost:8080/ldt/concepts/doc/@CURRENTMOMENT@>.
+		}
+	''';
 .
 
 # ======================================================================
