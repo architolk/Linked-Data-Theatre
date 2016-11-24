@@ -96,6 +96,10 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.orbeon.oxf.xml.XMLParsing;
 import org.xml.sax.Locator;
 
+import com.github.jsonldjava.utils.JsonUtils;
+import com.github.jsonldjava.core.JsonLdProcessor;
+import com.github.jsonldjava.impl.NQuadTripleCallback;
+
 public class HttpClientProcessor extends SimpleProcessor {
 
 	//The ParseHandler is a ContentHandler that doesn't forward the startDocument and endDocument events.
@@ -242,6 +246,7 @@ public class HttpClientProcessor extends SimpleProcessor {
 							if (configNode.valueOf("output-type").equals("json")) {
 								JSONObject json = JSONObject.fromObject(responseBody);
 								parseJSONObject(contentHandler,json);
+							// output-type = xml means: response is xml, keep it
 							} else if (configNode.valueOf("output-type").equals("xml")) {
 								try {
 									ByteArrayInputStream inStream = new ByteArrayInputStream(responseBody.getBytes("UTF-8"));
@@ -251,6 +256,29 @@ public class HttpClientProcessor extends SimpleProcessor {
 								} catch (Exception e) {
 									throw new OXFException(e);
 								}
+							// output-type = jsonld means: reponse is json-ld, (a) convert to nquads; (b) convert to xml
+							} else if (configNode.valueOf("output-type").equals("jsonld")) {
+								try {
+									Object jsonObject = JsonUtils.fromString(responseBody);
+									Object nquads = JsonLdProcessor.toRDF(jsonObject,new NQuadTripleCallback());
+									
+									Any23 runner = new Any23();
+									DocumentSource source = new StringDocumentSource((String)nquads,"http://localhost");
+									ByteArrayOutputStream out = new ByteArrayOutputStream();
+									TripleHandler handler = new RDFXMLWriter(out);
+									try {
+										runner.extract(source,handler);
+									} finally {
+										handler.close();
+									}
+									ByteArrayInputStream inStream = new ByteArrayInputStream(out.toByteArray());
+									XMLReader saxParser = XMLParsing.newXMLReader(new XMLParsing.ParserConfiguration(false,false,false));
+									saxParser.setContentHandler(new ParseHandler(contentHandler));
+									saxParser.parse(new InputSource(inStream));
+								} catch (Exception e) {
+									throw new OXFException(e);
+								}
+							// output-type = rdf means: response is some kind of rdf (except json-ld...), convert to xml
 							} else if (configNode.valueOf("output-type").equals("rdf")) {
 								try {
 									Any23 runner = new Any23();

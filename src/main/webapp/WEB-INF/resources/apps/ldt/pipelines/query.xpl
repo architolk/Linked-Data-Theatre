@@ -1,8 +1,8 @@
 <!--
 
     NAME     query.xpl
-    VERSION  1.12.2
-    DATE     2016-11-22
+    VERSION  1.12.3-SNAPSHOT
+    DATE     2016-11-24
 
     Copyright 2012-2016
 
@@ -393,7 +393,7 @@
 					<p:input name="config" href="#servicecall" transform="oxf:xslt">
 						<config xsl:version="2.0">
 							<input-type>text</input-type>
-							<output-type>json</output-type>
+							<output-type>jsonld</output-type>
 							<url><xsl:value-of select="service/url"/></url>
 							<method><xsl:value-of select="service/method"/></method>
 						</config>
@@ -403,7 +403,7 @@
 					</p:input>
 					<p:output name="data" id="service"/>
 				</p:processor>
-				<!-- Combine result with original parameters-->
+				<!-- Map result back to a sparql result -->
 				<p:processor name="oxf:xslt">
 					<p:input name="data" href="aggregate('root',current(),#service)"/>
 					<p:input name="config" href="../transformations/merge-parameters.xsl"/>
