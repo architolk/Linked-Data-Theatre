@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2html.xsl
-    VERSION  1.12.2
-    DATE     2016-11-22
+    VERSION  1.12.3-SNAPSHOT
+    DATE     2016-11-24
 
     Copyright 2012-2016
 
@@ -723,14 +723,18 @@
 	<xsl:if test="not(exists(rdf:Description[@rdf:nodeID='rset']))">
 		<xsl:variable name="columns">
 			<xsl:for-each-group select="rdf:Description[exists(@rdf:about)]/*" group-by="local-name()">
-				<column name="{local-name()}"/>
+				<xsl:variable name="label">
+					<xsl:value-of select="@elmo:label"/>
+					<xsl:if test="not(@elmo:label!='')"><xsl:value-of select="local-name()"/></xsl:if>
+				</xsl:variable>
+				<column name="{local-name()}" label="{$label}"/>
 			</xsl:for-each-group>
 		</xsl:variable>
 		<table id="datatable{generate-id()}" class="table table-striped table-bordered">
 			<thead>
 				<tr>
 					<xsl:for-each select="$columns/column">
-						<th><xsl:value-of select="@name"/></th>
+						<th><xsl:value-of select="@label"/></th>
 					</xsl:for-each>
 				</tr>
 			</thead>
