@@ -28,11 +28,29 @@ stage:SelectFormatsQuery a elmo:Query;
 		}
 	''';
 .
-stage:GeoQuery a elmo:Query;
-	rdfs:label "A geometry result";
+
+stage:GeoSelectQuery a elmo:Query;
+	rdfs:label "A geometry select";
 	elmo:query '''
 		prefix geosparql: <http://www.opengis.net/ont/geosparql#>
 		select ?p ?p_label ?p_geo
+		where {
+			graph <http://localhost:8080/stage> {
+				?p geosparql:hasGeometry ?geo.
+				?p rdfs:label ?p_label.
+				?geo geosparql:asWKT ?p_geo.
+			}
+		}
+  ''';
+.
+stage:GeoConstructQuery a elmo:Query;
+	rdfs:label "A geometry construct";
+	elmo:query '''
+		prefix geosparql: <http://www.opengis.net/ont/geosparql#>
+		construct {
+			?p geosparql:asWKT ?p_geo.
+			?p rdfs:label ?p_label.
+		}
 		where {
 			graph <http://localhost:8080/stage> {
 				?p geosparql:hasGeometry ?geo.
