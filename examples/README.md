@@ -12,6 +12,7 @@ To execute the tests, please have:
 - A sesame endpoint at http://localhost:7200.
 
 ##Starting the tests
-Execute `deploy-tests.bat` to insert the configuration and testdata into the triplestore.
+On a Windows machine: execute `deploy-tests.bat` to insert the configuration and testdata into the triplestore.
+For *nix systems, you can execute `deploy-tests.sh`.
 
 For the sesame tests, insert the `testdata.ttl` triples into a repository with the name `data`.
