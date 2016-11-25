@@ -89,18 +89,6 @@ stage:ConstructFormats a elmo:Representation;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:contains stage:Formats_tab;
 	elmo:contains stage:ConstructFormats_content;
-	elmo:index "0";
-	elmo:appearance elmo:HiddenAppearance;
-	elmo:query '''
-		prefix dbo: <http://dbpedia.org/ontology/>
-		construct {
-			?s?p?o
-		}
-		where {
-			?s rdf:type dbo:City.
-			?s?p?o.
-		}
-	''';
 .
 stage:Formats_constructTabs elmo:index "1";
 	elmo:appearance elmo:IndexAppearance;
