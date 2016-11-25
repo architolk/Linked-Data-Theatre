@@ -9,13 +9,17 @@ stage:Service a elmo:Representation;
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
 #	elmo:service "http://api.duo.nl/v0/search";
-	elmo:service "http://api.duo.nl/v0/datasets/01.-hoofdvestigingen-vo/search?brin=18BR"
-#	elmo:query '''
-#		select *
-#		where {
-#			service <http://localhost:8080/url> {
-#				<http://api.duo.nl/v0/datasets/01.-hoofdvestigingen-vo/search?brin=18BR> ?p ?o
-#			}
-#		}
-#	''';
+#	elmo:service "http://api.duo.nl/v0/datasets/01.-hoofdvestigingen-vo/search?brin=18BR"
+	elmo:query '''
+		construct {
+			?s ?p ?o
+		}
+		where {
+			service <http://localhost:8080/url> {
+				?s rdfs:isDefinedBy <http://api.duo.nl/v0/datasets/01.-hoofdvestigingen-vo/search?brin=18BR>.
+				?s ?p ?o
+			}
+			FILTER (?p!=<https://api.duo.nl/Results>)
+		}
+	''';
 .

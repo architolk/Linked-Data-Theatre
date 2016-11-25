@@ -1,8 +1,8 @@
 <!--
 
     NAME     url.xpl
-    VERSION  1.12.1
-    DATE     2016-11-07
+    VERSION  1.12.3-SNAPSHOT
+    DATE     2016-11-25
 
     Copyright 2012-2016
 
@@ -88,6 +88,15 @@
 		</p:input>
 		<p:output name="data" id="output"/>
 	</p:processor>
+
+<!--	
+<p:processor name="oxf:xml-serializer">
+	<p:input name="config">
+		<config/>
+	</p:input>
+	<p:input name="data" href="#output"/>
+</p:processor>
+-->
 	
 	<!-- Translate triples to sparql result -->
 	<p:processor name="oxf:xslt">
@@ -104,10 +113,10 @@
 							<sparql:variable name="o"/>
 						</sparql:head>
 						<sparql:results distinct="false" ordered="true">
-							<xsl:for-each-group select="response/rdf:RDF/rdf:Description[$type='dataset' or @rdf:about=$uri]" group-by="@rdf:about">
+							<xsl:for-each-group select="response/rdf:RDF/rdf:Description[$type='dataset' or @rdf:about=$uri]" group-by="@rdf:about|@rdf:nodeID">
 								<xsl:for-each select="current-group()/*">
 									<sparql:result>
-										<xsl:if test="$type='dataset'"><sparql:binding name="s"><sparql:uri><xsl:value-of select="../@rdf:about"/></sparql:uri></sparql:binding></xsl:if>
+										<xsl:if test="$type='dataset'"><sparql:binding name="s"><sparql:uri><xsl:value-of select="../@rdf:about|../@rdf:nodeID"/></sparql:uri></sparql:binding></xsl:if>
 										<sparql:binding name="p"><sparql:uri><xsl:value-of select="namespace-uri()"/><xsl:value-of select="local-name()"/></sparql:uri></sparql:binding>
 										<sparql:binding name="o">
 											<xsl:choose>

@@ -257,7 +257,10 @@ public class HttpClientProcessor extends SimpleProcessor {
 									throw new OXFException(e);
 								}
 							// output-type = jsonld means: reponse is json-ld, (a) convert to nquads; (b) convert to xml
-							} else if (configNode.valueOf("output-type").equals("jsonld")) {
+							// also: if output-type = rdf and responsebody starts with {, it is treaded as jsonld
+							} else if ((configNode.valueOf("output-type").equals("jsonld")) ||
+									   (configNode.valueOf("output-type").equals("rdf") && responseBody.startsWith("{"))
+									  ) {
 								try {
 									Object jsonObject = JsonUtils.fromString(responseBody);
 									Object nquads = JsonLdProcessor.toRDF(jsonObject,new NQuadTripleCallback());
