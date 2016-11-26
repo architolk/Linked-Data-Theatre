@@ -368,6 +368,7 @@
 										</xsl:apply-templates>
 										<xsl:if test="not(exists(/root/context/parameters/parameter))"><xsl:value-of select="/root/representation/service/url"/></xsl:if>
 									</url>
+									<output><xsl:value-of select="/root/representation/service/output"/></output>
 									<xsl:choose>
 										<xsl:when test="/root/representation/service/body!=''">
 											<body>
@@ -393,7 +394,7 @@
 					<p:input name="config" href="#servicecall" transform="oxf:xslt">
 						<config xsl:version="2.0">
 							<input-type>text</input-type>
-							<output-type>jsonld</output-type>
+							<output-type><xsl:value-of select="service/output"/></output-type>
 							<url><xsl:value-of select="service/url"/></url>
 							<method><xsl:value-of select="service/method"/></method>
 						</config>
