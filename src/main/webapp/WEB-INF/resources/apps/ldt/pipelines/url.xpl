@@ -2,7 +2,7 @@
 
     NAME     url.xpl
     VERSION  1.12.3-SNAPSHOT
-    DATE     2016-11-25
+    DATE     2016-11-28
 
     Copyright 2012-2016
 
@@ -89,7 +89,7 @@
 		<p:output name="data" id="output"/>
 	</p:processor>
 
-<!--	
+<!--
 <p:processor name="oxf:xml-serializer">
 	<p:input name="config">
 		<config/>
@@ -116,11 +116,20 @@
 							<xsl:for-each-group select="response/rdf:RDF/rdf:Description[$type='dataset' or @rdf:about=$uri]" group-by="@rdf:about|@rdf:nodeID">
 								<xsl:for-each select="current-group()/*">
 									<sparql:result>
-										<xsl:if test="$type='dataset'"><sparql:binding name="s"><sparql:uri><xsl:value-of select="../@rdf:about|../@rdf:nodeID"/></sparql:uri></sparql:binding></xsl:if>
+										<xsl:if test="$type='dataset'">
+											<sparql:binding name="s">
+												<xsl:choose>
+													<xsl:when test="exists(../@rdf:about)"><sparql:uri><xsl:value-of select="../@rdf:about"/></sparql:uri></xsl:when>
+													<xsl:when test="exists(../@rdf:nodeID)"><sparql:uri>urn:bnode:<xsl:value-of select="../@rdf:nodeID"/></sparql:uri></xsl:when>
+													<xsl:otherwise />
+												</xsl:choose>
+											</sparql:binding>
+										</xsl:if>
 										<sparql:binding name="p"><sparql:uri><xsl:value-of select="namespace-uri()"/><xsl:value-of select="local-name()"/></sparql:uri></sparql:binding>
 										<sparql:binding name="o">
 											<xsl:choose>
 												<xsl:when test="exists(@rdf:resource)"><sparql:uri><xsl:value-of select="@rdf:resource"/></sparql:uri></xsl:when>
+												<xsl:when test="exists(@rdf:nodeID)"><sparql:uri>urn:bnode:<xsl:value-of select="@rdf:nodeID"/></sparql:uri></xsl:when>
 												<xsl:otherwise><sparql:literal><xsl:value-of select="."/></sparql:literal></xsl:otherwise>
 											</xsl:choose>
 										</sparql:binding>
