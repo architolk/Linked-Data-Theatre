@@ -3,10 +3,11 @@
 @prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 
-stage:Service a elmo:Representation;
-	elmo:url-pattern "/query/service$";
+stage:Webpage a elmo:Representation;
+	elmo:url-pattern "/query/webpage$";
+	elmo:appearance elmo:VocabularyAppearance;
 	elmo:index "1";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
-	elmo:service "http://localhost:8080/query/ContentAppearance?format=json";
+	elmo:webpage "http://www.w3.org/2000/01/rdf-schema";
 .

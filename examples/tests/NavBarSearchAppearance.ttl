@@ -38,6 +38,8 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:data [elmo:index "6"; rdfs:label "Graph parameters"; html:link "/ldt/query/GraphAppearanceParameters?para=paradata&subject=http://localhost:8080/id/test"];
 			elmo:data [elmo:index "7"; rdfs:label "Blank nodes"; html:link "/ldt/query/BlankNodes"];
 			elmo:data [elmo:index "8"; rdfs:label "Virtual sparql endpoint"; html:link "/ldt/query/VirtualSparql"];
+			elmo:data [elmo:index "09"; rdfs:label "Service call"; html:link "/ldt/query/service"];
+			elmo:data [elmo:index "10"; rdfs:label "Webpage request"; html:link "/ldt/query/webpage"];
 		];
 		elmo:data [
 			elmo:index "3";

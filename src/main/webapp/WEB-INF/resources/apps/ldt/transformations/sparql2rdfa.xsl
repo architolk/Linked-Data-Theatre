@@ -1,8 +1,8 @@
 <!--
 
     NAME     sparql2rdfa.xsl
-    VERSION  1.12.0
-    DATE     2016-10-16
+    VERSION  1.12.3-SNAPSHOT
+    DATE     2016-11-25
 
     Copyright 2012-2016
 
@@ -136,6 +136,18 @@
 	</rdf:RDF>
 </xsl:template>
 
+<!-- Drop specific UI appearances -->
+<xsl:template match="rdf:RDF|res:sparql" mode="plain">
+	<xsl:choose>
+		<xsl:when test="/root/representation/@appearance='http://bp4mc2.org/elmo/def#HeaderAppearance'"/>
+		<xsl:when test="/root/representation/@appearance='http://bp4mc2.org/elmo/def#NavbarAppearance'"/>
+		<xsl:when test="/root/representation/@appearance='http://bp4mc2.org/elmo/def#NavbarSearchAppearance'"/>
+		<xsl:when test="/root/representation/@appearance='http://bp4mc2.org/elmo/def#IndexAppearance'"/>
+		<xsl:when test="/root/representation/@appearance='http://bp4mc2.org/elmo/def#TreeAppearance'"/>
+		<xsl:otherwise><xsl:copy-of select="."/></xsl:otherwise>
+	</xsl:choose>
+</xsl:template>
+
 <!-- **** -->
 <!-- ROOT -->
 <!-- **** -->
@@ -146,8 +158,9 @@
 		<xsl:when test="not(exists(rdf:RDF|res:sparql))"><xsl:copy-of select="*"/></xsl:when>
 		<!-- When the requested format is xml or json, don't do any annotations -->
 		<xsl:when test="context/format='application/xml'"><xsl:copy-of select="rdf:RDF|res:sparql"/></xsl:when>
-		<xsl:when test="context/format='application/rdf+xml'"><xsl:copy-of select="rdf:RDF|res:sparql"/></xsl:when>
-		<xsl:when test="context/format='application/json'"><xsl:copy-of select="rdf:RDF|res:sparql"/></xsl:when>
+		<xsl:when test="context/format='application/rdf+xml'"><xsl:apply-templates select="rdf:RDF|res:sparql" mode="plain"/></xsl:when>
+		<xsl:when test="context/format='application/json'"><xsl:apply-templates select="rdf:RDF|res:sparql" mode="plain"/></xsl:when>
+		<xsl:when test="context/format='text/turtle'"><xsl:apply-templates select="rdf:RDF|res:sparql" mode="plain"/></xsl:when>
 		<xsl:otherwise><xsl:apply-templates select="rdf:RDF|res:sparql"/></xsl:otherwise>
 	</xsl:choose>
 </xsl:template>
