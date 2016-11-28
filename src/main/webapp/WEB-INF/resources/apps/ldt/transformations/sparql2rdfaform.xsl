@@ -1,8 +1,8 @@
 <!--
 
     NAME     sparql2rdfaform.xsl
-    VERSION  1.12.2
-    DATE     2016-11-22
+    VERSION  1.12.3-SNAPSHOT
+    DATE     2016-11-28
 
     Copyright 2012-2016
 
@@ -36,12 +36,34 @@
 	xmlns:res="http://www.w3.org/2005/sparql-results#"
 	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
 	xmlns:dcterms="http://purl.org/dc/terms/"
+	xmlns:geosparql="http://www.opengis.net/ont/geosparql#"
 >
 
 <xsl:template match="rdf:RDF">
-	<rdf:RDF elmo:appearance="http://bp4mc2.org/elmo/def#ContentAppearance">
-		<xsl:copy-of select="*"/>
+	<xsl:variable name="appearance">
+		<xsl:choose>
+			<xsl:when test="count(rdf:Description)&gt;1">Table</xsl:when>
+			<xsl:otherwise>Content</xsl:otherwise>
+		</xsl:choose>
+	</xsl:variable>
+	<rdf:RDF elmo:appearance="http://bp4mc2.org/elmo/def#{$appearance}Appearance">
+		<xsl:for-each select="rdf:Description">
+			<rdf:Description>
+				<xsl:copy-of select="@*"/>
+				<xsl:copy-of select="* except (geosparql:asWKT|geo:geometry)"/>
+			</rdf:Description>
+		</xsl:for-each>
 	</rdf:RDF>
+	<xsl:if test="exists(*/geosparql:asWKT|*/geo:geometry)">
+		<rdf:RDF elmo:appearance="http://bp4mc2.org/elmo/def#GeoAppearance">
+			<xsl:for-each select="rdf:Description[exists(geosparql:asWKT|geo:geometry) and @rdf:about!='']">
+				<rdf:Description rdf:about="{@rdf:about}">
+					<rdfs:label><xsl:value-of select="rdfs:label"/></rdfs:label>
+					<geo:geometry><xsl:value-of select="geosparql:asWKT|geo:geometry"/></geo:geometry>
+				</rdf:Description>
+			</xsl:for-each>
+		</rdf:RDF>
+	</xsl:if>
 </xsl:template>
 
 <xsl:template match="res:sparql">

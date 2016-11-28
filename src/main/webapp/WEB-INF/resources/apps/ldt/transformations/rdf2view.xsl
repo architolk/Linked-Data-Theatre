@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2view.xsl
-    VERSION  1.12.2
-    DATE     2016-11-22
+    VERSION  1.12.3-SNAPSHOT
+    DATE     2016-11-26
 
     Copyright 2012-2016
 
@@ -117,7 +117,7 @@
 <xsl:template match="/root">
 	<view>
 		<xsl:apply-templates select="rdf:RDF/rdf:Description[rdf:type/@rdf:resource!='http://bp4mc2.org/elmo/def#fragment']/html:stylesheet"/>
-		<xsl:for-each-group select="rdf:RDF/rdf:Description[exists(elmo:data[1]) or exists(elmo:query[.!='']) or exists(elmo:service[1]) or exists(elmo:queryForm[1])]" group-by="@rdf:about"><xsl:sort select="concat(elmo:index[1],'~')"/>
+		<xsl:for-each-group select="rdf:RDF/rdf:Description[exists(elmo:data[1]) or exists(elmo:query[.!='']) or exists(elmo:service[1]) or exists(elmo:webpage[1]) or exists(elmo:queryForm[1])]" group-by="@rdf:about"><xsl:sort select="concat(elmo:index[1],'~')"/>
 			<xsl:choose>
 				<!-- Production -->
 				<xsl:when test="rdf:type/@rdf:resource='http://bp4mc2.org/elmo/def#Production'">
@@ -203,6 +203,7 @@
 						<xsl:if test="exists(elmo:service[1])">
 							<service>
 								<url><xsl:value-of select="elmo:service[1]"/></url>
+								<output>json</output>
 								<xsl:if test="elmo:post[1]!=''"><body><xsl:value-of select="elmo:post[1]"/></body></xsl:if>
 							</service>
 						</xsl:if>
@@ -216,7 +217,20 @@
 						<xsl:apply-templates select="elmo:fragment"/>
 						<service>
 							<url><xsl:value-of select="elmo:service[1]"/></url>
+							<output>jsonld</output>
 							<xsl:if test="elmo:post[1]!=''"><body><xsl:value-of select="elmo:post[1]"/></body></xsl:if>
+						</service>
+					</representation>
+				</xsl:when>
+				<xsl:when test="exists(elmo:webpage[1])">
+					<representation uri="{@rdf:about}" index="{position()}">
+						<xsl:if test="exists(elmo:appearance[1])"><xsl:attribute name="appearance"><xsl:value-of select="elmo:appearance[1]/@rdf:resource"/></xsl:attribute></xsl:if>
+						<xsl:if test="exists(elmo:name[1])"><xsl:attribute name="name"><xsl:value-of select="elmo:name[1]"/></xsl:attribute></xsl:if>
+						<xsl:apply-templates select="elmo:queryForm"/>
+						<xsl:apply-templates select="elmo:fragment"/>
+						<service>
+							<url><xsl:value-of select="elmo:webpage[1]"/></url>
+							<output>rdf</output>
 						</service>
 					</representation>
 				</xsl:when>

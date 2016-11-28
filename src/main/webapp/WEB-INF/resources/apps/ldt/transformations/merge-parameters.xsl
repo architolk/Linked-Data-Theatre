@@ -2,8 +2,8 @@
 <!--
 
     NAME     merge-parameters.xsl
-    VERSION  1.12.0
-    DATE     2016-10-16
+    VERSION  1.12.3-SNAPSHOT
+    DATE     2016-11-24
 
     Copyright 2012-2016
 
@@ -39,7 +39,7 @@
 		<xsl:variable name="output" select="/root/representation/fragment[@applies-to='']"/>
 		<xsl:choose>
 			<xsl:when test="not(exists(/root/context/parameters)) and not(exists(/root/representation/fragment/elmo:path))">
-				<xsl:copy-of select="/root/response"/>
+				<xsl:copy-of select="/root/response/*"/>
 			</xsl:when>
 			<xsl:otherwise>
 				<parameters>
