@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2jsonld.xsl
-    VERSION  1.12.0
-    DATE     2016-10-16
+    VERSION  1.12.3-SNAPSHOT
+    DATE     2016-11-26
 
     Copyright 2012-2016
 
@@ -103,13 +103,12 @@
 </xsl:template>
 
 <!-- Construct -->
-<xsl:template match="rdf:RDF">
-{"@context":
+<xsl:template match="rdf:RDF">{"@context":
 	{"id":"@id"
 	,"graph":"@graph"<xsl:for-each-group select="$prefix/prefix" group-by="@name"><xsl:if test="count(current-group())=1">
 	,"<xsl:value-of select="@name"/>":"<xsl:value-of select="."/>"</xsl:if></xsl:for-each-group>
 	<xsl:for-each-group select="rdf:Description/*[exists(@rdf:resource)]" group-by="name()">
-	,"<xsl:value-of select="name()"/>":{"@type":"@id"}</xsl:for-each-group>
+	,"<xsl:apply-templates select="." mode="property"/>":{"@type":"@id"}</xsl:for-each-group>
 	}
 <xsl:choose>
 	<xsl:when test="count(rdf:Description/@rdf:about)!=1">,"graph":

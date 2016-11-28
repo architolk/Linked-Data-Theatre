@@ -1,8 +1,8 @@
 <!--
 
     NAME     VocabularyAppearance.xsl
-    VERSION  1.12.1
-    DATE     2016-11-07
+    VERSION  1.12.3-SNAPSHOT
+    DATE     2016-11-28
 
     Copyright 2012-2016
 
@@ -37,6 +37,7 @@
 	xmlns:elmo="http://bp4mc2.org/elmo/def#"
 	xmlns:html="http://www.w3.org/1999/xhtml/vocab#"
 	xmlns:dcterms="http://purl.org/dc/terms/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
 	xmlns:shacl="http://www.w3.org/ns/shacl#"
 	xmlns:ldt="http://ldt/"
 >
@@ -321,9 +322,18 @@
 			<xsl:variable name="about" select="@rdf:about"/>
 			<property uri="{$about}">
 				<xsl:if test="not(exists(* except rdf:type))"><xsl:attribute name="ref">true</xsl:attribute></xsl:if>
-				<xsl:for-each select="$all-classes/class/property[@uri=$about]">
-					<scope-class uri="{../@uri}"/>
-				</xsl:for-each>
+				<xsl:choose>
+					<xsl:when test="exists($all-classes/class/property[@uri=$about])">
+						<xsl:for-each select="$all-classes/class/property[@uri=$about]">
+							<scope-class uri="{../@uri}"/>
+						</xsl:for-each>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:for-each select="current-group()/rdfs:domain">
+							<scope-class uri="{@rdf:resource}"/>
+						</xsl:for-each>
+					</xsl:otherwise>
+				</xsl:choose>
 				<xsl:for-each-group select="$all-predicates/property[@predicate=$about]/ref-class" group-by="@uri">
 					<ref-class uri="{@uri}"/>
 				</xsl:for-each-group>
@@ -353,6 +363,7 @@
 	<xsl:variable name="title">
 		<xsl:choose>
 			<xsl:when test="$ontology/dcterms:title!=''"><xsl:value-of select="$ontology/dcterms:title"/></xsl:when>
+			<xsl:when test="$ontology/dc:title!=''"><xsl:value-of select="$ontology/dc:title"/></xsl:when>
 			<xsl:when test="$ontology/rdfs:label!=''"><xsl:value-of select="$ontology/rdfs:label"/></xsl:when>
 			<xsl:when test="/root/context/subject!=''"><xsl:value-of select="/root/context/subject"/></xsl:when>
 			<xsl:otherwise><xsl:value-of select="ldt:label('Classes and properties')"/></xsl:otherwise>
