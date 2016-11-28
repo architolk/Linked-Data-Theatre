@@ -114,6 +114,32 @@
 									OPTIONAL {?rep elmo:layer ?layer}
 								}
 								{
+								  ]]><xsl:for-each select="context/parameters/parameter"><![CDATA[
+                  {
+									GRAPH <]]><xsl:value-of select="/context/representation-graph/@uri"/><![CDATA[> {
+										?rep elmo:with-parameter ?parameter.
+										FILTER regex("]]><xsl:value-of select="name"/><![CDATA[",?parameter)
+									}
+								}
+                  UNION ]]></xsl:for-each><![CDATA[
+								{
+									GRAPH <]]><xsl:value-of select="/context/representation-graph/@uri"/><![CDATA[> {
+										{ ?rep elmo:without-parameter ?parameter }
+								    ]]><xsl:for-each select="context/parameters/parameter"><![CDATA[
+										    MINUS { ?rep elmo:without-parameter "]]><xsl:value-of select="name"/><![CDATA["}
+								    ]]></xsl:for-each><![CDATA[
+									}
+								}
+                  UNION
+                  {
+									GRAPH <]]><xsl:value-of select="/context/representation-graph/@uri"/><![CDATA[> {
+									    { ?rep rdf:type elmo:Representation }
+                      MINUS { ?rep rdf:type elmo:Representation . ?rep elmo:with-parameter ?parameter}
+                      MINUS { ?rep rdf:type elmo:Representation . ?rep elmo:without-parameter ?parameter}
+                    }
+                  }
+                }
+								{
 									{
 										GRAPH <]]><xsl:value-of select="context/representation-graph/@uri"/><![CDATA[> {
 											?rep elmo:url-pattern ?pattern.
