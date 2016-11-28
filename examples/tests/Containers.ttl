@@ -1,6 +1,6 @@
 @prefix elmo: <http://bp4mc2.org/elmo/def#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
-@prefix container: <http://localhost:8080/container/>.
+@prefix container: <http://localhost:8080/ldt/container/>.
 @prefix stage: <http://localhost:8080/stage#>.
 
 container:excel a elmo:Container;

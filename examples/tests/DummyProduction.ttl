@@ -1,4 +1,4 @@
-@prefix updatestage: <http://localhost:8080/update/>.
+@prefix updatestage: <http://localhost:8080/ldt/update/>.
 @prefix stage: <http://localhost:8080/stage#>.
 @prefix elmo: <http://bp4mc2.org/elmo/def#>.
 @prefix html: <http://www.w3.org/1999/xhtml/vocab#>.

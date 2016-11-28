@@ -4,7 +4,7 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 
 stage:DefaultResource a elmo:Representation;
-	elmo:uri-pattern "^http://localhost:8080/id/";
+	elmo:uri-pattern "^http://localhost:8080/ldt/id/";
 	elmo:url-pattern "/resource";
 	elmo:index "1";
 	elmo:contains stage:HeaderAppearance;
