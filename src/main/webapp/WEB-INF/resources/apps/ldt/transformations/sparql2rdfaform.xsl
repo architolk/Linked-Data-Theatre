@@ -2,7 +2,7 @@
 
     NAME     sparql2rdfaform.xsl
     VERSION  1.12.3-SNAPSHOT
-    DATE     2016-11-24
+    DATE     2016-11-28
 
     Copyright 2012-2016
 
@@ -40,7 +40,13 @@
 >
 
 <xsl:template match="rdf:RDF">
-	<rdf:RDF elmo:appearance="http://bp4mc2.org/elmo/def#TableAppearance">
+	<xsl:variable name="appearance">
+		<xsl:choose>
+			<xsl:when test="count(rdf:Description)&gt;1">Table</xsl:when>
+			<xsl:otherwise>Content</xsl:otherwise>
+		</xsl:choose>
+	</xsl:variable>
+	<rdf:RDF elmo:appearance="http://bp4mc2.org/elmo/def#{$appearance}Appearance">
 		<xsl:for-each select="rdf:Description">
 			<rdf:Description>
 				<xsl:copy-of select="@*"/>
