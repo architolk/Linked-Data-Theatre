@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.12.3-SNAPSHOT
-    DATE     2016-11-24
+    DATE     2016-11-29
 
     Copyright 2012-2016
 
@@ -868,6 +868,12 @@
 				</xsl:when>
 				<xsl:when test="exists(html:link)">
 					<xsl:variable name="link">
+						<!-- If a link is a relative link (not absolute and not starting with a slash), prefix with docroot and subdomain -->
+						<xsl:if test="not(matches(html:link,'^(/|[a-zA-Z0-9]+:)'))">
+							<xsl:if test="$docroot!=''"><xsl:value-of select="$docroot"/></xsl:if>
+							<xsl:if test="$subdomain!=''"><xsl:value-of select="$subdomain"/></xsl:if>
+							<xsl:text>/</xsl:text>
+						</xsl:if>
 						<xsl:value-of select="html:link"/>
 						<xsl:if test="exists(elmo:subject/@rdf:resource)">?SUBJECT=<xsl:value-of select="encode-for-uri(elmo:subject/@rdf:resource)"/></xsl:if>
 					</xsl:variable>
