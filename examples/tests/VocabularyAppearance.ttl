@@ -3,11 +3,59 @@
 @prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 
+@prefix yed: <http://bp4mc2.org/yed#>.
+
 stage:VocabularyAppearance	a	elmo:Representation;
-	elmo:uri-pattern	"^http://localhost:8080/def/lotr(\\.(xml|ttl|json))?$";
+	elmo:url-pattern	"^http://localhost:8080/def/lotr(\\.(xml|ttl|json))?$";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:appearance elmo:VocabularyAppearance;
+	elmo:query stage:VocabularyQuery;
+.
+
+stage:VocabularyAppearanceYed a elmo:Representation;
+	elmo:url-pattern	"^http://localhost:8080/def/lotr\\.yed?$";
+	elmo:fragment [
+		elmo:applies-to rdfs:subClassOf;
+		rdfs:label "";
+		yed:sourceArrow "none";
+		yed:targetArrow "white_delta";
+	];
+	elmo:fragment [
+		elmo:applies-to "def";
+		yed:backgroundColor "#FFFF99";
+	];
+	elmo:query '''
+		prefix shacl: <http://www.w3.org/ns/shacl#>
+		CONSTRUCT {
+			?element rdfs:label ?label.
+			?element rdfs:comment "hoi".
+			?element rdfs:subClassOf ?super.
+			?element ?pc ?class.
+			?element elmo:style "def".
+			?element rdf:type ?type.
+		}
+		WHERE {
+			GRAPH <http://localhost:8080/stage> {
+				?element rdf:type ?type.
+				OPTIONAL {?element rdfs:label ?label}
+				OPTIONAL {?element rdfs:comment ?def}
+				OPTIONAL {?element rdfs:subClassOf ?super}
+				OPTIONAL {
+					?shape shacl:scopeClass ?element.
+					?shape shacl:property ?pc.
+					?pc shacl:predicate ?pred.
+					OPTIONAL {?pc shacl:class ?class}
+					OPTIONAL {?pc shacl:datatype ?datatype}
+					OPTIONAL {?pc shacl:in ?collection}
+				}
+				FILTER (?type = owl:Class || ?type = owl:DatatypeProperty || ?type = owl:ObjectProperty || ?type = owl:Ontology)
+			}
+		}
+	''';
+.
+
+stage:VocabularyQuery a elmo:Query;
 	elmo:query '''
 		prefix dcterms: <http://purl.org/dc/terms/>
 		prefix shacl: <http://www.w3.org/ns/shacl#>
