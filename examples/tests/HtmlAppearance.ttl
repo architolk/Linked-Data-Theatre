@@ -3,17 +3,33 @@
 @prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 
-stage:HtmlAppearance a elmo:Representation;
+stage:HtmlAppearanceWithoutParameter a elmo:Representation;
 	elmo:url-pattern "^http(s|)://[^/]+(/[^/]+)?(/|)$";
 	elmo:index "1";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
+	elmo:without-parameter "type";
 	elmo:appearance elmo:HtmlAppearance;
 	elmo:data [
 		rdfs:label "HtmlAppearance (en)"@en;
 		rdfs:label "HtmlAppearance (nl)"@nl;
 		elmo:html '''
-			<p>Test environment</p>
+			<p>Test environment zonder parameter type</p>
+		''';
+	]
+.
+stage:HtmlAppearanceWithParameter a elmo:Representation;
+	elmo:url-pattern "^http(s|)://[^/]+(/[^/]+)?(/|)$";
+	elmo:index "1";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:HtmlAppearance;
+	elmo:with-parameter "type";
+	elmo:data [
+		rdfs:label "HtmlAppearance (en)"@en;
+		rdfs:label "HtmlAppearance (nl)"@nl;
+		elmo:html '''
+			<p>Test environment met parameter type</p>
 		''';
 	]
 .
