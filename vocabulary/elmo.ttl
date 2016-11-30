@@ -49,6 +49,7 @@
 # Representation #
 <http://bp4mc2.org/elmo/def/shape/Representation#> a	sh:Shape;
 	sh:scopeClass	elmo:Representation;
+	sh:property		RepresentationShape:fragment;
 	sh:property		RepresentationShape:query;
 	sh:property		RepresentationShape:url-pattern;
 	sh:property		RepresentationShape:uri-pattern;
@@ -82,8 +83,14 @@ RepresentationShape:index	a	sh:PropertyConstraint;
 RepresentationShape:contains	a	sh:PropertyConstraint;
 	sh:predicate	elmo:contains;
 	sh:nodeKind		sh:IRI;
-	sh:valueClass	elmo:Representation;
-	sh:valueShape	<http://bp4mc2.org/elmo/def/shape/Representation#>
+	sh:class		elmo:Part;
+	sh:valueShape	<http://bp4mc2.org/elmo/def/shape/Part#>
+.
+RepresentationShape:fragment	a	sh:PropertyConstraint;
+	sh:predicate	elmo:fragment;
+	sh:nodeKind		sh:IRI;
+	sh:class		elmo:Fragment;
+	sh:valueShape	<http://bp4mc2.org/elmo/def/shape/Fragment#>
 .
 RepresentationShape:stylesheet	a	sh:PropertyConstraint;
 	sh:predicate	html:stylesheet;
@@ -624,82 +631,4 @@ elmo:translator		a	owl:ObjectProperty;
 	rdfs:label			"vertaler"@nl;
 	rdfs:comment		"defines the translator to be used to translate an uploaded file to linked data"@en;
 	rdfs:comment		"definieert de vertaler die gebruikt wordt bij het vertalen van een geuploaded bestand naar linked data"@nl;
-.
-
-#### TO BE MADE - DESIGN
-elmo:Performance	a	owl:Class;
-	rdfs:label			"performance"@en;
-	rdfs:label			"optreden"@nl;
-	rdfs:comment		"A performance is an operation that changes the contents of the triple store"@en;
-	rdfs:comment		"Een optreden is een operatie die de inhoud van de triple store veranderd"@nl;
-.
-elmo:Inference		a	owl:Class;
-	rdfs:subClassOf		elmo:Performance;
-.
-elmo:Conversion		a	owl:Class;
-	rdfs:subClassOf		elmo:Performance;
-	rdfs:label			"conversion"@en;
-	rdfs:label			"conversie"@nl;
-	rdfs:comment		"A conversion is a performance that converts some RDB data into linked data. A conversion should be places after the /convert (like a container is always behind /container)"@en;
-	rdfs:comment		"Een conversie is een optreden waarbij RDB data wordt geconverteerd naar linked data. Een conversie behoort aangesproken te worden vanaf een /convert-URI (net zoals bij een container en een /container-URI)"@nl;
-.
-elmo:tripleMap		a	owl:ObjectProperty;
-	rdfs:label			"triple map"@en;
-	rdfs:label			"triple map"@nl;
-	rdfs:comment		"Defines a triple map that will be used as part of the conversion"@en;
-	rdfs:comment		"Definieert een triple map die gebruikt wordt als onderdeel van de conversie"@nl;
-.
-elmo:database		a	owl:ObjectProperty;
-	rdfs:label			"database"@en;
-	rdfs:label			"database"@nl;
-	rdfs:comment		"Defines the database from which the data is fetched."@en;
-	rdfs:comment		"Definieert de database waaruit de data wordt gehaald"@nl;
-.
-
-### MORPH vocabulary
-morph:Database		a	owl:Class;
-	rdfs:label			"Database"@en;
-	rdfs:label			"Database"@nl;
-	rdfs:comment		"The database that is used."@en;
-	rdfs:comment		"De database die wordt gebruikt."@nl;
-.
-morph:PostgresqlDatabase	a	owl:Class;
-	rdfs:label			"Postgresql database"@en;
-	rdfs:label			"Postgresql database"@nl;
-	rdfs:comment		"A postgresql database"@en;
-	rdfs:comment		"Een postgresql database"@nl;
-.
-
-<http://bp4mc2.org/morph/def/shape/Database#> a	sh:Shape;
-	sh:scopeClass	morph:Database;
-	sh:property		DatabaseShape:name; # database.name
-	sh:property		DatabaseShape:url; # database.url
-	sh:property		DatabaseShape:username; # database.user
-	sh:property		DatabaseShape:password; # database.pwd
-	sh:property		DatabaseShape:uri-encode; # uri.encode
-	sh:property		DatabaseShape:uri-transform; # uri.transform
-.
-DatabaseShape:name	a	sh:PropertyConstraint;
-	sh:predicate	morph:name;
-	sh:nodeKind		sh:Literal;
-.
-DatabaseShape:url	a	sh:PropertyConstraint;
-	sh:predicate	morph:url;
-	sh:nodeKind		sh:Literal;
-.
-DatabaseShape:username	a	sh:PropertyConstraint;
-	sh:predicate	morph:username;
-	sh:nodeKind		sh:Literal;
-.
-DatabaseShape:password	a	sh:PropertyConstraint;
-	sh:predicate	morph:password;
-	sh:nodeKind		sh:Literal;
-.
-DatabaseShape:uri-encode	a	sh:PropertyConstraint;
-	sh:predicate	morph:uri-encode;
-	sh:nodeKind		sh:Literal;
-.
-DatabaseShape:uri-transform	a	sh:PropertyConstraint;
-	sh:predicate	morph:uri-transform;
-	sh:nodeKind		sh:Literal;
 .

@@ -16,15 +16,16 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:data [elmo:index "02"; rdfs:label "MarkdownAppearance"; html:link "query/MarkdownAppearance"];
 			elmo:data [elmo:index "03"; rdfs:label "GraphAppearance"; html:link "query/GraphAppearance?subject=http://localhost:8080/id/character/Bilbo"];
 			elmo:data [elmo:index "04"; rdfs:label "VocabularyAppearance"; html:link "def/lotr"];
-			elmo:data [elmo:index "05"; rdfs:label "ChartAppearance"; html:link "query/ChartAppearance"];
-			elmo:data [elmo:index "06"; rdfs:label "GeoAppearance (OpenStreetMap)"; html:link "query/GeoAppearance"];
-			elmo:data [elmo:index "07"; rdfs:label "GeoAppearance (BRT)"; html:link "query/GeoAppearanceBrt"];
-			elmo:data [elmo:index "08"; rdfs:label "GeoAppearance (Pointer)"; html:link "query/GeoAppearancePointer"];
-			elmo:data [elmo:index "09"; rdfs:label "TextAppearance"; html:link "query/TextAppearance"];
-			elmo:data [elmo:index "10"; rdfs:label "TableAppearance"; html:link "query/TableAppearance"];
-			elmo:data [elmo:index "11"; rdfs:label "FrameAppearance"; html:link "query/FrameAppearance"];
-			elmo:data [elmo:index "12"; rdfs:label "ContentAppearance"; html:link "query/ContentAppearance"];
-			elmo:data [elmo:index "13"; rdfs:label "ImageAppearance"; html:link "query/ImageAppearance"];
+			elmo:data [elmo:index "05"; rdfs:label "VocabularyAppearance (model)"; html:link "def/lotr.yed"];
+			elmo:data [elmo:index "06"; rdfs:label "ChartAppearance"; html:link "query/ChartAppearance"];
+			elmo:data [elmo:index "07"; rdfs:label "GeoAppearance (OpenStreetMap)"; html:link "query/GeoAppearance"];
+			elmo:data [elmo:index "08"; rdfs:label "GeoAppearance (BRT)"; html:link "query/GeoAppearanceBrt"];
+			elmo:data [elmo:index "09"; rdfs:label "GeoAppearance (Pointer)"; html:link "query/GeoAppearancePointer"];
+			elmo:data [elmo:index "10"; rdfs:label "TextAppearance"; html:link "query/TextAppearance"];
+			elmo:data [elmo:index "11"; rdfs:label "TableAppearance"; html:link "query/TableAppearance"];
+			elmo:data [elmo:index "12"; rdfs:label "FrameAppearance"; html:link "query/FrameAppearance"];
+			elmo:data [elmo:index "13"; rdfs:label "ContentAppearance"; html:link "query/ContentAppearance"];
+			elmo:data [elmo:index "14"; rdfs:label "ImageAppearance"; html:link "query/ImageAppearance"];
 		];
 		elmo:data [
 			elmo:index "2";
@@ -64,8 +65,9 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:index "6";
 			rdfs:label "LDT";
 			elmo:data [elmo:index "1"; rdfs:label "Vocabulary"; html:link "query/elmo"];
-			elmo:data [elmo:index "2"; rdfs:label "Upload XPLs"; html:link "container/xpl"];
-			elmo:data [elmo:index "3"; rdfs:label "XPL Documentation"; html:link "query/xpl/treeview"]
+			elmo:data [elmo:index "2"; rdfs:label "Vocabulary (model)"; html:link "query/elmo.yed"];
+			elmo:data [elmo:index "3"; rdfs:label "Upload XPLs"; html:link "container/xpl"];
+			elmo:data [elmo:index "4"; rdfs:label "XPL Documentation"; html:link "query/xpl/treeview"]
 		];
 	];
 .
