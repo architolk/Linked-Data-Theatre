@@ -24,6 +24,7 @@ stage:GeoAppearanceBrt a elmo:Representation;
 		prefix geosparql: <http://www.opengis.net/ont/geosparql#>
 		prefix brt: <http://brt.basisregistraties.overheid.nl/def/top10nl#>
 		prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+		prefix elmo: <http://bp4mc2.org/elmo/def#>
 		construct {
 			?municipal geo:geometry ?wkt.
 			?municipal rdfs:label ?label.
