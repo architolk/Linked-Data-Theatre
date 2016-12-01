@@ -85,6 +85,12 @@
 			<artifactId>txtmark</artifactId>
 			<version>0.13</version>
 		</dependency>
+		<!-- Dependencies sparql parser -->
+		<dependency>
+			<groupId>org.apache.jena</groupId>
+			<artifactId>jena-arq</artifactId>
+			<version>3.1.1</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

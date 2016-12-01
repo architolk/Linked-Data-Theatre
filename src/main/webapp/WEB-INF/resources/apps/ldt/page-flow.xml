@@ -1,8 +1,8 @@
 <!--
 
     NAME     page-flow.xml
-    VERSION  1.12.2
-    DATE     2016-11-22
+    VERSION  1.12.3-SNAPSHOT
+    DATE     2016-11-30
 
     Copyright 2012-2016
 
@@ -153,6 +153,13 @@
 	</page>
 	
 	<!-- def uri (give some information about a hash URI) -->
+	<page path="(((?!def).)*)/def(/[^ ]*)*\.([^ ]*)" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
+		<setvalue ref="theatre/subject" parameter="subject"/>
+		<setvalue ref="theatre/format" matcher-group="4"/>
+		<setvalue ref="theatre/representation" parameter="representation"/>
+		<setvalue ref="theatre/date" parameter="date"/>
+	</page>
 	<page path="(((?!def).)*)/def(/[^ ]*)*" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
 		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 		<setvalue ref="theatre/subject" parameter="subject"/>
