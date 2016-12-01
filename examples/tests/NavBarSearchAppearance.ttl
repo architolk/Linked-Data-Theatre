@@ -12,60 +12,62 @@ stage:NavbarSearchAppearance a elmo:Part;
 		elmo:data [
 			elmo:index "1";
 			rdfs:label "Appearances";
-			elmo:data [elmo:index "01"; rdfs:label "HtmlAppearance"; html:link "/"];
-			elmo:data [elmo:index "02"; rdfs:label "MarkdownAppearance"; html:link "/query/MarkdownAppearance"];
-			elmo:data [elmo:index "03"; rdfs:label "GraphAppearance"; html:link "/query/GraphAppearance?subject=http://localhost:8080/id/character/Bilbo"];
-			elmo:data [elmo:index "04"; rdfs:label "VocabularyAppearance"; html:link "/def/lotr"];
-			elmo:data [elmo:index "05"; rdfs:label "ChartAppearance"; html:link "/query/ChartAppearance"];
-			elmo:data [elmo:index "06"; rdfs:label "GeoAppearance (OpenStreetMap)"; html:link "/query/GeoAppearance"];
-			elmo:data [elmo:index "07"; rdfs:label "GeoAppearance (BRT)"; html:link "/query/GeoAppearanceBrt"];
-			elmo:data [elmo:index "08"; rdfs:label "GeoAppearance (Pointer)"; html:link "/query/GeoAppearancePointer"];
-			elmo:data [elmo:index "09"; rdfs:label "TextAppearance"; html:link "/query/TextAppearance"];
-			elmo:data [elmo:index "10"; rdfs:label "TableAppearance"; html:link "/query/TableAppearance"];
-			elmo:data [elmo:index "11"; rdfs:label "FrameAppearance"; html:link "/query/FrameAppearance"];
-			elmo:data [elmo:index "12"; rdfs:label "ContentAppearance"; html:link "/query/ContentAppearance"];
-			elmo:data [elmo:index "13"; rdfs:label "ImageAppearance"; html:link "/query/ImageAppearance"];
+			elmo:data [elmo:index "01"; rdfs:label "HtmlAppearance"; html:link ""];
+			elmo:data [elmo:index "02"; rdfs:label "MarkdownAppearance"; html:link "query/MarkdownAppearance"];
+			elmo:data [elmo:index "03"; rdfs:label "GraphAppearance"; html:link "query/GraphAppearance?subject=http://localhost:8080/id/character/Bilbo"];
+			elmo:data [elmo:index "04"; rdfs:label "VocabularyAppearance"; html:link "def/lotr"];
+			elmo:data [elmo:index "05"; rdfs:label "VocabularyAppearance (model)"; html:link "def/lotr.yed"];
+			elmo:data [elmo:index "06"; rdfs:label "ChartAppearance"; html:link "query/ChartAppearance"];
+			elmo:data [elmo:index "07"; rdfs:label "GeoAppearance (OpenStreetMap)"; html:link "query/GeoAppearance"];
+			elmo:data [elmo:index "08"; rdfs:label "GeoAppearance (BRT)"; html:link "query/GeoAppearanceBrt"];
+			elmo:data [elmo:index "09"; rdfs:label "GeoAppearance (Pointer)"; html:link "query/GeoAppearancePointer"];
+			elmo:data [elmo:index "10"; rdfs:label "TextAppearance"; html:link "query/TextAppearance"];
+			elmo:data [elmo:index "11"; rdfs:label "TableAppearance"; html:link "query/TableAppearance"];
+			elmo:data [elmo:index "12"; rdfs:label "FrameAppearance"; html:link "query/FrameAppearance"];
+			elmo:data [elmo:index "13"; rdfs:label "ContentAppearance"; html:link "query/ContentAppearance"];
+			elmo:data [elmo:index "14"; rdfs:label "ImageAppearance"; html:link "query/ImageAppearance"];
 		];
 		elmo:data [
 			elmo:index "2";
 			rdfs:label "Specific tests"@en;
 			rdfs:label "Specifieke testen"@nl;
-			elmo:data [elmo:index "01"; rdfs:label "Global links"; html:link "/query/GlobalLinks"];
-			elmo:data [elmo:index "02"; rdfs:label "Formats - SELECT"; html:link "/query/SelectFormats"];
-			elmo:data [elmo:index "03"; rdfs:label "Formats - CONSTRUCT"; html:link "/query/ConstructFormats"];
-			elmo:data [elmo:index "04"; rdfs:label "Stylesheet"; html:link "/query/StylesheetTest"];
-			elmo:data [elmo:index "05"; rdfs:label "Simple graph appearance"; html:link "/query/GraphAppearanceSimple?subject=http://localhost:8080/id/character/Bilbo"];
-			elmo:data [elmo:index "06"; rdfs:label "Graph parameters"; html:link "/query/GraphAppearanceParameters?para=paradata&subject=http://localhost:8080/id/test"];
-			elmo:data [elmo:index "07"; rdfs:label "Blank nodes"; html:link "/query/BlankNodes"];
-			elmo:data [elmo:index "08"; rdfs:label "Virtual sparql endpoint"; html:link "/query/VirtualSparql"];
-			elmo:data [elmo:index "09"; rdfs:label "Service call"; html:link "/query/service"];
-			elmo:data [elmo:index "10"; rdfs:label "Webpage request"; html:link "/query/webpage"];
+			elmo:data [elmo:index "01"; rdfs:label "Global links"; html:link "query/GlobalLinks"];
+			elmo:data [elmo:index "02"; rdfs:label "Formats - SELECT"; html:link "query/SelectFormats"];
+			elmo:data [elmo:index "03"; rdfs:label "Formats - CONSTRUCT"; html:link "query/ConstructFormats"];
+			elmo:data [elmo:index "04"; rdfs:label "Stylesheet"; html:link "query/StylesheetTest"];
+			elmo:data [elmo:index "05"; rdfs:label "Simple graph appearance"; html:link "query/GraphAppearanceSimple?subject=http://localhost:8080/id/character/Bilbo"];
+			elmo:data [elmo:index "06"; rdfs:label "Graph parameters"; html:link "query/GraphAppearanceParameters?para=paradata&subject=http://localhost:8080/id/test"];
+			elmo:data [elmo:index "07"; rdfs:label "Blank nodes"; html:link "query/BlankNodes"];
+			elmo:data [elmo:index "08"; rdfs:label "Virtual sparql endpoint"; html:link "query/VirtualSparql"];
+			elmo:data [elmo:index "09"; rdfs:label "Service call"; html:link "query/service"];
+			elmo:data [elmo:index "10"; rdfs:label "Webpage request"; html:link "query/webpage"];
 		];
 		elmo:data [
 			elmo:index "3";
 			rdfs:label "Triplestore tests";
-			elmo:data [elmo:index "1"; rdfs:label "Formats - SELECT"; html:link "/query/sesame/SelectFormats"];
-			elmo:data [elmo:index "1"; rdfs:label "Formats - CONSTRUCT"; html:link "/query/sesame/ConstructFormats"];
+			elmo:data [elmo:index "1"; rdfs:label "Formats - SELECT"; html:link "query/sesame/SelectFormats"];
+			elmo:data [elmo:index "1"; rdfs:label "Formats - CONSTRUCT"; html:link "query/sesame/ConstructFormats"];
 		];
 		elmo:data [
 			elmo:index "4";
 			rdfs:label "Containers";
-			elmo:data [elmo:index "1"; rdfs:label "Excel container"; html:link "/container/excel"];
-			elmo:data [elmo:index "2"; rdfs:label "XPL container"; html:link "/container/xpl"];
-			elmo:data [elmo:index "3"; rdfs:label "Container with post query"; html:link "/container/query"];
-			elmo:data [elmo:index "4"; rdfs:label "Container with predef post query"; html:link "/container/defquery"];
+			elmo:data [elmo:index "1"; rdfs:label "Excel container"; html:link "container/excel"];
+			elmo:data [elmo:index "2"; rdfs:label "XPL container"; html:link "container/xpl"];
+			elmo:data [elmo:index "3"; rdfs:label "Container with post query"; html:link "container/query"];
+			elmo:data [elmo:index "4"; rdfs:label "Container with predef post query"; html:link "container/defquery"];
 		];
 		elmo:data [
 			elmo:index "5";
 			rdfs:label "Productions";
-			elmo:data [elmo:index "1"; rdfs:label "Create a dummy graph"; html:link "/update/DummyProduction"];
+			elmo:data [elmo:index "1"; rdfs:label "Create a dummy graph"; html:link "update/DummyProduction"];
 		];
 		elmo:data [
 			elmo:index "6";
 			rdfs:label "LDT";
-			elmo:data [elmo:index "1"; rdfs:label "Vocabulary"; html:link "/query/elmo"];
-			elmo:data [elmo:index "2"; rdfs:label "Upload XPLs"; html:link "/container/xpl"];
-			elmo:data [elmo:index "3"; rdfs:label "XPL Documentation"; html:link "/query/xpl/treeview"]
+			elmo:data [elmo:index "1"; rdfs:label "Vocabulary"; html:link "query/elmo"];
+			elmo:data [elmo:index "2"; rdfs:label "Vocabulary (model)"; html:link "query/elmo.yed"];
+			elmo:data [elmo:index "3"; rdfs:label "Upload XPLs"; html:link "container/xpl"];
+			elmo:data [elmo:index "4"; rdfs:label "XPL Documentation"; html:link "query/xpl/treeview"]
 		];
 	];
 .

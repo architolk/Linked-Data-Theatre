@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2yed.xsl
-    VERSION  1.12.0
-    DATE     2016-10-16
+    VERSION  1.12.3-SNAPSHOT
+    DATE     2016-11-30
 
     Copyright 2012-2016
 
@@ -62,12 +62,22 @@
 			</xsl:variable>
 			<node id="{@rdf:about}{@rdf:nodeID}"> <!-- URI nodes and blank nodes -->
 				<data key="d6">
-					<y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
+					<xsl:variable name="nodeType">
+						<xsl:value-of select="$fragment/yed:nodeType"/>
+						<xsl:if test="not(exists($fragment/yed:nodeType))">com.yworks.entityRelationship.big_entity</xsl:if>
+					</xsl:variable>
+					<y:GenericNode configuration="{$nodeType}">
 						<y:Geometry height="100.0" width="200.0" x="0.5" y="0"/>
 						<y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
 						<y:BorderStyle color="#000000" type="line" width="1.0"/>
-						<y:NodeLabel alignment="center" autoSizePolicy="node_width" backgroundColor="{$backgroundColor}" configuration="CroppingLabel" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" modelName="internal" modelPosition="t" textColor="#000000" visible="true"><xsl:value-of select="$label"/></y:NodeLabel>
-						<y:NodeLabel alignment="left" autoSizePolicy="node_width" configuration="CroppingLabel" fontFamily="Dialog" fontSize="8" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" modelName="custom" textColor="#000000" visible="true">
+						<y:NodeLabel alignment="center" autoSizePolicy="node_width" configuration="CroppingLabel" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" modelName="internal" modelPosition="t" textColor="#000000" visible="true">
+							<xsl:choose>
+								<xsl:when test="$fragment/yed:backgroundColor!=''"><xsl:attribute name="backgroundColor"><xsl:value-of select="$fragment/yed:backgroundColor"/></xsl:attribute></xsl:when>
+								<xsl:otherwise><xsl:attribute name="hasBackgroundColor">false</xsl:attribute></xsl:otherwise>
+							</xsl:choose>
+							<xsl:value-of select="$label"/>
+						</y:NodeLabel>
+						<y:NodeLabel alignment="left" autoSizePolicy="node_width" configuration="CroppingLabel" fontFamily="Dialog" fontSize="10" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" modelName="custom" textColor="#000000" visible="true">
 							<xsl:for-each select="rdfs:comment">
 								<xsl:if test="position()!=1"><xsl:text>
 </xsl:text></xsl:if><xsl:value-of select="."/>
@@ -92,7 +102,11 @@
 			<xsl:variable name="pfragment" select="key('fragments',$puri)"/>
 			<xsl:variable name="label">
 				<xsl:value-of select="$pfragment/rdfs:label"/>
-				<xsl:if test="not(exists($pfragment/rdfs:label))"><xsl:value-of select="name()"/></xsl:if>
+				<xsl:if test="not(exists($pfragment/rdfs:label))">
+					<xsl:variable name="plabel" select="key('nodes',$puri)/rdfs:label"/>
+					<xsl:value-of select="$plabel"/>
+					<xsl:if test="$plabel=''"><xsl:value-of select="name()"/></xsl:if>
+				</xsl:if>
 			</xsl:variable>
 			<xsl:variable name="source">
 				<xsl:value-of select="$pfragment/yed:sourceArrow"/>
