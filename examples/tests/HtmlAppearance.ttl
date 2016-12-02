@@ -8,6 +8,7 @@ stage:HtmlAppearance a elmo:Representation;
 	elmo:index "1";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
+	elmo:contains stage:FooterAppearance;
 	elmo:appearance elmo:HtmlAppearance;
 	elmo:data [
 		rdfs:label "HtmlAppearance (en)"@en;

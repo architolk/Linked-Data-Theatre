@@ -31,6 +31,31 @@
   }
 }
 
+/* Styling for footer */
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 100px;
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 100px;
+}
+
+.footer>.container {
+	font-size: 90%;
+}
+.footer.bg-primary a {
+	color: #ffffff;
+}
+/* ------ */
+
 .carousel-indicators {
 	margin-bottom: -10px !important;
 	bottom: 0px !important;
