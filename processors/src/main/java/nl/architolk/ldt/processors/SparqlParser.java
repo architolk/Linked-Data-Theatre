@@ -65,6 +65,24 @@ public class SparqlParser extends SimpleProcessor {
 		}
 	}
 
+	private void parseNode(String name, Node n) throws SAXException {
+		if (n.isLiteral()) {
+			String value = n.getLiteralValue().toString();
+			this.myContent.startElement("",name,name,new AttributesImpl());
+			this.myContent.characters(value.toCharArray(), 0, value.length());
+		}
+		if (n.isURI()) {
+			AttributesImpl uriAttr = new AttributesImpl();
+			uriAttr.addAttribute("", "uri", "uri", "CDATA", n.getURI());
+			this.myContent.startElement("",name,name,uriAttr);
+		}
+		if (n.isVariable()) {
+			AttributesImpl varAttr = new AttributesImpl();
+			varAttr.addAttribute("", "var", "var", "CDATA", n.getName());
+			this.myContent.startElement("",name,name,varAttr);
+		}
+	}
+	
 	private void parseElement(Element e) throws SAXException {
 		if (e instanceof ElementGroup) parseElement((ElementGroup) e);
 		if (e instanceof ElementNamedGraph) parseElement((ElementNamedGraph) e);
@@ -80,9 +98,7 @@ public class SparqlParser extends SimpleProcessor {
 	}
 	private void parseElement(ElementNamedGraph e) throws SAXException {
 		Node graph = e.getGraphNameNode();
-		AttributesImpl uriAttr = new AttributesImpl();
-		uriAttr.addAttribute("", "uri", "uri", "CDATA", graph.toString());
-		this.myContent.startElement("","graph","graph",uriAttr);
+		parseNode("graph",e.getGraphNameNode());
 		parseElement(e.getElement());
 		this.myContent.endElement("","graph","graph");
 	}
@@ -90,15 +106,17 @@ public class SparqlParser extends SimpleProcessor {
 		Iterator<TriplePath> triples = e.patternElts();
 		while (triples.hasNext()) {
 			TriplePath triple = triples.next();
-			AttributesImpl tripleAttrs = new AttributesImpl();
-			tripleAttrs.addAttribute("", "subject", "subject", "CDATA", triple.getSubject().toString());
 			if (triple.isTriple()) {
-				tripleAttrs.addAttribute("", "predicate", "predicate", "CDATA", triple.getPredicate().toString());
-				tripleAttrs.addAttribute("", "object", "object", "CDATA", triple.getObject().toString());
-				this.myContent.startElement("","triple","triple",tripleAttrs);
+				this.myContent.startElement("","triple","triple",new AttributesImpl());
+				parseNode("subject",triple.getSubject());
+				this.myContent.endElement("","subject","subject");
+				parseNode("predicate",triple.getPredicate());
+				this.myContent.endElement("","predictate","predicate");
+				parseNode("object",triple.getObject());
+				this.myContent.endElement("","object","object");
 				this.myContent.endElement("","triple","triple");
 			} else {
-				this.myContent.startElement("","path","path",tripleAttrs);
+				this.myContent.startElement("","path","path",new AttributesImpl());
 				this.myContent.endElement("","path","path");
 			}
 		}

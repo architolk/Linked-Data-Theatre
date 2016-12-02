@@ -10,6 +10,7 @@ stage:VirtualSparql a elmo:Representation;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:contains stage:VirtualSparql_resource;
 	elmo:contains stage:VirtualSparql_dataset;
+	elmo:contains stage:VirtualSparql_resource2;
 .
 stage:VirtualSparql_resource a elmo:Part;
 	elmo:index "1";
@@ -19,7 +20,9 @@ stage:VirtualSparql_resource a elmo:Part;
 		}
 		where {
 			service <http://localhost:8080/url> {
-				<http://www.w3.org/2000/01/rdf-schema#> ?p ?o.
+				graph <http://www.w3.org/2000/01/rdf-schema#> {
+					<http://www.w3.org/2000/01/rdf-schema#> ?p ?o.
+				}
 			}
 		}
 	'''
@@ -30,8 +33,22 @@ stage:VirtualSparql_dataset a elmo:Part;
 		select *
 		where {
 			service <http://localhost:8080/url> {
-				?s rdfs:isDefinedBy <http://www.w3.org/2000/01/rdf-schema#>.
-				?s ?p ?o.
+				graph <http://www.w3.org/2000/01/rdf-schema#> {
+					?s ?p ?o
+				}
+			}
+		}
+	'''
+.
+stage:VirtualSparql_resource2 a elmo:Part;
+	elmo:index "1";
+	elmo:query '''
+		construct {
+			<http://dbpedia.org/resource/Stad> ?p ?o.
+		}
+		where {
+			service <http://localhost:8080/url> {
+				<http://dbpedia.org/resource/Stad> ?p ?o.
 			}
 		}
 	'''
