@@ -229,7 +229,6 @@ public class HttpClientProcessor extends SimpleProcessor {
 					HttpGet httpRequest = new HttpGet(configNode.valueOf("url"));
 					String acceptHeader = configNode.valueOf("accept");
 					if (!acceptHeader.isEmpty()) {
-						logger.info("header-accept: "+configNode.valueOf("accept"));
 						httpRequest.addHeader("accept",configNode.valueOf("accept"));
 					}
 					response = executeRequest(httpRequest, httpclient);
