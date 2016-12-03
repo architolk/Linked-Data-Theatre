@@ -181,7 +181,7 @@ public class HttpClientProcessor extends SimpleProcessor {
 						AuthScope.ANY, 
 						new UsernamePasswordCredentials(configNode.valueOf("username"), configNode.valueOf("password"))
 					);
-					logger.info("Credentials: "+configNode.valueOf("username")+"/"+configNode.valueOf("password"));
+					// logger.info("Credentials: "+configNode.valueOf("username")+"/"+configNode.valueOf("password"));
 					// Create AuthCache instance
 					AuthCache authCache = new BasicAuthCache();
 					authCache.put(targetHost,new BasicScheme());
@@ -198,7 +198,7 @@ public class HttpClientProcessor extends SimpleProcessor {
 					nameValuePairs.add(new BasicNameValuePair("password", configNode.valueOf("password")));
 					authpost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 					CloseableHttpResponse httpResponse = httpclient.execute(authpost);
-					logger.info("Signin response:"+Integer.toString(httpResponse.getStatusLine().getStatusCode()));
+					// logger.info("Signin response:"+Integer.toString(httpResponse.getStatusLine().getStatusCode()));
 				}
 				
 				CloseableHttpResponse response;
@@ -227,6 +227,11 @@ public class HttpClientProcessor extends SimpleProcessor {
 				} else {
 					//Default = GET
 					HttpGet httpRequest = new HttpGet(configNode.valueOf("url"));
+					String acceptHeader = configNode.valueOf("accept");
+					if (!acceptHeader.isEmpty()) {
+						logger.info("header-accept: "+configNode.valueOf("accept"));
+						httpRequest.addHeader("accept",configNode.valueOf("accept"));
+					}
 					response = executeRequest(httpRequest, httpclient);
 				}
 

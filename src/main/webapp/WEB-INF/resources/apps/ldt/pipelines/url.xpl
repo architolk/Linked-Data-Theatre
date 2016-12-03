@@ -2,7 +2,7 @@
 
     NAME     url.xpl
     VERSION  1.12.3-SNAPSHOT
-    DATE     2016-12-02
+    DATE     2016-12-03
 
     Copyright 2012-2016
 
@@ -120,6 +120,7 @@
 				<output-type>rdf</output-type>
 				<url><xsl:value-of select="filecontext/graph"/></url>
 				<method>get</method>
+				<accept>application/rdf+xml, text/rdf+n3, text/rdf+ttl, text/rdf+turtle, text/turtle, application/turtle, application/x-turtle, application/xml, */*</accept>
 			</config>
 		</p:input>
 		<p:output name="data" id="output"/>
@@ -162,13 +163,7 @@
 											</sparql:binding>
 										</xsl:if>
 										<sparql:binding name="p">
-											<xsl:variable name="ns">
-												<xsl:choose>
-													<xsl:when test="namespace-uri()='owl:'">http://owl.nl#</xsl:when>
-													<xsl:otherwise><xsl:value-of select="namespace-uri()"/></xsl:otherwise>
-												</xsl:choose>
-											</xsl:variable>
-											<sparql:uri><xsl:value-of select="$ns"/><xsl:value-of select="local-name()"/></sparql:uri>
+											<sparql:uri><xsl:value-of select="namespace-uri()"/><xsl:value-of select="local-name()"/></sparql:uri>
 										</sparql:binding>
 										<sparql:binding name="o">
 											<xsl:choose>

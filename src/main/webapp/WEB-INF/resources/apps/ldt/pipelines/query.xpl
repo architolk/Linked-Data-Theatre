@@ -2,7 +2,7 @@
 
     NAME     query.xpl
     VERSION  1.12.3-SNAPSHOT
-    DATE     2016-11-24
+    DATE     2016-12-03
 
     Copyright 2012-2016
 
@@ -383,6 +383,9 @@
 											<method>get</method>
 										</xsl:otherwise>
 									</xsl:choose>
+									<xsl:if test="exists(/root/representation/service/accept)">
+										<accept><xsl:value-of select="/root/representation/service/accept"/></accept>
+									</xsl:if>
 								</service>
 							</xsl:template>
 						</xsl:stylesheet>
@@ -397,6 +400,7 @@
 							<output-type><xsl:value-of select="service/output"/></output-type>
 							<url><xsl:value-of select="service/url"/></url>
 							<method><xsl:value-of select="service/method"/></method>
+							<xsl:if test="service/accept!=''"><accept><xsl:value-of select="service/accept"/></accept></xsl:if>
 						</config>
 					</p:input>
 					<p:input name="data" href="#servicecall" transform="oxf:xslt">
