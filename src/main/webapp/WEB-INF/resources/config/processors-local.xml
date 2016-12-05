@@ -45,4 +45,7 @@
 	<processor name="oxf:markdown-converter">
 		<class name="nl.architolk.ldt.processors.MarkDownConverter"/>
 	</processor>
+	<processor name="oxf:sparql-parser">
+		<class name="nl.architolk.ldt.processors.SparqlParser"/>
+	</processor>
 </processors>

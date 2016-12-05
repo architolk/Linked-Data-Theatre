@@ -2,7 +2,7 @@
 
     NAME     rdf2view.xsl
     VERSION  1.12.3-SNAPSHOT
-    DATE     2016-11-26
+    DATE     2016-12-03
 
     Copyright 2012-2016
 
@@ -231,6 +231,7 @@
 						<service>
 							<url><xsl:value-of select="elmo:webpage[1]"/></url>
 							<output>rdf</output>
+							<accept>application/rdf+xml, text/rdf+n3, text/rdf+ttl, text/rdf+turtle, text/turtle, application/turtle, application/x-turtle, application/xml, */*</accept>
 						</service>
 					</representation>
 				</xsl:when>

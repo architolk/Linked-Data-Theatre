@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.12.3-SNAPSHOT
-    DATE     2016-11-29
+    DATE     2016-12-02
 
     Copyright 2012-2016
 
@@ -35,7 +35,7 @@
 	- ShortTableAppearance: a twist at the TableAppearance, for short tables only
 	- TextSearchAppearance: a twist at the TableAppearance, for text searches only
 	For navigation
-	- HeaderAppearance
+	- HeaderAppearance and FooterAppearance
 	- NavbarAppearance and NavbarSearchAppearance
 	- IndexAppearance
 	Special:
@@ -431,6 +431,7 @@
 	<xsl:choose>
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance'"/> <!-- Hidden, dus niet tonen -->
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#HeaderAppearance'"/> <!-- Al gedaan -->
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#FooterAppearance'"/> <!-- Al gedaan -->
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarAppearance'"/> <!-- Al gedaan -->
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarSearchAppearance'"/> <!-- Al gedaan -->
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#TreeAppearance'"/> <!-- Al gedaan -->
@@ -518,6 +519,8 @@
 							</xsl:choose>
 						</div>
 					</div>
+					<!-- Last footer appearances-->
+					<xsl:apply-templates select="rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#FooterAppearance']" mode="FooterAppearance"/>
 				</div>
 			</body>
 		</html>
@@ -765,6 +768,16 @@
 <xsl:template match="rdf:RDF" mode="HeaderAppearance">
 	<div class="container hidden-xs">
 		<div class="row text-center">
+			<xsl:for-each select="rdf:Description/elmo:html">
+				<xsl:copy-of select="saxon:parse(.)" xmlns:saxon="http://saxon.sf.net/"/>
+			</xsl:for-each>
+		</div>
+	</div>
+</xsl:template>
+
+<xsl:template match="rdf:RDF" mode="FooterAppearance">
+	<div class="footer bg-primary">
+		<div class="container hidden-xs">
 			<xsl:for-each select="rdf:Description/elmo:html">
 				<xsl:copy-of select="saxon:parse(.)" xmlns:saxon="http://saxon.sf.net/"/>
 			</xsl:for-each>

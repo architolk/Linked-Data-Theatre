@@ -2,7 +2,7 @@
 
     NAME     url.xpl
     VERSION  1.12.3-SNAPSHOT
-    DATE     2016-11-28
+    DATE     2016-12-03
 
     Copyright 2012-2016
 
@@ -47,9 +47,18 @@
 	<!-- Configuration> -->
 	<p:param type="input" name="instance"/>
 	
+	<!-- Parse SPARQL query -->
+	<p:processor name="oxf:sparql-parser">
+		<p:input name="data" transform="oxf:xslt" href="#instance">
+			<sparql xsl:version="2.0"><xsl:value-of select="/theatre/query"/></sparql>
+		</p:input>
+		<p:output name="data" id="query"/>
+	</p:processor>
+	
 	<!-- Translate to file context -->
 	<p:processor name="oxf:xslt">
-		<p:input name="data" href="#instance"/>
+		<p:input name="data" href="#query"/>
+		<!--
 		<p:input name="config">
 			<xsl:stylesheet version="2.0">
 				<xsl:template match="/">
@@ -73,6 +82,33 @@
 				</xsl:template>
 			</xsl:stylesheet>
 		</p:input>
+		-->
+		<p:input name="config">
+			<xsl:stylesheet version="2.0">
+				<xsl:template match="/">
+					<xsl:variable name="subject">
+						<xsl:value-of select="query/group[1]/triple[1]/subject/@uri"/>
+						<xsl:value-of select="query/group[1]/graph[1]/group[1]/triple[1]/subject/@uri"/>
+					</xsl:variable>
+					<xsl:variable name="graph">
+						<xsl:value-of select="query/group[1]/graph[1]/@uri"/>
+					</xsl:variable>
+					<filecontext>
+						<type>
+							<xsl:choose>
+								<xsl:when test="$subject!=''">resource</xsl:when>
+								<xsl:otherwise>dataset</xsl:otherwise>
+							</xsl:choose>
+						</type>
+						<graph>
+							<xsl:value-of select="$graph"/>
+							<xsl:if test="$graph=''"><xsl:value-of select="$subject"/></xsl:if>
+						</graph>
+						<subject><xsl:value-of select="$subject"/></subject>
+					</filecontext>
+				</xsl:template>
+			</xsl:stylesheet>
+		</p:input>
 		<p:output name="data" id="filecontext"/>
 	</p:processor>
 	
@@ -82,8 +118,9 @@
 			<config xsl:version="2.0">
 				<input-type>text</input-type>
 				<output-type>rdf</output-type>
-				<url><xsl:value-of select="filecontext/subject"/></url>
+				<url><xsl:value-of select="filecontext/graph"/></url>
 				<method>get</method>
+				<accept>application/rdf+xml, text/rdf+n3, text/rdf+ttl, text/rdf+turtle, text/turtle, application/turtle, application/x-turtle, application/xml, */*</accept>
 			</config>
 		</p:input>
 		<p:output name="data" id="output"/>
@@ -125,7 +162,9 @@
 												</xsl:choose>
 											</sparql:binding>
 										</xsl:if>
-										<sparql:binding name="p"><sparql:uri><xsl:value-of select="namespace-uri()"/><xsl:value-of select="local-name()"/></sparql:uri></sparql:binding>
+										<sparql:binding name="p">
+											<sparql:uri><xsl:value-of select="namespace-uri()"/><xsl:value-of select="local-name()"/></sparql:uri>
+										</sparql:binding>
 										<sparql:binding name="o">
 											<xsl:choose>
 												<xsl:when test="exists(@rdf:resource)"><sparql:uri><xsl:value-of select="@rdf:resource"/></sparql:uri></xsl:when>

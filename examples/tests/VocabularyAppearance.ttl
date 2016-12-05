@@ -13,6 +13,21 @@ stage:VocabularyAppearance	a	elmo:Representation;
 	elmo:query stage:VocabularyQuery;
 .
 
+stage:UploadedVocabulary a elmo:Representation;
+	elmo:url-pattern "/query/uploaded-vocabulary";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:VocabularyAppearance;
+	elmo:query '''
+		construct {?s?p?o}
+		where {
+			graph <http://localhost:8080/container/upload> {
+				?s?p?o
+			}
+		}
+	''';
+.
+
 stage:VocabularyAppearanceYed a elmo:Representation;
 	elmo:url-pattern	"^http://localhost:8080/def/lotr\\.yed?$";
 	elmo:layer elmo:TopLayer;
