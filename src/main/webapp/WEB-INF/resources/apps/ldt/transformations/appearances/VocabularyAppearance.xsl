@@ -39,6 +39,7 @@
 	xmlns:dcterms="http://purl.org/dc/terms/"
 	xmlns:dc="http://purl.org/dc/elements/1.1/"
 	xmlns:shacl="http://www.w3.org/ns/shacl#"
+	xmlns:foaf="http://xmlns.com/foaf/0.1/"
 	xmlns:ldt="http://ldt/"
 >
 
@@ -75,7 +76,7 @@
 </xsl:function>
 
 <xsl:template match="@rdf:resource|@rdf:about|@uri" mode="link">
-	<xsl:param name="prefix"/>
+	<xsl:param name="prefix">~</xsl:param>
 	<xsl:param name="label"/>
 
 	<xsl:variable name="name"><xsl:value-of select="replace(.,'^.*(#|/)([^(#|/)]+)$','$2')"/></xsl:variable>
@@ -92,7 +93,7 @@
 			<xsl:variable name="resource-uri"><xsl:call-template name="resource-uri"><xsl:with-param name="uri" select="."/></xsl:call-template></xsl:variable>
 			<a href="{$resource-uri}"><xsl:value-of select="$name"/></a>
 			-->
-			<a href="{.}"><xsl:value-of select="$label"/></a>
+			<a href="{.}" style="font-style: italic"><xsl:value-of select="$label"/></a>
 		</xsl:otherwise>
 	</xsl:choose>
 </xsl:template>
@@ -316,6 +317,14 @@
 				</xsl:for-each-group>
 			</class>
 		</xsl:for-each-group>
+		<!-- All superclasses that are not defined in the ontology -->
+		<xsl:for-each-group select="rdf:Description[rdf:type/@rdf:resource='http://www.w3.org/2002/07/owl#Class' or rdf:type/@rdf:resource='http://www.w3.org/2000/01/rdf-schema#Class']/rdfs:subClassOf" group-by="@rdf:resource">
+			<class uri="{@rdf:resource}" ref="true">
+				<xsl:for-each select="current-group()">
+					<sub uri="{../@rdf:about}"/>
+				</xsl:for-each>
+			</class>
+		</xsl:for-each-group>
 	</xsl:variable>
 	<!-- All properties -->
 	<xsl:variable name="all-properties">
@@ -376,7 +385,7 @@
 		<li><a href="?format=xml">xml</a></li>
 		<li><a href="?format=json">json</a></li>
 	</ul>
-	
+
 	<div class="panel panel-primary">
 		<div class="panel-heading">
 			<h3 class="panel-title">
@@ -387,12 +396,56 @@
 			</h3>
 		</div>
 		<div class="panel-body">
-			<xsl:variable name="description"><xsl:value-of select="$ontology/rdfs:comment"/></xsl:variable>
-			<xsl:if test="$description!=''">
-				<div class="row">
-					<div class="col-md-12"><xsl:value-of select="$description"/></div>
+			<xsl:variable name="description"><xsl:value-of select="$ontology/rdfs:comment|$ontology/dc:description|$ontology/dcterms:description"/></xsl:variable>
+			<div class="row">
+				<div class="col-md-12">
+					<xsl:if test="$description!=''">
+						<p><xsl:value-of select="$description"/></p>
+					</xsl:if>
+					<xsl:for-each select="$ontology">
+						<table class="basic-text-table">
+							<tbody>
+								<xsl:for-each select="foaf:homepage/@rdf:resource">
+									<tr>
+										<td>Homepage:</td>
+										<td><a href="{.}"><xsl:value-of select="."/></a></td>
+									</tr>
+								</xsl:for-each>
+								<xsl:for-each select="rdfs:seeAlso/@rdf:resource">
+									<tr>
+										<td>See also:</td>
+										<td><a href="{.}"><xsl:value-of select="."/></a></td>
+									</tr>
+								</xsl:for-each>
+								<xsl:for-each select="dcterms:status/@rdf:resource">
+									<tr>
+										<td>Status</td>
+										<td><xsl:apply-templates select="." mode="link"/></td>
+									</tr>
+								</xsl:for-each>
+								<xsl:for-each select="dcterms:creator/@rdf:resource">
+									<tr>
+										<td>Creator</td>
+										<td><xsl:apply-templates select="." mode="link"/></td>
+									</tr>
+								</xsl:for-each>
+								<xsl:for-each select="dcterms:contributor/@rdf:resource">
+									<tr>
+										<td>Contributor</td>
+										<td><xsl:apply-templates select="." mode="link"/></td>
+									</tr>
+								</xsl:for-each>
+								<xsl:for-each select="dcterms:publisher/@rdf:resource">
+									<tr>
+										<td>Publisher</td>
+										<td><xsl:apply-templates select="." mode="link"/></td>
+									</tr>
+								</xsl:for-each>
+							</tbody>
+						</table>
+					</xsl:for-each>
 				</div>
-			</xsl:if>
+			</div>
 			<div class="row">
 				<!-- Class tree -->
 				<div class="col-md-6">
