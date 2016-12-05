@@ -2,7 +2,7 @@
 
     NAME     VocabularyAppearance.xsl
     VERSION  1.12.3-SNAPSHOT
-    DATE     2016-11-28
+    DATE     2016-12-05
 
     Copyright 2012-2016
 
@@ -77,21 +77,22 @@
 <xsl:template match="@rdf:resource|@rdf:about|@uri" mode="link">
 	<xsl:param name="prefix"/>
 	<xsl:param name="label"/>
-	
-	<xsl:variable name="name">
+
+	<xsl:variable name="name"><xsl:value-of select="replace(.,'^.*(#|/)([^(#|/)]+)$','$2')"/></xsl:variable>
+	<xsl:variable name="label">
 		<xsl:value-of select="$label"/>
-		<xsl:if test="not($label!='')"><xsl:value-of select="replace(.,'^.*(#|/)([^(#|/)]+)$','$2')"/></xsl:if>
+		<xsl:if test="not($label!='')"><xsl:value-of select="$name"/></xsl:if>
 	</xsl:variable>
 	<xsl:choose>
-		<xsl:when test="$name=substring-after(.,$prefix)">
-			<a href="#{$name}"><xsl:value-of select="$name"/></a>
+		<xsl:when test="starts-with(.,$prefix)">
+			<a href="#{$name}"><xsl:value-of select="$label"/></a>
 		</xsl:when>
 		<xsl:otherwise>
 			<!--
 			<xsl:variable name="resource-uri"><xsl:call-template name="resource-uri"><xsl:with-param name="uri" select="."/></xsl:call-template></xsl:variable>
 			<a href="{$resource-uri}"><xsl:value-of select="$name"/></a>
 			-->
-			<a href="{.}"><xsl:value-of select="$name"/></a>
+			<a href="{.}"><xsl:value-of select="$label"/></a>
 		</xsl:otherwise>
 	</xsl:choose>
 </xsl:template>
@@ -240,10 +241,10 @@
 </xsl:template>
 
 <xsl:template match="rdf:RDF" mode="VocabularyAppearance">
-	<xsl:variable name="ontology-prefix" select="replace(rdf:Description[rdf:type/@rdf:resource='http://www.w3.org/2002/07/owl#Ontology']/@rdf:about,'#([0-9A-Za-z-_~]*)$','')"/>
+	<xsl:variable name="ontology-prefix" select="replace(rdf:Description[rdf:type/@rdf:resource='http://www.w3.org/2002/07/owl#Ontology']/@rdf:about,'(#|/)[0-9A-Za-z-_~]*$','$1')"/>
 	<xsl:variable name="prefix">
 		<xsl:choose>
-			<xsl:when test="$ontology-prefix!=''"><xsl:value-of select="$ontology-prefix"/>#</xsl:when>
+			<xsl:when test="$ontology-prefix!=''"><xsl:value-of select="$ontology-prefix"/></xsl:when>
 			<xsl:otherwise><xsl:value-of select="/results/context/url"/>#</xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>
