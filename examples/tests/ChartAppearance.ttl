@@ -9,25 +9,9 @@ stage:ChartAppearance a elmo:Representation;
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:appearance elmo:ChartAppearance;
-	elmo:query '''
-		construct {
-			?class rdfs:label ?label.
-			?class rdf:value ?cnt
-		}
-		where {
-			?class rdfs:label ?label
-			{
-				select distinct ?class (count(?s) as ?cnt)
-				where {
-					?s rdf:type ?class
-				}
-				group by ?class
-				limit 30
-			}
-		}
-	''';
+	elmo:query stage:chartAppearanceQuery
 .
-stage:ChartAppearanceQuery a elmo:Query;
+stage:chartAppearanceQuery a elmo:Query;
 	rdfs:label "Max 30 classes with number of instances";
 	elmo:query '''
 		construct {
@@ -42,7 +26,7 @@ stage:ChartAppearanceQuery a elmo:Query;
 					?s rdf:type ?class
 				}
 				group by ?class
-				limit 30
+				limit 10
 			}
 		}
 	'''

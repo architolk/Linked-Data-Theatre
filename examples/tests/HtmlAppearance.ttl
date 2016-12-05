@@ -8,13 +8,76 @@ stage:HtmlAppearance a elmo:Representation;
 	elmo:index "1";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
-	elmo:contains stage:FooterAppearance;
 	elmo:appearance elmo:HtmlAppearance;
 	elmo:data [
 		rdfs:label "HtmlAppearance (en)"@en;
 		rdfs:label "HtmlAppearance (nl)"@nl;
 		elmo:html '''
-			<p>Test environment</p>
+			<p>Test environment (default)</p>
+		''';
+	]
+.
+stage:HtmlAppearanceWithoutParameterTypeAndSort a elmo:Representation;
+	elmo:url-pattern "^http(s|)://[^/]+(/[^/]+)?(/|)$";
+	elmo:index "1";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:without-parameter "type";
+	elmo:without-parameter "sort";
+	elmo:appearance elmo:HtmlAppearance;
+	elmo:data [
+		rdfs:label "HtmlAppearance (en)"@en;
+		rdfs:label "HtmlAppearance (nl)"@nl;
+		elmo:html '''
+			<p>Test environment zonder parameter type en sort</p>
+		''';
+	]
+.
+stage:HtmlAppearanceWithParameterTypeAndSort a elmo:Representation;
+	elmo:url-pattern "^http(s|)://[^/]+(/[^/]+)?(/|)$";
+	elmo:index "1";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:HtmlAppearance;
+	elmo:with-parameter "type";
+	elmo:with-parameter "sort";
+	elmo:data [
+		rdfs:label "HtmlAppearance (en)"@en;
+		rdfs:label "HtmlAppearance (nl)"@nl;
+		elmo:html '''
+			<p>Test environment met parameter type en sort</p>
+		''';
+	]
+.
+stage:HtmlAppearanceWithParameterTypeAndWithoutSort a elmo:Representation;
+	elmo:url-pattern "^http(s|)://[^/]+(/[^/]+)?(/|)$";
+	elmo:index "1";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:HtmlAppearance;
+	elmo:with-parameter "type";
+	elmo:without-parameter "sort";
+	elmo:data [
+		rdfs:label "HtmlAppearance (en)"@en;
+		rdfs:label "HtmlAppearance (nl)"@nl;
+		elmo:html '''
+			<p>Test environment met parameter type en zonder sort</p>
+		''';
+	]
+.
+stage:HtmlAppearanceWithParameterSortAndWithoutType a elmo:Representation;
+	elmo:url-pattern "^http(s|)://[^/]+(/[^/]+)?(/|)$";
+	elmo:index "1";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:HtmlAppearance;
+	elmo:with-parameter "sort";
+	elmo:without-parameter "type";
+	elmo:data [
+		rdfs:label "HtmlAppearance (en)"@en;
+		rdfs:label "HtmlAppearance (nl)"@nl;
+		elmo:html '''
+			<p>Test environment met parameter sort en zonder type</p>
 		''';
 	]
 .
