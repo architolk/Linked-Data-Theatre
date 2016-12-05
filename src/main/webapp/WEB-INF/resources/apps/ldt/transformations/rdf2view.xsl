@@ -2,7 +2,7 @@
 
     NAME     rdf2view.xsl
     VERSION  1.12.3-SNAPSHOT
-    DATE     2016-12-03
+    DATE     2016-12-05
 
     Copyright 2012-2016
 
@@ -118,17 +118,17 @@
 	<view>
 		<xsl:apply-templates select="rdf:RDF/rdf:Description[rdf:type/@rdf:resource!='http://bp4mc2.org/elmo/def#fragment']/html:stylesheet"/>
 		<xsl:for-each-group select="rdf:RDF/rdf:Description[exists(elmo:data[1]) or exists(elmo:query[.!='']) or exists(elmo:service[1]) or exists(elmo:webpage[1]) or exists(elmo:queryForm[1])]" group-by="@rdf:about"><xsl:sort select="concat(elmo:index[1],'~')"/>
-			<xsl:variable name="with">
+			<xsl:variable name="with-filter-notok">
 				<xsl:for-each select="elmo:with-parameter">
-					<xsl:if test="not(exists(key('parameters', .)))"><xsl:value-of select="'notok'"/></xsl:if>
+					<xsl:if test="not(exists(key('parameters', .)))">x</xsl:if>
 				</xsl:for-each>
 			</xsl:variable>
-			<xsl:variable name="without">
+			<xsl:variable name="without-filter-notok">
 				<xsl:for-each select="elmo:without-parameter">
-					<xsl:if test="exists(key('parameters', .))"><xsl:value-of select="'notok'"/></xsl:if>
+					<xsl:if test="exists(key('parameters', .))">x</xsl:if>
 				</xsl:for-each>
 			</xsl:variable>
-			<xsl:if test="not(contains($with, 'notok')) and not(contains($without, 'notok'))">
+			<xsl:if test="$with-filter-notok='' and $without-filter-notok=''">
 				<xsl:choose>
 					<!-- Production -->
 					<xsl:when test="rdf:type/@rdf:resource='http://bp4mc2.org/elmo/def#Production'">
