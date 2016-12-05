@@ -8,6 +8,7 @@ stage:HtmlAppearance a elmo:Representation;
 	elmo:index "1";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
+    elmo:contains stage:FooterAppearance;
 	elmo:appearance elmo:HtmlAppearance;
 	elmo:data [
 		rdfs:label "HtmlAppearance (en)"@en;
@@ -18,10 +19,14 @@ stage:HtmlAppearance a elmo:Representation;
 	]
 .
 stage:HtmlAppearanceWithoutParameterTypeAndSort a elmo:Representation;
-	elmo:url-pattern "^http(s|)://[^/]+(/[^/]+)?(/|)$";
+	elmo:url-pattern "/query/paramtest$";
 	elmo:index "1";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
+	elmo:contains stage:IndexAppearanceWithoutParameterTypeAndSort;
+	elmo:contains stage:IndexAppearanceWithParameterTypeAndSort;
+	elmo:contains stage:IndexAppearanceWithParameterTypeAndWithoutSort;
+	elmo:contains stage:IndexAppearanceWithParameterSortAndWithoutType;
 	elmo:without-parameter "type";
 	elmo:without-parameter "sort";
 	elmo:appearance elmo:HtmlAppearance;
@@ -33,11 +38,27 @@ stage:HtmlAppearanceWithoutParameterTypeAndSort a elmo:Representation;
 		''';
 	]
 .
+stage:IndexAppearanceWithoutParameterTypeAndSort a elmo:Part;
+	elmo:index "0";
+	elmo:without-parameter "type";
+	elmo:without-parameter "sort";
+	elmo:appearance elmo:IndexAppearance;
+	elmo:data [
+		elmo:name "set";
+		rdfs:label "Type|Sort|Type+Sort";
+		rdf:value "&type=|&sort=|&type=&sort=";
+	];
+.
+
 stage:HtmlAppearanceWithParameterTypeAndSort a elmo:Representation;
-	elmo:url-pattern "^http(s|)://[^/]+(/[^/]+)?(/|)$";
+	elmo:url-pattern "/query/paramtest$";
 	elmo:index "1";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
+	elmo:contains stage:IndexAppearanceWithoutParameterTypeAndSort;
+	elmo:contains stage:IndexAppearanceWithParameterTypeAndSort;
+	elmo:contains stage:IndexAppearanceWithParameterTypeAndWithoutSort;
+	elmo:contains stage:IndexAppearanceWithParameterSortAndWithoutType;
 	elmo:appearance elmo:HtmlAppearance;
 	elmo:with-parameter "type";
 	elmo:with-parameter "sort";
@@ -49,11 +70,27 @@ stage:HtmlAppearanceWithParameterTypeAndSort a elmo:Representation;
 		''';
 	]
 .
+stage:IndexAppearanceWithParameterTypeAndSort a elmo:Part;
+	elmo:index "0";
+	elmo:with-parameter "type";
+	elmo:with-parameter "sort";
+	elmo:appearance elmo:IndexAppearance;
+	elmo:data [
+		elmo:name "set";
+		rdfs:label "NONE|Type|Sort";
+		rdf:value "|&type=|&sort=";
+	];
+.
+
 stage:HtmlAppearanceWithParameterTypeAndWithoutSort a elmo:Representation;
-	elmo:url-pattern "^http(s|)://[^/]+(/[^/]+)?(/|)$";
+	elmo:url-pattern "/query/paramtest$";
 	elmo:index "1";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
+	elmo:contains stage:IndexAppearanceWithoutParameterTypeAndSort;
+	elmo:contains stage:IndexAppearanceWithParameterTypeAndSort;
+	elmo:contains stage:IndexAppearanceWithParameterTypeAndWithoutSort;
+	elmo:contains stage:IndexAppearanceWithParameterSortAndWithoutType;
 	elmo:appearance elmo:HtmlAppearance;
 	elmo:with-parameter "type";
 	elmo:without-parameter "sort";
@@ -65,11 +102,27 @@ stage:HtmlAppearanceWithParameterTypeAndWithoutSort a elmo:Representation;
 		''';
 	]
 .
+stage:IndexAppearanceWithParameterTypeAndWithoutSort a elmo:Part;
+	elmo:index "0";
+	elmo:with-parameter "type";
+	elmo:without-parameter "sort";
+	elmo:appearance elmo:IndexAppearance;
+	elmo:data [
+		elmo:name "set";
+		rdfs:label "NONE|Sort|Type+Sort";
+		rdf:value "|&sort=|&type=&sort=";
+	];
+.
+
 stage:HtmlAppearanceWithParameterSortAndWithoutType a elmo:Representation;
-	elmo:url-pattern "^http(s|)://[^/]+(/[^/]+)?(/|)$";
+	elmo:url-pattern "/query/paramtest$";
 	elmo:index "1";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
+	elmo:contains stage:IndexAppearanceWithoutParameterTypeAndSort;
+	elmo:contains stage:IndexAppearanceWithParameterTypeAndSort;
+	elmo:contains stage:IndexAppearanceWithParameterTypeAndWithoutSort;
+	elmo:contains stage:IndexAppearanceWithParameterSortAndWithoutType;
 	elmo:appearance elmo:HtmlAppearance;
 	elmo:with-parameter "sort";
 	elmo:without-parameter "type";
@@ -80,4 +133,15 @@ stage:HtmlAppearanceWithParameterSortAndWithoutType a elmo:Representation;
 			<p>Test environment met parameter sort en zonder type</p>
 		''';
 	]
+.
+stage:IndexAppearanceWithParameterSortAndWithoutType a elmo:Part;
+	elmo:index "0";
+	elmo:with-parameter "sort";
+	elmo:without-parameter "type";
+	elmo:appearance elmo:IndexAppearance;
+	elmo:data [
+		elmo:name "set";
+		rdfs:label "NONE|Type|Type+Sort";
+		rdf:value "|&type=|&type=&sort=";
+	];
 .

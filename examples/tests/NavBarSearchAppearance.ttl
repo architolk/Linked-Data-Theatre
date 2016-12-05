@@ -41,6 +41,7 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:data [elmo:index "08"; rdfs:label "Virtual sparql endpoint"; html:link "query/VirtualSparql"];
 			elmo:data [elmo:index "09"; rdfs:label "Service call"; html:link "query/service"];
 			elmo:data [elmo:index "10"; rdfs:label "Webpage request"; html:link "query/webpage"];
+			elmo:data [elmo:index "11"; rdfs:label "Parameter filter test"; html:link "query/paramtest"];
 		];
 		elmo:data [
 			elmo:index "3";
