@@ -1,8 +1,8 @@
 <!--
 
     NAME     sparqlheader.xpl
-    VERSION  1.12.3-SNAPSHOT
-    DATE     2016-12-03
+    VERSION  1.13.0
+    DATE     2016-12-06
 
     Copyright 2012-2016
 

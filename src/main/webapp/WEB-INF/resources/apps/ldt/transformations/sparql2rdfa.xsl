@@ -1,8 +1,8 @@
 <!--
 
     NAME     sparql2rdfa.xsl
-    VERSION  1.12.3-SNAPSHOT
-    DATE     2016-11-25
+    VERSION  1.13.0
+    DATE     2016-12-06
 
     Copyright 2012-2016
 
