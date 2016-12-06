@@ -2,7 +2,7 @@
 
     NAME     VocabularyAppearance.xsl
     VERSION  1.12.3-SNAPSHOT
-    DATE     2016-12-05
+    DATE     2016-12-06
 
     Copyright 2012-2016
 
@@ -319,11 +319,14 @@
 		</xsl:for-each-group>
 		<!-- All superclasses that are not defined in the ontology -->
 		<xsl:for-each-group select="rdf:Description[rdf:type/@rdf:resource='http://www.w3.org/2002/07/owl#Class' or rdf:type/@rdf:resource='http://www.w3.org/2000/01/rdf-schema#Class']/rdfs:subClassOf" group-by="@rdf:resource">
-			<class uri="{@rdf:resource}" ref="true">
-				<xsl:for-each select="current-group()">
-					<sub uri="{../@rdf:about}"/>
-				</xsl:for-each>
-			</class>
+			<xsl:variable name="classuri" select="@rdf:resource"/>
+			<xsl:if test="not(exists(../../rdf:Description[@rdf:about=$classuri]))">
+				<class uri="{@rdf:resource}" ref="true">
+					<xsl:for-each select="current-group()">
+						<sub uri="{../@rdf:about}"/>
+					</xsl:for-each>
+				</class>
+			</xsl:if>
 		</xsl:for-each-group>
 	</xsl:variable>
 	<!-- All properties -->
