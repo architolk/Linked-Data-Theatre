@@ -58,6 +58,7 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:data [elmo:index "4"; rdfs:label "Container with predef post query"; html:link "container/defquery"];
 			elmo:data [elmo:index "5"; rdfs:label "Upload (vocabulary)"; html:link "container/upload"];
 			elmo:data [elmo:index "6"; rdfs:label "Show uploaded vocabulary"; html:link "query/uploaded-vocabulary"];
+			elmo:data [elmo:index "7"; rdfs:label "Show uploaded vocabulary model"; html:link "query/uploaded-vocabulary.yed"];
 		];
 		elmo:data [
 			elmo:index "5";

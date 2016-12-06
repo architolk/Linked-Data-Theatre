@@ -14,7 +14,7 @@ stage:VocabularyAppearance	a	elmo:Representation;
 .
 
 stage:UploadedVocabulary a elmo:Representation;
-	elmo:url-pattern "/query/uploaded-vocabulary";
+	elmo:url-pattern "/query/uploaded-vocabulary$";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:appearance elmo:VocabularyAppearance;
@@ -23,6 +23,64 @@ stage:UploadedVocabulary a elmo:Representation;
 		where {
 			graph <http://localhost:8080/container/upload> {
 				?s?p?o
+			}
+		}
+	''';
+.
+
+stage:UploadedVocabularyAppearanceYed a elmo:Representation;
+	elmo:url-pattern	"/query/uploaded-vocabulary\\.yed$";
+	elmo:layer elmo:TopLayer;
+	elmo:fragment [
+		elmo:applies-to rdfs:subClassOf;
+		rdfs:label "";
+		yed:sourceArrow "none";
+		yed:targetArrow "white_delta";
+	];
+	elmo:query '''
+		prefix shacl: <http://www.w3.org/ns/shacl#>
+		CONSTRUCT {
+			?element rdfs:label ?label.
+			?element rdfs:comment ?attribs.
+			?element rdfs:subClassOf ?super.
+			?element ?pc ?class.
+			?element rdf:type owl:Class.
+			?pc rdfs:label ?plabel.
+		}
+		WHERE {
+			GRAPH <http://localhost:8080/container/upload> {
+				?element rdf:type owl:Class.
+				?element rdfs:label ?label
+				OPTIONAL {?element rdfs:subClassOf ?super}
+				OPTIONAL {
+					select ?element ?pc ?class (concat(strafter(str(?pred),"#")," [",if(bound(?minc),?minc,"0"),",",if(bound(?maxc),?maxc,"n"),"]") as ?plabel)
+					where {
+						?shape shacl:scopeClass ?element.
+						?shape shacl:property ?pc.
+						?pc shacl:predicate ?pred.
+						?pc shacl:class ?class.
+						?class rdf:type owl:Class.
+						OPTIONAL {?pc shacl:minCount ?minc}
+						OPTIONAL {?pc shacl:maxCount ?maxc}
+						FILTER NOT EXISTS {?pc shacl:in ?col}
+					}
+				}
+				OPTIONAL {
+					select ?element (group_concat(concat(strafter(str(?pred),"#")," (",strafter(str(?datatype),"#"),") [",if(bound(?minc),?minc,"0"),",",?maxc,"]");separator="\\n") as ?attribs)
+					where {
+						?shape shacl:scopeClass ?element.
+						?shape shacl:property ?pc.
+						?pc shacl:predicate ?pred.
+						OPTIONAL {?pc shacl:datatype ?datatype}
+						OPTIONAL {?pc shacl:minCount ?minc}
+						OPTIONAL {?pc shacl:maxCount ?maxc}
+						FILTER NOT EXISTS {
+							?pc shacl:class ?class.
+							?class rdf:type owl:Class.
+						}
+					}
+					group by ?element
+				}
 			}
 		}
 	''';
@@ -125,3 +183,4 @@ stage:VocabularyQuery a elmo:Query;
 		}
 	'''
 .
+
