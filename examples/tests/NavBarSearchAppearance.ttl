@@ -26,6 +26,7 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:data [elmo:index "12"; rdfs:label "FrameAppearance"; html:link "query/FrameAppearance"];
 			elmo:data [elmo:index "13"; rdfs:label "ContentAppearance"; html:link "query/ContentAppearance"];
 			elmo:data [elmo:index "14"; rdfs:label "ImageAppearance"; html:link "query/ImageAppearance"];
+			elmo:data [elmo:index "15"; rdfs:label "ModelAppearance"; html:link "query/ModelAppearance"];
 		];
 		elmo:data [
 			elmo:index "2";
@@ -59,6 +60,7 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:data [elmo:index "5"; rdfs:label "Upload (vocabulary)"; html:link "container/upload"];
 			elmo:data [elmo:index "6"; rdfs:label "Show uploaded vocabulary"; html:link "query/uploaded-vocabulary"];
 			elmo:data [elmo:index "7"; rdfs:label "Show uploaded vocabulary model"; html:link "query/uploaded-vocabulary.yed"];
+			elmo:data [elmo:index "8"; rdfs:label "DMN container"; html:link "container/dmn"];
 		];
 		elmo:data [
 			elmo:index "5";

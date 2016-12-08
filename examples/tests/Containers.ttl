@@ -22,6 +22,12 @@ container:xpl a elmo:Container;
 	rdfs:label "Upload XPL (zip file or XPL file)";
 .
 
+container:dmn a elmo:Container;
+	elmo:translator elmo:DMNTranslator;
+	elmo:contains stage:NavbarSearchAppearance;
+	rdfs:label "Upload DMN";
+.
+
 container:query a elmo:Container;
 	elmo:contains stage:NavbarSearchAppearance;
 	rdfs:label "Upload with post query";

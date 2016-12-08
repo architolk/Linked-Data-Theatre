@@ -1,0 +1,22 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+stage:ModelAppearance a elmo:Representation;
+	elmo:url-pattern "/query/ModelAppearance";
+	elmo:index "1";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:ModelAppearance;
+	elmo:query '''
+		CONSTRUCT {
+			?s?p?o}
+		WHERE {
+			GRAPH <http://localhost:8080/stage> {
+				?s rdf:type owl:Class.
+				?s ?p ?o
+			}
+		}
+	''';
+.

@@ -53,24 +53,26 @@ stage:UploadedVocabularyAppearanceYed a elmo:Representation;
 				?element rdfs:label ?label
 				OPTIONAL {?element rdfs:subClassOf ?super}
 				OPTIONAL {
-					select ?element ?pc ?class (concat(strafter(str(?pred),"#")," [",if(bound(?minc),?minc,"0"),",",if(bound(?maxc),?maxc,"n"),"]") as ?plabel)
+					select ?element ?pc ?class (concat(if(bound(?plabel),?plabel,strafter(str(?pred),"#"))," [",if(bound(?minc),?minc,"0"),",",if(bound(?maxc),?maxc,"n"),"]") as ?plabel)
 					where {
 						?shape shacl:scopeClass ?element.
 						?shape shacl:property ?pc.
 						?pc shacl:predicate ?pred.
 						?pc shacl:class ?class.
 						?class rdf:type owl:Class.
+						OPTIONAL {?pred rdfs:label ?plabel}
 						OPTIONAL {?pc shacl:minCount ?minc}
 						OPTIONAL {?pc shacl:maxCount ?maxc}
 						FILTER NOT EXISTS {?pc shacl:in ?col}
 					}
 				}
 				OPTIONAL {
-					select ?element (group_concat(concat(strafter(str(?pred),"#")," (",strafter(str(?datatype),"#"),") [",if(bound(?minc),?minc,"0"),",",?maxc,"]");separator="\\n") as ?attribs)
+					select ?element (group_concat(concat(if(bound(?plabel),?plabel,strafter(str(?pred),"#"))," (",strafter(str(?datatype),"#"),") [",if(bound(?minc),?minc,"0"),",",?maxc,"]");separator="\\n") as ?attribs)
 					where {
 						?shape shacl:scopeClass ?element.
 						?shape shacl:property ?pc.
 						?pc shacl:predicate ?pred.
+						OPTIONAL {?pred rdfs:label ?plabel}
 						OPTIONAL {?pc shacl:datatype ?datatype}
 						OPTIONAL {?pc shacl:minCount ?minc}
 						OPTIONAL {?pc shacl:maxCount ?maxc}
@@ -111,24 +113,26 @@ stage:VocabularyAppearanceYed a elmo:Representation;
 				?element rdfs:label ?label
 				OPTIONAL {?element rdfs:subClassOf ?super}
 				OPTIONAL {
-					select ?element ?pc ?class (concat(strafter(str(?pred),"#")," [",if(bound(?minc),?minc,"0"),",",if(bound(?maxc),?maxc,"n"),"]") as ?plabel)
+					select ?element ?pc ?class (concat(if(bound(?plabel),?plabel,strafter(str(?pred),"#"))," [",if(bound(?minc),?minc,"0"),",",if(bound(?maxc),?maxc,"n"),"]") as ?plabel)
 					where {
 						?shape shacl:scopeClass ?element.
 						?shape shacl:property ?pc.
 						?pc shacl:predicate ?pred.
 						?pc shacl:class ?class.
 						?class rdf:type owl:Class.
+						OPTIONAL {?pred rdfs:label ?plabel}
 						OPTIONAL {?pc shacl:minCount ?minc}
 						OPTIONAL {?pc shacl:maxCount ?maxc}
 						FILTER NOT EXISTS {?pc shacl:in ?col}
 					}
 				}
 				OPTIONAL {
-					select ?element (group_concat(concat(strafter(str(?pred),"#")," (",strafter(str(?datatype),"#"),") [",if(bound(?minc),?minc,"0"),",",?maxc,"]");separator="\\n") as ?attribs)
+					select ?element (group_concat(concat(if(bound(?plabel),?plabel,strafter(str(?pred),"#"))," (",strafter(str(?datatype),"#"),") [",if(bound(?minc),?minc,"0"),",",?maxc,"]");separator="\\n") as ?attribs)
 					where {
 						?shape shacl:scopeClass ?element.
 						?shape shacl:property ?pc.
 						?pc shacl:predicate ?pred.
+						OPTIONAL {?pred rdfs:label ?plabel}
 						OPTIONAL {?pc shacl:datatype ?datatype}
 						OPTIONAL {?pc shacl:minCount ?minc}
 						OPTIONAL {?pc shacl:maxCount ?maxc}
