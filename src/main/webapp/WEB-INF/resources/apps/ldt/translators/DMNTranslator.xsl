@@ -2,7 +2,7 @@
 
     NAME     DMNTranslator.xsl
     VERSION  1.13.1-SNAPSHOT
-    DATE     2016-12-08
+    DATE     2016-12-09
 
     Copyright 2012-2016
 
@@ -37,6 +37,21 @@
 
 	<xsl:variable name="dmno-prefix">http://www.omg.org/spec/DMN/20151101/dmn#</xsl:variable>
 
+	<!-- Properties -->
+	<xsl:template match="dmn:informationRequirement|dmn:knowledgeRequirement|dmn:authorityRequirement">
+		<xsl:variable name="name"><xsl:value-of select="local-name()"/></xsl:variable>
+		<xsl:for-each select="*">
+			<xsl:element name="dmno:{$name}">
+				<xsl:attribute name="rdf:resource">urn:uuid:<xsl:value-of select="substring-after(@href,'_')"/></xsl:attribute>
+			</xsl:element>
+		</xsl:for-each>
+	</xsl:template>
+
+	<xsl:template match="dmn:description">
+		<dmno:description><xsl:value-of select="."/></dmno:description>
+	</xsl:template>
+	
+	<!-- Classes -->
 	<xsl:template match="dmn:variable">
 		<xsl:variable name="type">
 			<xsl:choose>
@@ -48,6 +63,7 @@
 			<dmno:Variable rdf:about="urn:uuid:{substring-after(@id,'_')}">
 				<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
 				<dmno:type rdf:resource="{$dmno-prefix}{$type}"/>
+				<xsl:apply-templates select="dmn:description"/>
 			</dmno:Variable>
 		</dmno:variable>
 	</xsl:template>
@@ -55,9 +71,8 @@
 	<xsl:template match="dmn:decision">
 		<dmno:Decision rdf:about="urn:uuid:{substring-after(@id,'_')}">
 			<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
-			<xsl:for-each select="dmn:informationRequirement/*">
-				<dmno:informationRequirement rdf:resource="urn:uuid:{substring-after(@href,'_')}"/>
-			</xsl:for-each>
+			<xsl:apply-templates select="dmn:informationRequirement|dmn:knowledgeRequirement|dmn:authorityRequirement"/>
+			<xsl:apply-templates select="dmn:description"/>
 			<xsl:apply-templates select="dmn:variable"/>
 		</dmno:Decision>
 	</xsl:template>
@@ -65,12 +80,39 @@
 	<xsl:template match="dmn:inputData">
 		<dmno:InputData rdf:about="urn:uuid:{substring-after(@id,'_')}">
 			<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
+			<xsl:apply-templates select="dmn:informationRequirement|dmn:knowledgeRequirement|dmn:authorityRequirement"/>
+			<xsl:apply-templates select="dmn:description"/>
 			<xsl:apply-templates select="dmn:variable"/>
 		</dmno:InputData>
 	</xsl:template>
 
+	<xsl:template match="dmn:knowledgeSource">
+		<dmno:KnowledgeSource rdf:about="urn:uuid:{substring-after(@id,'_')}">
+			<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
+			<xsl:if test="exists(@locationURI)"><dmno:locationURI rdf:resource="{@locationURI}"/></xsl:if>
+			<xsl:apply-templates select="dmn:description"/>
+		</dmno:KnowledgeSource>
+	</xsl:template>
+	
+	<xsl:template match="dmn:businessKnowledgeModel">
+		<dmno:BusinessKnowledgeModel rdf:about="urn:uuid:{substring-after(@id,'_')}">
+			<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
+			<xsl:apply-templates select="dmn:informationRequirement|dmn:knowledgeRequirement|dmn:authorityRequirement"/>
+			<xsl:apply-templates select="dmn:description"/>
+			<xsl:apply-templates select="dmn:variable"/>
+		</dmno:BusinessKnowledgeModel>
+	</xsl:template>
+	
+	<xsl:template match="dmn:organizationUnit">
+		<dmno:OrganizationUnit rdf:about="urn:uuid:{substring-after(@id,'_')}">
+			<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
+			<xsl:apply-templates select="dmn:description"/>
+		</dmno:OrganizationUnit>
+	</xsl:template>
+	
+	<!-- Main entry -->
 	<xsl:template match="dmn:definitions">
-		<xsl:apply-templates select="dmn:decision|dmn:inputData"/>
+		<xsl:apply-templates select="dmn:decision|dmn:inputData|dmn:knowledgeSource|dmn:businessKnowledgeModel|dmn:organizationUnit"/>
 	</xsl:template>
 
 	<xsl:template match="/root">
