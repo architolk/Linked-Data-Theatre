@@ -70,9 +70,9 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:data [elmo:index "01"; rdfs:label "Virtual sparql endpoint"; html:link "query/VirtualSparql"];
 			elmo:data [elmo:index "02"; rdfs:label "Service call"; html:link "query/service"];
 			elmo:data [elmo:index "03"; rdfs:label "Webpage request"; html:link "query/webpage"];
-			elmo:data [elmo:index "04"; rdfs:label "IMDB"; html:link "/ldt/resource?subject=http%3A%2F%2Fwww.imdb.com%2Ftitle%2Ftt0120737"];
-			elmo:data [elmo:index "05"; rdfs:label "RottenTomatos - movie"; html:link "/ldt/resource?subject=http%3A%2F%2Fwww.rottentomatoes.com%2Fm%2Fthe_lord_of_the_rings_the_return_of_the_king"];
-			elmo:data [elmo:index "06"; rdfs:label "RottenTomatos - actor"; html:link "/ldt/resource?subject=http%3A%2F%2Fwww.rottentomatoes.com%2Fcelebrity%2Fsean_astin"];
+			elmo:data [elmo:index "04"; rdfs:label "Federated - IMDB"; html:link "ldt/resource?subject=http%3A%2F%2Fwww.imdb.com%2Ftitle%2Ftt0120737"];
+			elmo:data [elmo:index "05"; rdfs:label "Federated - RottenTomatoes - movie"; html:link "ldt/resource?subject=http%3A%2F%2Fwww.rottentomatoes.com%2Fm%2Fthe_lord_of_the_rings_the_return_of_the_king"];
+			elmo:data [elmo:index "06"; rdfs:label "Federated - RottenTomatoes - actor"; html:link "ldt/resource?subject=http%3A%2F%2Fwww.rottentomatoes.com%2Fcelebrity%2Fsean_astin"];
 		];
 		elmo:data [
 			elmo:index "7";

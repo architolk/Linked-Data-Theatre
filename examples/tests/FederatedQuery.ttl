@@ -17,17 +17,14 @@ stage:FederatedQuery	a	elmo:Representation;
 			?actor rdfs:label ?actorname.
 		}
 		where {
-			select ?title (iri(concat("http://imdb.com/name",strafter(str(?url),"//name"))) as ?actor) ?description ?actorname
-			where {
-				service <http://localhost:8080/url> {
-					<@SUBJECT@> <http://www.w3.org/1999/xhtml/microdata#item> ?movie.
-					<@SUBJECT@> <http://www.w3.org/1999/xhtml/vocab#title> ?title.
-					<@SUBJECT@> <http://www.w3.org/1999/xhtml/vocab#description> ?description.
-					?movie a ?type.
-					?movie <http://schema.org/Movie/actor> ?actor.
-					?actor <http://schema.org/Person/name> ?actorname.
-					?actor <http://schema.org/Person/url> ?url.
-				}
+			service <http://localhost:8080/url> {
+				<@SUBJECT@> <http://www.w3.org/1999/xhtml/microdata#item> ?movie.
+				<@SUBJECT@> <http://www.w3.org/1999/xhtml/vocab#title> ?title.
+				<@SUBJECT@> <http://www.w3.org/1999/xhtml/vocab#description> ?description.
+				?movie a ?type.
+				?movie <http://schema.org/Movie/actor> ?actor.
+				?actor <http://schema.org/Person/name> ?actorname.
+				?actor <http://schema.org/Person/url> ?url.
 			}
 		}
 	''';
