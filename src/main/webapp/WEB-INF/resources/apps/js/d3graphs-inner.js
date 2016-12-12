@@ -1,7 +1,7 @@
 /*
  * NAME     d3graphs-inner.js
- * VERSION  1.13.0
- * DATE     2016-12-06
+ * VERSION  1.13.1-SNAPSHOT
+ * DATE     2016-12-12
  *
  * Copyright 2012-2016
  *
@@ -166,8 +166,14 @@ function movePropertyBox() {
 			propertyBox.style("display","block");
 			//Get absolute position
 			var matrix  = propertyNode.arect.getScreenCTM();
-			pt.x = propertyNode.arect.x.animVal.value+propertyNode.arect.width.animVal.value;
-			pt.y = propertyNode.arect.y.animVal.value;
+			if (propertyNode.arect.nodeName==='rect') {
+				pt.x = propertyNode.arect.x.animVal.value+propertyNode.arect.width.animVal.value;
+				pt.y = propertyNode.arect.y.animVal.value;
+			}
+			if (propertyNode.arect.nodeName==='circle') {
+				pt.x = propertyNode.arect.cx.animVal.value+propertyNode.arect.r.animVal.value;
+				pt.y = propertyNode.arect.cy.animVal.value-propertyNode.arect.r.animVal.value;
+			}
 			var divrect = pt.matrixTransform(matrix);
 			//Correct for offset and scroll
 			var theX = divrect.x-$('#graphcanvas').offset().left+$(window).scrollLeft();
@@ -227,7 +233,7 @@ function createAggregateNodes() {
 				var d = n.outLinks[prop];
 				if (d.length>=maxNodes) {
 					if (!nodeMap[n["@id"]+d[0].uri]) {
-						var aNode = {"@id":n["@id"]+d[0].uri,data:{},label:d[0].label,uri:d[0].uri,elementType:"circle",aggregateNode:true,count:d.length,links:d};
+						var aNode = {"@id":n["@id"]+d[0].uri,data:{},label:d[0].label,uri:d[0].uri,elementType:"circle",aggregateNode:true,inbound:false,count:d.length,links:d};
 						root.nodes.push(aNode);
 						root.links.push({id:n["@id"]+d[0].uri,source:n,target:aNode,label:d[0].label,uri:d[0].uri});
 						nodeMap[aNode["@id"]]=aNode;
@@ -238,7 +244,7 @@ function createAggregateNodes() {
 				var d = n.inLinks[prop];
 				if (d.length>=maxNodes) {
 					if (!nodeMap[n["@id"]+d[0].uri]) {
-						var aNode = {"@id":n["@id"]+d[0].uri,data:{},label:d[0].label,uri:d[0].uri,elementType:"circle",aggregateNode:true,count:d.length,links:d};
+						var aNode = {"@id":n["@id"]+d[0].uri,data:{},label:d[0].label,uri:d[0].uri,elementType:"circle",aggregateNode:true,inbound:true,count:d.length,links:d};
 						root.nodes.push(aNode);
 						root.links.push({id:n["@id"]+d[0].uri,source:aNode,target:n,label:d[0].label,uri:d[0].uri});
 						nodeMap[aNode["@id"]]=aNode;
@@ -385,7 +391,8 @@ function update() {
 		.attr("cx", function(d) { return d.rect.x+5})
 		.attr("cy", function(d) { return d.rect.y+5})
 		.attr("r", function(d) { return 5+d.rect.height/2 })
-		.attr("class", function(d) { return (d["class"] ? "s"+d["class"] : "default") });
+		.attr("class", function(d) { return (d["class"] ? "s"+d["class"] : "default") })
+		.each(function(d) {d.arect = this;});
 		
 	force
 		.nodes(nodes)
@@ -405,15 +412,46 @@ function clickPropertyBox() {
 	}
 }
 
+function expandOneItem(id) {
+	var selected = nodeMap[id];
+	if (selected) {
+		selected.linkCount++;
+	}
+	if (propertyNode) {
+		if (propertyNode.aggregateNode) {
+			propertyNode.count-=1;
+			clickInfoBox();
+		}
+	}
+	update();
+}
+
 function clickInfoBox() {
 	if (propertyNode) {
 		infoNode = propertyNode;
-		var html = '<table>';
-		for (var key in propertyNode.data) {
-			html += '<tr><td>'+key+'</td><td class="data">'+propertyNode.data[key]+"</td></tr>";
+		if (propertyNode.aggregateNode) {
+			var html= '<table style="background-color:#F0F0F0;">';
+			propertyNode.links.forEach(function(x) {
+				if (propertyNode.inbound) {
+					if (x.source.linkCount<=1) { //Hack: linkCount is misused to show nodes from aggregation!
+						html += '<tr><td><a onclick="expandOneItem(this.href);return false;" href="' + x.source['@id'] + '">' + x.source.label + '</a></td></tr>';
+					}
+				} else {
+					if (x.target.linkCount<=1) { //Hack: linkCount is misused to show nodes from aggregation!
+						html += '<tr><td><a onclick="expandOneItem(this.href);return false;" href="' + x.target['@id'] + '">' + x.target.label + '</a></td></tr>';
+					}
+				}
+			});
+			html += "</table>";
+			infoBox.html(html);
+		} else {
+			var html = '<table>';
+			for (var key in propertyNode.data) {
+				html += '<tr><td>'+key+'</td><td class="data">'+propertyNode.data[key]+"</td></tr>";
+			}
+			html += "</table>";
+			infoBox.html(html);
 		}
-		html += "</table>";
-		infoBox.html(html);
 	}
 }
   
