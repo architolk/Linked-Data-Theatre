@@ -100,6 +100,10 @@ public class SparqlParser extends SimpleProcessor {
 		Node graph = e.getGraphNameNode();
 		parseNode("graph",e.getGraphNameNode());
 		parseElement(e.getElement());
+		this.myContent.startElement("","query","query",new AttributesImpl());
+		String query = e.getElement().toString();
+		this.myContent.characters(query.toCharArray(), 0, query.length());
+		this.myContent.endElement("","query","query");
 		this.myContent.endElement("","graph","graph");
 	}
 	private void parseElement(ElementPathBlock e) throws SAXException {

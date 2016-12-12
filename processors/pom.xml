@@ -1,3 +1,6 @@
+<!-- This POM only uses maven source, plus the Orbeon jar -->
+<!-- To use the most recent functions for any23 and jsonld-java, you should compile these source by hand -->
+<!-- PLUS you should upgrade the version numbers below for any23 and jsonld-java (see the commented version tags) -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>nl.architolk.ldt</groupId>
@@ -68,16 +71,36 @@
 			<groupId>org.apache.any23</groupId>
 			<artifactId>apache-any23-api</artifactId>
 			<version>1.1</version>
+			<!--<version>1.2-SNAPSHOT</version>-->
 		</dependency>
 		<dependency>
 			<groupId>org.apache.any23</groupId>
 			<artifactId>apache-any23-core</artifactId>
 			<version>1.1</version>
+			<!--<version>1.2-SNAPSHOT</version>-->
+		</dependency>
+		<!-- Explicit version numbering to force recent version, commons-io not necessary -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.5</version>
+		</dependency>
+		<!-- Explicit version numbering to force recent version, semargl is not necessary -->
+		<dependency>
+			<groupId>org.semarglproject</groupId>
+			<artifactId>semargl-rdfa</artifactId>
+			<version>0.7</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.jsonld-java</groupId>
 			<artifactId>jsonld-java</artifactId>
 			<version>0.8.3</version>
+			<!-- <version>0.9.0-SNAPSHOT</version> -->
+		</dependency>
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.10.1</version>
 		</dependency>
 		<!-- Dependencies MarkDownConverter -->
 		<dependency>
@@ -85,7 +108,7 @@
 			<artifactId>txtmark</artifactId>
 			<version>0.13</version>
 		</dependency>
-		<!-- Dependencies sparql parser -->
+		<!-- Dependencies sparql parser/executor -->
 		<dependency>
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-arq</artifactId>

@@ -107,6 +107,9 @@ import com.github.jsonldjava.utils.JsonUtils;
 import com.github.jsonldjava.core.JsonLdProcessor;
 import com.github.jsonldjava.impl.NQuadTripleCallback;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Entities;
+
 public class HttpClientProcessor extends SimpleProcessor {
 
 	//The ParseHandler is a ContentHandler that doesn't forward the startDocument and endDocument events.
@@ -280,7 +283,7 @@ public class HttpClientProcessor extends SimpleProcessor {
 									Object nquads = JsonLdProcessor.toRDF(jsonObject,new NQuadTripleCallback());
 									
 									Any23 runner = new Any23();
-									DocumentSource source = new StringDocumentSource((String)nquads,"http://localhost");
+									DocumentSource source = new StringDocumentSource((String)nquads,configNode.valueOf("url"));
 									ByteArrayOutputStream out = new ByteArrayOutputStream();
 									TripleHandler handler = new RDFXMLWriter(out);
 									try {
@@ -299,7 +302,24 @@ public class HttpClientProcessor extends SimpleProcessor {
 							} else if (configNode.valueOf("output-type").equals("rdf")) {
 								try {
 									Any23 runner = new Any23();
-									DocumentSource source = new ByteArrayDocumentSource(inStream,"http://localhost",contentType.getValue()); //New
+									
+									DocumentSource source;
+									//If contentType = text/html than convert from html to xhtml to handle non-xml style html!
+									logger.info("Contenttype: " + contentType.getValue());
+									if (configNode.valueOf("tidy").equals("yes") && contentType.getValue().startsWith("text/html")) {
+										org.jsoup.nodes.Document doc = Jsoup.parse(inStream,"UTF-8",configNode.valueOf("url")); //TODO UTF-8 should be read from response!
+
+										RDFCleaner cleaner = new RDFCleaner();
+										org.jsoup.nodes.Document cleandoc = cleaner.clean(doc);
+										cleandoc.outputSettings().escapeMode(Entities.EscapeMode.xhtml);
+										cleandoc.outputSettings().syntax(org.jsoup.nodes.Document.OutputSettings.Syntax.xml);
+										cleandoc.outputSettings().charset("UTF-8");
+
+										source = new StringDocumentSource(cleandoc.html(),configNode.valueOf("url"),contentType.getValue());
+									} else {
+										source = new ByteArrayDocumentSource(inStream,configNode.valueOf("url"),contentType.getValue());
+									}
+									
 									ByteArrayOutputStream out = new ByteArrayOutputStream();
 									TripleHandler handler = new RDFXMLWriter(out);
 									try {
