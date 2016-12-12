@@ -1,0 +1,92 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+stage:FederatedQuery	a	elmo:Representation;
+	elmo:uri-pattern	"^http://www.imdb.com/title/tt";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:GraphAppearance;
+	elmo:query '''
+		construct {
+			<@SUBJECT@> rdfs:label ?title.
+			<@SUBJECT@> <http://schema.org/Movie#description> ?description.
+			<@SUBJECT@> rdf:type ?type.
+			<@SUBJECT@> <http://schema.org/Movie#actor> ?actor.
+			?actor rdfs:label ?actorname.
+		}
+		where {
+			select ?title (iri(concat("http://imdb.com/name",strafter(str(?url),"//name"))) as ?actor) ?description ?actorname
+			where {
+				service <http://localhost:8080/url> {
+					<@SUBJECT@> <http://www.w3.org/1999/xhtml/microdata#item> ?movie.
+					<@SUBJECT@> <http://www.w3.org/1999/xhtml/vocab#title> ?title.
+					<@SUBJECT@> <http://www.w3.org/1999/xhtml/vocab#description> ?description.
+					?movie a ?type.
+					?movie <http://schema.org/Movie/actor> ?actor.
+					?actor <http://schema.org/Person/name> ?actorname.
+					?actor <http://schema.org/Person/url> ?url.
+				}
+			}
+		}
+	''';
+.
+
+stage:Federated2Query	a	elmo:Representation;
+	elmo:uri-pattern	"^http://www.rottentomatoes.com/";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:GraphAppearance;
+	elmo:query '''
+		construct {
+			<@SUBJECT@> rdf:type ?type.
+			<@SUBJECT@> rdfs:label ?title.
+			<@SUBJECT@> <http://schema.org/Movie#description> ?description.
+			<@SUBJECT@> <http://schema.org/Movie#actor> ?actorurl.
+			?actorurl rdfs:label ?actorname.
+			?movieurl <http://schema.org/Movie#actor> <@SUBJECT@>.
+			?movieurl rdfs:label ?moviename.
+		}
+		where {
+			service <http://localhost:8080/url> {
+				<@SUBJECT@> <http://ogp.me/ns#title> ?title.
+				OPTIONAL {
+					<@SUBJECT@> <http://ogp.me/ns#title> ?description.
+					?subject a ?type.
+					?subject <http://schema.org/actors> ?actor.
+					?actor <http://schema.org/name> ?actorname.
+					?actor <http://schema.org/sameAs> ?actorurl.
+				}
+				OPTIONAL {
+					<@SUBJECT@> <http://www.w3.org/1999/xhtml/microdata#item> ?movie.
+					?movie <https://schema.org/Movie/url> ?movieurl.
+					?movie <https://schema.org/Movie/name> ?moviename.
+				}
+			}
+		}
+	''';
+.
+
+stage:Federated3Query	a	elmo:Representation;
+#	elmo:uri-pattern	"^http://www.rottentomatoes.com/celebrity";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:GraphAppearance;
+	elmo:query '''
+		construct {
+			<@SUBJECT@> rdf:type ?type.
+			<@SUBJECT@> rdfs:label ?title.
+			?movieurl <http://schema.org/Movie#actor> <@SUBJECT@>.
+			?movieurl rdfs:label ?moviename.
+		}
+		where {
+			service <http://localhost:8080/url> {
+				<@SUBJECT@> <http://ogp.me/ns#title> ?title.
+				<@SUBJECT@> <http://www.w3.org/1999/xhtml/microdata#item> ?movie.
+				?movie <https://schema.org/Movie/url> ?movieurl.
+				?movie <https://schema.org/Movie/name> ?moviename.
+			}
+		}
+	''';
+.

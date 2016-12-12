@@ -34,7 +34,8 @@ stage:VirtualSparql_dataset a elmo:Part;
 		where {
 			service <http://localhost:8080/url> {
 				graph <http://www.w3.org/2000/01/rdf-schema#> {
-					?s ?p ?o
+					?class a rdfs:Class.
+					?class rdfs:label ?class_label
 				}
 			}
 		}
@@ -49,6 +50,8 @@ stage:VirtualSparql_resource2 a elmo:Part;
 		where {
 			service <http://localhost:8080/url> {
 				<http://dbpedia.org/resource/Amersfoort> ?p ?o.
+				FILTER (?p = rdfs:label || ?p = rdfs:comment)
+				FILTER (lang(?o)="" or lang(?o)="@LANGUAGE@")
 			}
 		}
 	'''
