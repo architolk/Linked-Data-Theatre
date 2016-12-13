@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2html.xsl
-    VERSION  1.13.0
-    DATE     2016-12-06
+    VERSION  1.13.1-SNAPSHOT
+    DATE     2016-12-11
 
     Copyright 2012-2016
 
@@ -479,6 +479,9 @@
 		</xsl:when>
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#FrameAppearance'">
 			<xsl:apply-templates select="." mode="FrameAppearance"/>
+		</xsl:when>
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#ModelAppearance'">
+			<xsl:apply-templates select="." mode="ModelAppearance"/>
 		</xsl:when>
 		<xsl:otherwise>
 			<!-- No, or an unknown appearance, use the data to select a suitable appearance -->
@@ -959,5 +962,6 @@
 <xsl:include href="appearances/TreeAppearance.xsl"/>
 <xsl:include href="appearances/VocabularyAppearance.xsl"/>
 <xsl:include href="appearances/FrameAppearance.xsl"/>
+<xsl:include href="appearances/ModelAppearance.xsl"/>
 
 </xsl:stylesheet>

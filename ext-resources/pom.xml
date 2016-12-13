@@ -18,7 +18,7 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js</url>
+							<url>https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js</url>
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
 						</configuration>
 					</execution>
@@ -28,7 +28,7 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css</url>
+							<url>https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css</url>
 							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
 						</configuration>
 					</execution>
@@ -38,7 +38,7 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css</url>
+							<url>https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css</url>
 							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
 						</configuration>
 					</execution>
@@ -271,7 +271,7 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>http://code.jquery.com/jquery-1.11.3.min.js</url>
+							<url>https://code.jquery.com/jquery-3.1.1.min.js</url>
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
 						</configuration>
 					</execution>
@@ -307,6 +307,7 @@
 							<outputDirectory>zips</outputDirectory>
 						</configuration>
 					</execution>
+					<!-- Virtuoso JDBC dependencies and libraries -->
 					<execution>
 						<id>get-virtuoso-jdbc3</id>
 						<goals>
@@ -329,6 +330,49 @@
 							<outputDirectory>WEB-INF/lib</outputDirectory>
 						</configuration>
 					</execution>
+					<!-- END -->
+					<!-- Joint.js dependencies and libraries -->
+					<execution>
+						<id>get-joint-js</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>https://raw.githubusercontent.com/clientIO/joint/master/dist/joint.min.js</url>
+							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>get-joint-css</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>https://raw.githubusercontent.com/clientIO/joint/master/dist/joint.min.css</url>
+							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>get-lodash</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js</url>
+							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>get-backbone</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js</url>
+							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
+						</configuration>
+					</execution>
+					<!-- END -->
 				</executions>
 			</plugin>
 			<plugin>
