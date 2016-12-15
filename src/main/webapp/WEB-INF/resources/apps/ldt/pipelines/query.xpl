@@ -1,8 +1,8 @@
 <!--
 
     NAME     query.xpl
-    VERSION  1.13.0
-    DATE     2016-12-06
+    VERSION  1.13.1-SNAPSHOT
+    DATE     2016-12-15
 
     Copyright 2012-2016
 
@@ -933,13 +933,15 @@
 					</p:processor>
 					<!-- Serialize -->
 					<p:processor name="oxf:http-serializer">
-						<p:input name="config">
-							<config>
+						<p:input name="config" href="#instance" transform="oxf:xslt">
+							<config xsl:version="2.0">
 								<cache-control><use-local-cache>false</use-local-cache></cache-control>
-								<header>
-									<name>Access-Control-Allow-Origin</name>
-									<value>*</value>
-								</header>
+								<xsl:if test="not(theatre/@cors='no')">
+									<header>
+										<name>Access-Control-Allow-Origin</name>
+										<value>*</value>
+									</header>
+								</xsl:if>
 							</config>
 						</p:input>
 						<p:input name="data" href="#converted"/>
@@ -966,13 +968,15 @@
 					</p:processor>
 					<!-- Serialize -->
 					<p:processor name="oxf:http-serializer">
-						<p:input name="config">
-							<config>
+						<p:input name="config" href="#instance" transform="oxf:xslt">
+							<config xsl:version="2.0">
 								<cache-control><use-local-cache>false</use-local-cache></cache-control>
-								<header>
-									<name>Access-Control-Allow-Origin</name>
-									<value>*</value>
-								</header>
+								<xsl:if test="not(theatre/@cors='no')">
+									<header>
+										<name>Access-Control-Allow-Origin</name>
+										<value>*</value>
+									</header>
+								</xsl:if>
 							</config>
 						</p:input>
 						<p:input name="data" href="#converted"/>
