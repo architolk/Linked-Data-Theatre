@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.13.1-SNAPSHOT
-    DATE     2016-12-11
+    DATE     2016-12-16
 
     Copyright 2012-2016
 
@@ -553,7 +553,7 @@
 			<link rel="stylesheet" type="text/css" href="{$staticroot}/css/signin.min.css"/>
 		</xsl:if>
 
-		<script type="text/javascript" src="{$staticroot}/js/jquery-1.11.3.min.js"></script>
+		<script type="text/javascript" src="{$staticroot}/js/jquery-3.1.1.min.js"></script>
 		<script type="text/javascript" src="{$staticroot}/js/jquery.dataTables.min.js"></script>
 		<script type="text/javascript" src="{$staticroot}/js/dataTables.bootstrap.min.js"></script>
 		<script type="text/javascript" src="{$staticroot}/js/bootstrap.min.js"></script>
