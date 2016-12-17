@@ -41,16 +41,71 @@
 <xsl:output method="xml" indent="yes"/>
 
 <xsl:template match="rdf:RDF" mode="ModelAppearance">
-	<link rel="stylesheet" href="{$staticroot}/css/joint.css" />
-    <script src="{$staticroot}/js/lodash.js"></script>
-    <script src="{$staticroot}/js/backbone.js"></script>
-    <script src="{$staticroot}/js/joint.js"></script>
+	<link rel="stylesheet" href="{$staticroot}/css/joint.min.css" />
+    <script src="{$staticroot}/js/lodash.min.js"></script>
+    <script src="{$staticroot}/js/backbone.min.js"></script>
+	<script src="{$staticroot}/js/graphlib.min.js"></script>
+	<script src="{$staticroot}/js/dagre.min.js"></script>
+    <script src="{$staticroot}/js/joint.min.js"></script>
+	<!--<script src="{$staticroot}/js/joint.layout.DirectedGraph.min.js"></script>-->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
 			<h3 class="panel-title">Model</h3>
 		</div>
 		<div class="panel-body">
 			<div id="jointmodel"/>
+			<xsl:variable name="nodes">
+				<xsl:for-each select="rdf:Description[@rdf:about!='']">
+					<node><xsl:value-of select="@rdf:about"/></node>
+				</xsl:for-each>
+			</xsl:variable>
+			<xsl:variable name="cells">
+				<!-- Nodes -->
+				<xsl:for-each select="rdf:Description">
+					<xsl:if test="position()!=1">,</xsl:if>
+					<xsl:text>{id:"</xsl:text><xsl:value-of select="@rdf:about"/><xsl:text>"</xsl:text>
+					<xsl:text>,type:"basic.Rect"</xsl:text>
+					<xsl:text>,position:{x:300,y:300}</xsl:text>
+					<xsl:text>,size:{width:100,height:30}</xsl:text>
+					<xsl:text>,attrs:{text: {text: "</xsl:text><xsl:value-of select="rdfs:label"/><xsl:text>"}}</xsl:text>
+					<xsl:text>}</xsl:text>
+				</xsl:for-each>
+				<!-- Links -->
+				<xsl:for-each select="rdf:Description/*[@rdf:resource!='']">
+					<xsl:variable name="target" select="@rdf:resource"/>
+					<xsl:if test="exists($nodes/node[.=$target])">
+						<xsl:text>,{id:"</xsl:text><xsl:value-of select="../@rdf:about"/><xsl:value-of select="@rdf:resource"/><xsl:text>"</xsl:text>
+						<xsl:text>,type:"link"</xsl:text>
+						<xsl:text>,source:{id:"</xsl:text><xsl:value-of select="../@rdf:about"/><xsl:text>"}</xsl:text>
+						<xsl:text>,target:{id:"</xsl:text><xsl:value-of select="@rdf:resource"/><xsl:text>"}</xsl:text>
+						<xsl:text>,labels: [{ position: 0.5, attrs: { text: { text: "label" } } }]</xsl:text>
+						<xsl:text>}</xsl:text>
+					</xsl:if>
+				</xsl:for-each>
+			</xsl:variable>
+			<script type="text/javascript">
+
+				var graph = new joint.dia.Graph;
+
+				var paper = new joint.dia.Paper({
+					el: $('#jointmodel'),
+					width: "100%",
+					height: 400,
+					model: graph,
+					gridSize: 1
+				});
+				
+				graph.fromJSON({cells: [<xsl:value-of select="$cells"/>]});
+				
+				var graphBBox = joint.layout.DirectedGraph.layout(graph, {
+					nodeSep: 50,
+					edgeSep: 80,
+					rankDir: "TB"
+				});
+
+
+			</script>
+			<!--
 			<script type="text/javascript">
 
 				var graph = new joint.dia.Graph;
@@ -129,7 +184,10 @@
 				graph.addCells([rect, rect2, link]);
 
 				graph.addCell(s1);
+				
+				alert(JSON.stringify(graph.toJSON()));
 			</script>
+			-->
 		</div>
 	</div>
 </xsl:template>

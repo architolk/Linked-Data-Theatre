@@ -28,6 +28,106 @@ stage:UploadedVocabulary a elmo:Representation;
 	''';
 .
 
+stage:UploadedShapes a elmo:Representation;
+	elmo:url-pattern "/query/uploaded-shapes$";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:VocabularyAppearance;
+	elmo:query '''
+		prefix shacl: <http://www.w3.org/ns/shacl#>
+		construct {
+			?shape ?sp ?so.
+			?class rdf:type rdfs:Class.
+			?class rdfs:comment "".
+			?subclass rdfs:subClassOf ?superclass.
+			?superclass rdf:type rdfs:Class.
+			?pc ?pcp ?pco.
+			?property rdf:type rdf:Property.
+			?property rdfs:comment "".
+			?subproperty rdfs:subPropertyOf ?superproperty.
+			?superproperty rdf:type rdf:Property.
+		}
+		where {
+			graph <http://localhost:8080/container/upload> {
+				?shape a shacl:Shape.
+				?shape ?sp ?so.
+				OPTIONAL {
+					?shape shacl:scopeClass ?class.
+					OPTIONAL {
+						?class rdfs:subClassOf* ?subclass.
+						?subclass rdfs:subClassOf ?superclass
+					}
+				}
+				OPTIONAL {
+					?shape shacl:property ?pc.
+					?pc ?pcp ?pco.
+					OPTIONAL {
+						?pc shacl:predicate ?property.
+						OPTIONAL {
+							?property rdfs:subPropertyOf* ?subproperty.
+							?subproperty rdfs:subPropertyOf ?superproperty
+						}
+					}
+				}
+			}
+		}
+	''';
+.
+
+stage:UploadedShapesAppearanceYed a elmo:Representation;
+	elmo:url-pattern	"/query/uploaded-shapes\\.yed$";
+	elmo:layer elmo:TopLayer;
+	elmo:fragment [
+		elmo:applies-to rdfs:subClassOf;
+		rdfs:label "";
+		yed:sourceArrow "none";
+		yed:targetArrow "white_delta";
+	];
+	elmo:query '''
+		prefix shacl: <http://www.w3.org/ns/shacl#>
+		CONSTRUCT {
+			?element rdfs:comment ?attribs.
+			?element rdfs:subClassOf ?super.
+			?element ?pc ?class.
+			?element rdf:type owl:Class.
+			?pc rdfs:label ?plabel.
+		}
+		WHERE {
+			GRAPH <http://localhost:8080/container/upload> {
+				?shape shacl:scopeClass ?element.
+				OPTIONAL {?element rdfs:subClassOf ?super}
+				OPTIONAL {
+					select ?shape ?pc ?class (concat(if(bound(?plabel),?plabel,strafter(str(?pred),"#"))," [",if(bound(?minc),?minc,"0"),",",if(bound(?maxc),?maxc,"n"),"]") as ?plabel)
+					where {
+						?shape shacl:property ?pc.
+						?pc shacl:predicate ?pred.
+						?pc shacl:class ?class.
+						OPTIONAL {?pred rdfs:label ?plabel}
+						OPTIONAL {?pc shacl:minCount ?minc}
+						OPTIONAL {?pc shacl:maxCount ?maxc}
+						FILTER NOT EXISTS {?pc shacl:in ?col}
+					}
+				}
+				OPTIONAL {
+					select ?shape (group_concat(concat(if(bound(?plabel),?plabel,strafter(str(?pred),"#"))," (",strafter(str(?datatype),"#"),") [",if(bound(?minc),?minc,"0"),",",?maxc,"]");separator="\\n") as ?attribs)
+					where {
+						?shape shacl:property ?pc.
+						?pc shacl:predicate ?pred.
+						OPTIONAL {?pc shacl:datatype ?datatype}
+						OPTIONAL {?pc shacl:minCount ?minc}
+						OPTIONAL {?pc shacl:maxCount ?maxc}
+						FILTER NOT EXISTS {
+							?pc shacl:class ?class.
+							?class rdf:type owl:Class.
+						}
+					}
+					group by ?shape
+				}
+			}
+		}
+	''';
+.
+
 stage:UploadedVocabularyAppearanceYed a elmo:Representation;
 	elmo:url-pattern	"/query/uploaded-vocabulary\\.yed$";
 	elmo:layer elmo:TopLayer;

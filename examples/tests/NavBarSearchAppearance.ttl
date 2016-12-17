@@ -54,10 +54,11 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:data [elmo:index "2"; rdfs:label "XPL container"; html:link "container/xpl"];
 			elmo:data [elmo:index "3"; rdfs:label "Container with post query"; html:link "container/query"];
 			elmo:data [elmo:index "4"; rdfs:label "Container with predef post query"; html:link "container/defquery"];
-			elmo:data [elmo:index "5"; rdfs:label "Upload (vocabulary)"; html:link "container/upload"];
-			elmo:data [elmo:index "6"; rdfs:label "Show uploaded vocabulary"; html:link "query/uploaded-vocabulary"];
-			elmo:data [elmo:index "7"; rdfs:label "Show uploaded vocabulary model"; html:link "query/uploaded-vocabulary.yed"];
-			elmo:data [elmo:index "8"; rdfs:label "DMN container"; html:link "container/dmn"];
+			elmo:data [elmo:index "5"; rdfs:label "DMN container"; html:link "container/dmn"];
+			elmo:data [elmo:index "6"; rdfs:label "Upload (vocabulary or shapes)"; html:link "container/upload"];
+			elmo:data [elmo:index "7"; rdfs:label "Show uploaded vocabulary"; html:link "query/uploaded-vocabulary"];
+			elmo:data [elmo:index "8"; rdfs:label "Show uploaded shapes"; html:link "query/uploaded-shapes"];
+			elmo:data [elmo:index "9"; rdfs:label "Show uploaded vocabulary model"; html:link "query/uploaded-vocabulary.yed"];
 		];
 		elmo:data [
 			elmo:index "5";
