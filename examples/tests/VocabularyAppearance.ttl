@@ -49,6 +49,18 @@ stage:UploadedShapes a elmo:Representation;
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:appearance elmo:VocabularyAppearance;
+	elmo:query stage:UploadedShapesQuery;
+.
+
+stage:UploadedShapesModel a elmo:Representation;
+	elmo:url-pattern "/query/uploaded-shapes-model";
+	elmo:index "1";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:ModelAppearance;
+	elmo:query stage:UploadedShapesQuery;
+.
+stage:UploadedShapesQuery a elmo:Query;
 	elmo:query '''
 		prefix shacl: <http://www.w3.org/ns/shacl#>
 		construct {

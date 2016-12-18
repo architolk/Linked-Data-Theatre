@@ -58,6 +58,7 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:data [elmo:index "6"; rdfs:label "Upload (vocabulary or shapes)"; html:link "container/upload"];
 			elmo:data [elmo:index "7"; rdfs:label "Show uploaded vocabulary"; html:link "query/uploaded-vocabulary"];
 			elmo:data [elmo:index "8"; rdfs:label "Show uploaded shapes"; html:link "query/uploaded-shapes"];
+			elmo:data [elmo:index "8"; rdfs:label "Show uploaded shapes model"; html:link "query/uploaded-shapes-model"];
 			elmo:data [elmo:index "9"; rdfs:label "Show uploaded vocabulary yEd model"; html:link "query/uploaded-vocabulary.yed"];
 			elmo:data [elmo:index "9"; rdfs:label "Show uploaded vocabulary model"; html:link "query/uploaded-model"];
 		];
