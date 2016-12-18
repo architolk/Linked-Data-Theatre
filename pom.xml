@@ -120,6 +120,7 @@
 								<jsSourceFile>d3graphs-inner.js</jsSourceFile>
 								<jsSourceFile>leaflet.label.js</jsSourceFile>
 								<jsSourceFile>linkeddatamap.js</jsSourceFile>
+								<jsSourceFile>linkedmodel.js</jsSourceFile>
 								<jsSourceFile>rdfmap.js</jsSourceFile>
 								<jsSourceFile>ldt.js</jsSourceFile>
 							</jsSourceFiles>

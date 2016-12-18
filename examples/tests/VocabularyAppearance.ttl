@@ -28,6 +28,22 @@ stage:UploadedVocabulary a elmo:Representation;
 	''';
 .
 
+stage:UploadedModelAppearance a elmo:Representation;
+	elmo:url-pattern "/query/uploaded-model";
+	elmo:index "1";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:ModelAppearance;
+	elmo:query '''
+		construct {?s?p?o}
+		where {
+			graph <http://localhost:8080/container/upload> {
+				?s?p?o
+			}
+		}
+	''';
+.
+
 stage:UploadedShapes a elmo:Representation;
 	elmo:url-pattern "/query/uploaded-shapes$";
 	elmo:contains stage:HeaderAppearance;
