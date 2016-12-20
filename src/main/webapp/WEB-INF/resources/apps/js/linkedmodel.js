@@ -1,7 +1,7 @@
 /*
- * NAME     linkeddatamap.js
- * VERSION  1.13.1-SNAPSHOT
- * DATE     2016-12-18
+ * NAME     linkedmodel.js
+ * VERSION  1.13.1
+ * DATE     2016-12-20
  *
  * Copyright 2012-2016
  *
