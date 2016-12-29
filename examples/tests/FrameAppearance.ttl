@@ -14,7 +14,7 @@ stage:FrameAppearance_Frame a elmo:Part;
 	elmo:appearance elmo:FrameAppearance;
 	elmo:data [
 		elmo:data [
-			html:link "/query/TextAppearance";
+			html:link "/query/FrameLeft";
 			elmo:index "1";
 		];
 		elmo:data [
@@ -25,24 +25,35 @@ stage:FrameAppearance_Frame a elmo:Part;
 .
 
 stage:FrameAppearance_Left a elmo:Representation;
-	elmo:url-pattern "/query/FrameLeft";
+	elmo:url-pattern "/query/FrameLeft$";
 	elmo:appearance elmo:HtmlAppearance;
 	elmo:data [
 		rdfs:label "Left";
 		elmo:html '''
 			<p>Frame left</p>
-			<a href="#" onclick="parent.document.getElementsByName('frame2')[0].src='/query/FrameLeft'; return false;">BLUB</a>
+			<a href="#" onclick="parent.document.getElementsByName('frame2')[0].src='/query/FrameRight2'; return false;">Refresh right frame</a>
 		''';
 	]
 .
 
 stage:FrameAppearance_Right a elmo:Representation;
-	elmo:url-pattern "/query/FrameRight";
+	elmo:url-pattern "/query/FrameRight$";
 	elmo:appearance elmo:HtmlAppearance;
 	elmo:data [
 		rdfs:label "Right";
 		elmo:html '''
 			<p>Frame right</p>
+		''';
+	]
+.
+
+stage:FrameAppearance_Right2 a elmo:Representation;
+	elmo:url-pattern "/query/FrameRight2$";
+	elmo:appearance elmo:HtmlAppearance;
+	elmo:data [
+		rdfs:label "Right (new content)";
+		elmo:html '''
+			<p>Frame right (new content)</p>
 		''';
 	]
 .
