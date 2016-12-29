@@ -1,0 +1,71 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix container: <http://localhost:8080/container/>.
+@prefix stage: <http://localhost:8080/stage#>.
+
+container:excel a elmo:Container;
+	elmo:translator elmo:TableExcelTranslator;
+	elmo:contains stage:NavbarSearchAppearance;
+	rdfs:label "Upload Linked Data (Excel fie)";
+.
+
+container:upload a elmo:Container;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:representation elmo:UploadRepresentation;
+	rdfs:label "Upload vocabulary";
+.
+
+container:xpl a elmo:Container;
+	elmo:translator elmo:XPLTranslator;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:representation elmo:UploadRepresentation;
+	rdfs:label "Upload XPL (zip file or XPL file)";
+.
+
+container:dmn a elmo:Container;
+	elmo:translator elmo:DMNTranslator;
+	elmo:contains stage:NavbarSearchAppearance;
+	rdfs:label "Upload DMN";
+.
+
+container:query a elmo:Container;
+	elmo:contains stage:NavbarSearchAppearance;
+	rdfs:label "Upload with post query";
+	elmo:query '''
+		prefix container: <http://localhost:8080/container/>
+		insert into container:query {
+			container:query void:triples ?count
+		}
+		where {
+			select (count(*) as ?count)
+			where {
+				graph container:query {
+					?s?p?o
+				}
+			}
+		}
+	''';
+.
+
+container:defquery a elmo:Container;
+	elmo:contains stage:NavbarSearchAppearance;
+	rdfs:label "Upload with predefined post query";
+	elmo:query stage:ContainerQuery;
+.
+
+stage:ContainerQuery a elmo:Query;
+	elmo:query '''
+		prefix container: <http://localhost:8080/container/>
+		insert into container:defquery {
+			container:defquery void:triples ?count
+		}
+		where {
+			select (count(*) as ?count)
+			where {
+				graph container:defquery {
+					?s?p?o
+				}
+			}
+		}
+	''';
+.

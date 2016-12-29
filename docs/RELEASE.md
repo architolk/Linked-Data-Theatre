@@ -23,7 +23,7 @@ Change this in the `\pom.xml` maven project file:
 (This example shows only the relevant lines from the pom.xml. This example refers to a release with version 1.6.0 and release data march 13, 2016).
 
 ##2. Change the README.md description
-The README.md contains a link to the most recent major release of the Linked Data Theatre. In case of a major release: update this link.
+The README.md contains a link to the most recent release of the Linked Data Theatre. In case of a major or minor release: update this link.
 
 ##3. Check if all license headers are set correctly
 All license-headers should have the release version included. This means that all files should have the same date for major and minor releases (the release date). A patch release leaves the version header of unchanged files to the version of the major/minor release.
@@ -43,7 +43,7 @@ You should perform a regression test. A regression test is currently not part of
 ##6. Commit changes to github and create release tag
 For example (refering to release 1.6.0):
 
-	git add *
+	git add -A
 	git commit -m "Release 1.6.0"
 	git push origin
 	git tag -a v1.6.0 -m "Release 1.6.0"

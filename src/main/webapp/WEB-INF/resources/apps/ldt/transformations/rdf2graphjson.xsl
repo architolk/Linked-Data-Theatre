@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2graphjson.xsl
-    VERSION  1.11.1-SNAPSHOT
-    DATE     2016-09-26
+    VERSION  1.13.0
+    DATE     2016-12-06
 
     Copyright 2012-2016
 
@@ -55,9 +55,17 @@
 		<xsl:value-of select="$rdfs-label"/>
 		<xsl:if test="$rdfs-label=''"><xsl:value-of select="$uri"/></xsl:if>
 	</xsl:variable>
-	<xsl:variable name="class">
+	<xsl:variable name="styles">
 		<xsl:for-each select="key('resource',$uri)/elmo:style">
-			<xsl:value-of select="key('resource',@rdf:resource)/elmo:name"/>
+			<xsl:variable name="style"><xsl:value-of select="key('resource',@rdf:resource)/elmo:name"/></xsl:variable>
+			<xsl:if test="$style!=''">
+				<style index="{/root/view/representation/fragment[@applies-to=$style]/elmo:index}"><xsl:value-of select="key('resource',@rdf:resource)/elmo:name"/></style>
+			</xsl:if>
+		</xsl:for-each>
+	</xsl:variable>
+	<xsl:variable name="class">
+		<xsl:for-each select="$styles/style"><xsl:sort select="@index"/>
+			<xsl:if test="position()=1"><xsl:value-of select="."/></xsl:if>
 		</xsl:for-each>
 	</xsl:variable>
 	<xsl:text>"nodes":[</xsl:text>
@@ -70,7 +78,7 @@
 		<xsl:for-each select="key('resource',$uri)/*[not(exists(@rdf:resource)) and local-name()!='label']">
 			<xsl:if test="position()!=1">,</xsl:if>
 			<xsl:text>"</xsl:text><xsl:value-of select="local-name()"/><xsl:text>":"</xsl:text>
-			<xsl:value-of select="."/><xsl:text>"</xsl:text>
+			<xsl:value-of select="translate(.,$dblquote,$quote)"/><xsl:text>"</xsl:text>
 		</xsl:for-each>
 	<xsl:text>}</xsl:text>
 	<xsl:text>}</xsl:text>
@@ -82,9 +90,17 @@
 			<xsl:value-of select="$ordfs-label"/>
 			<xsl:if test="$ordfs-label=''"><xsl:value-of select="$ouri"/></xsl:if>
 		</xsl:variable>
-		<xsl:variable name="oclass">
+		<xsl:variable name="styles">
 			<xsl:for-each select="key('resource',$ouri)/elmo:style">
-				<xsl:value-of select="key('resource',@rdf:resource)/elmo:name"/>
+				<xsl:variable name="style"><xsl:value-of select="key('resource',@rdf:resource)/elmo:name"/></xsl:variable>
+				<xsl:if test="$style!=''">
+					<style index="{/root/view/representation/fragment[@applies-to=$style]/elmo:index}"><xsl:value-of select="key('resource',@rdf:resource)/elmo:name"/></style>
+				</xsl:if>
+			</xsl:for-each>
+		</xsl:variable>
+		<xsl:variable name="oclass">
+			<xsl:for-each select="$styles/style"><xsl:sort select="@index"/>
+				<xsl:if test="position()=1"><xsl:value-of select="."/></xsl:if>
 			</xsl:for-each>
 		</xsl:variable>
 		<xsl:text>,{"@id":"</xsl:text><xsl:value-of select="$ouri"/><xsl:text>"</xsl:text>
@@ -96,7 +112,7 @@
 			<xsl:for-each select="key('resource',$ouri)/*[not(exists(@rdf:resource)) and local-name()!='label']">
 				<xsl:if test="position()!=1">,</xsl:if>
 				<xsl:text>"</xsl:text><xsl:value-of select="local-name()"/><xsl:text>":"</xsl:text>
-				<xsl:value-of select="."/><xsl:text>"</xsl:text>
+				<xsl:value-of select="translate(.,$dblquote,$quote)"/><xsl:text>"</xsl:text>
 			</xsl:for-each>
 		<xsl:text>}</xsl:text>
 		<xsl:text>}</xsl:text>
@@ -111,9 +127,17 @@
 				<xsl:value-of select="$ordfs-label"/>
 				<xsl:if test="$ordfs-label=''"><xsl:value-of select="$ouri"/></xsl:if>
 			</xsl:variable>
-			<xsl:variable name="oclass">
+			<xsl:variable name="styles">
 				<xsl:for-each select="key('resource',$ouri)/elmo:style">
-					<xsl:value-of select="key('resource',@rdf:resource)/elmo:name"/>
+					<xsl:variable name="style"><xsl:value-of select="key('resource',@rdf:resource)/elmo:name"/></xsl:variable>
+					<xsl:if test="$style!=''">
+						<style index="{/root/view/representation/fragment[@applies-to=$style]/elmo:index}"><xsl:value-of select="key('resource',@rdf:resource)/elmo:name"/></style>
+					</xsl:if>
+				</xsl:for-each>
+			</xsl:variable>
+			<xsl:variable name="oclass">
+				<xsl:for-each select="$styles/style"><xsl:sort select="@index"/>
+					<xsl:if test="position()=1"><xsl:value-of select="."/></xsl:if>
 				</xsl:for-each>
 			</xsl:variable>
 			<xsl:text>,{"@id":"</xsl:text><xsl:value-of select="$ouri"/><xsl:text>"</xsl:text>
@@ -121,7 +145,13 @@
 			<xsl:if test="$oclass!=''">
 				<xsl:text>,"class":"</xsl:text><xsl:value-of select="$oclass"/><xsl:text>"</xsl:text>
 			</xsl:if>
-			<xsl:text>,"data":{}</xsl:text>
+			<xsl:text>,"data":{</xsl:text>
+				<xsl:for-each select="key('resource',$ouri)/*[not(exists(@rdf:resource)) and local-name()!='label']">
+					<xsl:if test="position()!=1">,</xsl:if>
+					<xsl:text>"</xsl:text><xsl:value-of select="local-name()"/><xsl:text>":"</xsl:text>
+					<xsl:value-of select="translate(.,$dblquote,$quote)"/><xsl:text>"</xsl:text>
+				</xsl:for-each>
+			<xsl:text>}</xsl:text>
 			<xsl:text>}</xsl:text>
 		</xsl:if>
 	</xsl:for-each-group>

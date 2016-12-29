@@ -1,0 +1,23 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+stage:GeoAppearancePointer a elmo:Representation;
+	elmo:url-pattern "/query/GeoAppearancePointer$";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:GeoAppearance;
+	elmo:query '''
+		prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+		prefix elmo: <http://bp4mc2.org/elmo/def#>
+		construct {
+			<urn:pointer> rdf:type elmo:GeoLocator.
+#			<urn:pointer> geo:geometry "POINT(5.38 52.155)".
+			<urn:pointer> geo:lat "52.155".
+			<urn:pointer> geo:long "5.38".
+			<urn:pointer> rdfs:label "Here!".
+		}
+		WHERE {}
+	''';
+.

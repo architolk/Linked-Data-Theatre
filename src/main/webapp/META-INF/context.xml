@@ -1,8 +1,8 @@
 <!--
 
     NAME     context.xml
-    VERSION  1.11.0
-    DATE     2016-09-18
+    VERSION  1.13.0
+    DATE     2016-12-06
 
     Copyright 2012-2016
 
@@ -25,9 +25,9 @@
 <!--
     DESCRIPTION
     Configuration of Virtuoso JDBC
-	
+
     WARNING: reloadable is set to true for development and testing purposes. Set to false in production environments!
-    
+
 	Set username and password to the username and password for your environment
 -->
 <Context reloadable="true">

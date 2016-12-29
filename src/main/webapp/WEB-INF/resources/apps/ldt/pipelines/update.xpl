@@ -1,8 +1,8 @@
 <!--
 
     NAME     update.xpl
-    VERSION  1.11.0
-    DATE     2016-09-18
+    VERSION  1.13.0
+    DATE     2016-12-06
 
     Copyright 2012-2016
 
@@ -129,12 +129,19 @@
 		<p:input name="config" href="../transformations/rdf2view.xsl"/>
 		<p:output name="data" id="querytext"/>
 	</p:processor>
-
+<!--
+<p:processor name="oxf:xml-serializer">
+	<p:input name="config">
+		<config/>
+	</p:input>
+	<p:input name="data" href="#defquery"/>
+</p:processor>
+-->
 	<p:for-each href="#querytext" select="/view/(scene|representation)" root="results" id="sparql">
 	
 		<p:choose href="current()">
 			<!-- queryForm constraint not satisfied, so query won't succeed: show form -->
-			<p:when test="representation/queryForm/@satisfied!='' or scene/../production/queryForm/@satisfied!=''">
+			<p:when test="representation/queryForm/@satisfied!=''">
 				<p:processor name="oxf:identity">
 					<p:input name="data">
 						<rdf:RDF/>

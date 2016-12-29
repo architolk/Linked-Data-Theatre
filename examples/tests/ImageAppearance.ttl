@@ -1,0 +1,41 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+@prefix void: <http://rdfs.org/ns/void#>.
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
+
+stage:ImageAppearance	a	elmo:Representation;
+	elmo:url-pattern	"/query/ImageAppearance$";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:ImageAppearance;
+#	elmo:container <http://demo.localhost/container/update>;
+	elmo:query '''
+		prefix html: <http://www.w3.org/1999/xhtml/vocab#>
+		prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+		prefix elmo: <http://bp4mc2.org/elmo/def#>
+		prefix testo: <http://localhost:8080/def/test#>
+		construct {
+			<urn:image> html:img "/images/planboard.png".
+			<urn:image> html:width "3440.640".
+			<urn:image> html:height "1720.320".
+			<urn:image> html:top "0".
+			<urn:image> html:left "0".
+			?item rdfs:label ?itemlabel.
+			?item geo:geometry ?previousgeo.
+			?current geo:geometry ?currentgeo.
+			?item testo:status ?current.
+		}
+		where {
+			?item rdf:type testo:UserStory.
+			?item rdfs:label ?itemlabel.
+			?item testo:status ?current.
+			?current geo:geometry ?currentgeo.
+			?item testo:prevStatus ?previous.
+			?previous geo:geometry ?previousgeo.
+			
+		}
+	''';
+.

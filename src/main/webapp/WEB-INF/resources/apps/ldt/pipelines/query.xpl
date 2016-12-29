@@ -1,8 +1,8 @@
 <!--
 
     NAME     query.xpl
-    VERSION  1.11.0
-    DATE     2016-09-18
+    VERSION  1.13.1
+    DATE     2016-12-20
 
     Copyright 2012-2016
 
@@ -25,7 +25,7 @@
 <!--
     DESCRIPTION
 	Pipeline to proces read-request to the linked data theatre
-	
+
 -->
 <p:config xmlns:p="http://www.orbeon.com/oxf/pipeline"
 		  xmlns:xforms="http://www.w3.org/2002/xforms"
@@ -44,7 +44,7 @@
 
 	<!-- Configuration> -->
 	<p:param type="input" name="instance"/>
-		  
+
 	<!-- Generate original request -->
 	<p:processor name="oxf:request">
 		<p:input name="config">
@@ -65,7 +65,7 @@
 		<p:input name="config" href="../transformations/context.xsl"/>
 		<p:output name="data" id="context"/>
 	</p:processor>
-	
+
 	<!-- Look for possible query in query graph -->
 	<!-- Execute SPARQL statement -->
 	<p:choose href="#context">
@@ -157,7 +157,7 @@
 			</p:processor>
 		</p:otherwise>
 	</p:choose>
-	
+
 	<p:choose href="#context">
 		<!-- Use predefined representation from LDT for elmo-representations -->
 		<p:when test="substring-after(context/representation,'http://bp4mc2.org/elmo/def#')!=''">
@@ -234,6 +234,8 @@
 										?fragmentchild ?fragmentchildp ?fragmentchildo.
 										?form ?formp ?formo.
 										?ff ?ffp ?ffo.
+                    ?rep elmo:query ?query.
+                    ?repchild elmo:query ?querychild.
 									}
 									WHERE {
 										GRAPH <]]><xsl:value-of select="root/context/representation-graph/@uri"/><![CDATA[>{
@@ -246,7 +248,8 @@
 												OPTIONAL {
 													?rep elmo:contains ?repchild.
 													?repchild ?repchildp ?repchildo.
-													OPTIONAL { ?repchild elmo:fragment ?fragmentchild. ?fragmentchild ?fragmentchildp ?fragmentchildo } 
+													OPTIONAL { ?repchild elmo:fragment ?fragmentchild. ?fragmentchild ?fragmentchildp ?fragmentchildo }
+                          OPTIONAL { ?repchild elmo:query/elmo:query ?querychild }
 												}
 												OPTIONAL {
 													?rep elmo:queryForm ?form.
@@ -254,6 +257,7 @@
 													?form elmo:fragment ?ff.
 													?ff ?ffp ?ffo.
 												}
+                        OPTIONAL { ?rep elmo:query/elmo:query ?query }
 											}]]></xsl:for-each><![CDATA[
 										}
 									}
@@ -268,7 +272,7 @@
 				<p:input name="data" href="aggregate('root',#context,#representations)"/>
 				<p:output name="data" id="defquerytext"/>
 			</p:processor>
-			
+
 			<!-- Fetch query definition(s) -->
 			<p:processor name="oxf:xforms-submission">
 				<p:input name="submission" transform="oxf:xslt" href="#context">
@@ -286,7 +290,7 @@
 			</p:processor>
 		</p:otherwise>
 	</p:choose>
-							
+
 	<!-- Query from graph representation -->
 	<p:processor name="oxf:xslt">
 		<p:input name="data" href="aggregate('root',#defquery,#context)"/>
@@ -303,7 +307,7 @@
 -->
 	<!-- More than one query is possible -->
 	<p:for-each href="#querytext" select="/view/representation" root="results" id="sparql">
-	
+
 		<p:choose href="current()">
 			<!-- queryForm constraint not satisfied, so query won't succeed: show form -->
 			<p:when test="representation/queryForm/@satisfied!=''">
@@ -364,6 +368,7 @@
 										</xsl:apply-templates>
 										<xsl:if test="not(exists(/root/context/parameters/parameter))"><xsl:value-of select="/root/representation/service/url"/></xsl:if>
 									</url>
+									<output><xsl:value-of select="/root/representation/service/output"/></output>
 									<xsl:choose>
 										<xsl:when test="/root/representation/service/body!=''">
 											<body>
@@ -378,6 +383,9 @@
 											<method>get</method>
 										</xsl:otherwise>
 									</xsl:choose>
+									<xsl:if test="exists(/root/representation/service/accept)">
+										<accept><xsl:value-of select="/root/representation/service/accept"/></accept>
+									</xsl:if>
 								</service>
 							</xsl:template>
 						</xsl:stylesheet>
@@ -389,9 +397,10 @@
 					<p:input name="config" href="#servicecall" transform="oxf:xslt">
 						<config xsl:version="2.0">
 							<input-type>text</input-type>
-							<output-type>json</output-type>
+							<output-type><xsl:value-of select="service/output"/></output-type>
 							<url><xsl:value-of select="service/url"/></url>
 							<method><xsl:value-of select="service/method"/></method>
+							<xsl:if test="service/accept!=''"><accept><xsl:value-of select="service/accept"/></accept></xsl:if>
 						</config>
 					</p:input>
 					<p:input name="data" href="#servicecall" transform="oxf:xslt">
@@ -399,7 +408,7 @@
 					</p:input>
 					<p:output name="data" id="service"/>
 				</p:processor>
-				<!-- Combine result with original parameters-->
+				<!-- Map result back to a sparql result -->
 				<p:processor name="oxf:xslt">
 					<p:input name="data" href="aggregate('root',current(),#service)"/>
 					<p:input name="config" href="../transformations/merge-parameters.xsl"/>
@@ -497,14 +506,14 @@
 					</p:input>
 					<p:output name="response" id="metadata"/>
 				</p:processor>
-				
+
 				<!-- Transform SQL to RDF -->
 				<p:processor name="oxf:xslt">
 					<p:input name="data" href="aggregate('root',#data,#metadata)"/>
 					<p:input name="config" href="../transformations/sql2rdf.xsl"/>
 					<p:output name="data" ref="sparql"/>
 				</p:processor>
-				
+
 			</p:when>
 			<p:otherwise>
 				<!-- Execute service if any -->
@@ -641,15 +650,18 @@
 					<p:input name="data" href="aggregate('root',current(),#context,#sparqlinput)"/>
 					<p:output name="data" id="query"/>
 				</p:processor>
-				
+
 				<!-- Get endpoint -->
 				<p:processor name="oxf:xslt">
 					<p:input name="config">
 						<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 							<xsl:template match="/root">
 								<xsl:variable name="endpoint">
-									<xsl:value-of select="representation/@endpoint"/>
-									<xsl:if test="not(representation/@endpoint!='')"><xsl:value-of select="context/local-endpoint"/></xsl:if>
+									<xsl:choose>
+										<xsl:when test="representation/@endpoint='http://bp4mc2.org/elmo/def#Backstage'"><xsl:value-of select="context/configuration-endpoint"/></xsl:when>
+										<xsl:when test="representation/@endpoint!=''"><xsl:value-of select="representation/@endpoint"/></xsl:when>
+										<xsl:otherwise><xsl:value-of select="context/local-endpoint"/></xsl:otherwise>
+									</xsl:choose>
 								</xsl:variable>
 								<endpoint>
 									<url><xsl:value-of select="$endpoint"/></url>
@@ -696,75 +708,9 @@
 				</p:processor>
 			</p:otherwise>
 		</p:choose>
-	
+
 	</p:for-each>
 
-	<!-- Look up fragments if applicable (TextAppearance) -->
-	<p:for-each href="#querytext" select="view/representation[@appearance='http://bp4mc2.org/elmo/def#TextAppearance']" root="docs" id="text">
-		<!-- Splits document URL van fragment xpath -->
-		<p:processor name="oxf:xslt">
-			<p:input name="data" href="aggregate('root',current(),#sparql)"/>
-			<p:input name="config">
-				<xsl:stylesheet version="2.0">
-					<xsl:template match="/root">
-						<xsl:variable name="representation-uri" select="representation/@uri"/>
-						<xsl:variable name="index" select="representation/@index"/>
-						<xsl:variable name="fragment"><xsl:value-of select="results/rdf:RDF[position()=$index]/rdf:Description[1]/@rdf:about"/></xsl:variable>
-						<params>
-							<fragment>
-								<xsl:text>//fragment</xsl:text>
-								<xsl:if test="substring-after($fragment,'#')!=''">/<xsl:value-of select="substring-after($fragment,'#')"/></xsl:if>
-							</fragment>
-							<publication-uri>
-								<xsl:value-of select="substring-before(concat($fragment,'#'),'#')"/>
-							</publication-uri>
-							<representation-uri>
-								<xsl:value-of select="representation/@uri"/>
-							</representation-uri>
-						</params>
-					</xsl:template>
-				</xsl:stylesheet>
-			</p:input>
-			<p:output name="data" id="params"/>
-		</p:processor>
-		<!-- Ophalen document uit relationele database -->
-		<p:processor name="oxf:sql">
-			<p:input name="data" href="#params"/>
-			<p:input name="config" transform="oxf:xslt" href="#params">
-				<sql:config xsl:version="2.0">
-					<xmldocs uri="{params/representation-uri}">
-						<sql:connection>
-						<sql:datasource>virtuoso</sql:datasource>
-							<sql:execute>
-								<sql:query>
-									select publication_uri,publication_datetime,part from xmldoc
-									where xpath_contains(document,<sql:param type="xs:string" select="params/fragment"/>,part)
-									and publication_uri=<sql:param type="xs:string" select="params/publication-uri"/>
-								</sql:query>
-								<sql:result-set>
-									<sql:row-iterator>
-										<xmldoc>
-											<publication-uri>
-												<sql:get-column-value type="xs:string" column="publication_uri"/>
-											</publication-uri>
-											<publication-datetime>
-												<sql:get-column-value type="xs:dateTime" column="publication_datetime"/>
-											</publication-datetime>
-											<document>
-												<sql:get-column-value type="odt:xmlFragment" column="part" xmlns:odt="http://orbeon.org/oxf/xml/datatypes"/>
-											</document>
-										</xmldoc>
-									</sql:row-iterator>
-								</sql:result-set>
-							</sql:execute>
-						</sql:connection>
-					</xmldocs>
-				</sql:config>
-			</p:input>
-			<p:output name="data" ref="text"/>
-		</p:processor>
-	</p:for-each>
-	
 	<p:choose href="aggregate('root',#context,#sparql)">
 		<!-- Check for errors -->
 		<p:when test="exists(root/results/parameters/error)">
@@ -797,15 +743,17 @@
 			</p:processor>
 		</p:when>
 		<!-- Check if there is any result, return 404 if no resource could be found and a subject is expected -->
-		<p:when test="root/context/representation='' and root/context/subject!='' and exists(root/results/rdf:RDF[1]) and not(exists(root/results/rdf:RDF[1]/*))">
-			<p:processor name="oxf:xslt">
+		<p:when test="root/context/representation='' and root/context/subject!='' and root/context/format!='application/x.elmo.query' and exists(root/results/rdf:RDF[1]) and not(exists(root/results/rdf:RDF[1]/*))">
+			<p:processor name="oxf:identity">
 				<p:input name="data">
-					<results>
-						<parameters>
-							<error>Resource niet gevonden.</error>
-						</parameters>
-					</results>
+					<parameters>
+							<error-nr>404</error-nr>
+					</parameters>
 				</p:input>
+				<p:output name="data" id="errortext"/>
+			</p:processor>
+			<p:processor name="oxf:xslt">
+				<p:input name="data" href="aggregate('results',#context,#errortext)"/>
 				<p:input name="config" href="../transformations/error2html.xsl"/>
 				<p:output name="data" id="html"/>
 			</p:processor>
@@ -837,7 +785,9 @@
 				<p:when test="context/format='application/xml'">
 					<p:processor name="oxf:xml-serializer">
 						<p:input name="config">
-							<config/>
+							<config>
+								<encoding>utf-8</encoding>
+							</config>
 						</p:input>
 						<p:input name="data" href="aggregate('results',#sparql#xpointer(/results/*))"/>
 					</p:processor>
@@ -846,7 +796,22 @@
 				<p:when test="context/format='application/rdf+xml'">
 					<p:processor name="oxf:xml-serializer">
 						<p:input name="config">
-							<config/>
+							<config>
+								<encoding>utf-8</encoding>
+								<content-type>application/rdf+xml</content-type>
+							</config>
+						</p:input>
+						<p:input name="data" href="#sparql#xpointer((/results/res:sparql|/results/rdf:RDF)[1])"/>
+					</p:processor>
+				</p:when>
+				<!-- SPARQL/XML -->
+				<p:when test="context/format='application/sparql-results+xml'">
+					<p:processor name="oxf:xml-serializer">
+						<p:input name="config">
+							<config>
+								<encoding>utf-8</encoding>
+								<content-type>application/sparql-results+xml</content-type>
+							</config>
 						</p:input>
 						<p:input name="data" href="#sparql#xpointer((/results/res:sparql|/results/rdf:RDF)[1])"/>
 					</p:processor>
@@ -855,9 +820,11 @@
 				<p:when test="context/format='application/x.elmo.query'">
 					<p:processor name="oxf:xml-serializer">
 						<p:input name="config">
-							<config/>
+							<config>
+								<encoding>utf-8</encoding>
+							</config>
 						</p:input>
-						<p:input name="data" href="#querytext"/>
+						<p:input name="data" href="aggregate('query',#context,#representations,#querytext)"/>
 					</p:processor>
 				</p:when>
 				<!-- Plain text -->
@@ -900,6 +867,7 @@
 						<p:input name="config">
 							<config>
 								<encoding>utf-8</encoding>
+								<content-type>text/turtle</content-type>
 							</config>
 						</p:input>
 						<p:input name="data" href="#ttl" />
@@ -928,6 +896,7 @@
 						<p:input name="config">
 							<config>
 								<encoding>utf-8</encoding>
+								<content-type>text/csv</content-type>
 							</config>
 						</p:input>
 						<p:input name="data" href="#csv" />
@@ -956,6 +925,7 @@
 						<p:input name="config">
 							<config>
 								<encoding>utf-8</encoding>
+								<content-type>application/ld+json</content-type>
 							</config>
 						</p:input>
 						<p:input name="data" href="#jsonld" />
@@ -963,13 +933,15 @@
 					</p:processor>
 					<!-- Serialize -->
 					<p:processor name="oxf:http-serializer">
-						<p:input name="config">
-							<config>
+						<p:input name="config" href="#instance" transform="oxf:xslt">
+							<config xsl:version="2.0">
 								<cache-control><use-local-cache>false</use-local-cache></cache-control>
-								<header>
-									<name>Access-Control-Allow-Origin</name>
-									<value>*</value>
-								</header>
+								<xsl:if test="not(theatre/@cors='no')">
+									<header>
+										<name>Access-Control-Allow-Origin</name>
+										<value>*</value>
+									</header>
+								</xsl:if>
 							</config>
 						</p:input>
 						<p:input name="data" href="#converted"/>
@@ -988,6 +960,7 @@
 						<p:input name="config">
 							<config>
 								<encoding>utf-8</encoding>
+								<content-type>application/ld+json</content-type>
 							</config>
 						</p:input>
 						<p:input name="data" href="#jsonld" />
@@ -995,13 +968,15 @@
 					</p:processor>
 					<!-- Serialize -->
 					<p:processor name="oxf:http-serializer">
-						<p:input name="config">
-							<config>
+						<p:input name="config" href="#instance" transform="oxf:xslt">
+							<config xsl:version="2.0">
 								<cache-control><use-local-cache>false</use-local-cache></cache-control>
-								<header>
-									<name>Access-Control-Allow-Origin</name>
-									<value>*</value>
-								</header>
+								<xsl:if test="not(theatre/@cors='no')">
+									<header>
+										<name>Access-Control-Allow-Origin</name>
+										<value>*</value>
+									</header>
+								</xsl:if>
 							</config>
 						</p:input>
 						<p:input name="data" href="#converted"/>
@@ -1136,7 +1111,7 @@
 				<p:when test="context/format='application/x.elmo.d3+json'">
 					<!-- Transform -->
 					<p:processor name="oxf:xslt">
-						<p:input name="data" href="aggregate('root',#context,#sparql)"/>
+						<p:input name="data" href="aggregate('root',#context,#sparql,#querytext)"/>
 						<p:input name="config" href="../transformations/rdf2graphjson.xsl"/>
 						<p:output name="data" id="graphjson"/>
 					</p:processor>
@@ -1145,6 +1120,7 @@
 						<p:input name="config">
 							<config>
 								<encoding>utf-8</encoding>
+								<content-type>application/ld+json</content-type>
 							</config>
 						</p:input>
 						<p:input name="data" href="#graphjson" />
@@ -1205,7 +1181,7 @@
 					</p:processor>
 				</p:when>
 				<!-- PDF -->
-				<p:when test="context/format='application/rdf'">
+				<p:when test="context/format='application/pdf'">
 					<!-- Transform -->
 					<p:processor name="oxf:xslt">
 						<p:input name="data" href="#sparql"/>
@@ -1240,7 +1216,7 @@
 				<p:otherwise>
 					<!-- Transform to annotated rdf -->
 					<p:processor name="oxf:xslt">
-						<p:input name="data" href="aggregate('root',#context,#querytext,#sparql,#text)"/>
+						<p:input name="data" href="aggregate('root',#context,#querytext,#sparql)"/>
 						<p:input name="config" href="../transformations/rdf2rdfa.xsl"/>
 						<p:output name="data" id="rdfa"/>
 					</p:processor>
@@ -1248,7 +1224,9 @@
 						<p:when test="context/format='application/x.elmo.rdfa'">
 							<p:processor name="oxf:xml-serializer">
 								<p:input name="config">
-									<config/>
+									<config>
+										<encoding>utf-8</encoding>
+									</config>
 								</p:input>
 								<p:input name="data" href="#rdfa"/>
 							</p:processor>

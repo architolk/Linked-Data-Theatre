@@ -1,0 +1,38 @@
+@prefix updatestage: <http://localhost:8080/update/>.
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+updatestage:DummyProduction a elmo:Production;
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:queryForm stage:DummyProduction_form;
+	elmo:contains stage:DummyProduction_scene1;
+	elmo:contains stage:DummyProduction_scene2;
+.
+
+stage:DummyProduction_form a elmo:Form;
+	elmo:fragment [
+		elmo:applies-to "testvalue";
+		rdfs:label "Testwaarde"@nl;
+		rdfs:label "Test value"@en;
+		elmo:index "1";
+		elmo:constraint elmo:MandatoryConstraint;
+	];
+	elmo:fragment [
+		elmo:appearance elmo:SubmitAppearance;
+		rdfs:label "Omzetten"@nl;
+	];
+.
+
+stage:DummyProduction_scene1 a elmo:Scene;
+	elmo:index "1";
+	rdfs:label "Clear graph";
+	elmo:query "clear graph <http://localhost:8080/id/dataset/dummy>";
+.
+stage:DummyProduction_scene2 a elmo:Scene;
+	elmo:index "2";
+	rdfs:label "Add testdata";
+	elmo:query '''insert into <http://localhost:8080/id/dataset/dummy> {<urn:test> rdfs:label "@TESTVALUE@"}''';
+.

@@ -1,8 +1,8 @@
 <!--
 
     NAME     context.xsl
-    VERSION  1.11.0
-    DATE     2016-09-18
+    VERSION  1.13.0
+    DATE     2016-12-06
 
     Copyright 2012-2016
 
@@ -32,7 +32,7 @@
 	<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="no"/>
 	
 	<xsl:template match="/root|/croot">
-		<xsl:variable name="uri-filter">[^a-zA-Z0-9:\.\-_~/()#]</xsl:variable>
+		<xsl:variable name="uri-filter">[^a-zA-Z0-9:\.\-_~/()#&amp;=,]</xsl:variable> <!-- ampersand and equal-sign added for Juriconnect -->
 		<xsl:variable name="x-forwarded-host"><xsl:value-of select="replace(request/headers/header[name='x-forwarded-host']/value,'^([^,]+).*$','$1')"/></xsl:variable>
 		<xsl:variable name="domain">
 			<xsl:value-of select="$x-forwarded-host"/> <!-- Use original hostname in case of proxy, first one in case of multiple proxies -->
@@ -47,7 +47,6 @@
 				<xsl:otherwise><xsl:value-of select="$docroot"/></xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
-		<xsl:variable name="stylesheet"><xsl:value-of select="theatre/site[@domain=$domain]/@css"/></xsl:variable>
 		<!-- Subdomain is the part after the docroot, but if the docroot is not part of the URL (in case of a proxy), the docroot is ignored -->
 		<xsl:variable name="subdomain2" select="substring-after(theatre/subdomain,$docroot)"/>
 		<xsl:variable name="subdomain1">
@@ -60,6 +59,12 @@
 		</xsl:variable>
 		<xsl:variable name="url-stage" select="replace($subdomain,'^/([^/]+)','$1')"/>
 		<xsl:variable name="stage" select="theatre/site[@domain=$domain]/stage[not(@name!='') or @name=substring($subdomain,2,string-length(@name))][1]"/>
+		<xsl:variable name="stylesheet">
+			<xsl:choose>
+				<xsl:when test="$stage/@css!=''"><xsl:value-of select="$stage/@css"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="theatre/site[@domain=$domain]/@css"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
 		<xsl:variable name="backstage" select="theatre/site[@backstage=$domain]/stage[not(@name!='') or @name=substring($subdomain,2,string-length(@name))][1]"/>
 		<xsl:variable name="config">
 			<xsl:choose>
@@ -95,8 +100,6 @@
 		<xsl:variable name="url-with-domain">
 			<xsl:choose>
 				<xsl:when test="$x-forwarded-host!=''"><xsl:value-of select="replace(request/request-url,'^([a-z]+://)([^/]+)(.*)',concat('$1',$x-forwarded-host,'$3'))"/></xsl:when>
-				<!-- TODO: Maybe http is not realy correct: what if it should be https?? -->
-<!--				<xsl:when test="$x-forwarded-host!=''">http://<xsl:value-of select="$x-forwarded-host"/><xsl:value-of select="request/request-path"/></xsl:when>-->
 				<xsl:otherwise><xsl:value-of select="request/request-url"/></xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
@@ -104,7 +107,7 @@
 		<xsl:variable name="url">
 			<xsl:choose>
 				<xsl:when test="$docroot=''"><xsl:value-of select="$url-with-domain"/></xsl:when>
-				<xsl:when test="matches(request/request-path,concat('^',$docroot))"><xsl:value-of select="$url-with-domain"/></xsl:when>
+				<xsl:when test="matches(request/request-url,concat('^([a-z]+://[^/]+)',$docroot))"><xsl:value-of select="$url-with-domain"/></xsl:when>
 				<xsl:otherwise><xsl:value-of select="replace($url-with-domain,'^([a-z]+://[^/]+)(.*)$',concat('$1',$docroot,'$2'))"/></xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
@@ -159,6 +162,8 @@
 					<xsl:when test="theatre/format='yed'">application/x.elmo.yed</xsl:when> <!-- Application specific mime-type -->
 					<xsl:when test="theatre/format='exml'">application/xml</xsl:when> <!-- Full XML, all resultsets -->
 					<xsl:when test="theatre/format='xml'">application/rdf+xml</xsl:when> <!-- Only first resultset, like ttl and json -->
+					<xsl:when test="theatre/format='rdf'">application/rdf+xml</xsl:when>
+					<xsl:when test="theatre/format='sparql'">application/sparql-results+xml</xsl:when>
 					<xsl:when test="theatre/format='txt'">text/plain</xsl:when>
 					<xsl:when test="theatre/format='csv'">text/csv</xsl:when>
 					<xsl:when test="theatre/format='ttl'">text/turtle</xsl:when>
@@ -166,12 +171,13 @@
 					<xsl:when test="theatre/format='jsonld'">application/json</xsl:when>
 					<xsl:when test="theatre/format='xlsx'">application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</xsl:when>
 					<xsl:when test="theatre/format='docx'">application/vnd.openxmlformats-officedocument.wordprocessingml.document</xsl:when>
-					<xsl:when test="theatre/format='pdf'">application/rdf</xsl:when>
+					<xsl:when test="theatre/format='pdf'">application/pdf</xsl:when>
 					<xsl:when test="theatre/format='xmi'">application/vnd.xmi+xml</xsl:when>
 					<xsl:when test="theatre/format='svgi'">application/x.elmo.svg+xml</xsl:when> <!-- Application specific mime-type -->
 					<xsl:when test="theatre/format='d3json'">application/x.elmo.d3+json</xsl:when> <!-- Application specific mime-type -->
 					<xsl:when test="theatre/format='query'">application/x.elmo.query</xsl:when> <!-- Application specific mime-type -->
 					<xsl:when test="theatre/format='rdfa'">application/x.elmo.rdfa</xsl:when> <!-- Application specific mime-type -->
+					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/sparql-results+xml')">application/sparql-results+xml</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/rdf+xml')">application/rdf+xml</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'text/turtle')">text/turtle</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'text/csv')">text/csv</xsl:when>
@@ -179,7 +185,7 @@
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/ld+json')">application/json</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')">application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/vnd.openxmlformats-officedocument.wordprocessingml.document')">application/vnd.openxmlformats-officedocument.wordprocessingml.document</xsl:when>
-					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/rdf')">application/rdf</xsl:when>
+					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/pdf')">application/pdf</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/vnd.xmi+xml')">application/vnd.xmi+xml</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'text/html')">text/html</xsl:when>
 					<xsl:otherwise>text/html</xsl:otherwise> <!-- If all fails: simply html -->

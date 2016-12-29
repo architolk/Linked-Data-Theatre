@@ -1,0 +1,33 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dbo: <http://dbpedia.org/ontology/>.
+@prefix dbpedia: <http://dbpedia.org/resource/>.
+@prefix dbp: <http://dbpedia.org/property/>.
+
+stage:ContentAppearance a elmo:Representation;
+	elmo:url-pattern "/query/ContentAppearance";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:index "1";
+	elmo:fragment [
+		elmo:applies-to elmo:Fragment;
+		html:meta rdf:nil;
+	];
+	elmo:fragment [
+		elmo:applies-to <http://localhost:8080/def/test#capitalCity>;
+		html:meta <http://localhost:8080/def/test#capitalCity>;
+		rdfs:label "hoofdstad?";
+		rdfs:comment "Hoofdstad van een land";
+	];
+	elmo:query '''
+		construct {
+			?s?p?o
+		}
+		where {
+			?s?p?o
+			FILTER (?s = <http://dbpedia.org/resource/Amersfoort>)
+		}
+	''';
+.

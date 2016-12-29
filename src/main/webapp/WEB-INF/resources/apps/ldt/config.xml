@@ -1,8 +1,8 @@
 <!--
 
     NAME     config.xml
-    VERSION  1.11.0
-    DATE     2016-09-18
+    VERSION  1.13.1
+    DATE     2016-12-20
 
     Copyright 2012-2016
 
@@ -28,13 +28,14 @@
 	- The configuration of stages;
 	- The declaration of roles;
 	- A placeholder for some context parameters (which will be filled at run-time)
- 
+
 	You should configure config.xml to your local settings:
 	- env: the environment (prod, test, dev). Only in dev will runtime errors be visible. Default = prod
     - configuration-endpoint: the SPARQL endpoint which contains the configurations of the Linked Data Theatre
     - local-endpoint: the SPARQL endpoint that is used as the default endpoint to fetch data
     - the tempdir, if any: the absolute path to the directory to be used by the linked data theatre for temporary files (default is the tomcat temp dir)
 	- sparql: states if a public sparql endpoint should be available at /sparql. "yes" means: make a public endpoint available.
+	- cors: states if the json-ld service should support CORS (no value defaults to 'yes')
     - the <site> node contains the configuration for every domainname that is served by the LDT
       - domain: the domainname for this configuration
   	  - icon: (optional) the favicon.ico that is visible for this domain
@@ -52,6 +53,7 @@
 	  - the <stage> node contains the configuration for every stage within the specific domain. At least one stage should be present.
 		- name: (optional) the name of the stage
 		- title: (optional) the title of any page on that stage (as displayed in the tab of your browser)
+		- css: (optional) an alternative css stylesheet for this site. This will override the css declaration at site-level
 		- backstage-role: (optional) the role for anybody that can enter the backstage (to update or view the stage configuration)
 	- the <endpoint> node(s) contain extra information uses for sparql-endpoint, currently only for basic-authentication:
 		- username: the username for the endpoint
@@ -63,7 +65,7 @@
 	If a stage doesn't have a name, the URI for the named graph is created from the domain name only:
 		http://{domain}/stage
 	If you need more than one stage for a single site, you should use the name attribute to differentiate between stages.
-		
+
 	A user with the backstage-role can look into the stage configuration using the following URL:
 		http://{domain}/backstage/{stage name}
 -->
@@ -75,12 +77,12 @@
 <!-- Set env="dev" to env="prod" in a production environment -->
 <theatre env="dev" configuration-endpoint="http://127.0.0.1:8890/sparql" local-endpoint="http://127.0.0.1:8890/sparql" sparql="yes">
 	<!-- Remove the "backstage" attribute in a production environment (or secure that particular URL) -->
-	<site domain="localhost" icon="favicon.ico" backstage="localhost">
+	<!--site domain="localhost" icon="favicon.ico" backstage="localhost">
 		<stage/>
-	</site>
+	</site-->
 	<!-- The default port of Tomcat is 8080, so the site below will give you access to a LDT on a default Tomcat install -->
 	<!-- The configuration of the LDT for the stage below is expected in the named graph <http://localhost:8080/stage> -->
-	<site domain="localhost:8080" icon="favicon.ico" backstage="localhost:8080">
+	<site domain="localhost:8080" icon="favicon.ico" backstage="localhost:8080" docroot="/ldt">
 		<stage/>
 	</site>
 	<!-- Optional: include a third site, with two stages and a backstage for every stage -->

@@ -12,8 +12,13 @@ stage:SelectFormats a elmo:Representation;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:contains stage:Formats_tab;
 	elmo:contains stage:SelectFormats_content;
+	elmo:contains stage:FooterAppearance;
 	elmo:index "0";
 	elmo:appearance elmo:HiddenAppearance;
+	elmo:query stage:SelectFormatsQuery;
+.
+stage:SelectFormatsQuery a elmo:Query;
+	rdfs:label "Cities with populations";
 	elmo:query '''
 		prefix dbo: <http://dbpedia.org/ontology/>
 		select ?s ?s_label (dbo:City as ?type) ?s_count
@@ -24,6 +29,39 @@ stage:SelectFormats a elmo:Representation;
 		}
 	''';
 .
+
+stage:GeoSelectQuery a elmo:Query;
+	rdfs:label "A geometry select";
+	elmo:query '''
+		prefix geosparql: <http://www.opengis.net/ont/geosparql#>
+		select ?p ?p_label ?p_geo
+		where {
+			graph <http://localhost:8080/stage> {
+				?p geosparql:hasGeometry ?geo.
+				?p rdfs:label ?p_label.
+				?geo geosparql:asWKT ?p_geo.
+			}
+		}
+  ''';
+.
+stage:GeoConstructQuery a elmo:Query;
+	rdfs:label "A geometry construct";
+	elmo:query '''
+		prefix geosparql: <http://www.opengis.net/ont/geosparql#>
+		construct {
+			?p geosparql:asWKT ?p_geo.
+			?p rdfs:label ?p_label.
+		}
+		where {
+			graph <http://localhost:8080/stage> {
+				?p geosparql:hasGeometry ?geo.
+				?p rdfs:label ?p_label.
+				?geo geosparql:asWKT ?p_geo.
+			}
+		}
+  ''';
+.
+
 stage:Formats_tab elmo:index "1";
 	elmo:appearance elmo:IndexAppearance;
 	elmo:data [
@@ -52,18 +90,7 @@ stage:ConstructFormats a elmo:Representation;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:contains stage:Formats_tab;
 	elmo:contains stage:ConstructFormats_content;
-	elmo:index "0";
-	elmo:appearance elmo:HiddenAppearance;
-	elmo:query '''
-		prefix dbo: <http://dbpedia.org/ontology/>
-		construct {
-			?s?p?o
-		}
-		where {
-			?s rdf:type dbo:City.
-			?s?p?o.
-		}
-	''';
+	elmo:contains stage:FooterAppearance;
 .
 stage:Formats_constructTabs elmo:index "1";
 	elmo:appearance elmo:IndexAppearance;

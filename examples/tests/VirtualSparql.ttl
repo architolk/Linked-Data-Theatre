@@ -1,0 +1,58 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+stage:VirtualSparql a elmo:Representation;
+	elmo:url-pattern "/query/VirtualSparql$";
+	elmo:index "1";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:contains stage:VirtualSparql_resource;
+	elmo:contains stage:VirtualSparql_dataset;
+	elmo:contains stage:VirtualSparql_resource2;
+.
+stage:VirtualSparql_resource a elmo:Part;
+	elmo:index "1";
+	elmo:query '''
+		construct {
+			<http://www.w3.org/2000/01/rdf-schema#> ?p ?o.
+		}
+		where {
+			service <http://localhost:8080/url> {
+				graph <http://www.w3.org/2000/01/rdf-schema#> {
+					<http://www.w3.org/2000/01/rdf-schema#> ?p ?o.
+				}
+			}
+		}
+	'''
+.
+stage:VirtualSparql_dataset a elmo:Part;
+	elmo:index "2";
+	elmo:query '''
+		select *
+		where {
+			service <http://localhost:8080/url> {
+				graph <http://www.w3.org/2000/01/rdf-schema#> {
+					?class a rdfs:Class.
+					?class rdfs:label ?class_label
+				}
+			}
+		}
+	'''
+.
+stage:VirtualSparql_resource2 a elmo:Part;
+	elmo:index "3";
+	elmo:query '''
+		construct {
+			<http://dbpedia.org/resource/Amersfoort> ?p ?o.
+		}
+		where {
+			service <http://localhost:8080/url> {
+				<http://dbpedia.org/resource/Amersfoort> ?p ?o.
+				FILTER (?p = rdfs:label || ?p = rdfs:comment)
+				FILTER (lang(?o)="" or lang(?o)="@LANGUAGE@")
+			}
+		}
+	'''
+.

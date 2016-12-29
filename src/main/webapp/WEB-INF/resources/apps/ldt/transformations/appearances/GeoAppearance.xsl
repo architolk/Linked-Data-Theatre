@@ -1,8 +1,8 @@
 <!--
 
     NAME     GeoAppearance.xsl
-    VERSION  1.11.0
-    DATE     2016-09-18
+    VERSION  1.13.0
+    DATE     2016-12-06
 
     Copyright 2012-2016
 
@@ -30,6 +30,7 @@
 	This file is also used for the ImageAppearance
 
 	TODO: Including a <style> element within a <div> is not compliant to html5: this has to change
+		  The best way is to migrate this to the javascript part of the code
 	
 -->
 <xsl:stylesheet version="2.0"
@@ -190,6 +191,7 @@
 						<xsl:variable name="styleclass">
 							<xsl:choose>
 								<xsl:when test="elmo:style/@rdf:resource='http://bp4mc2.org/elmo/def#HiddenStyle'">hidden-object</xsl:when>
+								<xsl:when test="html:stylesheet!=''"><xsl:value-of select="html:stylesheet"/></xsl:when>
 								<xsl:otherwise><xsl:value-of select="key('resource',elmo:style[1]/@rdf:resource)/elmo:name[1]"/></xsl:otherwise>
 							</xsl:choose>
 						</xsl:variable>

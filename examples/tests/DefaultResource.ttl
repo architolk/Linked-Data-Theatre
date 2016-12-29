@@ -5,6 +5,8 @@
 
 stage:DefaultResource a elmo:Representation;
 	elmo:uri-pattern "^http://localhost:8080/id/";
+	elmo:uri-pattern "^http://localhost:8080/ldt/id/";
+	elmo:url-pattern "/resource";
 	elmo:index "1";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;

@@ -1,0 +1,45 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+stage:GeoAppearanceBrt a elmo:Representation;
+	elmo:url-pattern "/query/GeoAppearanceBrt$";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:GeoAppearance;
+	elmo:fragment [
+		elmo:applies-to elmo:Appearance;
+		elmo:backmap "brt";
+	];
+	elmo:fragment [
+		elmo:applies-to "gemeente";
+		html:stylesheet '''
+			fill: red;
+			fill-opacity: .3;
+			stroke: #666;
+		''';
+	];
+	elmo:query '''
+		prefix geosparql: <http://www.opengis.net/ont/geosparql#>
+		prefix brt: <http://brt.basisregistraties.overheid.nl/def/top10nl#>
+		prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+		prefix elmo: <http://bp4mc2.org/elmo/def#>
+		construct {
+			?municipal geo:geometry ?wkt.
+			?municipal rdfs:label ?label.
+			?municipal elmo:style brt:Gemeente.
+			brt:Gemeente elmo:name "gemeente".
+		}
+		WHERE {
+			select *
+			where {
+				?municipal a brt:Gemeente.
+				?municipal rdfs:label ?label.
+				?municipal geosparql:hasGeometry ?geo.
+				?geo geosparql:asWKT ?wkt.
+			}
+			limit 1
+		}
+	''';
+.

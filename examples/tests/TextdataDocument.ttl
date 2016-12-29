@@ -1,0 +1,96 @@
+@prefix doc: <http://localhost:8080/id/fragment/doc1>.
+@prefix dc: <http://purl.org/dc/elements/1.1/>.
+@prefix geosparql: <http://www.opengis.net/ont/geosparql#>.
+@prefix xhtml: <http://www.w3.org/1999/xhtml/vocab#>.
+
+<http://localhost:8080/id/fragment/doc1> a xhtml:section;
+	dc:title "Testdocument";
+	xhtml:subsection doc:f1,doc:f2;
+.
+doc:f1 a xhtml:section;
+	dc:title "Hoofdstuk 1";
+	xhtml:subsection doc:f1f1,doc:f1f2;
+.
+doc:f1f1 a xhtml:section;
+	dc:title "Artikel 1";
+	xhtml:subsection doc:f1f1f1,doc:f1f1f2;
+.
+doc:f1f1f1 a xhtml:contents;
+	rdf:value "Tekst van artikel 1";
+.
+doc:f1f1f2 a geosparql:Feature;
+	dc:title "werkingsgebied";
+	geosparql:hasGeometry <http://brt.basisregistraties.overheid.nl/top10nl/id/geometry/2061ab1c0bf29447d7ab04a1d6d91576>
+.
+doc:f1f2 a xhtml:section;
+	dc:title "Artikel 2";
+	xhtml:subsection doc:f1f2f1,doc:f1f2f2;
+.
+doc:f1f2f1 a xhtml:contents;
+	rdf:value ("De objecten op " doc:f2f2f1 " bij " doc:f2f2 " zijn monumenten. De volgende richtlijnen gelden:");
+.
+doc:f1f2f2 a xhtml:list;
+	xhtml:subsection doc:f1f2f2f1,doc:f1f2f2f2,doc:f1f2f2f3;
+.
+doc:f1f2f2f1 a xhtml:contents;
+	dc:title "1";
+	rdf:value ("Voor gebieden aangeduid met " doc:binnenstadsmuren ": 100 meter");
+.
+doc:f1f2f2f2 a xhtml:contents;
+	dc:title "2";
+	rdf:value ("Voor gebieden aangeduid met " doc:buitenstadsmuren ": 50 meter");
+.
+doc:f1f2f2f3 a xhtml:section;
+	dc:title "3";
+	xhtml:subsection doc:f1f2f2f3f1,doc:f1f2f2f3f2;
+.
+doc:f1f2f2f3f1 a xhtml:contents;
+	rdf:value "Voor de overige gebieden:";
+.
+doc:f1f2f2f3f2 a xhtml:list;
+	xhtml:subsection doc:f1f2f2f3f2f1,doc:f1f2f2f3f2f2;
+.
+doc:f1f2f2f3f2f1 a xhtml:contents;
+	dc:title "a";
+	rdf:value "Niets";
+.
+doc:f1f2f2f3f2f2 a xhtml:contents;
+	dc:title "b";
+	rdf:value "En nog minder";
+.
+doc:f2 a xhtml:section;
+	dc:title "Hoofdstuk 2";
+	xhtml:subsection doc:f2f1,doc:f2f2;
+.
+doc:f2f1 a xhtml:section;
+	dc:title "Artikel 3";
+	xhtml:subsection doc:f2f1f1,doc:f2f1f2;
+.
+doc:f2f1f1 a xhtml:contents;
+	rdf:value ("De tekst genoemd in " doc:f2f1f1l1 " en in " doc:f2f1 " is foutief");
+.
+doc:f2f1f1l1 a xhtml:link;
+	dc:title "Artikel 3 Wet Awb";
+.
+doc:f2f1f2 a xhtml:contents;
+	rdf:value "Tweede regel text van Artikel 3";
+.
+doc:f2f2 a xhtml:section;
+	dc:title "Artikel 4";
+	xhtml:subsection doc:f2f2f1;
+.
+doc:f2f2f1 a geosparql:Feature;
+	dc:title "Kaart A";
+	geosparql:sfContains doc:binnenstadsmuren,doc:buitenstadsmuren;
+.
+doc:binnenstadsmuren a geosparql:Feature;
+	dc:title "Binnen de stadsmuren";
+	xhtml:stylesheet "binnen";
+	geosparql:hasGeometry <http://brt.basisregistraties.overheid.nl/top10nl/id/geometry/23d44a1b417b71cd21699e005123a697>;
+	geosparql:hasGeometry <http://brt.basisregistraties.overheid.nl/top10nl/id/geometry/9f24b93d200a41de677f715c840d1ec1>;
+.
+doc:buitenstadsmuren a geosparql:Feature;
+	dc:title "Buiten de stadsmuren";
+	xhtml:stylesheet "buiten";
+	geosparql:hasGeometry <http://brt.basisregistraties.overheid.nl/top10nl/id/geometry/307812ac9c7e057fbb9fd1eec10fddcb>;
+.

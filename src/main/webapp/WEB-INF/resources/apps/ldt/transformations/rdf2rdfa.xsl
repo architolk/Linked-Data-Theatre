@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2rdfa.xsl
-    VERSION  1.11.0
-    DATE     2016-09-18
+    VERSION  1.13.0
+    DATE     2016-12-06
 
     Copyright 2012-2016
 
@@ -50,6 +50,8 @@
 	<xsl:element name="{name()}" namespace="{namespace-uri()}">
 		<!-- full uri of the property -->
 		<xsl:variable name="uri"><xsl:value-of select="namespace-uri()"/><xsl:value-of select="local-name()"/></xsl:variable>
+		<!-- Default fragment -->
+		<xsl:variable name="defaultFragment" select="$fragments[@applies-to='http://bp4mc2.org/elmo/def#Fragment']"/>
 		<!-- Find an applicable fragment -->
 		<xsl:variable name="fragment" select="$fragments[@applies-to=$uri]"/>
 		<!-- If the label of the property exists, include it (priority for a fragment, then the property-label in the query result -->
@@ -83,6 +85,11 @@
 		<xsl:if test="$fragment/html:link[1]!=''"><xsl:attribute name="elmo:link"><xsl:value-of select="$fragment/html:link[1]"/></xsl:attribute></xsl:if>
 		<xsl:if test="$fragment/elmo:index[1]!=''"><xsl:attribute name="elmo:index"><xsl:value-of select="$fragment/elmo:index[1]"/></xsl:attribute></xsl:if>
 		<xsl:if test="$fragment/html:glossary[1]/@rdf:resource!=''"><xsl:attribute name="html:glossary"><xsl:value-of select="$fragment/html:glossary[1]/@rdf:resource"/></xsl:attribute></xsl:if>
+		<xsl:choose>
+			<xsl:when test="$fragment/html:meta[1]/@rdf:resource!=''"><xsl:attribute name="html:meta"><xsl:value-of select="$fragment/html:meta[1]/@rdf:resource"/></xsl:attribute></xsl:when>
+			<xsl:when test="$defaultFragment/html:meta[1]/@rdf:resource!=''"><xsl:attribute name="html:meta"><xsl:value-of select="$defaultFragment/html:meta[1]/@rdf:resource"/></xsl:attribute></xsl:when>
+			<xsl:otherwise />
+		</xsl:choose>
 		<xsl:choose>
 			<xsl:when test="exists(@rdf:resource)">
 				<xsl:variable name="olabels">
@@ -146,9 +153,9 @@
 	<xsl:param name="index"/>
 	
 	<rdf:Description rdf:about="{@uri}">
-		<elmo:index><xsl:value-of select="$index"/></elmo:index>
-		<xsl:if test="exists(label)"><rdfs:label><xsl:value-of select="label"/></rdfs:label></xsl:if>
-		<rdf:value><xsl:value-of select="/root/results/rdf:RDF[position()=$index]/rdf:Description[1]/res:solution[1]/res:binding[1]/res:value[1]"/></rdf:value>
+		<elmo:index elmo:label="Step"><xsl:value-of select="$index"/></elmo:index>
+		<xsl:if test="exists(@label)"><rdfs:label elmo:label="Description"><xsl:value-of select="@label"/></rdfs:label></xsl:if>
+		<rdf:value elmo:label="Result"><xsl:value-of select="/root/results/rdf:RDF[position()=$index]/rdf:Description[1]/res:solution[1]/res:binding[1]/res:value[1]"/></rdf:value>
 	</rdf:Description>
 </xsl:template>
 
@@ -204,9 +211,6 @@
 					</xsl:if>
 				</xsl:for-each-group>
 			</xsl:when>
-			<xsl:when test="$appearance='http://bp4mc2.org/elmo/def#TextAppearance'">
-				<xsl:copy-of select="/root/docs/xmldocs[@uri=$representation-uri]"/>
-			</xsl:when>
 			<xsl:when test="$appearance='http://bp4mc2.org/elmo/def#FormAppearance'">
 				<xsl:for-each select="queryForm">
 					<rdf:Description rdf:nodeID="form">
@@ -255,6 +259,24 @@
 						<xsl:copy-of select="current-group()/*"/>
 					</rdf:Description>
 				</xsl:for-each-group>
+			</xsl:when>
+			<xsl:when test="$appearance='http://bp4mc2.org/elmo/def#TextAppearance'">
+				<xsl:for-each-group select="/root/results/rdf:RDF[position()=$index]/rdf:Description" group-by="@rdf:about">
+					<rdf:Description rdf:about="{@rdf:about}">
+						<xsl:copy-of select="current-group()/*"/>
+					</rdf:Description>
+				</xsl:for-each-group>
+				<xsl:for-each-group select="/root/results/rdf:RDF[position()=$index]/rdf:Description" group-by="@rdf:nodeID">
+					<rdf:Description rdf:nodeID="{@rdf:nodeID}">
+						<xsl:copy-of select="current-group()/*"/>
+					</rdf:Description>
+				</xsl:for-each-group>
+				<xsl:for-each select="fragment">
+					<rdf:Description rdf:nodeID="f{position()}">
+						<xsl:if test="@applies-to!=''"><elmo:applies-to><xsl:value-of select="@applies-to"/></elmo:applies-to></xsl:if>
+						<xsl:copy-of select="*"/>
+					</rdf:Description>
+				</xsl:for-each>
 			</xsl:when>
 			<xsl:when test="$appearance='http://bp4mc2.org/elmo/def#GeoSelectAppearance' or $appearance='http://bp4mc2.org/elmo/def#GeoAppearance' or $appearance='http://bp4mc2.org/elmo/def#ImageAppearance'">
 				<xsl:if test="$appearance='http://bp4mc2.org/elmo/def#GeoSelectAppearance' and not(exists(/root/results/rdf:RDF[position()=$index]/*))">

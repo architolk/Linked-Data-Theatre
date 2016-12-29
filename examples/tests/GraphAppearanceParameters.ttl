@@ -1,0 +1,34 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+stage:GraphAppearanceParameters	a	elmo:Representation;
+	elmo:url-pattern	"/query/GraphAppearanceParameters$";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:contains stage:GraphAppearanceParameters_tab;
+	elmo:contains stage:GraphAppearanceParameters_content;
+.
+stage:GraphAppearanceParameters_tab elmo:index "1";
+	elmo:appearance elmo:IndexAppearance;
+	elmo:data [
+		html:link "/resource?representation=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GraphAppearanceParameters_content&subject=http://localhost:8080/id/test&para=paradata";
+		elmo:name "format";
+		rdfs:label "xml|json|ttl|csv|txt|excel|word|pdf|xmi|svgi|d3json|graphml|yed|query|exml|rdfa";
+		rdf:value "xml|json|ttl|csv|txt|xlsx|docx|pdf|xmi|svgi|d3json|graphml|yed|query|exml|rdfa";
+	];
+.
+stage:GraphAppearanceParameters_content elmo:index "2";
+	elmo:appearance elmo:GraphAppearance;
+	elmo:query '''
+		construct {
+			<http://localhost:8080/id/test> rdfs:label "Test".
+			<http://localhost:8080/id/test> <http://localhost:8080#para> <http://localhost:8080/id/para>.
+			<http://localhost:8080#para> rdfs:label "PARA".
+			<http://localhost:8080/id/para> rdfs:label "@PARA@".
+		}
+		where {}
+	''';
+.
+

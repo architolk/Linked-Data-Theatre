@@ -1,8 +1,8 @@
 <!--
 
     NAME     ChartAppearance.xsl
-    VERSION  1.11.0
-    DATE     2016-09-18
+    VERSION  1.13.0
+    DATE     2016-12-06
 
     Copyright 2012-2016
 
@@ -29,7 +29,6 @@
 	Show linked data as a Chart.
 	
 	TODO: Chart appearance now uses rdfs:label (X axes) and rdf:value (Y axes). Should probably use datacube ontology.
-	TODO: Including a <style> element within a <div> is not compliant to html5: this has to change
 	
 -->
 <xsl:stylesheet version="2.0"
@@ -44,33 +43,11 @@
 <xsl:output method="xml" indent="yes"/>
 
 <xsl:template match="rdf:RDF" mode="ChartAppearance">
-	<!-- <div class="row"> -->
-		<div class="panel panel-primary">
-			<div class="panel-heading"/>
-			<div id="blub" class="panel-body">
-			</div>
+	<div class="panel panel-primary">
+		<div class="panel-heading"/>
+		<div id="chart" class="panel-body">
 		</div>
-	<!-- </div> -->
-	<style>
-		.bar {
-		  fill: steelblue;
-		}
-
-		.axis text {
-		  font: 10px sans-serif;
-		}
-
-		.axis path,
-		.axis line {
-		  fill: none;
-		  stroke: #000;
-		  shape-rendering: crispEdges;
-		}
-
-		.x.axis path {
-		  display: none;
-		}
-	</style>
+	</div>
 	<script>
 		var data=[<xsl:for-each select="rdf:Description"><xsl:if test="position()!=1">,</xsl:if>{name:"<xsl:value-of select="rdfs:label"/>",value:1+<xsl:value-of select="rdf:value"/>}</xsl:for-each>];
 
@@ -92,7 +69,7 @@
 			.scale(y)
 			.orient("left");
 
-		var chart = d3.select("#blub").append("svg")
+		var chart = d3.select("#chart").append("svg")
 			.attr("width", width + margin.left + margin.right)
 			.attr("height", height + margin.top + margin.bottom)
 		  .append("g")

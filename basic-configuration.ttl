@@ -1,7 +1,7 @@
 #
 # NAME     basic-configuration.ttl
-# VERSION  1.11.0
-# DATE     2016-09-18
+# VERSION  1.13.0
+# DATE     2016-12-06
 #
 # Copyright 2012-2016
 #
@@ -30,6 +30,7 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
 @prefix stage: <http://localhost#>.
+@prefix container: <http://localhost:8080/ldt/container/>.
 
 # ======================================================================
 # Homepage, including header and menu
@@ -41,28 +42,32 @@ stage:Home	a	elmo:Representation;
 	elmo:contains	stage:Home_content;
 	elmo:layer elmo:BottomLayer;
 .
-stage:Header elmo:appearance elmo:HeaderAppearance;
+stage:Header a elmo:Part;
+	elmo:appearance elmo:HeaderAppearance;
 	elmo:index "~";
-	elmo:data	[ elmo:html "<img src='/images/ldt-logo.png'></img>"^^rdf:HTML];
+	elmo:data	[ elmo:html "<img src='/ldt/images/ldt-logo.png'></img>"^^rdf:HTML];
 .
-stage:Menu elmo:appearance elmo:NavbarSearchAppearance;
+stage:Menu a elmo:Part;
+	elmo:appearance elmo:NavbarSearchAppearance;
 	elmo:index "~";
 	elmo:data [
 		rdfs:label "Linked Data Theater"@nl;
 		rdfs:label "Linked Data Theatre"@en;
 		xhtml:link "/";
-		elmo:data [elmo:index "1"; rdfs:label "Datasets"; xhtml:link "/query/datasets"];
-		elmo:data [elmo:index "2"; rdfs:label "Graphs"; xhtml:link "/query/graphs"];
-		elmo:data [elmo:index "3"; rdfs:label "Configs"; xhtml:link "/query/configs"];
+		elmo:data [elmo:index "1"; rdfs:label "Datasets"; xhtml:link "/ldt/query/datasets"];
+		elmo:data [elmo:index "2"; rdfs:label "Graphs"; xhtml:link "/ldt/query/graphs"];
+		elmo:data [elmo:index "3"; rdfs:label "Configs"; xhtml:link "/ldt/query/configs"];
+		elmo:data [elmo:index "4"; rdfs:label "Upload container"; xhtml:link "/ldt/container/ttlupload"];
 		elmo:data [
-			elmo:index "4";
+			elmo:index "5";
 			rdfs:label "Examples";
-			elmo:data [elmo:index "1"; rdfs:label "Hospitals within 10km"; xhtml:link "/query/geo"];
+			elmo:data [elmo:index "1"; rdfs:label "Hospitals within 10km"; xhtml:link "/ldt/query/geo"];
 		];
-		elmo:data [elmo:index "5"; rdfs:label "Backstage"; xhtml:link "/backstage"];
+		elmo:data [elmo:index "6"; rdfs:label "Backstage"; xhtml:link "/ldt/backstage"];
 	];
 .
-stage:Home_content elmo:appearance elmo:HtmlAppearance;
+stage:Home_content a elmo:Part;
+	elmo:appearance elmo:HtmlAppearance;
 	elmo:data [
 		rdfs:label "Het theater is open!"@nl;
 		rdfs:label "The theatre is open!"@en;
@@ -84,18 +89,19 @@ stage:Home_content elmo:appearance elmo:HtmlAppearance;
 # ======================================================================
 # List of all available datasets
 # ======================================================================
-stage:Datasets rdf:type elmo:Representation;
-	elmo:url-pattern "/query/datasets$";
+stage:Datasets a elmo:Representation;
+	elmo:url-pattern "/ldt/query/datasets$";
 	elmo:contains stage:Header;
 	elmo:contains stage:Menu;
 	elmo:contains stage:Datasets_list;
 .
-stage:Datasets_list elmo:index "1";
+stage:Datasets_list a elmo:Part;
+	elmo:index "1";
 	elmo:fragment [
 		elmo:applies-to "dataset";
 		rdfs:label "Dataset"@en;
 		rdfs:label "Dataset"@nl;
-		xhtml:link "/query/datasets";
+		xhtml:link "/ldt/query/datasets";
 	];
 	elmo:query '''
 		prefix void: <http://rdfs.org/ns/void#>
@@ -113,18 +119,19 @@ stage:Datasets_list elmo:index "1";
 # ======================================================================
 # List of all available graphs
 # ======================================================================
-stage:Graphs rdf:type elmo:Representation;
-	elmo:url-pattern "/query/graphs$";
+stage:Graphs a elmo:Representation;
+	elmo:url-pattern "/ldt/query/graphs$";
 	elmo:contains stage:Header;
 	elmo:contains stage:Menu;
 	elmo:contains stage:Graphs_list;
 .
-stage:Graphs_list elmo:index "1";
+stage:Graphs_list a elmo:Part;
+	elmo:index "1";
 	elmo:fragment [
 		elmo:applies-to "graph";
 		rdfs:label "Graph"@en;
 		rdfs:label "Graaf"@nl;
-		xhtml:link "/query/classes";
+		xhtml:link "/ldt/query/classes";
 	];
 	elmo:fragment [
 		elmo:applies-to "triplecount";
@@ -145,24 +152,29 @@ stage:Graphs_list elmo:index "1";
 # ======================================================================
 # List of all available configurations
 # ======================================================================
-stage:Configs rdf:type elmo:Representation;
-	elmo:url-pattern "/query/configs$";
+stage:Configs a elmo:Representation;
+	elmo:url-pattern "/ldt/query/configs$";
 	elmo:contains stage:Header;
 	elmo:contains stage:Menu;
 	elmo:contains stage:Configs_list;
 .
-stage:Configs_list elmo:index "1";
+stage:Configs_list a elmo:Part;
+	elmo:index "1";
 	elmo:fragment [
 		elmo:applies-to "graph";
 		rdfs:label "Configuration"@en;
 		rdfs:label "Configuratie"@nl;
-		xhtml:link "/query/classes";
+		xhtml:link "/ldt/query/classes";
 	];
 	elmo:fragment [
 		elmo:applies-to "representationcount";
 		rdfs:label "Number of representations"@en;
 		rdfs:label "Aantal representaties"@nl;
 	];
+	elmo:endpoint elmo:Backstage;
+	elmo:query stage:ConfigQuery
+.
+stage:ConfigQuery a elmo:Query;
 	elmo:query '''
 		prefix elmo: <http://bp4mc2.org/elmo/def#>
 		select distinct ?graph (count(?r) as ?representationcount)
@@ -176,10 +188,31 @@ stage:Configs_list elmo:index "1";
 .
 
 # ======================================================================
+# Uploadcontainer ttl
+# (test upload container)
+# ======================================================================
+container:ttlupload rdf:type elmo:Container;
+	elmo:contains stage:Header;
+	elmo:contains stage:Menu;
+	elmo:representation elmo:UploadRepresentation;
+	rdfs:label "Upload Turtle (.ttl)";
+	elmo:replaces <http://localhost:8080/ldt/container/generiek>;
+	elmo:query stage:ContainerPostQuery;
+.
+  stage:ContainerPostQuery a elmo:query;
+	elmo:query '''
+		prefix prov: <http://www.w3.org/ns/prov/#>
+		INSERT INTO <http://localhost:8080/ldt/container/test/@CURRENTMOMENT@> {
+            <http://localhost:8080/ldt/container/id/dataset/concepten> rdfs:isDefinedBy <http://localhost:8080/ldt/concepts/doc/@CURRENTMOMENT@>.
+		}
+	''';
+.
+
+# ======================================================================
 # Search (including form for advanced search)
 # ======================================================================
-stage:Search rdf:type elmo:Representation;
-	elmo:url-pattern "/query/search$";
+stage:Search a elmo:Representation;
+	elmo:url-pattern "/ldt/query/search$";
 	elmo:contains stage:Header;
 	elmo:contains stage:Menu;
 	elmo:contains stage:Search_graphs;
@@ -240,7 +273,8 @@ stage:Search_form a elmo:Form;
 #		rdfs:label "Search"@en;
 	];
 .
-stage:Search_graphs elmo:appearance elmo:HiddenAppearance;
+stage:Search_graphs a elmo:Part;
+	elmo:appearance elmo:HiddenAppearance;
 	elmo:query '''
 		construct {
 			?g rdfs:label ?gl
@@ -260,12 +294,13 @@ stage:Search_graphs elmo:appearance elmo:HiddenAppearance;
 # List of classes for a particular graph
 # ======================================================================
 stage:Classes	a	elmo:Representation;
-	elmo:url-pattern "/query/classes";
+	elmo:url-pattern "/ldt/query/classes";
 	elmo:contains stage:Header;
 	elmo:contains stage:Menu;
 	elmo:contains stage:Classes_list;
 .
-stage:Classes_list	elmo:index "1";
+stage:Classes_list a elmo:Part;
+	elmo:index "1";
 	elmo:fragment [
 		elmo:applies-to "class";
 		rdfs:label "Class"@en;
@@ -277,7 +312,7 @@ stage:Classes_list	elmo:index "1";
 		rdfs:label "Items"@en;
 		rdfs:label "Items"@nl;
 		rdf:value "Items";
-		xhtml:link "/query/items";
+		xhtml:link "/ldt/query/items";
 	];
 	elmo:fragment [
 		elmo:applies-to "properties";
@@ -285,7 +320,7 @@ stage:Classes_list	elmo:index "1";
 		rdfs:label "Eigenschappen"@nl;
 		rdf:value "Properties"@en;
 		rdf:value "Eigenschappen"@nl;
-		xhtml:link "/query/properties";
+		xhtml:link "/ldt/query/properties";
 	];
 	elmo:query	'''
 		select distinct ?class ?graph_count (<@SUBJECT@> as ?graph) (<@SUBJECT@> as ?properties)
@@ -307,12 +342,13 @@ stage:Classes_list	elmo:index "1";
 # List of items of a particular class in a particular graph
 # ======================================================================
 stage:Items	a	elmo:Representation;
-	elmo:url-pattern "/query/items";
+	elmo:url-pattern "/ldt/query/items";
 	elmo:contains stage:Header;
 	elmo:contains stage:Menu;
 	elmo:contains stage:Items_list;
 .
-stage:Items_list	elmo:index "1";
+stage:Items_list a elmo:Part;
+	elmo:index "1";
 	elmo:fragment [
 		elmo:applies-to "item";
 		rdfs:label "Item"@en;
@@ -333,13 +369,14 @@ stage:Items_list	elmo:index "1";
 # ======================================================================
 # List of used properties of a particular class in a particular graph
 # ======================================================================
-stage:Properties	rdf:type	elmo:Representation;
-	elmo:url-pattern "/query/properties";
+stage:Properties	a	elmo:Representation;
+	elmo:url-pattern "/ldt/query/properties";
 	elmo:contains stage:Header;
 	elmo:contains stage:Menu;
 	elmo:contains stage:Properties_list;
 .
-stage:Properties_list	elmo:index "1";
+stage:Properties_list a elmo:Part;
+	elmo:index "1";
 	elmo:fragment [
 		elmo:applies-to "property";
 		rdfs:label "Predicate"@en;
@@ -359,7 +396,7 @@ stage:Properties_list	elmo:index "1";
 # ======================================================================
 # Representation of a resource
 # ======================================================================
-stage:Resource rdf:type elmo:Representation;
+stage:Resource a elmo:Representation;
 	elmo:url-pattern "/resource";
 	elmo:url-pattern "((?!doc).)*/doc/";
 	elmo:contains stage:Header;
@@ -388,13 +425,16 @@ stage:Resource_content elmo:index "1";
 .
 
 # Show every hospital in a 10km range from the selected point
-stage:GeoAppearance rdf:type elmo:Representation;
-	elmo:url-pattern "/query/geo";
+stage:GeoAppearance a elmo:Representation;
+	elmo:url-pattern "/ldt/query/geo";
 	elmo:contains stage:Header;
 	elmo:contains stage:Menu;
 	elmo:endpoint <http://linkedgeodata.org/sparql>;
 	elmo:appearance elmo:GeoSelectAppearance;
 	elmo:queryForm elmo:GeoForm;
+	elmo:query stage:HospitalQuery
+.
+stage:HospitalQuery a elmo:Query;
 	elmo:query '''
 		Prefix lgdo:<http://linkedgeodata.org/ontology/>
 		Prefix geom:<http://geovocab.org/geometry#>
@@ -406,9 +446,9 @@ stage:GeoAppearance rdf:type elmo:Representation;
 		}
 		WHERE {
 		?s a lgdo:Hospital ;
-			rdfs:label ?l ;    
-			geom:geometry [ ogc:asWKT ?g] 
-		 
+			rdfs:label ?l ;
+			geom:geometry [ ogc:asWKT ?g]
+
 			Filter(bif:st_intersects(?g, bif:st_point(@LONG@,@LAT@), 10))
 		 }
 		LIMIT 10

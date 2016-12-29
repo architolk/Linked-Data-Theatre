@@ -1,8 +1,8 @@
 <!--
 
     NAME     page-flow.xml
-    VERSION  1.11.0
-    DATE     2016-09-18
+    VERSION  1.13.0
+    DATE     2016-12-06
 
     Copyright 2012-2016
 
@@ -32,6 +32,9 @@
 	<!-- Robots.txt -->
 	<files path="/robots.txt"/>
 
+	<!-- Changelog -->
+	<files path="/changelog.txt"/>
+	
 	<!-- Favicon -->
 	<page path="/favicon.ico" model="pipelines/favicon.xpl" default-submission="config.xml" public-methods="#all"/>
 
@@ -99,6 +102,14 @@
 		<setvalue ref="theatre/date" parameter="date"/>
 	</page>
 	
+	<!-- federated query (virtual sparql endpoint) -->
+	<page path="(((?!git).)*)/git" model="pipelines/git.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/query" parameter="query"/>
+	</page>
+	<page path="(((?!url).)*)/url" model="pipelines/url.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/query" parameter="query"/>
+	</page>
+	
 	<!-- container -->
 	<page path="(((?!container).)*)/container/([^ ]*)" model="pipelines/container.xpl" default-submission="config.xml" public-methods="#all">
 		<setvalue ref="theatre/subdomain" matcher-group="1"/>
@@ -107,6 +118,12 @@
 	<!-- update -->
 	<page path="(((?!update).)*)/update/([^ ]*)" model="pipelines/update.xpl" default-submission="config.xml" public-methods="#all">
 		<setvalue ref="theatre/subdomain" matcher-group="1"/>
+	</page>
+	
+	<!-- edit -->
+	<page path="(((?!edit).)*)/edit/([^ ]*)" model="pipelines/edit.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
+		<setvalue ref="theatre/subject" parameter="subject"/>
 	</page>
 	
 	<!-- conversion -->
@@ -136,6 +153,13 @@
 	</page>
 	
 	<!-- def uri (give some information about a hash URI) -->
+	<page path="(((?!def).)*)/def(/[^ ]*)*\.([^ ]*)" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
+		<setvalue ref="theatre/subject" parameter="subject"/>
+		<setvalue ref="theatre/format" matcher-group="4"/>
+		<setvalue ref="theatre/representation" parameter="representation"/>
+		<setvalue ref="theatre/date" parameter="date"/>
+	</page>
 	<page path="(((?!def).)*)/def(/[^ ]*)*" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
 		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 		<setvalue ref="theatre/subject" parameter="subject"/>
@@ -220,7 +244,9 @@
 	
 	<!-- Request header information (for debugging purposes in production) -->
 	<page path="(((?!header).)*)/header" model="pipelines/header.xpl" default-submission="config.xml" public-methods="#all"/>
+	<page path="(((?!header).)*)/header.xml" model="pipelines/xmlheader.xpl" default-submission="config.xml" public-methods="#all"/>
 	<page path="(((?!header).)*)/header.json" model="pipelines/jsonheader.xpl" default-submission="config.xml" public-methods="#all"/>
+	<page path="(((?!header).)*)/header.sparql" model="pipelines/sparqlheader.xpl" default-submission="config.xml" public-methods="#all"/>
 	<!-- <page path="/admin/header" model="pipelines/header.xpl" default-submission="config.xml" public-methods="#all"/> -->
 
 	<!-- Version header information (for debugging purposes) -->

@@ -1,8 +1,8 @@
 <!--
 
     NAME     XMI21Translator.xsl
-    VERSION  1.11.0
-    DATE     2016-09-18
+    VERSION  1.13.0
+    DATE     2016-12-06
 
     Copyright 2012-2016
 
@@ -147,7 +147,14 @@
 
 <!-- Catch all extensions via xmi:Extension -->
 <xsl:template match="element" mode="extension">
-	<rdf:Description rdf:about="{$domain}{@xmi:idref}">
+	<!-- Weird something in EA: if a property package2 exists, the ID is hidden in this property... -->
+	<xsl:variable name="id">
+		<xsl:choose>
+			<xsl:when test="model/@package2!=''"><xsl:value-of select="replace(model/@package2,'^EAID','EAPK')"/></xsl:when>
+			<xsl:otherwise><xsl:value-of select="@xmi:idref"/></xsl:otherwise>
+		</xsl:choose>
+	</xsl:variable>
+	<rdf:Description rdf:about="{$domain}{$id}">
 		<xsl:for-each select="properties/@*">
 			<xsl:element name="ea:{local-name(.)}"><xsl:value-of select="."/></xsl:element>
 		</xsl:for-each>
@@ -155,12 +162,12 @@
 			<xsl:element name="ea:{local-name(.)}"><xsl:value-of select="."/></xsl:element>
 		</xsl:for-each>
 		<xsl:for-each select="tags/tag">
-			<xsl:variable name="tagvalue"><xsl:value-of select="substring-before(@value,'#NOTES#')"/></xsl:variable>
+			<xsl:variable name="tagvalue"><xsl:value-of select="substring-before(concat(@value,'#NOTES#'),'#NOTES#')"/></xsl:variable>
 			<xsl:if test="$tagvalue!=''">
 				<uml:taggedValue>
 					<uml:TaggedValue>
 						<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
-						<rdf:value><xsl:value-of select="substring-before(@value,'#NOTES#')"/></rdf:value>
+						<rdf:value><xsl:value-of select="$tagvalue"/></rdf:value>
 					</uml:TaggedValue>
 				</uml:taggedValue>
 			</xsl:if>
@@ -226,6 +233,16 @@
 			<xsl:element name="ea:{local-name(.)}"><xsl:value-of select="."/></xsl:element>
 		</xsl:for-each>
 	</rdf:Description>
+	<xsl:if test="source/documentation/@value!=''">
+		<rdf:Description rdf:about="{$domain}{replace(@xmi:idref,'(EAID_..)','EAID_src')}"> <!-- Hack: ea uses src -->
+			<ea:documentation><xsl:value-of select="source/documentation/@value"/></ea:documentation>
+		</rdf:Description>
+	</xsl:if>
+	<xsl:if test="target/documentation/@value!=''">
+		<rdf:Description rdf:about="{$domain}{replace(@xmi:idref,'(EAID_..)','EAID_dst')}"> <!-- Hack: ea uses dst -->
+			<ea:documentation><xsl:value-of select="target/documentation/@value"/></ea:documentation>
+		</rdf:Description>
+	</xsl:if>
 </xsl:template>
 
 <xsl:template match="xmi:Extension[@extender='Enterprise Architect']">

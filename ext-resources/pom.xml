@@ -18,7 +18,7 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js</url>
+							<url>https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js</url>
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
 						</configuration>
 					</execution>
@@ -28,7 +28,7 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css</url>
+							<url>https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css</url>
 							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
 						</configuration>
 					</execution>
@@ -38,7 +38,7 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css</url>
+							<url>https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css</url>
 							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
 						</configuration>
 					</execution>
@@ -271,7 +271,7 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>http://code.jquery.com/jquery-1.11.3.min.js</url>
+							<url>https://code.jquery.com/jquery-3.1.1.min.js</url>
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
 						</configuration>
 					</execution>
@@ -307,6 +307,7 @@
 							<outputDirectory>zips</outputDirectory>
 						</configuration>
 					</execution>
+					<!-- Virtuoso JDBC dependencies and libraries -->
 					<execution>
 						<id>get-virtuoso-jdbc3</id>
 						<goals>
@@ -329,6 +330,73 @@
 							<outputDirectory>WEB-INF/lib</outputDirectory>
 						</configuration>
 					</execution>
+					<!-- END -->
+					<!-- Joint.js dependencies and libraries -->
+					<execution>
+						<id>get-joint-js</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>https://raw.githubusercontent.com/clientIO/joint/master/dist/joint.min.js</url>
+							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>get-joint-css</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>https://raw.githubusercontent.com/clientIO/joint/master/dist/joint.min.css</url>
+							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>get-lodash</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<!-- Dependency with joint.js: version should be 3.x NOT 4.x -->
+							<url>https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js</url>
+							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>get-backbone</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>https://github.com/jashkenas/backbone/archive/1.3.3.zip</url>
+							<unpack>true</unpack>
+							<outputDirectory>zips</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>get-dagre</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>https://github.com/cpettitt/dagre/archive/v0.7.3.zip</url>
+							<unpack>true</unpack>
+							<outputDirectory>zips</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>get-graphlib</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>https://github.com/cpettitt/graphlib/archive/v2.0.0.zip</url>
+							<unpack>true</unpack>
+							<outputDirectory>zips</outputDirectory>
+						</configuration>
+					</execution>
+					<!-- END -->
 				</executions>
 			</plugin>
 			<plugin>
@@ -413,6 +481,24 @@
 									<directory>zips/chosen</directory>
 									<includes>
 										<include>chosen.jquery.min.js</include>
+									</includes>
+								</resource>
+								<resource>
+									<directory>zips/backbone-1.3.3</directory>
+									<includes>
+										<include>backbone-min.js</include>
+									</includes>
+								</resource>
+								<resource>
+									<directory>zips/dagre-0.7.3/dist</directory>
+									<includes>
+										<include>dagre.min.js</include>
+									</includes>
+								</resource>
+								<resource>
+									<directory>zips/graphlib-2.0.0/dist</directory>
+									<includes>
+										<include>graphlib.min.js</include>
 									</includes>
 								</resource>
 							</resources>              

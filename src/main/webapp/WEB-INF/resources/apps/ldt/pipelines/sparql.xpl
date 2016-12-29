@@ -1,8 +1,8 @@
 <!--
 
     NAME     sparql.xpl
-    VERSION  1.11.0
-    DATE     2016-09-18
+    VERSION  1.13.0
+    DATE     2016-12-06
 
     Copyright 2012-2016
 
@@ -124,6 +124,57 @@
 							<config/>
 						</p:input>
 						<p:input name="data" href="#sparql"/>
+					</p:processor>
+				</p:when>
+				<!-- SPARQL/XML -->
+				<p:when test="context/format='application/sparql-results+xml'">
+					<p:processor name="oxf:xml-serializer">
+						<p:input name="config">
+							<config>
+								<content-type>application/sparql-results+xml</content-type>
+							</config>
+						</p:input>
+						<p:input name="data" href="#sparql"/>
+					</p:processor>
+				</p:when>
+				<!-- RDF/XML -->
+				<p:when test="context/format='application/rdf+xml'">
+					<p:processor name="oxf:xml-serializer">
+						<p:input name="config">
+							<config>
+								<content-type>application/rdf+xml</content-type>
+							</config>
+						</p:input>
+						<p:input name="data" href="#sparql"/>
+					</p:processor>
+				</p:when>
+				<!-- Turtle -->
+				<p:when test="context/format='text/turtle'">
+					<!-- Transform -->
+					<p:processor name="oxf:xslt">
+						<p:input name="data" href="aggregate('results',#context,#sparql)"/>
+						<p:input name="config" href="../transformations/rdf2ttl.xsl"/>
+						<p:output name="data" id="ttl"/>
+					</p:processor>
+					<!-- Convert XML result to plain text -->
+					<p:processor name="oxf:text-converter">
+						<p:input name="config">
+							<config>
+								<encoding>utf-8</encoding>
+								<content-type>text/turtle</content-type>
+							</config>
+						</p:input>
+						<p:input name="data" href="#ttl" />
+						<p:output name="data" id="converted" />
+					</p:processor>
+					<!-- Serialize -->
+					<p:processor name="oxf:http-serializer">
+						<p:input name="config">
+							<config>
+								<cache-control><use-local-cache>false</use-local-cache></cache-control>
+							</config>
+						</p:input>
+						<p:input name="data" href="#converted"/>
 					</p:processor>
 				</p:when>
 				<!-- XLSX -->

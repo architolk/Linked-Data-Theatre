@@ -1,8 +1,8 @@
 <!--
 
     NAME     GraphAppearance.xsl
-    VERSION  1.11.1-SNAPSHOT
-    DATE     2016-09-29
+    VERSION  1.13.0
+    DATE     2016-12-06
 
     Copyright 2012-2016
 
@@ -29,6 +29,7 @@
 	A GraphAppearance shows Linked Data as a graph, plus the opportunity to navigate through the linked data (expand the graph)
 	
 	TODO: Including a <style> element within a <div> is not compliant to html5: this has to change
+		  Solution might be to migrate the code to the javascript part
 -->
 <xsl:stylesheet version="2.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -42,12 +43,12 @@
 <xsl:output method="xml" indent="yes"/>
 
 <xsl:template match="rdf:RDF" mode="GraphAppearance">
-	<div style="position: relative">
+	<div id="graphcanvas" style="position: relative">
 		<xsl:if test="exists(rdf:Description[html:stylesheet!='' and elmo:applies-to!=''])">
 			<div class="panel panel-primary" style="position:absolute;right:20px;top:50px">
 				<div class="panel-heading"><span class="glyphicon glyphicon-off" style="position:absolute;right:5px;margin-top:2px;cursor:pointer" onclick="this.parentNode.parentNode.style.display='none'"/></div>	
 				<table style="margin-left:10px">
-					<xsl:for-each select="rdf:Description[html:stylesheet!='' and elmo:applies-to!='']">
+					<xsl:for-each select="rdf:Description[html:stylesheet!='' and elmo:applies-to!='']"><xsl:sort select="elmo:index"/>
 						<tr>
 							<td><input name="{elmo:applies-to}" type="checkbox" checked="checked" onclick="togglenode(this.checked,this.name);"/></td>
 							<td><svg style="display: inline;" width="140" height="30"><g><rect x="5" y="5" width="120" height="20" class="s{elmo:applies-to}"/><text x="15" y="18" style="line-height: normal; font-family: sans-serif; font-size: 10px; font-style: normal; font-variant: normal; font-weight: normal; font-size-adjust: none; font-stretch: normal;"><xsl:value-of select="elmo:applies-to"/></text></g></svg></td>
@@ -56,101 +57,36 @@
 				</table>
 			</div>
 		</xsl:if>
+		<div id="propertybox" style="position:absolute; display:none" onmouseover="mouseoverPropertyBox();" onmouseout="mouseoutPropertyBox();">
+			<i id="mbtninfo" class="btn btn-primary" style="padding: 1px 4px;" onclick="clickInfoBox();">
+				<span class="glyphicon glyphicon-info-sign" style="cursor:pointer"/>
+			</i>
+			<i id="mbtnexpand" class="btn btn-primary" style="padding: 1px 4px;" onclick="clickPropertyBox();">
+				<span class="glyphicon glyphicon-zoom-in" style="cursor:pointer"/>
+			</i>
+		</div>
 		<div class="panel panel-primary panel-secondary">
 			<div id="graphtitle" class="panel-heading"/>
 			<div id="graph" class="panel-body"/>
 		</div>
 	</div>
 	<style>
-	<!-- Styling for the edge between nodes -->
-	.link line.border {
-	  stroke: #fff;
-	  stroke-opacity: 0;
-	  stroke-width: 8px;
-	}
-	.link line.stroke {
-	  pointer-events: none;
-	}
-	.link text {
-	  pointer-events: none;
-	}
-	<!-- Styling of nodes -->
-	.node text {
-	  pointer-events: none;
-	}
-	<!-- Styling of canvas -->
-	.canvas {
-	  fill: none;
-	  pointer-events: all;
-	}
-	<!-- Default styling (should be part of node or edge??) -->
-	.default {
-		fill: white;
-		fill-opacity: .3;
-		stroke: #666;
-	}
-	<!-- DIV Detailbox -->
-	div.detailbox {
-		background-color: black;
-		border-radius: 5px;
-		-moz-border-radius: 5px;
-		font-size: 0.8em;
-		top: 5px;
-		right: 5px;
-		width: 300px;
-		padding: 5px;
-		position: absolute;
-	}
-	div.detailbox div.header {
-		color: white;
-		font-weight: bold;
-		margin: 0px 0px 5px;
-	}
-	div.detailbox div.button {
-		height: 30px;
-		padding: 0px;
-	}
-
-	div.detailbox table {
-		width:100%;
-		background-color:white;
-		table-layout: fixed;
-		word-wrap:break-word;
-	}
-	div.detailbox table tr td.data {
-		width:80%;
-	}
-
-	div.detailbox div.button #expand {
-		padding: 5px;
-		float: right;
-		text-align: right;
-		z-index: 5000;
-		background-color: #808080;
-		border-color: #808080;
-		color: white;
-		cursor: pointer;
-		border-radius: 5px;
-		-moz-border-radius: 5px;
-		padding-left: 15px;
-		text-indent: -10px;
-		font-weight: bold;
-	}
-	<xsl:for-each select="rdf:Description[html:stylesheet!='' and elmo:applies-to!='']">
-		.s<xsl:value-of select="elmo:applies-to"/> {
-		<xsl:value-of select="html:stylesheet"/>
-		}
-	</xsl:for-each>
-	<xsl:for-each select="rdf:Description[html:stylesheet!='' and elmo:applies-to!='']">
-		.t<xsl:value-of select="elmo:applies-to"/> {
-			visibility: visible
-		}
-	</xsl:for-each>
+		<xsl:for-each select="rdf:Description[html:stylesheet!='' and elmo:applies-to!='']">
+			.s<xsl:value-of select="elmo:applies-to"/> {
+			<xsl:value-of select="html:stylesheet"/>
+			}
+		</xsl:for-each>
+		<xsl:for-each select="rdf:Description[html:stylesheet!='' and elmo:applies-to!='']">
+			.t<xsl:value-of select="elmo:applies-to"/> {
+				visibility: visible
+			}
+		</xsl:for-each>
 	</style>
+	<xsl:variable name="jsonParams"><xsl:for-each select="/results/context/parameters/parameter"><xsl:value-of select="name"/>=<xsl:value-of select="encode-for-uri(value)"/>&amp;</xsl:for-each></xsl:variable>
 	<script type="text/javascript">
 		var jsonApiSubject = "<xsl:value-of select="/results/context/subject"/>";
-		var jsonApiCall = "<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource.d3json?representation=<xsl:value-of select="encode-for-uri(@elmo:query)"/>&amp;subject=";
-		var uriEndpoint = "<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource?subject=";
+		var jsonApiCall = "<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource.d3json?representation=<xsl:value-of select="encode-for-uri(@elmo:query)"/>&amp;<xsl:value-of select="$jsonParams"/>subject=";
+		var uriEndpoint = "<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource?<xsl:value-of select="$jsonParams"/>subject=";
 	</script>
 	<script src="{$staticroot}/js/d3graphs-inner.min.js" type="text/javascript"/>
 </xsl:template>

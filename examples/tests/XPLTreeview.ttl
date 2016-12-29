@@ -1,0 +1,42 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+stage:XPLTreeview a elmo:Representation;
+	elmo:url-pattern "/query/xpl/treeview";
+	elmo:index "1";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:TreeAppearance;
+	elmo:query '''
+		prefix container: <http://localhost:8080/container/>
+		prefix xpl: <http://www.orbeon.com/oxf/pipeline#>
+		prefix html: <http://www.w3.org/1999/xhtml/vocab#>
+		construct {
+			?pipeline rdfs:label ?pipeline_label.
+			?filter rdfs:label ?filter_label.
+			?filter html:link ?node.
+			?branche rdfs:label ?branche_label.
+			?branche html:link ?choose.
+		}
+		where {
+			graph container:xpl {
+				{
+					?pipeline rdf:type xpl:Config.
+					?pipeline rdfs:label ?pipeline_label.
+				}
+				UNION
+				{
+					?node xpl:filter ?filter.
+					?filter rdfs:label ?filter_label.
+				}
+				UNION
+				{
+					?choose xpl:when|xpl:otherwise ?branche.
+					?branche rdfs:label ?branche_label
+				}
+			}
+		}
+	''';
+.
