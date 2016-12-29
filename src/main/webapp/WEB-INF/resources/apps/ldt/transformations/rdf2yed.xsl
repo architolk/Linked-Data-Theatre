@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2yed.xsl
-    VERSION  1.13.0
-    DATE     2016-12-06
+    VERSION  1.13.2-SNAPSHOT
+    DATE     2016-12-29
 
     Copyright 2012-2016
 
@@ -47,7 +47,7 @@
 	<graph id="G" edgedefault="directed">
 		<!-- Nodes -->
 		<xsl:for-each select="rdf:Description[exists(rdf:type)]">
-			<xsl:variable name="slabel"><xsl:value-of select="substring-after(@rdf:about,'#')"/></xsl:variable>
+			<xsl:variable name="slabel"><xsl:value-of select="replace(@rdf:about,'^.*(#|/)([^(#|/)]+)$','$2')"/></xsl:variable>
 			<xsl:variable name="label">
 				<xsl:value-of select="rdfs:label"/>
 				<xsl:if test="not(rdfs:label!='')">
