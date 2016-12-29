@@ -1,8 +1,8 @@
 <!--
 
     NAME     VocabularyAppearance.xsl
-    VERSION  1.13.0
-    DATE     2016-12-06
+    VERSION  1.13.2-SNAPSHOT
+    DATE     2016-12-29
 
     Copyright 2012-2016
 
@@ -103,7 +103,7 @@
 <!-- WARNING: No check is made regarding loops!!! -->
 	<xsl:for-each select="rdfs:subClassOf">
 		<xsl:variable name="super" select="@rdf:resource"/>
-		<xsl:for-each select="../../rdf:Description[shacl:scopeClass/@rdf:resource=$super]">
+		<xsl:for-each select="../../rdf:Description[(shacl:scopeClass|shacl:targetClass)/@rdf:resource=$super]">
 			<xsl:for-each select="shacl:property">
 				<xsl:variable name="property" select="@rdf:resource"/>
 				<inherited-property uri="{../../rdf:Description[@rdf:about=$property]/shacl:predicate/@rdf:resource}"/>
@@ -268,8 +268,8 @@
 	</xsl:variable>
 	<!-- All shapes -->
 	<xsl:variable name="all-shapes">
-		<xsl:for-each-group select="rdf:Description[exists(shacl:scopeClass) or exists(shacl:property)]" group-by="@rdf:about">
-			<xsl:variable name="class" select="current-group()/shacl:scopeClass[1]/@rdf:resource"/>
+		<xsl:for-each-group select="rdf:Description[exists(shacl:scopeClass|shacl:targetClass|shacl:property)]" group-by="@rdf:about">
+			<xsl:variable name="class" select="current-group()/(shacl:scopeClass|shacl:targetClass)[1]/@rdf:resource"/>
 			<shape class-uri="{$class}">
 				<xsl:for-each select="current-group()/shacl:property">
 					<xsl:variable name="property" select="@rdf:resource"/>
