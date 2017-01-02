@@ -1,10 +1,10 @@
 <!--
 
     NAME     rdf2html.xsl
-    VERSION  1.13.1
-    DATE     2016-12-20
+    VERSION  1.13.2-SNAPSHOT
+    DATE     2017-01-02
 
-    Copyright 2012-2016
+    Copyright 2012-2017
 
     This file is part of the Linked Data Theatre.
 
