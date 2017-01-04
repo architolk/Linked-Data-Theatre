@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>nl.architolk.ldt</groupId>
 	<artifactId>ldt</artifactId>
-	<version>1.14.0</version>
+	<version>1.14.1-SNAPSHOT</version>
 	<name>ldt</name>
 	<packaging>war</packaging>
 	<properties>
@@ -12,7 +12,7 @@
 		<license.failIfMissing>false</license.failIfMissing>
 		<release.version>1.14.0</release.version>
 		<release.date>2017-01-04</release.date>
-		<patch.date>2016-12-20</patch.date>
+		<patch.date>2017-01-04</patch.date>
 	</properties>
 	<dependencies>
 		<dependency>
