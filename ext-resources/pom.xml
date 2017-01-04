@@ -291,7 +291,7 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>http://codemirror.net/codemirror.zip</url>
+							<url>https://github.com/codemirror/CodeMirror/archive/5.12.0.zip</url>
 							<unpack>true</unpack>
 							<outputDirectory>zips</outputDirectory>
 						</configuration>
@@ -460,7 +460,7 @@
 									</includes>
 								</resource>
 								<resource>
-									<directory>zips/codemirror-5.12/lib</directory>
+									<directory>zips/Codemirror-5.12.0/lib</directory>
 									<includes>
 										<include>codemirror.js</include>
 									</includes>
