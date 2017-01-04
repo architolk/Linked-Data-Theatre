@@ -1,7 +1,7 @@
 <!--
 
     NAME     sparql2rdfaform.xsl
-    VERSION  1.13.1-SNAPSHOT
+    VERSION  1.14.0
     DATE     2017-01-04
 
     Copyright 2012-2017

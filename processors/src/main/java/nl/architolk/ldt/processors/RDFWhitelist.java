@@ -1,9 +1,9 @@
 /**
- * NAME     RDFCleaner.java
- * VERSION  1.10.0
- * DATE     2016-12-12
+ * NAME     RDFWhitelist.java
+ * VERSION  1.14.0
+ * DATE     2017-01-04
  *
- * Copyright 2012-2016
+ * Copyright 2012-2017
  *
  * This file is part of the Linked Data Theatre.
  *
