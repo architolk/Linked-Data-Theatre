@@ -1,10 +1,10 @@
 <!--
 
     NAME     sparql2rdfaform.xsl
-    VERSION  1.13.0
-    DATE     2016-12-06
+    VERSION  1.13.1-SNAPSHOT
+    DATE     2017-01-04
 
-    Copyright 2012-2016
+    Copyright 2012-2017
 
     This file is part of the Linked Data Theatre.
 
@@ -164,7 +164,7 @@
 			<rdf:Description rdf:nodeID="f5">
 				<rdfs:label>Go!</rdfs:label>
 				<elmo:appearance rdf:resource="http://bp4mc2.org/elmo/def#SubmitAppearance"/>
-				<html:link><xsl:value-of select="root/context/@docroot"/>/sparql</html:link>
+				<html:link><xsl:value-of select="root/context/@docroot"/><xsl:value-of select="root/context/subdomain"/>/sparql</html:link>
 			</rdf:Description>
 		</rdf:RDF>
 		<rdf:RDF elmo:query="http://bp4mc2.org/elmo/def#Queries" elmo:appearance="http://bp4mc2.org/elmo/def#HiddenAppearance">
