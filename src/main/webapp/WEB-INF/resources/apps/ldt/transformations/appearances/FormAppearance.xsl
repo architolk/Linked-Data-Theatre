@@ -1,8 +1,8 @@
 <!--
 
     NAME     FormAppearance.xsl
-    VERSION  1.13.0
-    DATE     2016-12-06
+    VERSION  1.13.2-SNAPSHOT
+    DATE     2017-01-04
 
     Copyright 2012-2016
 
@@ -88,10 +88,12 @@
 						<div class="col-sm-10">
 							<xsl:choose>
 								<xsl:when test="elmo:valuesFrom/@rdf:resource!=''">
+									<xsl:variable name="applies" select="elmo:applies-to"/>
+									<xsl:variable name="param" select="/results/context/parameters/parameter[name=$applies]/value[1]"/>
 									<xsl:choose>
 										<xsl:when test="count(key('rdf',elmo:valuesFrom/@rdf:resource)/rdf:Description)>2">
 											<div class="input-group" style="width:100%;">
-												<select data-placeholder="Select..." class="chosen-select" multiple="multiple" id="{elmo:applies-to}" name="{elmo:applies-to}">
+												<select data-placeholder="Select..." class="chosen-select" multiple="multiple" id="{$applies}" name="{$applies}">
 													<xsl:if test="exists(elmo:value-to)">
 														<xsl:attribute name="onchange">
 															<xsl:choose>
@@ -100,20 +102,22 @@
 															</xsl:choose>
 														</xsl:attribute>
 													</xsl:if>
-													<xsl:for-each select="key('rdf',elmo:valuesFrom/@rdf:resource)/rdf:Description"><xsl:sort select="@rdf:about"/>
-														<option value="{@rdf:about}" data-rdfvalue="{rdf:value}"><xsl:value-of select="rdfs:label"/></option>
+													<xsl:for-each select="key('rdf',elmo:valuesFrom/@rdf:resource)/rdf:Description"><xsl:sort select="rdfs:label[1]"/>
+														<option value="{@rdf:about}" data-rdfvalue="{rdf:value}">
+															<xsl:if test="$param=@rdf:about"><xsl:attribute name="selected">selected</xsl:attribute></xsl:if>
+															<xsl:value-of select="rdfs:label"/>
+														</option>
 													</xsl:for-each>
 												</select>
-												<script>$('#<xsl:value-of select="elmo:applies-to"/>').chosen({max_selected_options: 1});</script>
+												<script>$('#<xsl:value-of select="$applies"/>').chosen({max_selected_options: 1});</script>
 											</div>
 										</xsl:when>
 										<xsl:otherwise>
-											<xsl:variable name="applies" select="elmo:applies-to"/>
 											<xsl:variable name="default" select="rdf:value/@rdf:resource"/>
-											<xsl:for-each select="key('rdf',elmo:valuesFrom/@rdf:resource)/rdf:Description"><xsl:sort select="@rdf:about"/>
+											<xsl:for-each select="key('rdf',elmo:valuesFrom/@rdf:resource)/rdf:Description"><xsl:sort select="rdfs:label[1]"/>
 												<label class="radio-inline">
 													<input type="radio" id="{$applies}" name="{$applies}" value="{@rdf:about}">
-														<xsl:if test="@rdf:about=$default"><xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
+														<xsl:if test="@rdf:about=$param or @rdf:about=$default"><xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
 													</input>
 													<xsl:value-of select="rdfs:label"/>
 												</label>
