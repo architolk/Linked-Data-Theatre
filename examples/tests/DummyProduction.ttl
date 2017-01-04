@@ -22,6 +22,12 @@ ldtupdatestage:DummyProduction a elmo:Production;
 	elmo:contains stage:DummyProduction_scene2;
 .
 
+updatestage:ClearGraph a elmo:Production;
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:contains stage:DummyProduction_scene1;
+.
+
 stage:DummyProduction_form a elmo:Form;
 	elmo:fragment [
 		elmo:applies-to "testvalue";
@@ -45,4 +51,17 @@ stage:DummyProduction_scene2 a elmo:Scene;
 	elmo:index "2";
 	rdfs:label "Add testdata";
 	elmo:query '''insert into <http://localhost:8080/id/dataset/dummy> {<urn:test> rdfs:label "@TESTVALUE@"}''';
+.
+
+stage:ShowDummyGraph a elmo:Representation;
+	elmo:url-pattern "/query/ShowDummyGraph$";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:TableAppearance;
+	elmo:query '''
+		select ?subject ?predicate ?object
+		where {
+			graph <http://localhost:8080/id/dataset/dummy> {?subject ?predicate ?object}
+		}
+	''';
 .
