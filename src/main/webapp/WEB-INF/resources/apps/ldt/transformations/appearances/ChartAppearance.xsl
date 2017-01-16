@@ -1,8 +1,8 @@
 <!--
 
     NAME     ChartAppearance.xsl
-    VERSION  1.14.0
-    DATE     2017-01-04
+    VERSION  1.14.1
+    DATE     2017-01-16
 
     Copyright 2012-2017
 
@@ -49,7 +49,7 @@
 		</div>
 	</div>
 	<script>
-		var data=[<xsl:for-each select="rdf:Description"><xsl:if test="position()!=1">,</xsl:if>{name:"<xsl:value-of select="rdfs:label"/>",value:1+<xsl:value-of select="rdf:value"/>}</xsl:for-each>];
+		var data=[<xsl:for-each select="rdf:Description"><xsl:if test="position()!=1">,</xsl:if>{name:"<xsl:value-of select="rdfs:label"/>",value:<xsl:value-of select="rdf:value"/>}</xsl:for-each>];
 
 		var margin = {top: 20, right: 30, bottom: 30, left: 40},
 			width = 800 - margin.left - margin.right,

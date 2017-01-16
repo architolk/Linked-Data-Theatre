@@ -2,7 +2,7 @@
 
     NAME     rdf2view.xsl
     VERSION  1.14.1-SNAPSHOT
-    DATE     2017-01-04
+    DATE     2017-01-16
 
     Copyright 2012-2017
 
@@ -228,8 +228,16 @@
 							<xsl:apply-templates select="elmo:fragment"/>
 							<service>
 								<url><xsl:value-of select="elmo:service[1]"/></url>
-								<output>jsonld</output>
+								<output>
+									<xsl:choose>
+										<xsl:when test="elmo:accept[1]='text/plain'">txt</xsl:when>
+										<xsl:when test="elmo:accept[1]='application/xml'">xml</xsl:when>
+										<xsl:when test="elmo:accept[1]='application/json'">json</xsl:when>
+										<xsl:otherwise>jsonld</xsl:otherwise>
+									</xsl:choose>
+								</output>
 								<xsl:if test="elmo:post[1]!=''"><body><xsl:value-of select="elmo:post[1]"/></body></xsl:if>
+								<xsl:if test="elmo:translator[1]/@rdf:resource!=''"><translator><xsl:value-of select="substring-after(elmo:translator[1]/@rdf:resource,'#')"/></translator></xsl:if>
 							</service>
 						</representation>
 					</xsl:when>

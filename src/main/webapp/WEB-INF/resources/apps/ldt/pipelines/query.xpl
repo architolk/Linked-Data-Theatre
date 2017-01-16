@@ -1,8 +1,8 @@
 <!--
 
     NAME     query.xpl
-    VERSION  1.14.0
-    DATE     2017-01-04
+    VERSION  1.14.1-SNAPSHOT
+    DATE     2017-01-16
 
     Copyright 2012-2017
 
@@ -363,10 +363,13 @@
 							<xsl:template match="/root">
 								<service>
 									<url>
-										<xsl:apply-templates select="/root/context/parameters/parameter[1]" mode="replace">
-											<xsl:with-param name="text" select="/root/representation/service/url"/>
-										</xsl:apply-templates>
-										<xsl:if test="not(exists(/root/context/parameters/parameter))"><xsl:value-of select="/root/representation/service/url"/></xsl:if>
+										<xsl:variable name="url">
+											<xsl:apply-templates select="/root/context/parameters/parameter[1]" mode="replace">
+												<xsl:with-param name="text" select="/root/representation/service/url"/>
+											</xsl:apply-templates>
+											<xsl:if test="not(exists(/root/context/parameters/parameter))"><xsl:value-of select="/root/representation/service/url"/></xsl:if>
+										</xsl:variable>
+										<xsl:value-of select="replace($url,'@SUBJECT@',/root/context/subject)"/>
 									</url>
 									<output><xsl:value-of select="/root/representation/service/output"/></output>
 									<xsl:choose>
@@ -385,6 +388,9 @@
 									</xsl:choose>
 									<xsl:if test="exists(/root/representation/service/accept)">
 										<accept><xsl:value-of select="/root/representation/service/accept"/></accept>
+									</xsl:if>
+									<xsl:if test="exists(/root/representation/service/translator)">
+										<translator><xsl:value-of select="/root/representation/service/translator"/></translator>
 									</xsl:if>
 								</service>
 							</xsl:template>
@@ -409,11 +415,32 @@
 					<p:output name="data" id="service"/>
 				</p:processor>
 				<!-- Map result back to a sparql result -->
-				<p:processor name="oxf:xslt">
-					<p:input name="data" href="aggregate('root',current(),#service)"/>
-					<p:input name="config" href="../transformations/merge-parameters.xsl"/>
-					<p:output name="data" ref="sparql"/>
-				</p:processor>
+				<p:choose href="#servicecall">
+					<p:when test="service/translator!=''">
+						<p:processor name="oxf:url-generator">
+							<p:input name="config" transform="oxf:xslt" href="#servicecall">
+								<config xsl:version="2.0">
+									<url>../translators/<xsl:value-of select="service/translator"/>.xsl</url>
+									<content-type>application/xml</content-type>
+								</config>
+							</p:input>
+							<p:output name="data" id="translator"/>
+						</p:processor>
+						<!-- Translate -->
+						<p:processor name="oxf:xslt">
+							<p:input name="config" href="#translator"/>
+							<p:input name="data" href="#service"/>
+							<p:output name="data" ref="sparql"/>
+						</p:processor>
+					</p:when>
+					<p:otherwise>
+						<p:processor name="oxf:xslt">
+							<p:input name="data" href="aggregate('root',current(),#service)"/>
+							<p:input name="config" href="../transformations/merge-parameters.xsl"/>
+							<p:output name="data" ref="sparql"/>
+						</p:processor>
+					</p:otherwise>
+				</p:choose>
 			</p:when>
 			<!-- TextSearchAppearance is NOT a regular SPARQL query, but a specific SQL query. elmo:query triple is ignored -->
 			<p:when test="representation/@appearance='http://bp4mc2.org/elmo/def#TextSearchAppearance'">

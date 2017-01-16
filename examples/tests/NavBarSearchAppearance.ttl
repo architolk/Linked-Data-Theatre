@@ -79,6 +79,10 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:data [elmo:index "04"; rdfs:label "Federated - IMDB"; html:link "ldt/resource?subject=http%3A%2F%2Fwww.imdb.com%2Ftitle%2Ftt0120737"];
 			elmo:data [elmo:index "05"; rdfs:label "Federated - RottenTomatoes - movie"; html:link "ldt/resource?subject=http%3A%2F%2Fwww.rottentomatoes.com%2Fm%2Fthe_lord_of_the_rings_the_return_of_the_king"];
 			elmo:data [elmo:index "06"; rdfs:label "Federated - RottenTomatoes - actor"; html:link "ldt/resource?subject=http%3A%2F%2Fwww.rottentomatoes.com%2Fcelebrity%2Fsean_astin"];
+			elmo:data [elmo:index "07"; rdfs:label "Service call - Buienradar"; html:link "query/buienradar?zoom=7"];
+			elmo:data [elmo:index "08"; rdfs:label "Virtual sparql endpoint - Buienradar"; html:link "query/sparql/buienradar?zoom=7"];
+			elmo:data [elmo:index "09"; rdfs:label "Service call - WOW"; html:link "query/wow?zoom=8"];
+			elmo:data [elmo:index "10"; rdfs:label "Federated - Musicbrainz"; html:link "ldt/resource?subject=http%3A%2F%2Fmusicbrainz.org%2Fws%2F2%2Fartist%2F0383dadf-2a4e-4d10-a46a-e9e041da8eb3"];
 		];
 		elmo:data [
 			elmo:index "7";
