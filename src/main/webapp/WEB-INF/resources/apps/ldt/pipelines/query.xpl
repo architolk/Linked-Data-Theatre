@@ -232,10 +232,8 @@
 										?fragment ?fragmentp ?fragmento.
 										?repchild ?repchildp ?repchildo.
 										?fragmentchild ?fragmentchildp ?fragmentchildo.
-										?form ?formp ?formo.
-										?ff ?ffp ?ffo.
-                    ?rep elmo:query ?query.
-                    ?repchild elmo:query ?querychild.
+										?rep elmo:query ?query.
+										?repchild elmo:query ?querychild.
 									}
 									WHERE {
 										GRAPH <]]><xsl:value-of select="root/context/representation-graph/@uri"/><![CDATA[>{
@@ -246,18 +244,12 @@
 												FILTER (?rep=]]><xsl:value-of select="."/><![CDATA[)
 												OPTIONAL { ?rep elmo:fragment ?fragment. ?fragment ?fragmentp ?fragmento }
 												OPTIONAL {
-													?rep elmo:contains ?repchild.
+													?rep (elmo:contains|elmo:queryForm) ?repchild.
 													?repchild ?repchildp ?repchildo.
 													OPTIONAL { ?repchild elmo:fragment ?fragmentchild. ?fragmentchild ?fragmentchildp ?fragmentchildo }
-                          OPTIONAL { ?repchild elmo:query/elmo:query ?querychild }
+													OPTIONAL { ?repchild elmo:query/elmo:query ?querychild }
 												}
-												OPTIONAL {
-													?rep elmo:queryForm ?form.
-													?form ?formp ?formo.
-													?form elmo:fragment ?ff.
-													?ff ?ffp ?ffo.
-												}
-                        OPTIONAL { ?rep elmo:query/elmo:query ?query }
+												OPTIONAL { ?rep elmo:query/elmo:query ?query }
 											}]]></xsl:for-each><![CDATA[
 										}
 									}
