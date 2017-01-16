@@ -1,7 +1,7 @@
 /*
  * NAME     linkeddatamap.js
- * VERSION  1.14.0
- * DATE     2017-01-04
+ * VERSION  1.14.1-SNAPSHOT
+ * DATE     2017-01-16
  *
  * Copyright 2012-2017
  *
@@ -485,21 +485,35 @@ function updateMap() {
 	mapChanged = false;
 }
 
-function addPoint(latCor, longCor, text, url)
+function addPoint(latCor, longCor, text, url, value, iconvalue)
 {
 	//Every location is a marker-object.
-	var location = L.marker();
+	
+	var location = L.marker([latCor, longCor]).addTo(map);
+	
+	if (iconvalue!="") {
+		location.setIcon(L.icon({iconUrl: iconvalue}));
+	}
+
+	//TODO: use bindLabel instead of adding the value to the pop
 	
 	//Eerst stellen we de locatie in waarop de marker moet worden weergegeven, waarbij we hier kiezen voor simpele Latitude/Longitude coördinaten die ook gebruikt worden door GPS.
-	location.setLatLng([latCor, longCor]);
+	//location.setLatLng([latCor, longCor]);
 	//Daarna geven we aan welke informatie moet worden weergegeven wanneer de gebruiker op de locatie klikt.
 	var html = "";
 	if (url!="") {
-		html+='<a href="'+url+'">'+text+'</a>';
+		html+='<a href="'+url+'">'+text;
+		if (value!='') {
+			html+=' ('+value+')';
+		}
+		html+='</a>';
 	} else {
 		html+=text;
+		if (value!='') {
+			html+=' ('+value+')';
+		}
 	}
-	location.bindPopup(html).openPopup();
+	location.bindPopup(html);
 	
 	//Tot slot voegen we de locatie toe aan de te tonen locaties.
 	listOfLocations.push(location);
@@ -635,10 +649,6 @@ function showLocations(doZoom, appearance)
   .append('path')
 	.attr('d', 'M0,-5L10,0L0,5');
 	
-	//Add all locations to the map
-	for(i = 0; i < listOfLocations.length; ++i)
-		listOfLocations[i].addTo(map);
-
 	if (listOfGeoObjects.length!=0) {
 		var firstPolygon = listOfGeoObjects[0];
 		if (doZoom==1 && (firstPolygon) && !(firstPolygon.getLayers()[0] instanceof L.CircleMarker)) {

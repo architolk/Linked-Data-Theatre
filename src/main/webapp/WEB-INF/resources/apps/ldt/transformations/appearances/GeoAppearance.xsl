@@ -1,8 +1,8 @@
 <!--
 
     NAME     GeoAppearance.xsl
-    VERSION  1.14.0
-    DATE     2017-01-04
+    VERSION  1.14.1-SNAPSHOT
+    DATE     2017-01-16
 
     Copyright 2012-2017
 
@@ -69,10 +69,18 @@
 			<xsl:otherwise>
 				<link href="{$staticroot}/css/leaflet.css" rel="stylesheet"/>
 				<script src="{$staticroot}/js/leaflet.js"></script>
+				<script src="{$staticroot}/js/leaflet.label.js"></script>
 				<script src="{$staticroot}/js/proj4-compressed.js"></script>
 				<script src="{$staticroot}/js/proj4leaflet.js"></script>
 				<!-- Clickable map form -->
-				<form id="clickform" method="get" action="#">
+				<xsl:variable name="link" select="rdf:Description[elmo:applies-to='http://bp4mc2.org/elmo/def#Appearance']/html:link[1]"/>
+				<xsl:variable name="action">
+					<xsl:choose>
+						<xsl:when test="$link!=''"><xsl:value-of select="$link"/></xsl:when>
+						<xsl:otherwise>#</xsl:otherwise>
+					</xsl:choose>
+				</xsl:variable>
+				<form id="clickform" method="get" action="{$action}">
 					<input type="hidden" id="lat" name="lat" value=""/>
 					<input type="hidden" id="long" name="long" value=""/>
 					<input type="hidden" id="zoom" name="zoom" value=""/>
@@ -172,7 +180,7 @@
 					
 					<xsl:for-each select="rdf:Description[geo:lat!='' and geo:long!='' and rdfs:label!='']">
 						<xsl:variable name="resource-uri"><xsl:call-template name="resource-uri"><xsl:with-param name="uri" select="@rdf:about"/></xsl:call-template></xsl:variable>
-						addPoint(<xsl:value-of select="geo:lat[1]"/>,<xsl:value-of select="geo:long[1]"/>,"<xsl:value-of select="rdfs:label"/>","<xsl:value-of select="$resource-uri"/>");
+						addPoint(<xsl:value-of select="geo:lat[1]"/>,<xsl:value-of select="geo:long[1]"/>,"<xsl:value-of select="rdfs:label"/>","<xsl:value-of select="$resource-uri"/>","<xsl:value-of select="rdf:value"/>","<xsl:value-of select="html:icon"/>");
 					</xsl:for-each>
 					<xsl:for-each select="rdf:Description[geo:geometry!='']"><xsl:sort select="string-length(geo:geometry[1])" data-type="number" order="descending"/>
 						<!-- //<xsl:value-of select="string-length(geo:geometry[1])"/>-<xsl:value-of select="key('resource',elmo:style[1]/@rdf:resource)/elmo:name"/> -->

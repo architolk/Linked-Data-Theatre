@@ -17,6 +17,7 @@ stage:GeoAppearancePointer a elmo:Representation;
 			<urn:pointer> geo:lat "52.155".
 			<urn:pointer> geo:long "5.38".
 			<urn:pointer> rdfs:label "Here!".
+			<urn:pointer> rdf:value "Amersfoort".
 		}
 		WHERE {}
 	''';
