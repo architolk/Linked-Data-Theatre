@@ -1,7 +1,7 @@
 /*
  * NAME     d3graphs-inner.js
- * VERSION  1.14.0
- * DATE     2017-01-04
+ * VERSION  1.14.1-SNAPSHOT
+ * DATE     2017-01-16
  *
  * Copyright 2012-2017
  *
@@ -30,7 +30,7 @@ var width = $("#graph").width(),
 	aspect = height/width;
 
 //Maximum number of nodes allowed before links and nodes are aggregated
-var maxNodes = 10;
+var maxNodes = 4;
 
 //Full screen toggle
 var fullScreenFlag = false;
