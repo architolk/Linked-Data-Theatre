@@ -25,7 +25,7 @@
 <!--
     DESCRIPTION
     Transformation of context to text format
-	
+
 -->
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
 
@@ -65,8 +65,8 @@ Docroot:                 </xsl:text><xsl:if test="not(root/context/@docroot!='')
 Staticroot:              </xsl:text><xsl:if test="not(root/context/@staticroot!='')">/</xsl:if><xsl:value-of select="root/context/@staticroot"/><xsl:text>
 Public SPARQL endpoint:  </xsl:text><xsl:value-of select="root/context/@sparql"/><xsl:text>
 Public backstage:        </xsl:text><xsl:choose><xsl:when test="root/context/back-of-stage!=''">yes</xsl:when><xsl:otherwise>no</xsl:otherwise></xsl:choose><xsl:text>
+Request attribute(s):    </xsl:text><xsl:for-each select="root/context/attributes/attribute"><xsl:value-of select="./name"/><xsl:text>:</xsl:text><xsl:value-of select="./value"/><xsl:text> </xsl:text></xsl:for-each><xsl:text>
 Config:                  </xsl:text><xsl:value-of select="$config"/><xsl:if test="$config='INVALID'"><xsl:text>
-
 Reason for invalid configuration:</xsl:text><xsl:for-each select="$configcheck/error"><xsl:text>
 </xsl:text><xsl:value-of select="."/></xsl:for-each></xsl:if>
 </xsl:template>

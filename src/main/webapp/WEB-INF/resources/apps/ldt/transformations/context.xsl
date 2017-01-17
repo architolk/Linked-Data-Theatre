@@ -25,12 +25,12 @@
 <!--
 	DESCRIPTION
 	Generates the context, used in the info.xpl, version.xpl, query.xpl, sparql.xpl and container.xpl pipelines
-  
+
 -->
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="no"/>
-	
+
 	<xsl:template match="/root|/croot">
 		<xsl:variable name="uri-filter">[^a-zA-Z0-9:\.\-_~/()#&amp;=,]</xsl:variable> <!-- ampersand and equal-sign added for Juriconnect -->
 		<xsl:variable name="x-forwarded-host"><xsl:value-of select="replace(request/headers/header[name='x-forwarded-host']/value,'^([^,]+).*$','$1')"/></xsl:variable>
@@ -95,7 +95,7 @@
 				<xsl:text>/stage</xsl:text>
 			</xsl:if>
 		</xsl:variable>
-		
+
 		<!-- URL should be request-url, but in case of proxy we need to replace the host -->
 		<xsl:variable name="url-with-domain">
 			<xsl:choose>
@@ -111,7 +111,7 @@
 				<xsl:otherwise><xsl:value-of select="replace($url-with-domain,'^([a-z]+://[^/]+)(.*)$',concat('$1',$docroot,'$2'))"/></xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
-		
+
 		<xsl:variable name="datearray" select="tokenize(theatre/date,'[-/]')"/>
 		<xsl:variable name="normalized-date">
 			<xsl:if test="$datearray[1]!=''"><xsl:value-of select="format-number(number($datearray[1]),'0000')"/></xsl:if>
@@ -128,7 +128,7 @@
 				<xsl:otherwise><xsl:value-of select="replace($normalized-date,'[T:\.]','-')"/></xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
-		
+
 		<context env="{theatre/@env}" docroot="{$docroot}" staticroot="{$staticroot}" version="{version/number}" timestamp="{version/timestamp}" sparql="{theatre/@sparql}">
 			<configuration-endpoint><xsl:value-of select="theatre/@configuration-endpoint"/></configuration-endpoint>
 			<local-endpoint>
@@ -226,6 +226,11 @@
 					<xsl:copy-of select="."/>
 				</xsl:for-each>
 			</parameters>
+			<attributes>
+				<xsl:for-each select="request/attributes/attribute[name!='']">
+					<xsl:copy-of select="."/>
+				</xsl:for-each>
+			</attributes>
 			<xsl:if test="request/body/@xsi:type='xs:anyURI'">
 				<xsl:choose>
 					<xsl:when test="request/method='POST'"><upload-file action='insert'><xsl:value-of select="request/body"/></upload-file></xsl:when>

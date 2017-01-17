@@ -25,14 +25,14 @@
 <!--
     DESCRIPTION
     Transforms the regular header XML to html
-  
+
 -->
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
 
 <xsl:template match="*" mode="rec">
-	
+
 	<ul>
-		<li><span style="float:left"><xsl:value-of select="name()"/></span>
+		<li><span><xsl:value-of select="name()"/></span>
 			<xsl:choose>
 				<xsl:when test="exists(*)"><xsl:apply-templates select="*" mode="rec"/></xsl:when>
 				<xsl:otherwise><span style="padding-left: 10px; float:right;"><xsl:value-of select="."/></span></xsl:otherwise>
@@ -40,7 +40,7 @@
 		</li>
 	</ul>
 </xsl:template>
-	
+
 <xsl:template match="/">
 	<html>
 		<body>
