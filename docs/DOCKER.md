@@ -30,8 +30,8 @@ Now virtuoso should be running (http://localhost:8890/conductor/) and Tomcat sho
 (This step is only necessary if you use Virtuoso as a backend. Note that some functionality (mainly backstage and containers) is not available if you use different backend).
 
 Execute the following commands from your local machine:
-1. docker cp stored-procs/create_procedures.sql virtuoso:/var/tmp
-2. docker exec -it virtuoso sh -c 'isql -U dba -P dba < /var/tmp/create_procedures.sql'
+- docker cp stored-procs/create_procedures.sql virtuoso:/var/tmp
+- docker exec -it virtuoso sh -c 'isql -U dba -P dba < /var/tmp/create_procedures.sql'
 
 ### Adapt config for Docker
 The default setup assumes Virtuoso and Tomcat run at the same server, but with Docker they communicate through the docker network. The LDT should be configured to use virtuoso (hostname) in stead of localhost.
@@ -59,7 +59,7 @@ For building the LDT with Maven do (TODO implement in Maven in stead of separate
 
 ## Run LDT
 Now ldt is up and running so open the backstage in your browser with the url:
-http://localhost:8080/ldt/backstage, press import and select the file the basic-configuration.ttl press Upload.
+http://localhost:8080/backstage, press import and select the file the basic-configuration.ttl press Upload.
 
 Now LDT front could be opened in your browser with:
 http://localhost:8080/ldt/

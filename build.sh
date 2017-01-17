@@ -38,4 +38,4 @@ cd ..
 # package ldt
 mvn clean package
 # cp files to tomcat webapps dir
-cp -R target/ldt*/ webapps/ldt/
+cp -R target/ldt*/ webapps/ROOT/
