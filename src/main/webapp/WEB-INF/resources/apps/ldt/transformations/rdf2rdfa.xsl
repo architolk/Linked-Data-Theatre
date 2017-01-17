@@ -1,10 +1,10 @@
 <!--
 
     NAME     rdf2rdfa.xsl
-    VERSION  1.12.2-SNAPSHOT
-    DATE     2016-11-08
+    VERSION  1.14.0
+    DATE     2017-01-04
 
-    Copyright 2012-2016
+    Copyright 2012-2017
 
     This file is part of the Linked Data Theatre.
 
@@ -153,9 +153,9 @@
 	<xsl:param name="index"/>
 	
 	<rdf:Description rdf:about="{@uri}">
-		<elmo:index><xsl:value-of select="$index"/></elmo:index>
-		<xsl:if test="exists(label)"><rdfs:label><xsl:value-of select="label"/></rdfs:label></xsl:if>
-		<rdf:value><xsl:value-of select="/root/results/rdf:RDF[position()=$index]/rdf:Description[1]/res:solution[1]/res:binding[1]/res:value[1]"/></rdf:value>
+		<elmo:index elmo:label="Step"><xsl:value-of select="$index"/></elmo:index>
+		<xsl:if test="exists(@label)"><rdfs:label elmo:label="Description"><xsl:value-of select="@label"/></rdfs:label></xsl:if>
+		<rdf:value elmo:label="Result"><xsl:value-of select="/root/results/rdf:RDF[position()=$index]/rdf:Description[1]/res:solution[1]/res:binding[1]/res:value[1]"/></rdf:value>
 	</rdf:Description>
 </xsl:template>
 

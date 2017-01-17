@@ -1,9 +1,9 @@
 /**
  * NAME     HttpClientProcessor.java
- * VERSION  1.10.0
- * DATE     2016-09-27
+ * VERSION  1.14.0
+ * DATE     2017-01-08
  *
- * Copyright 2012-2016
+ * Copyright 2012-2017
  *
  * This file is part of the Linked Data Theatre.
  *
@@ -54,9 +54,9 @@ import org.apache.http.client.methods.HttpOptions;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.Header;
 
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.CredentialsProvider;
@@ -86,7 +86,13 @@ import org.apache.any23.writer.RDFXMLWriter;
 import org.apache.any23.writer.TripleHandler;
 import org.apache.any23.source.DocumentSource;
 import org.apache.any23.source.StringDocumentSource;
+import org.apache.any23.source.ByteArrayDocumentSource;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+
+import java.io.CharArrayWriter;
+import java.io.StringWriter;
+import org.apache.commons.io.IOUtils;
 
 import java.io.ByteArrayInputStream;
 import org.xml.sax.Attributes;
@@ -95,6 +101,13 @@ import org.xml.sax.InputSource;
 import org.xml.sax.helpers.DefaultHandler;
 import org.orbeon.oxf.xml.XMLParsing;
 import org.xml.sax.Locator;
+
+import com.github.jsonldjava.utils.JsonUtils;
+import com.github.jsonldjava.core.JsonLdProcessor;
+import com.github.jsonldjava.impl.NQuadTripleCallback;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Entities;
 
 public class HttpClientProcessor extends SimpleProcessor {
 
@@ -162,14 +175,16 @@ public class HttpClientProcessor extends SimpleProcessor {
     public void generateData(PipelineContext context, ContentHandler contentHandler) throws SAXException {
 
 		try {
-			CloseableHttpClient httpclient = HttpClients.createDefault();
+			CloseableHttpClient httpclient = HttpClientProperties.createHttpClient();
+			
 			try {
 				// Read content of config pipe
 				Document configDocument = readInputAsDOM4J(context, INPUT_CONFIG);
 				Node configNode = configDocument.selectSingleNode("//config");
 
+				URL theURL = new URL(configNode.valueOf("url"));
+				
 				if (configNode.valueOf("auth-method").equals("basic")) {
-					URL theURL = new URL(configNode.valueOf("url"));
 					HttpHost targetHost = new HttpHost(theURL.getHost(),theURL.getPort(),theURL.getProtocol());
 					//Authentication support
 					CredentialsProvider credsProvider = new BasicCredentialsProvider();
@@ -177,7 +192,7 @@ public class HttpClientProcessor extends SimpleProcessor {
 						AuthScope.ANY, 
 						new UsernamePasswordCredentials(configNode.valueOf("username"), configNode.valueOf("password"))
 					);
-					logger.info("Credentials: "+configNode.valueOf("username")+"/"+configNode.valueOf("password"));
+					// logger.info("Credentials: "+configNode.valueOf("username")+"/"+configNode.valueOf("password"));
 					// Create AuthCache instance
 					AuthCache authCache = new BasicAuthCache();
 					authCache.put(targetHost,new BasicScheme());
@@ -194,7 +209,7 @@ public class HttpClientProcessor extends SimpleProcessor {
 					nameValuePairs.add(new BasicNameValuePair("password", configNode.valueOf("password")));
 					authpost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 					CloseableHttpResponse httpResponse = httpclient.execute(authpost);
-					logger.info("Signin response:"+Integer.toString(httpResponse.getStatusLine().getStatusCode()));
+					// logger.info("Signin response:"+Integer.toString(httpResponse.getStatusLine().getStatusCode()));
 				}
 				
 				CloseableHttpResponse response;
@@ -223,6 +238,12 @@ public class HttpClientProcessor extends SimpleProcessor {
 				} else {
 					//Default = GET
 					HttpGet httpRequest = new HttpGet(configNode.valueOf("url"));
+					String acceptHeader = configNode.valueOf("accept");
+					if (!acceptHeader.isEmpty()) {
+						httpRequest.addHeader("accept",configNode.valueOf("accept"));
+					}
+					//Add proxy route if needed
+					HttpClientProperties.setProxy(httpRequest,theURL.getHost());
 					response = executeRequest(httpRequest, httpclient);
 				}
 
@@ -235,26 +256,37 @@ public class HttpClientProcessor extends SimpleProcessor {
 					contentHandler.startElement("", "response", "response", statusAttr);
 					if (status >= 200 && status < 300) {
 						HttpEntity entity = response.getEntity();
-						if (entity != null) {
-							String responseBody = EntityUtils.toString(entity);
+						Header contentType = response.getFirstHeader("Content-Type");
+						if (entity!=null && contentType!=null) {
+							//logger.info("Contenttype: " + contentType.getValue());
+							//Read content into inputstream
+							InputStream inStream = entity.getContent();
 							
-							// output-type = json means: response is json, convert to xml. Or else: return plain string
+							// output-type = json means: response is json, convert to xml
 							if (configNode.valueOf("output-type").equals("json")) {
-								JSONObject json = JSONObject.fromObject(responseBody);
+								//TODO: net.sf.json.JSONObject might nog be the correct JSONObject. javax.json.JsonObject might be better!!!
+								//javax.json contains readers to read from an inputstream
+								StringWriter writer = new StringWriter();
+								IOUtils.copy(inStream,writer,"UTF-8");
+								JSONObject json = JSONObject.fromObject(writer.toString());
 								parseJSONObject(contentHandler,json);
+							// output-type = xml means: response is xml, keep it
 							} else if (configNode.valueOf("output-type").equals("xml")) {
 								try {
-									ByteArrayInputStream inStream = new ByteArrayInputStream(responseBody.getBytes("UTF-8"));
 									XMLReader saxParser = XMLParsing.newXMLReader(new XMLParsing.ParserConfiguration(false,false,false));
 									saxParser.setContentHandler(new ParseHandler(contentHandler));
 									saxParser.parse(new InputSource(inStream));
 								} catch (Exception e) {
 									throw new OXFException(e);
 								}
-							} else if (configNode.valueOf("output-type").equals("rdf")) {
+							// output-type = jsonld means: reponse is json-ld, (a) convert to nquads; (b) convert to xml
+							} else if (configNode.valueOf("output-type").equals("jsonld")) {
 								try {
+									Object jsonObject = JsonUtils.fromInputStream(inStream,"UTF-8"); //TODO: UTF-8 should be read from response!
+									Object nquads = JsonLdProcessor.toRDF(jsonObject,new NQuadTripleCallback());
+									
 									Any23 runner = new Any23();
-									DocumentSource source = new StringDocumentSource(responseBody,"http://localhost");
+									DocumentSource source = new StringDocumentSource((String)nquads,configNode.valueOf("url"));
 									ByteArrayOutputStream out = new ByteArrayOutputStream();
 									TripleHandler handler = new RDFXMLWriter(out);
 									try {
@@ -262,16 +294,54 @@ public class HttpClientProcessor extends SimpleProcessor {
 									} finally {
 										handler.close();
 									}
-									ByteArrayInputStream inStream = new ByteArrayInputStream(out.toByteArray());
+									ByteArrayInputStream inJsonStream = new ByteArrayInputStream(out.toByteArray());
 									XMLReader saxParser = XMLParsing.newXMLReader(new XMLParsing.ParserConfiguration(false,false,false));
 									saxParser.setContentHandler(new ParseHandler(contentHandler));
-									saxParser.parse(new InputSource(inStream));
+									saxParser.parse(new InputSource(inJsonStream));
+								} catch (Exception e) {
+									throw new OXFException(e);
+								}
+							// output-type = rdf means: response is some kind of rdf (except json-ld...), convert to xml
+							} else if (configNode.valueOf("output-type").equals("rdf")) {
+								try {
+									Any23 runner = new Any23();
+									
+									DocumentSource source;
+									//If contentType = text/html than convert from html to xhtml to handle non-xml style html!
+									logger.info("Contenttype: " + contentType.getValue());
+									if (configNode.valueOf("tidy").equals("yes") && contentType.getValue().startsWith("text/html")) {
+										org.jsoup.nodes.Document doc = Jsoup.parse(inStream,"UTF-8",configNode.valueOf("url")); //TODO UTF-8 should be read from response!
+
+										RDFCleaner cleaner = new RDFCleaner();
+										org.jsoup.nodes.Document cleandoc = cleaner.clean(doc);
+										cleandoc.outputSettings().escapeMode(Entities.EscapeMode.xhtml);
+										cleandoc.outputSettings().syntax(org.jsoup.nodes.Document.OutputSettings.Syntax.xml);
+										cleandoc.outputSettings().charset("UTF-8");
+
+										source = new StringDocumentSource(cleandoc.html(),configNode.valueOf("url"),contentType.getValue());
+									} else {
+										source = new ByteArrayDocumentSource(inStream,configNode.valueOf("url"),contentType.getValue());
+									}
+									
+									ByteArrayOutputStream out = new ByteArrayOutputStream();
+									TripleHandler handler = new RDFXMLWriter(out);
+									try {
+										runner.extract(source,handler);
+									} finally {
+										handler.close();
+									}
+									ByteArrayInputStream inAnyStream = new ByteArrayInputStream(out.toByteArray());
+									XMLReader saxParser = XMLParsing.newXMLReader(new XMLParsing.ParserConfiguration(false,false,false));
+									saxParser.setContentHandler(new ParseHandler(contentHandler));
+									saxParser.parse(new InputSource(inAnyStream));
 
 								} catch (Exception e) {
 									throw new OXFException(e);
 								}
 							} else {
-								contentHandler.characters(responseBody.toCharArray(), 0, responseBody.length());
+								CharArrayWriter writer = new CharArrayWriter();
+								IOUtils.copy(inStream,writer,"UTF-8");
+								contentHandler.characters(writer.toCharArray(), 0, writer.size());
 							}
 						}
 					}
@@ -284,7 +354,7 @@ public class HttpClientProcessor extends SimpleProcessor {
 			} finally {
 				httpclient.close();
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			throw new OXFException(e);
 		}
 

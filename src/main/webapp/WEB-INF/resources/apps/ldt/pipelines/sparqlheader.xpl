@@ -1,10 +1,10 @@
 <!--
 
-    NAME     header.xpl
-    VERSION  1.12.1
-    DATE     2016-11-07
+    NAME     sparqlheader.xpl
+    VERSION  1.14.0
+    DATE     2017-01-04
 
-    Copyright 2012-2016
+    Copyright 2012-2017
 
     This file is part of the Linked Data Theatre.
 
@@ -61,11 +61,13 @@
 	</p:processor>
 
 	<!-- Create context -->
+	<!--
 	<p:processor name="oxf:xslt">
 		<p:input name="data" href="aggregate('root',#instance,#request)"/>
 		<p:input name="config" href="../transformations/context.xsl"/>
 		<p:output name="data" id="context"/>
 	</p:processor>
+	-->
 	
 	<p:choose href="#instance">
 		<!-- Only show header information in development-mode -->
@@ -77,7 +79,7 @@
 						<encoding>utf-8</encoding>
 					</config>
 				</p:input>
-				<p:input name="data" href="#context"/>
+				<p:input name="data" href="#request"/>
 				<p:output name="data" id="xmldoc"/>
 			</p:processor>
 			<p:processor name="oxf:file-serializer">
@@ -90,13 +92,41 @@
 				<p:output name="data" id="url-written"/>
 			</p:processor>
 
+			<!-- Translate to sparql-result -->
+			<p:processor name="oxf:xslt">
+				<p:input name="config">
+					<xsl:stylesheet version="2.0">
+						<xsl:template match="/root">
+							<sparql:sparql>
+								<sparql:head>
+									<sparql:variable name="p"/>
+									<sparql:variable name="o"/>
+								</sparql:head>
+								<sparql:results distinct="false" ordered="true">
+									<sparql:result>
+										<sparql:binding name="p">
+											<sparql:uri>urn:property</sparql:uri>
+										</sparql:binding>
+										<sparql:binding name="o">
+											<sparql:literal>blub</sparql:literal>
+										</sparql:binding>
+									</sparql:result>
+								</sparql:results>
+							</sparql:sparql>
+						</xsl:template>
+					</xsl:stylesheet>
+				</p:input>
+				<p:input name="data" href="aggregate('root',#request,#roles,#url-written)"/>
+				<p:output name="data" id="result"/>
+			</p:processor>
+			
 			<p:processor name="oxf:xml-serializer">
 				<p:input name="config">
 					<config>
 						<content-type>application/sparql-results+xml</content-type>
 					</config>
 				</p:input>
-				<p:input name="data" href="aggregate('root',#request,#roles,#url-written)"/>
+				<p:input name="data" href="#result"/>
 			</p:processor>
 		</p:when>
 		<p:otherwise>

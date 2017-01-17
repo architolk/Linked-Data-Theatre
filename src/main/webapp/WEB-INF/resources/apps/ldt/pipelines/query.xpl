@@ -1,10 +1,10 @@
 <!--
 
     NAME     query.xpl
-    VERSION  1.12.2-SNAPSHOT
-    DATE     2016-11-19
+    VERSION  1.14.1-SNAPSHOT
+    DATE     2017-01-16
 
-    Copyright 2012-2016
+    Copyright 2012-2017
 
     This file is part of the Linked Data Theatre.
 
@@ -232,10 +232,8 @@
 										?fragment ?fragmentp ?fragmento.
 										?repchild ?repchildp ?repchildo.
 										?fragmentchild ?fragmentchildp ?fragmentchildo.
-										?form ?formp ?formo.
-										?ff ?ffp ?ffo.
-                    ?rep elmo:query ?query.
-                    ?repchild elmo:query ?querychild.
+										?rep elmo:query ?query.
+										?repchild elmo:query ?querychild.
 									}
 									WHERE {
 										GRAPH <]]><xsl:value-of select="root/context/representation-graph/@uri"/><![CDATA[>{
@@ -246,18 +244,12 @@
 												FILTER (?rep=]]><xsl:value-of select="."/><![CDATA[)
 												OPTIONAL { ?rep elmo:fragment ?fragment. ?fragment ?fragmentp ?fragmento }
 												OPTIONAL {
-													?rep elmo:contains ?repchild.
+													?rep (elmo:contains|elmo:queryForm) ?repchild.
 													?repchild ?repchildp ?repchildo.
 													OPTIONAL { ?repchild elmo:fragment ?fragmentchild. ?fragmentchild ?fragmentchildp ?fragmentchildo }
-                          OPTIONAL { ?repchild elmo:query/elmo:query ?querychild }
+													OPTIONAL { ?repchild elmo:query/elmo:query ?querychild }
 												}
-												OPTIONAL {
-													?rep elmo:queryForm ?form.
-													?form ?formp ?formo.
-													?form elmo:fragment ?ff.
-													?ff ?ffp ?ffo.
-												}
-                        OPTIONAL { ?rep elmo:query/elmo:query ?query }
+												OPTIONAL { ?rep elmo:query/elmo:query ?query }
 											}]]></xsl:for-each><![CDATA[
 										}
 									}
@@ -363,11 +355,15 @@
 							<xsl:template match="/root">
 								<service>
 									<url>
-										<xsl:apply-templates select="/root/context/parameters/parameter[1]" mode="replace">
-											<xsl:with-param name="text" select="/root/representation/service/url"/>
-										</xsl:apply-templates>
-										<xsl:if test="not(exists(/root/context/parameters/parameter))"><xsl:value-of select="/root/representation/service/url"/></xsl:if>
+										<xsl:variable name="url">
+											<xsl:apply-templates select="/root/context/parameters/parameter[1]" mode="replace">
+												<xsl:with-param name="text" select="/root/representation/service/url"/>
+											</xsl:apply-templates>
+											<xsl:if test="not(exists(/root/context/parameters/parameter))"><xsl:value-of select="/root/representation/service/url"/></xsl:if>
+										</xsl:variable>
+										<xsl:value-of select="replace($url,'@SUBJECT@',/root/context/subject)"/>
 									</url>
+									<output><xsl:value-of select="/root/representation/service/output"/></output>
 									<xsl:choose>
 										<xsl:when test="/root/representation/service/body!=''">
 											<body>
@@ -382,6 +378,12 @@
 											<method>get</method>
 										</xsl:otherwise>
 									</xsl:choose>
+									<xsl:if test="exists(/root/representation/service/accept)">
+										<accept><xsl:value-of select="/root/representation/service/accept"/></accept>
+									</xsl:if>
+									<xsl:if test="exists(/root/representation/service/translator)">
+										<translator><xsl:value-of select="/root/representation/service/translator"/></translator>
+									</xsl:if>
 								</service>
 							</xsl:template>
 						</xsl:stylesheet>
@@ -393,9 +395,10 @@
 					<p:input name="config" href="#servicecall" transform="oxf:xslt">
 						<config xsl:version="2.0">
 							<input-type>text</input-type>
-							<output-type>json</output-type>
+							<output-type><xsl:value-of select="service/output"/></output-type>
 							<url><xsl:value-of select="service/url"/></url>
 							<method><xsl:value-of select="service/method"/></method>
+							<xsl:if test="service/accept!=''"><accept><xsl:value-of select="service/accept"/></accept></xsl:if>
 						</config>
 					</p:input>
 					<p:input name="data" href="#servicecall" transform="oxf:xslt">
@@ -403,12 +406,33 @@
 					</p:input>
 					<p:output name="data" id="service"/>
 				</p:processor>
-				<!-- Combine result with original parameters-->
-				<p:processor name="oxf:xslt">
-					<p:input name="data" href="aggregate('root',current(),#service)"/>
-					<p:input name="config" href="../transformations/merge-parameters.xsl"/>
-					<p:output name="data" ref="sparql"/>
-				</p:processor>
+				<!-- Map result back to a sparql result -->
+				<p:choose href="#servicecall">
+					<p:when test="service/translator!=''">
+						<p:processor name="oxf:url-generator">
+							<p:input name="config" transform="oxf:xslt" href="#servicecall">
+								<config xsl:version="2.0">
+									<url>../translators/<xsl:value-of select="service/translator"/>.xsl</url>
+									<content-type>application/xml</content-type>
+								</config>
+							</p:input>
+							<p:output name="data" id="translator"/>
+						</p:processor>
+						<!-- Translate -->
+						<p:processor name="oxf:xslt">
+							<p:input name="config" href="#translator"/>
+							<p:input name="data" href="#service"/>
+							<p:output name="data" ref="sparql"/>
+						</p:processor>
+					</p:when>
+					<p:otherwise>
+						<p:processor name="oxf:xslt">
+							<p:input name="data" href="aggregate('root',current(),#service)"/>
+							<p:input name="config" href="../transformations/merge-parameters.xsl"/>
+							<p:output name="data" ref="sparql"/>
+						</p:processor>
+					</p:otherwise>
+				</p:choose>
 			</p:when>
 			<!-- TextSearchAppearance is NOT a regular SPARQL query, but a specific SQL query. elmo:query triple is ignored -->
 			<p:when test="representation/@appearance='http://bp4mc2.org/elmo/def#TextSearchAppearance'">
@@ -928,13 +952,15 @@
 					</p:processor>
 					<!-- Serialize -->
 					<p:processor name="oxf:http-serializer">
-						<p:input name="config">
-							<config>
+						<p:input name="config" href="#instance" transform="oxf:xslt">
+							<config xsl:version="2.0">
 								<cache-control><use-local-cache>false</use-local-cache></cache-control>
-								<header>
-									<name>Access-Control-Allow-Origin</name>
-									<value>*</value>
-								</header>
+								<xsl:if test="not(theatre/@cors='no')">
+									<header>
+										<name>Access-Control-Allow-Origin</name>
+										<value>*</value>
+									</header>
+								</xsl:if>
 							</config>
 						</p:input>
 						<p:input name="data" href="#converted"/>
@@ -961,13 +987,15 @@
 					</p:processor>
 					<!-- Serialize -->
 					<p:processor name="oxf:http-serializer">
-						<p:input name="config">
-							<config>
+						<p:input name="config" href="#instance" transform="oxf:xslt">
+							<config xsl:version="2.0">
 								<cache-control><use-local-cache>false</use-local-cache></cache-control>
-								<header>
-									<name>Access-Control-Allow-Origin</name>
-									<value>*</value>
-								</header>
+								<xsl:if test="not(theatre/@cors='no')">
+									<header>
+										<name>Access-Control-Allow-Origin</name>
+										<value>*</value>
+									</header>
+								</xsl:if>
 							</config>
 						</p:input>
 						<p:input name="data" href="#converted"/>

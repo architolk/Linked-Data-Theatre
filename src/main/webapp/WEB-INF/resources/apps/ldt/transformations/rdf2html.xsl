@@ -1,10 +1,10 @@
 <!--
 
     NAME     rdf2html.xsl
-    VERSION  1.12.2-SNAPSHOT
-    DATE     2016-11-08
+    VERSION  1.14.0
+    DATE     2017-01-04
 
-    Copyright 2012-2016
+    Copyright 2012-2017
 
     This file is part of the Linked Data Theatre.
 
@@ -35,7 +35,7 @@
 	- ShortTableAppearance: a twist at the TableAppearance, for short tables only
 	- TextSearchAppearance: a twist at the TableAppearance, for text searches only
 	For navigation
-	- HeaderAppearance
+	- HeaderAppearance and FooterAppearance
 	- NavbarAppearance and NavbarSearchAppearance
 	- IndexAppearance
 	Special:
@@ -431,6 +431,7 @@
 	<xsl:choose>
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance'"/> <!-- Hidden, dus niet tonen -->
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#HeaderAppearance'"/> <!-- Al gedaan -->
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#FooterAppearance'"/> <!-- Al gedaan -->
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarAppearance'"/> <!-- Al gedaan -->
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarSearchAppearance'"/> <!-- Al gedaan -->
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#TreeAppearance'"/> <!-- Al gedaan -->
@@ -479,6 +480,9 @@
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#FrameAppearance'">
 			<xsl:apply-templates select="." mode="FrameAppearance"/>
 		</xsl:when>
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#ModelAppearance'">
+			<xsl:apply-templates select="." mode="ModelAppearance"/>
+		</xsl:when>
 		<xsl:otherwise>
 			<!-- No, or an unknown appearance, use the data to select a suitable appearance -->
 			<xsl:apply-templates select="." mode="ContentAppearance"/>
@@ -518,6 +522,8 @@
 							</xsl:choose>
 						</div>
 					</div>
+					<!-- Last footer appearances-->
+					<xsl:apply-templates select="rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#FooterAppearance']" mode="FooterAppearance"/>
 				</div>
 			</body>
 		</html>
@@ -547,7 +553,7 @@
 			<link rel="stylesheet" type="text/css" href="{$staticroot}/css/signin.min.css"/>
 		</xsl:if>
 
-		<script type="text/javascript" src="{$staticroot}/js/jquery-1.11.3.min.js"></script>
+		<script type="text/javascript" src="{$staticroot}/js/jquery-3.1.1.min.js"></script>
 		<script type="text/javascript" src="{$staticroot}/js/jquery.dataTables.min.js"></script>
 		<script type="text/javascript" src="{$staticroot}/js/dataTables.bootstrap.min.js"></script>
 		<script type="text/javascript" src="{$staticroot}/js/bootstrap.min.js"></script>
@@ -723,14 +729,18 @@
 	<xsl:if test="not(exists(rdf:Description[@rdf:nodeID='rset']))">
 		<xsl:variable name="columns">
 			<xsl:for-each-group select="rdf:Description[exists(@rdf:about)]/*" group-by="local-name()">
-				<column name="{local-name()}"/>
+				<xsl:variable name="label">
+					<xsl:value-of select="@elmo:label"/>
+					<xsl:if test="not(@elmo:label!='')"><xsl:value-of select="local-name()"/></xsl:if>
+				</xsl:variable>
+				<column name="{local-name()}" label="{$label}"/>
 			</xsl:for-each-group>
 		</xsl:variable>
 		<table id="datatable{generate-id()}" class="table table-striped table-bordered">
 			<thead>
 				<tr>
 					<xsl:for-each select="$columns/column">
-						<th><xsl:value-of select="@name"/></th>
+						<th><xsl:value-of select="@label"/></th>
 					</xsl:for-each>
 				</tr>
 			</thead>
@@ -761,6 +771,16 @@
 <xsl:template match="rdf:RDF" mode="HeaderAppearance">
 	<div class="container hidden-xs">
 		<div class="row text-center">
+			<xsl:for-each select="rdf:Description/elmo:html">
+				<xsl:copy-of select="saxon:parse(.)" xmlns:saxon="http://saxon.sf.net/"/>
+			</xsl:for-each>
+		</div>
+	</div>
+</xsl:template>
+
+<xsl:template match="rdf:RDF" mode="FooterAppearance">
+	<div class="footer bg-primary">
+		<div class="container hidden-xs">
 			<xsl:for-each select="rdf:Description/elmo:html">
 				<xsl:copy-of select="saxon:parse(.)" xmlns:saxon="http://saxon.sf.net/"/>
 			</xsl:for-each>
@@ -864,6 +884,12 @@
 				</xsl:when>
 				<xsl:when test="exists(html:link)">
 					<xsl:variable name="link">
+						<!-- If a link is a relative link (not absolute and not starting with a slash), prefix with docroot and subdomain -->
+						<xsl:if test="not(matches(html:link,'^(/|[a-zA-Z0-9]+:)'))">
+							<xsl:if test="$docroot!=''"><xsl:value-of select="$docroot"/></xsl:if>
+							<xsl:if test="$subdomain!=''"><xsl:value-of select="$subdomain"/></xsl:if>
+							<xsl:text>/</xsl:text>
+						</xsl:if>
 						<xsl:value-of select="html:link"/>
 						<xsl:if test="exists(elmo:subject/@rdf:resource)">?SUBJECT=<xsl:value-of select="encode-for-uri(elmo:subject/@rdf:resource)"/></xsl:if>
 					</xsl:variable>
@@ -936,5 +962,6 @@
 <xsl:include href="appearances/TreeAppearance.xsl"/>
 <xsl:include href="appearances/VocabularyAppearance.xsl"/>
 <xsl:include href="appearances/FrameAppearance.xsl"/>
+<xsl:include href="appearances/ModelAppearance.xsl"/>
 
 </xsl:stylesheet>

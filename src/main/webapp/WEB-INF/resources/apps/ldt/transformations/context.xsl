@@ -1,10 +1,10 @@
 <!--
 
     NAME     context.xsl
-    VERSION  1.12.2-SNAPSHOT
-    DATE     2016-11-16
+    VERSION  1.14.0
+    DATE     2017-01-04
 
-    Copyright 2012-2016
+    Copyright 2012-2017
 
     This file is part of the Linked Data Theatre.
 

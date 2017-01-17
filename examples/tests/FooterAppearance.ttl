@@ -1,0 +1,32 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+stage:FooterAppearance a elmo:Part;
+	elmo:appearance elmo:FooterAppearance;
+	elmo:index "~";
+	elmo:data	[ 
+        elmo:html '''<div class="row">
+			<div class="col-sm-4">
+				<h4>Links</h4>
+				<ul class="list-unstyled">
+					<li>
+						<a href="https://github.com/architolk/linked-data-theatre">Github codebase</a>
+					</li>
+					<li>
+						<a href="https://github.com/architolk/linked-data-theatre/wiki">Wiki documentation</a>
+					</li>
+				</ul>
+			</div>
+			<div class="col-sm-4">
+				<h4>Demo configuration</h4>
+				<p>This demo configuration is designed to function as a regression test. It should depict all configuration options of the LDT.</p>
+			</div>
+			<div class="col-sm-4">
+				<h4>License</h4>
+				<p>GPL 3.0 / CC-BY-SA</p>
+			</div>
+		</div>'''^^rdf:HTML
+		];
+.

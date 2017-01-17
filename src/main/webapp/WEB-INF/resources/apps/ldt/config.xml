@@ -1,10 +1,10 @@
 <!--
 
     NAME     config.xml
-    VERSION  1.12.0
-    DATE     2016-10-16
+    VERSION  1.14.0
+    DATE     2017-01-04
 
-    Copyright 2012-2016
+    Copyright 2012-2017
 
     This file is part of the Linked Data Theatre.
 
@@ -35,6 +35,7 @@
     - local-endpoint: the SPARQL endpoint that is used as the default endpoint to fetch data
     - the tempdir, if any: the absolute path to the directory to be used by the linked data theatre for temporary files (default is the tomcat temp dir)
 	- sparql: states if a public sparql endpoint should be available at /sparql. "yes" means: make a public endpoint available.
+	- cors: states if the json-ld service should support CORS (no value defaults to 'yes')
     - the <site> node contains the configuration for every domainname that is served by the LDT
       - domain: the domainname for this configuration
   	  - icon: (optional) the favicon.ico that is visible for this domain
@@ -81,7 +82,7 @@
 	</site-->
 	<!-- The default port of Tomcat is 8080, so the site below will give you access to a LDT on a default Tomcat install -->
 	<!-- The configuration of the LDT for the stage below is expected in the named graph <http://localhost:8080/stage> -->
-	<site domain="localhost:8080" icon="favicon.ico" backstage="localhost:8080" docroot="/ldt">
+	<site domain="localhost:8080" icon="favicon.ico" backstage="localhost:8080">
 		<stage/>
 	</site>
 	<!-- Optional: include a third site, with two stages and a backstage for every stage -->

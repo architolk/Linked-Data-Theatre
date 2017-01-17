@@ -1,9 +1,9 @@
 /*
  * NAME     linkeddatamap.js
- * VERSION  1.12.1
- * DATE     2016-11-07
+ * VERSION  1.14.1-SNAPSHOT
+ * DATE     2017-01-16
  *
- * Copyright 2012-2016
+ * Copyright 2012-2017
  *
  * This file is part of the Linked Data Theatre.
  *
@@ -40,6 +40,9 @@ var res = [3440.640, 1720.320, 860.160, 430.080, 215.040, 107.520, 53.760, 26.88
 
 // Relative sizing of circles
 var circleQuotient = 0.7;
+
+// Minimum length of edge (squared value, so 36 actually means a minium value of 6)
+var minEdgeLength = 100;
 
 var numberRegexp = /^[-+]?([0-9]*\.[0-9]+|[0-9]+)([eE][-+]?[0-9]+)?/;
 
@@ -293,6 +296,12 @@ function resetHighlight(e) {
 
 function circleMoveStart(e) {
 	movedItem = e.target;
+	//Remove arrowhead (IE Bugfix)
+	if (movedItem.edge!=undefined) {
+		d3.select(movedItem.edge._path)
+			.attr("marker-end","none")
+		;
+	}
 	map.on('mousemove',circleMove);
 	map.on('mouseup',circleMoveEnd);
 }
@@ -334,6 +343,13 @@ function circleMove(e) {
 }
 function circleMoveEnd(e) {
 	map.removeEventListener('mousemove');
+	if (movedItem.edge!=undefined) {
+		//Redisplay the arrowheads after zoom
+		//We might use this in the future to resize the arrowheads according to the zoomlevel!
+		d3.select(movedItem.edge._path)
+			.attr("marker-end","url(#ArrowHead)")
+		;
+	}
 }
 
 function onEachFeature(feature, layer) {
@@ -352,11 +368,32 @@ function pointToLayer(feature, latlng) {
 	}
 }
 
+function removeArrowheads(e){
+	// Remove arrowheads before zoom (IE has a SVG bug that will separate the arrowhead from the edge!)
+	for(i = 0; i < listOfGeoObjects.length; ++i) {
+		var layer = listOfGeoObjects[i].getLayers()[0];
+		if (layer instanceof L.CircleMarker) {
+			if (layer.edge!=undefined) {
+				d3.select(layer.edge._path)
+					.attr("marker-end","none")
+				;
+			}
+		}
+	}
+}
+
 function resizeCircle(e) {
 	for(i = 0; i < listOfGeoObjects.length; ++i) {
 		var layer = listOfGeoObjects[i].getLayers()[0];
 		if (layer instanceof L.CircleMarker) {
 			layer.setStyle({radius: res[0]*layer.feature.geometry.radius/res[map.getZoom()]});
+			if (layer.edge!=undefined) {
+				//Redisplay the arrowheads after zoom
+				//We might use this in the future to resize the arrowheads according to the zoomlevel!
+				d3.select(layer.edge._path)
+					.attr("marker-end","url(#ArrowHead)")
+				;
+			}
 		}
 	}
 }
@@ -411,12 +448,20 @@ function addEdge(subject,predicate,object) {
 	if (sSub!=undefined && sObj!=undefined) {
 		latlngs.push(sSub.getLayers()[0].getLatLng());
 		latlngs.push(sObj.getLayers()[0].getLatLng());
-		var polyline = L.polyline(latlngs, {className: 'edgestyle'}).addTo(map);
-		d3.select(polyline._path)
-			.attr("marker-end","url(#ArrowHead)")
-			.attr("stroke","#606060")
-		;
-		sSub.getLayers()[0].edge = polyline;
+
+		//Get edge length
+		dx = latlngs[0].lat-latlngs[1].lat;
+		dy = latlngs[0].lng-latlngs[1].lng;
+		
+		//Add edge only if the edge is actually visible (long enough)
+		if (dx*dx+dy*dy>minEdgeLength) {
+			var polyline = L.polyline(latlngs, {className: 'edgestyle'}).addTo(map);
+			d3.select(polyline._path)
+				.attr("marker-end","url(#ArrowHead)")
+				.attr("stroke","#606060")
+			;
+			sSub.getLayers()[0].edge = polyline;
+		}
 	}
 
 }
@@ -440,21 +485,35 @@ function updateMap() {
 	mapChanged = false;
 }
 
-function addPoint(latCor, longCor, text, url)
+function addPoint(latCor, longCor, text, url, value, iconvalue)
 {
 	//Every location is a marker-object.
-	var location = L.marker();
+	
+	var location = L.marker([latCor, longCor]).addTo(map);
+	
+	if (iconvalue!="") {
+		location.setIcon(L.icon({iconUrl: iconvalue}));
+	}
+
+	//TODO: use bindLabel instead of adding the value to the pop
 	
 	//Eerst stellen we de locatie in waarop de marker moet worden weergegeven, waarbij we hier kiezen voor simpele Latitude/Longitude coördinaten die ook gebruikt worden door GPS.
-	location.setLatLng([latCor, longCor]);
+	//location.setLatLng([latCor, longCor]);
 	//Daarna geven we aan welke informatie moet worden weergegeven wanneer de gebruiker op de locatie klikt.
 	var html = "";
 	if (url!="") {
-		html+='<a href="'+url+'">'+text+'</a>';
+		html+='<a href="'+url+'">'+text;
+		if (value!='') {
+			html+=' ('+value+')';
+		}
+		html+='</a>';
 	} else {
 		html+=text;
+		if (value!='') {
+			html+=' ('+value+')';
+		}
 	}
-	location.bindPopup(html).openPopup();
+	location.bindPopup(html);
 	
 	//Tot slot voegen we de locatie toe aan de te tonen locaties.
 	listOfLocations.push(location);
@@ -569,6 +628,7 @@ function initMap(staticroot, startZoom, latCor, longCor, baseLayer, imageMapURL,
 	}
 
 	//Zoom option for circlemarkers
+	map.on('zoomstart',removeArrowheads);
 	map.on('zoomend',resizeCircle);
 	map.invalidateSize();
 }
@@ -589,10 +649,6 @@ function showLocations(doZoom, appearance)
   .append('path')
 	.attr('d', 'M0,-5L10,0L0,5');
 	
-	//Add all locations to the map
-	for(i = 0; i < listOfLocations.length; ++i)
-		listOfLocations[i].addTo(map);
-
 	if (listOfGeoObjects.length!=0) {
 		var firstPolygon = listOfGeoObjects[0];
 		if (doZoom==1 && (firstPolygon) && !(firstPolygon.getLayers()[0] instanceof L.CircleMarker)) {

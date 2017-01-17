@@ -18,8 +18,9 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js</url>
+							<url>https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js</url>
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
+							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -28,8 +29,9 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css</url>
+							<url>https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css</url>
 							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
+							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -38,8 +40,9 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css</url>
+							<url>https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css</url>
 							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
+							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -100,6 +103,7 @@
 						<configuration>
 							<url>https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css</url>
 							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
+							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -170,6 +174,7 @@
 						<configuration>
 							<url>https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js</url>
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
+							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -180,6 +185,7 @@
 						<configuration>
 							<url>https://github.com/DataTables/DataTables/raw/master/media/js/dataTables.bootstrap.min.js</url>
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
+							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -190,6 +196,7 @@
 						<configuration>
 							<url>https://github.com/DataTables/DataTables/raw/master/media/css/dataTables.bootstrap.min.css</url>
 							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
+							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -211,6 +218,7 @@
 						<configuration>
 							<url>https://raw.githubusercontent.com/alxlit/bootstrap-chosen/master/bootstrap-chosen.css</url>
 							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
+							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -222,6 +230,7 @@
 							<url>https://github.com/alxlit/bootstrap-chosen/archive/master.zip</url>
 							<unpack>true</unpack>
 							<outputDirectory>zips</outputDirectory>
+							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -232,6 +241,7 @@
 						<configuration>
 							<url>http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js</url>
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
+							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -242,6 +252,7 @@
 						<configuration>
 							<url>http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css</url>
 							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
+							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -271,7 +282,7 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>http://code.jquery.com/jquery-1.11.3.min.js</url>
+							<url>https://code.jquery.com/jquery-3.1.1.min.js</url>
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
 						</configuration>
 					</execution>
@@ -283,6 +294,7 @@
 						<configuration>
 							<url>https://github.com/CliffCloud/Leaflet.EasyButton/raw/master/src/easy-button.js</url>
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
+							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -291,7 +303,7 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>http://codemirror.net/codemirror.zip</url>
+							<url>https://github.com/codemirror/CodeMirror/archive/5.12.0.zip</url>
 							<unpack>true</unpack>
 							<outputDirectory>zips</outputDirectory>
 						</configuration>
@@ -307,6 +319,7 @@
 							<outputDirectory>zips</outputDirectory>
 						</configuration>
 					</execution>
+					<!-- Virtuoso JDBC dependencies and libraries -->
 					<execution>
 						<id>get-virtuoso-jdbc3</id>
 						<goals>
@@ -329,6 +342,76 @@
 							<outputDirectory>WEB-INF/lib</outputDirectory>
 						</configuration>
 					</execution>
+					<!-- END -->
+					<!-- Joint.js dependencies and libraries -->
+					<execution>
+						<id>get-joint-js</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>https://raw.githubusercontent.com/clientIO/joint/master/dist/joint.min.js</url>
+							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
+							<skipCache>true</skipCache>
+						</configuration>
+					</execution>
+					<execution>
+						<id>get-joint-css</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>https://raw.githubusercontent.com/clientIO/joint/master/dist/joint.min.css</url>
+							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
+							<skipCache>true</skipCache>
+						</configuration>
+					</execution>
+					<execution>
+						<id>get-lodash</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<!-- Dependency with joint.js: version should be 3.x NOT 4.x -->
+							<url>https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js</url>
+							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
+							<skipCache>true</skipCache>
+						</configuration>
+					</execution>
+					<execution>
+						<id>get-backbone</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>https://github.com/jashkenas/backbone/archive/1.3.3.zip</url>
+							<unpack>true</unpack>
+							<outputDirectory>zips</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>get-dagre</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>https://github.com/cpettitt/dagre/archive/v0.7.3.zip</url>
+							<unpack>true</unpack>
+							<outputDirectory>zips</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>get-graphlib</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>https://github.com/cpettitt/graphlib/archive/v2.0.0.zip</url>
+							<unpack>true</unpack>
+							<outputDirectory>zips</outputDirectory>
+						</configuration>
+					</execution>
+					<!-- END -->
 				</executions>
 			</plugin>
 			<plugin>
@@ -392,7 +475,7 @@
 									</includes>
 								</resource>
 								<resource>
-									<directory>zips/codemirror-5.12/lib</directory>
+									<directory>zips/Codemirror-5.12.0/lib</directory>
 									<includes>
 										<include>codemirror.js</include>
 									</includes>
@@ -413,6 +496,24 @@
 									<directory>zips/chosen</directory>
 									<includes>
 										<include>chosen.jquery.min.js</include>
+									</includes>
+								</resource>
+								<resource>
+									<directory>zips/backbone-1.3.3</directory>
+									<includes>
+										<include>backbone-min.js</include>
+									</includes>
+								</resource>
+								<resource>
+									<directory>zips/dagre-0.7.3/dist</directory>
+									<includes>
+										<include>dagre.min.js</include>
+									</includes>
+								</resource>
+								<resource>
+									<directory>zips/graphlib-2.0.0/dist</directory>
+									<includes>
+										<include>graphlib.min.js</include>
 									</includes>
 								</resource>
 							</resources>              

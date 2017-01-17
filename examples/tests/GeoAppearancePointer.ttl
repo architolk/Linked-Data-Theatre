@@ -10,12 +10,14 @@ stage:GeoAppearancePointer a elmo:Representation;
 	elmo:appearance elmo:GeoAppearance;
 	elmo:query '''
 		prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+		prefix elmo: <http://bp4mc2.org/elmo/def#>
 		construct {
 			<urn:pointer> rdf:type elmo:GeoLocator.
 #			<urn:pointer> geo:geometry "POINT(5.38 52.155)".
 			<urn:pointer> geo:lat "52.155".
 			<urn:pointer> geo:long "5.38".
 			<urn:pointer> rdfs:label "Here!".
+			<urn:pointer> rdf:value "Amersfoort".
 		}
 		WHERE {}
 	''';

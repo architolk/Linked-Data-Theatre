@@ -1,9 +1,9 @@
 /**
  * NAME     ldt-theme.css
- * VERSION  1.12.1
- * DATE     2016-11-07
+ * VERSION  1.14.0
+ * DATE     2017-01-04
  *
- * Copyright 2012-2016
+ * Copyright 2012-2017
  *
  * This file is part of the Linked Data Theatre.
  *
@@ -30,6 +30,31 @@
     width: 97%;
   }
 }
+
+/* Styling for footer */
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 100px;
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 100px;
+}
+
+.footer>.container {
+	font-size: 90%;
+}
+.footer.bg-primary a {
+	color: #ffffff;
+}
+/* ------ */
 
 .carousel-indicators {
 	margin-bottom: -10px !important;

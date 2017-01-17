@@ -1,10 +1,10 @@
 <!--
 
     NAME     sparql2rdfaform.xsl
-    VERSION  1.12.2-SNAPSHOT
-    DATE     2016-11-16
+    VERSION  1.14.0
+    DATE     2017-01-04
 
-    Copyright 2012-2016
+    Copyright 2012-2017
 
     This file is part of the Linked Data Theatre.
 
@@ -36,12 +36,34 @@
 	xmlns:res="http://www.w3.org/2005/sparql-results#"
 	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
 	xmlns:dcterms="http://purl.org/dc/terms/"
+	xmlns:geosparql="http://www.opengis.net/ont/geosparql#"
 >
 
 <xsl:template match="rdf:RDF">
-	<rdf:RDF elmo:appearance="http://bp4mc2.org/elmo/def#ContentAppearance">
-		<xsl:copy-of select="*"/>
+	<xsl:variable name="appearance">
+		<xsl:choose>
+			<xsl:when test="count(rdf:Description)&gt;1">Table</xsl:when>
+			<xsl:otherwise>Content</xsl:otherwise>
+		</xsl:choose>
+	</xsl:variable>
+	<rdf:RDF elmo:appearance="http://bp4mc2.org/elmo/def#{$appearance}Appearance">
+		<xsl:for-each select="rdf:Description">
+			<rdf:Description>
+				<xsl:copy-of select="@*"/>
+				<xsl:copy-of select="* except (geosparql:asWKT|geo:geometry)"/>
+			</rdf:Description>
+		</xsl:for-each>
 	</rdf:RDF>
+	<xsl:if test="exists(*/geosparql:asWKT|*/geo:geometry)">
+		<rdf:RDF elmo:appearance="http://bp4mc2.org/elmo/def#GeoAppearance">
+			<xsl:for-each select="rdf:Description[exists(geosparql:asWKT|geo:geometry) and @rdf:about!='']">
+				<rdf:Description rdf:about="{@rdf:about}">
+					<rdfs:label><xsl:value-of select="rdfs:label"/></rdfs:label>
+					<geo:geometry><xsl:value-of select="geosparql:asWKT|geo:geometry"/></geo:geometry>
+				</rdf:Description>
+			</xsl:for-each>
+		</rdf:RDF>
+	</xsl:if>
 </xsl:template>
 
 <xsl:template match="res:sparql">
@@ -142,7 +164,7 @@
 			<rdf:Description rdf:nodeID="f5">
 				<rdfs:label>Go!</rdfs:label>
 				<elmo:appearance rdf:resource="http://bp4mc2.org/elmo/def#SubmitAppearance"/>
-				<html:link><xsl:value-of select="root/context/@docroot"/>/sparql</html:link>
+				<html:link><xsl:value-of select="root/context/@docroot"/><xsl:value-of select="root/context/subdomain"/>/sparql</html:link>
 			</rdf:Description>
 		</rdf:RDF>
 		<rdf:RDF elmo:query="http://bp4mc2.org/elmo/def#Queries" elmo:appearance="http://bp4mc2.org/elmo/def#HiddenAppearance">

@@ -8,15 +8,9 @@
 
 stage:TableAppearance a elmo:Representation;
 	elmo:url-pattern "/query/TableAppearance";
-	elmo:query '''
-		select distinct ?class ?class_label (count(*) as ?class_count)
-		where {
-			graph <http://localhost:8080/stage> {
-				?item rdf:type ?class.
-				OPTIONAL {?class rdfs:label ?class_label}
-			}
-		}
-	''';
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:query stage:TableAppearanceQuery;
 .
 stage:TableAppearanceQuery a elmo:Query;
 	rdfs:label "All classes within the test dataset";

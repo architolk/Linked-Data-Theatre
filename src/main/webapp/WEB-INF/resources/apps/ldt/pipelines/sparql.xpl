@@ -1,10 +1,10 @@
 <!--
 
     NAME     sparql.xpl
-    VERSION  1.12.2-SNAPSHOT
-    DATE     2016-10-16
+    VERSION  1.14.0
+    DATE     2017-01-04
 
-    Copyright 2012-2016
+    Copyright 2012-2017
 
     This file is part of the Linked Data Theatre.
 
@@ -146,6 +146,35 @@
 							</config>
 						</p:input>
 						<p:input name="data" href="#sparql"/>
+					</p:processor>
+				</p:when>
+				<!-- Turtle -->
+				<p:when test="context/format='text/turtle'">
+					<!-- Transform -->
+					<p:processor name="oxf:xslt">
+						<p:input name="data" href="aggregate('results',#context,#sparql)"/>
+						<p:input name="config" href="../transformations/rdf2ttl.xsl"/>
+						<p:output name="data" id="ttl"/>
+					</p:processor>
+					<!-- Convert XML result to plain text -->
+					<p:processor name="oxf:text-converter">
+						<p:input name="config">
+							<config>
+								<encoding>utf-8</encoding>
+								<content-type>text/turtle</content-type>
+							</config>
+						</p:input>
+						<p:input name="data" href="#ttl" />
+						<p:output name="data" id="converted" />
+					</p:processor>
+					<!-- Serialize -->
+					<p:processor name="oxf:http-serializer">
+						<p:input name="config">
+							<config>
+								<cache-control><use-local-cache>false</use-local-cache></cache-control>
+							</config>
+						</p:input>
+						<p:input name="data" href="#converted"/>
 					</p:processor>
 				</p:when>
 				<!-- XLSX -->

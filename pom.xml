@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>nl.architolk.ldt</groupId>
 	<artifactId>ldt</artifactId>
-	<version>1.12.2-SNAPSHOT</version>
+	<version>1.14.1-SNAPSHOT</version>
 	<name>ldt</name>
 	<packaging>war</packaging>
 	<properties>
@@ -10,15 +10,15 @@
 		<buildTimestamp>${maven.build.timestamp}</buildTimestamp>
 		<license-maven-plugin.version>2.11</license-maven-plugin.version>
 		<license.failIfMissing>false</license.failIfMissing>
-		<release.version>1.12.0</release.version>
-		<release.date>2016-10-16</release.date>
-		<patch.date>2016-11-07</patch.date>
+		<release.version>1.14.0</release.version>
+		<release.date>2017-01-04</release.date>
+		<patch.date>2017-01-04</patch.date>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>nl.architolk.ldt</groupId>
 			<artifactId>processors</artifactId>
-			<version>1.10.0</version>
+			<version>1.14.0</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -82,6 +82,7 @@
 						<exclude>**/pom.xml</exclude>
 						<exclude>images/**</exclude>
 						<exclude>**/robots.txt</exclude>
+						<exclude>**/*.yml</exclude>
 					</excludes>
 				</configuration>
 				<dependencies>
@@ -119,6 +120,7 @@
 								<jsSourceFile>d3graphs-inner.js</jsSourceFile>
 								<jsSourceFile>leaflet.label.js</jsSourceFile>
 								<jsSourceFile>linkeddatamap.js</jsSourceFile>
+								<jsSourceFile>linkedmodel.js</jsSourceFile>
 								<jsSourceFile>rdfmap.js</jsSourceFile>
 								<jsSourceFile>ldt.js</jsSourceFile>
 							</jsSourceFiles>

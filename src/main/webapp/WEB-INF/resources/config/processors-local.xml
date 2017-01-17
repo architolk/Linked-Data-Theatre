@@ -1,10 +1,10 @@
 <!--
 
     NAME     processors-local.xml
-    VERSION  1.12.0
-    DATE     2016-10-16
+    VERSION  1.14.0
+    DATE     2017-01-04
 
-    Copyright 2012-2016
+    Copyright 2012-2017
 
     This file is part of the Linked Data Theatre.
 
@@ -44,5 +44,11 @@
 	</processor>
 	<processor name="oxf:markdown-converter">
 		<class name="nl.architolk.ldt.processors.MarkDownConverter"/>
+	</processor>
+	<processor name="oxf:sparql-parser">
+		<class name="nl.architolk.ldt.processors.SparqlParser"/>
+	</processor>
+	<processor name="oxf:sparql-processor">
+		<class name="nl.architolk.ldt.processors.SparqlProcessor"/>
 	</processor>
 </processors>
