@@ -27,7 +27,7 @@ stage:FormAppearance	a	elmo:Representation;
 			graph <http://localhost:8080/stage> {
 				?person a <@SPECIES@>.
 				?person rdfs:label ?person_label.
-				FILTER (regex(?person_label,"@NAME@,"i")
+				FILTER (regex(?person_label,"@NAME@","i"))
 			}
 		}
 	'''
