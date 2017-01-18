@@ -1,0 +1,80 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+
+stage:FormAppearanceDbPedia	a	elmo:Representation;
+	elmo:url-pattern	"/query/FormAppearanceDbPedia$";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:contains	stage:FormAppearanceDbPedia-places;
+	elmo:appearance elmo:ContentAppearance;
+	elmo:endpoint <http://dbpedia.org/sparql>;
+	elmo:queryForm stage:FormAppearanceDbPedia-form;
+	elmo:fragment [
+		elmo:applies-to "person";
+		rdfs:label "Persoon"@nl;
+		rdfs:label "Person"@en;
+	];
+	elmo:fragment [
+		elmo:applies-to "birth";
+		rdfs:label "Geboortejaar"@nl;
+		rdfs:label "Year of birth"@en;
+	];
+	elmo:fragment [
+		elmo:applies-to "desc";
+		rdfs:label "Beroep"@nl;
+		rdfs:label "Occupation"@en;
+	];
+	elmo:query '''
+		select distinct ?person ?person_label ?birth ?desc
+		where {
+			?person <http://dbpedia.org/property/placeOfBirth> <@BIRTHPLACE@>.
+			?person rdfs:label ?person_label.
+			?person <http://dbpedia.org/ontology/birthYear> ?birth.
+			FILTER (lang(?person_label)="@LANGUAGE@")
+			FILTER (lang(?desc)="")
+			FILTER (str(?birth)<"@BIRTHYEAR@" or "@BIRTHYEAR@"="")
+			OPTIONAL {?person <http://purl.org/dc/elements/1.1/description> ?desc}
+		}
+	'''
+.
+
+stage:FormAppearanceDbPedia-form a elmo:Form;
+	elmo:fragment [
+		elmo:applies-to "birthplace";
+		rdfs:label "Birth place"@nl;
+		elmo:constraint elmo:MandatoryConstraint;
+		elmo:valuesFrom stage:FormAppearanceDbPedia-places;
+		elmo:index "1";
+	];
+	elmo:fragment [
+		elmo:applies-to "birthyear";
+		rdfs:label "Geboren VOOR"@nl;
+		elmo:valueDatatype xsd:Date;
+		elmo:index "2";
+	];
+	elmo:fragment [
+		elmo:appearance elmo:SubmitAppearance;
+		rdfs:label "Search"@nl;
+		elmo:index "3";
+	];
+.
+
+stage:FormAppearanceDbPedia-places elmo:appearance elmo:HiddenAppearance;
+	elmo:endpoint <http://dbpedia.org/sparql>;
+	elmo:query '''
+		construct {
+			?bp rdfs:label ?bplabel
+		}
+		where {
+			?person <http://dbpedia.org/property/placeOfBirth> ?bp.
+			?person rdfs:label ?plabel.
+			?bp rdfs:label ?bplabel.
+			?bp <http://dbpedia.org/ontology/country> <http://dbpedia.org/resource/Netherlands>
+			FILTER (lang(?plabel)="@LANGUAGE@")
+			FILTER (lang(?bplabel)="@LANGUAGE@")
+		}
+	''';
+.
