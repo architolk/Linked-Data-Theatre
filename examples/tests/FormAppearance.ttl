@@ -6,8 +6,8 @@
 
 stage:FormAppearance	a	elmo:Representation;
 	elmo:url-pattern	"/query/FormAppearance$";
-#	elmo:contains stage:HeaderAppearance;
-#	elmo:contains stage:NavbarSearchAppearance;
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
 	elmo:contains	stage:FormAppearance-species;
 	elmo:appearance elmo:ContentAppearance;
 	elmo:queryForm stage:FormAppearance-form;

@@ -40,7 +40,8 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:data [elmo:index "05"; rdfs:label "Simple graph appearance"; html:link "query/GraphAppearanceSimple?subject=http://localhost:8080/id/character/Bilbo"];
 			elmo:data [elmo:index "06"; rdfs:label "Graph parameters"; html:link "query/GraphAppearanceParameters?para=paradata&subject=http://localhost:8080/id/test"];
 			elmo:data [elmo:index "07"; rdfs:label "Blank nodes"; html:link "query/BlankNodes"];
-			elmo:data [elmo:index "11"; rdfs:label "Parameter filter test"; html:link "query/paramtest"];
+			elmo:data [elmo:index "08"; rdfs:label "Parameter filter test"; html:link "query/paramtest"];
+			elmo:data [elmo:index "09"; rdfs:label "Form appearance DBPedia data"; html:link "query/FormAppearanceDbPedia"];
 		];
 		elmo:data [
 			elmo:index "3";
