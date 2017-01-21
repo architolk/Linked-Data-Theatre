@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2jsonld.xsl
-    VERSION  1.14.0
-    DATE     2017-01-04
+    VERSION  1.14.1-SNAPSHOT
+    DATE     2017-01-21
 
     Copyright 2012-2017
 
@@ -35,6 +35,8 @@
 
 <xsl:variable name="dblquote"><xsl:text>"&#10;&#13;</xsl:text></xsl:variable>
 <xsl:variable name="quote">'  </xsl:variable>
+<xsl:variable name="spaces">.                                            .</xsl:variable>
+
 
 <xsl:key name="bnodes" match="/results/rdf:RDF[1]/rdf:Description" use="@rdf:nodeID"/>
 
@@ -103,6 +105,13 @@
 </xsl:template>
 
 <!-- Construct -->
+<xsl:template match="*" mode="triple"><xsl:param name="tab"/>
+<xsl:text>"</xsl:text><xsl:apply-templates select="." mode="property"/>": <xsl:choose><xsl:when test="exists(@rdf:nodeID)"><xsl:text>
+</xsl:text><xsl:value-of select="substring($spaces,2,$tab)"/>{<xsl:for-each select="key('bnodes',@rdf:nodeID)/*"><xsl:if test="position()!=1"><xsl:text>
+</xsl:text><xsl:value-of select="substring($spaces,2,$tab)"/>,</xsl:if><xsl:apply-templates select="." mode="triple"><xsl:with-param name="tab" select="$tab+4"/></xsl:apply-templates></xsl:for-each><xsl:text>
+</xsl:text><xsl:value-of select="substring($spaces,2,$tab)"/>}</xsl:when><xsl:otherwise><xsl:apply-templates select="." mode="constructliteral"/></xsl:otherwise></xsl:choose>
+</xsl:template>
+
 <xsl:template match="rdf:RDF">{"@context":
 	{"id":"@id"
 	,"graph":"@graph"<xsl:for-each-group select="$prefix/prefix" group-by="@name"><xsl:if test="count(current-group())=1">
@@ -116,7 +125,7 @@
 	{"id":"<xsl:value-of select="@rdf:about"/>"<xsl:for-each select="current-group()/*">
 	,"<xsl:apply-templates select="." mode="property"/>": <xsl:choose><xsl:when test="exists(@rdf:nodeID)">
 		{<xsl:for-each select="key('bnodes',@rdf:nodeID)/*"><xsl:if test="position()!=1">
-		,</xsl:if>"<xsl:apply-templates select="." mode="property"/>": "<xsl:value-of select="."/>"</xsl:for-each>
+		,</xsl:if><xsl:apply-templates select="." mode="triple"><xsl:with-param name="tab" select="8"/></xsl:apply-templates></xsl:for-each>
 		}</xsl:when><xsl:otherwise><xsl:apply-templates select="." mode="constructliteral"/></xsl:otherwise></xsl:choose></xsl:for-each>
 	}</xsl:for-each-group>
 ]
@@ -124,9 +133,9 @@
 	<xsl:otherwise>
 		<xsl:for-each-group select="rdf:Description" group-by="@rdf:about">,"@id":"<xsl:value-of select="@rdf:about"/>"<xsl:for-each select="current-group()/*">
 ,"<xsl:apply-templates select="." mode="property"/>": <xsl:choose><xsl:when test="exists(@rdf:nodeID)">
-	{<xsl:for-each select="key('bnodes',@rdf:nodeID)/*"><xsl:if test="position()!=1">
-	,</xsl:if>"<xsl:apply-templates select="." mode="property"/>": "<xsl:value-of select="."/>"</xsl:for-each>
-	}</xsl:when><xsl:otherwise><xsl:apply-templates select="." mode="constructliteral"/></xsl:otherwise></xsl:choose></xsl:for-each>
+    {<xsl:for-each select="key('bnodes',@rdf:nodeID)/*"><xsl:if test="position()!=1">
+    ,</xsl:if><xsl:apply-templates select="." mode="triple"><xsl:with-param name="tab" select="8"/></xsl:apply-templates></xsl:for-each>
+    }</xsl:when><xsl:otherwise><xsl:apply-templates select="." mode="constructliteral"/></xsl:otherwise></xsl:choose></xsl:for-each>
 		</xsl:for-each-group>
 }</xsl:otherwise>
 </xsl:choose>
