@@ -10,12 +10,24 @@ stage:ModelAppearance a elmo:Representation;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:appearance elmo:ModelAppearance;
 	elmo:query '''
+		prefix shacl: <http://www.w3.org/ns/shacl#>
 		CONSTRUCT {
-			?s?p?o}
+			?c?cp?co.
+			?s ?sp ?so.
+			?pc ?pcp ?pco.
+			?prop rdf:type rdf:Property.
+		}
 		WHERE {
 			GRAPH <http://localhost:8080/stage> {
-				?s rdf:type owl:Class.
-				?s ?p ?o
+				?c rdf:type owl:Class.
+				?c ?cp ?co.
+				OPTIONAL {
+					?s shacl:targetClass ?c.
+					?s ?sp ?so.
+					?s shacl:property ?pc.
+					?pc ?pcp ?pco.
+					?pc shacl:predicate ?prop.
+				}
 			}
 		}
 	''';

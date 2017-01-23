@@ -1,8 +1,8 @@
 <!--
 
     NAME     ModelAppearance.xsl
-    VERSION  1.14.0
-    DATE     2017-01-04
+    VERSION  1.14.1-SNAPSHOT
+    DATE     2017-01-23
 
     Copyright 2012-2017
 
@@ -55,10 +55,10 @@
 				<xsl:for-each select="current-group()/shacl:in">
 					<domain uri="{@rdf:resource}"/>
 				</xsl:for-each>
-				<xsl:for-each select="current-group()/minCount">
+				<xsl:for-each select="current-group()/shacl:minCount">
 					<mincount><xsl:value-of select="."/></mincount>
 				</xsl:for-each>
-				<xsl:for-each select="current-group()/maxCount">
+				<xsl:for-each select="current-group()/shacl:maxCount">
 					<maxcount><xsl:value-of select="."/></maxcount>
 				</xsl:for-each>
 			</property>
@@ -261,7 +261,7 @@
 							<xsl:variable name="propertyuri" select="@uri"/>
 							<xsl:variable name="property" select="../../../properties/property[@uri=$propertyuri]"/>
 							<xsl:variable name="label"><xsl:value-of select="$property/@label"/></xsl:variable>
-							<xsl:text>,{id:"</xsl:text><xsl:value-of select="../@uri"/><xsl:value-of select="$target"/><xsl:text>"</xsl:text>
+							<xsl:text>,{id:"</xsl:text><xsl:value-of select="../@uri"/><xsl:value-of select="$propertyuri"/><xsl:value-of select="$target"/><xsl:text>"</xsl:text>
 							<xsl:text>,type:"link"</xsl:text>
 							<xsl:text>,source:{id:"</xsl:text><xsl:value-of select="../@uri"/><xsl:text>"}</xsl:text>
 							<xsl:text>,target:{id:"</xsl:text><xsl:value-of select="$target"/><xsl:text>"}</xsl:text>
