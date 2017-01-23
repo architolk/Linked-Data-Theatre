@@ -2,7 +2,7 @@
 
     NAME     GeoAppearance.xsl
     VERSION  1.14.1-SNAPSHOT
-    DATE     2017-01-16
+    DATE     2017-01-23
 
     Copyright 2012-2017
 
@@ -69,7 +69,6 @@
 			<xsl:otherwise>
 				<link href="{$staticroot}/css/leaflet.css" rel="stylesheet"/>
 				<script src="{$staticroot}/js/leaflet.js"></script>
-				<script src="{$staticroot}/js/leaflet.label.js"></script>
 				<script src="{$staticroot}/js/proj4-compressed.js"></script>
 				<script src="{$staticroot}/js/proj4leaflet.js"></script>
 				<!-- Clickable map form -->
