@@ -36,6 +36,8 @@
     - the tempdir, if any: the absolute path to the directory to be used by the linked data theatre for temporary files (default is the tomcat temp dir)
 	- sparql: states if a public sparql endpoint should be available at /sparql. "yes" means: make a public endpoint available.
 	- cors: states if the json-ld service should support CORS (no value defaults to 'yes')
+	- cache: states the caching period for a specific call. (no value defaults to 'none' - no caching). See http://www.w3.org/TR/xmlschema-2#duration. For example: PT1M means 1 minute.
+	- querycache: state the caching period for the configuration of a specific call. Query caching can be used independent of normal caching, but should be enabled if data caching is used.
     - the <site> node contains the configuration for every domainname that is served by the LDT
       - domain: the domainname for this configuration
   	  - icon: (optional) the favicon.ico that is visible for this domain

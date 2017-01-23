@@ -60,7 +60,7 @@
 	</p:processor>
 
 	<!-- Create context -->
-	<p:processor name="oxf:xslt">
+	<p:processor name="oxf:unsafe-xslt">
 		<p:input name="data" href="aggregate('root',#instance,#request)"/>
 		<p:input name="config" href="../transformations/context.xsl"/>
 		<p:output name="data" id="context"/>
@@ -283,12 +283,21 @@
 		</p:otherwise>
 	</p:choose>
 
+	<!-- Implementing caching for configuration -->
+	<p:processor name="oxf:cache">
+		<p:input name="data" href="#defquery"/>
+		<p:input name="key" href="#context#xpointer(context/request-hash)"/>
+		<p:input name="validity" href="#context#xpointer(context/querycache/validity)"/>
+		<p:output name="data" id="defquerycache"/>
+	</p:processor>
+	
 	<!-- Query from graph representation -->
 	<p:processor name="oxf:xslt">
-		<p:input name="data" href="aggregate('root',#defquery,#context)"/>
+		<p:input name="data" href="aggregate('root',#defquerycache,#context)"/>
 		<p:input name="config" href="../transformations/rdf2view.xsl"/>
 		<p:output name="data" id="querytext"/>
 	</p:processor>
+	
 <!--
 <p:processor name="oxf:xml-serializer">
 	<p:input name="config">
@@ -730,12 +739,20 @@
 
 	</p:for-each>
 
-	<p:choose href="aggregate('root',#context,#sparql)">
+	<!-- Implementing caching for data -->
+	<p:processor name="oxf:cache">
+		<p:input name="data" href="#sparql"/>
+		<p:input name="key" href="#context#xpointer(context/request-hash)"/>
+		<p:input name="validity" href="#context#xpointer(context/cache/validity)"/>
+		<p:output name="data" id="cache"/>
+	</p:processor>
+	
+	<p:choose href="aggregate('root',#context,#cache)">
 		<!-- Check for errors -->
 		<p:when test="exists(root/results/parameters/error)">
 			<!-- Transform error message to HTML -->
 			<p:processor name="oxf:xslt">
-				<p:input name="data" href="#sparql"/>
+				<p:input name="data" href="#cache"/>
 				<p:input name="config" href="../transformations/error2html.xsl"/>
 				<p:output name="data" id="html"/>
 			</p:processor>
@@ -808,7 +825,7 @@
 								<encoding>utf-8</encoding>
 							</config>
 						</p:input>
-						<p:input name="data" href="aggregate('results',#sparql#xpointer(/results/*))"/>
+						<p:input name="data" href="aggregate('results',#cache#xpointer(/results/*))"/>
 					</p:processor>
 				</p:when>
 				<!-- RDF/XML -->
@@ -820,7 +837,7 @@
 								<content-type>application/rdf+xml</content-type>
 							</config>
 						</p:input>
-						<p:input name="data" href="#sparql#xpointer((/results/res:sparql|/results/rdf:RDF)[1])"/>
+						<p:input name="data" href="#cache#xpointer((/results/res:sparql|/results/rdf:RDF)[1])"/>
 					</p:processor>
 				</p:when>
 				<!-- SPARQL/XML -->
@@ -832,7 +849,7 @@
 								<content-type>application/sparql-results+xml</content-type>
 							</config>
 						</p:input>
-						<p:input name="data" href="#sparql#xpointer((/results/res:sparql|/results/rdf:RDF)[1])"/>
+						<p:input name="data" href="#cache#xpointer((/results/res:sparql|/results/rdf:RDF)[1])"/>
 					</p:processor>
 				</p:when>
 				<!-- Show query instead of the result -->
@@ -849,7 +866,7 @@
 				<!-- Plain text -->
 				<p:when test="context/format='text/plain'">
 					<p:processor name="oxf:xslt">
-						<p:input name="data" href="#sparql"/>
+						<p:input name="data" href="#cache"/>
 						<p:input name="config" href="../transformations/rdf2txt.xsl"/>
 						<p:output name="data" id="txt"/>
 					</p:processor>
@@ -877,7 +894,7 @@
 				<p:when test="context/format='text/turtle'">
 					<!-- Transform -->
 					<p:processor name="oxf:xslt">
-						<p:input name="data" href="#sparql"/>
+						<p:input name="data" href="#cache"/>
 						<p:input name="config" href="../transformations/rdf2ttl.xsl"/>
 						<p:output name="data" id="ttl"/>
 					</p:processor>
@@ -906,7 +923,7 @@
 				<p:when test="context/format='text/csv'">
 					<!-- Transform -->
 					<p:processor name="oxf:xslt">
-						<p:input name="data" href="#sparql"/>
+						<p:input name="data" href="#cache"/>
 						<p:input name="config" href="../transformations/rdf2csv.xsl"/>
 						<p:output name="data" id="csv"/>
 					</p:processor>
@@ -935,7 +952,7 @@
 				<p:when test="context/format='application/json' and substring-before(context/url,'/context/')!=''">
 					<!-- Transform -->
 					<p:processor name="oxf:xslt">
-						<p:input name="data" href="#sparql"/>
+						<p:input name="data" href="#cache"/>
 						<p:input name="config" href="../transformations/rdf2jsonldcontext.xsl"/>
 						<p:output name="data" id="jsonld"/>
 					</p:processor>
@@ -970,7 +987,7 @@
 				<p:when test="context/format='application/json'">
 					<!-- Transform -->
 					<p:processor name="oxf:xslt">
-						<p:input name="data" href="#sparql"/>
+						<p:input name="data" href="#cache"/>
 						<p:input name="config" href="../transformations/rdf2jsonld.xsl"/>
 						<p:output name="data" id="jsonld"/>
 					</p:processor>
@@ -1005,7 +1022,7 @@
 				<p:when test="context/format='application/graphml+xml'">
 					<!-- Transform -->
 					<p:processor name="oxf:xslt">
-						<p:input name="data" href="#sparql"/>
+						<p:input name="data" href="#cache"/>
 						<p:input name="config" href="../transformations/rdf2graphml.xsl"/>
 						<p:output name="data" id="graphml"/>
 					</p:processor>
@@ -1037,7 +1054,7 @@
 				<p:when test="context/format='application/x.elmo.yed'">
 					<!-- Transform -->
 					<p:processor name="oxf:xslt">
-						<p:input name="data" href="aggregate('root',#querytext,#sparql)"/>
+						<p:input name="data" href="aggregate('root',#querytext,#cache)"/>
 						<p:input name="config" href="../transformations/rdf2yed.xsl"/>
 						<p:output name="data" id="graphml"/>
 					</p:processor>
@@ -1069,7 +1086,7 @@
 				<p:when test="context/format='application/vnd.xmi+xml'">
 					<!-- Transform -->
 					<p:processor name="oxf:xslt">
-						<p:input name="data" href="#sparql"/>
+						<p:input name="data" href="#cache"/>
 						<p:input name="config" href="../transformations/rdf2xmi.xsl"/>
 						<p:output name="data" id="xmi"/>
 					</p:processor>
@@ -1130,7 +1147,7 @@
 				<p:when test="context/format='application/x.elmo.d3+json'">
 					<!-- Transform -->
 					<p:processor name="oxf:xslt">
-						<p:input name="data" href="aggregate('root',#context,#sparql,#querytext)"/>
+						<p:input name="data" href="aggregate('root',#context,#cache,#querytext)"/>
 						<p:input name="config" href="../transformations/rdf2graphjson.xsl"/>
 						<p:output name="data" id="graphjson"/>
 					</p:processor>
@@ -1159,7 +1176,7 @@
 				<p:when test="context/format='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'">
 					<!-- Transform -->
 					<p:processor name="oxf:xslt">
-						<p:input name="data" href="#sparql"/>
+						<p:input name="data" href="#cache"/>
 						<p:input name="config" href="../transformations/rdf2xls.xsl"/>
 						<p:output name="data" id="xlsxml"/>
 					</p:processor>
@@ -1181,7 +1198,7 @@
 				<p:when test="context/format='application/vnd.openxmlformats-officedocument.wordprocessingml.document'">
 					<!-- Transform -->
 					<p:processor name="oxf:xslt">
-						<p:input name="data" href="#sparql"/>
+						<p:input name="data" href="#cache"/>
 						<p:input name="config" href="../transformations/rdf2doc.xsl"/>
 						<p:output name="data" id="docxml"/>
 					</p:processor>
@@ -1203,7 +1220,7 @@
 				<p:when test="context/format='application/pdf'">
 					<!-- Transform -->
 					<p:processor name="oxf:xslt">
-						<p:input name="data" href="#sparql"/>
+						<p:input name="data" href="#cache"/>
 						<p:input name="config" href="../transformations/rdf2fo.xsl"/>
 						<p:output name="data" id="fo"/>
 					</p:processor>
@@ -1235,7 +1252,7 @@
 				<p:otherwise>
 					<!-- Transform to annotated rdf -->
 					<p:processor name="oxf:xslt">
-						<p:input name="data" href="aggregate('root',#context,#querytext,#sparql)"/>
+						<p:input name="data" href="aggregate('root',#context,#querytext,#cache)"/>
 						<p:input name="config" href="../transformations/rdf2rdfa.xsl"/>
 						<p:output name="data" id="rdfa"/>
 					</p:processor>

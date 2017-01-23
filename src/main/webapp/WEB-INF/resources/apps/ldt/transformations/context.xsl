@@ -29,7 +29,7 @@
 -->
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-	<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="no"/>
+	<xsl:output name="xml" method="xml" version="1.0" encoding="UTF-8" indent="no"/>
 
 	<xsl:template match="/root|/croot">
 		<xsl:variable name="uri-filter">[^a-zA-Z0-9:\.\-_~/()#&amp;=,]</xsl:variable> <!-- ampersand and equal-sign added for Juriconnect -->
@@ -128,7 +128,8 @@
 				<xsl:otherwise><xsl:value-of select="replace($normalized-date,'[T:\.]','-')"/></xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
-
+		<xsl:variable name="request"><request><xsl:copy-of select="request/parameters|request/request-url"/></request></xsl:variable>
+		
 		<context env="{theatre/@env}" docroot="{$docroot}" staticroot="{$staticroot}" version="{version/number}" timestamp="{version/timestamp}" sparql="{theatre/@sparql}">
 			<configuration-endpoint><xsl:value-of select="theatre/@configuration-endpoint"/></configuration-endpoint>
 			<local-endpoint>
@@ -144,6 +145,23 @@
 				</xsl:choose>
 			</title>
 			<url><xsl:value-of select="$url"/></url>
+			<request-hash><xsl:value-of xmlns:saxon="http://saxon.sf.net/" xmlns:Hasher="nl.architolk.ldt.utils.Hasher" select="Hasher:hash(saxon:serialize($request,'xml'))"/></request-hash>
+			<querycache>
+				<validity>
+					<xsl:choose>
+						<xsl:when test="theatre/@querycache!=''"><xsl:value-of select="theatre/@querycache"/></xsl:when>
+						<xsl:otherwise>none</xsl:otherwise>
+					</xsl:choose>
+				</validity>
+			</querycache>
+			<cache>
+				<validity>
+					<xsl:choose>
+						<xsl:when test="theatre/@cache!=''"><xsl:value-of select="theatre/@cache"/></xsl:when>
+						<xsl:otherwise>none</xsl:otherwise>
+					</xsl:choose>
+				</validity>
+			</cache>
 			<domain><xsl:value-of select="$domain"/></domain>
 			<subdomain><xsl:value-of select="$subdomain"/></subdomain>
 			<date><xsl:value-of select="$normal-date"/></date>

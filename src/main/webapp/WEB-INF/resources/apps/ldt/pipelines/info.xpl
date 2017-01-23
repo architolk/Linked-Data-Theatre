@@ -57,7 +57,7 @@
 				<include>/request/headers/header</include>
 				<include>/request/request-url</include>
 				<include>/request/parameters/parameter</include>
-        <include>/request/attributes/attribute</include>
+				<include>/request/attributes/attribute</include>
 				<include>/request/remote-user</include>
 				<include>/request/request-path</include>
 			</config>
@@ -78,7 +78,7 @@
 	</p:processor>
 
 	<!-- Create context -->
-	<p:processor name="oxf:xslt">
+	<p:processor name="oxf:unsafe-xslt">
 		<p:input name="data" href="aggregate('root',#instance,#request,#roles,#version)"/>
 		<p:input name="config" href="../transformations/context.xsl"/>
 		<p:output name="data" id="context"/>

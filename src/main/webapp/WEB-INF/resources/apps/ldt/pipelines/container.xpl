@@ -157,7 +157,7 @@
 	</p:processor>
 
 	<!-- Create context -->
-	<p:processor name="oxf:xslt" rdfs:label="create context">
+	<p:processor name="oxf:unsafe-xslt" rdfs:label="create context">
 		<p:input name="data" href="aggregate('croot',#instance,#request,#requestbody,#roles)"/>
 		<p:input name="config" href="../transformations/context.xsl"/>
 		<p:output name="data" id="context"/>

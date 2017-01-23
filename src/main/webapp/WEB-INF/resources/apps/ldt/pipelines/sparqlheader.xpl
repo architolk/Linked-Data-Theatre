@@ -60,15 +60,6 @@
 		<p:output name="data" id="roles"/>
 	</p:processor>
 
-	<!-- Create context -->
-	<!--
-	<p:processor name="oxf:xslt">
-		<p:input name="data" href="aggregate('root',#instance,#request)"/>
-		<p:input name="config" href="../transformations/context.xsl"/>
-		<p:output name="data" id="context"/>
-	</p:processor>
-	-->
-	
 	<p:choose href="#instance">
 		<!-- Only show header information in development-mode -->
 		<p:when test="theatre/@env='dev'">
