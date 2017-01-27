@@ -1,8 +1,8 @@
 <!--
 
     NAME     FormAppearance.xsl
-    VERSION  1.14.0
-    DATE     2017-01-04
+    VERSION  1.14.1-SNAPSHOT
+    DATE     2017-01-27
 
     Copyright 2012-2017
 
@@ -59,7 +59,7 @@
 			<xsl:variable name="alt-action" select="rdf:Description[elmo:appearance/@rdf:resource='http://bp4mc2.org/elmo/def#SubmitAppearance']/html:link"/>
 			<xsl:variable name="action">
 				<xsl:value-of select="$alt-action"/>
-				<xsl:if test="not($alt-action!='')"><xsl:value-of select="/results/context/url"/></xsl:if>
+				<xsl:if test="not($alt-action!='')"><xsl:value-of select="replace(/results/context/url,'^[a-z]+://[^/]+','')"/></xsl:if>
 			</xsl:variable>
 			<form class="form-horizontal" method="post" action="{$action}">
 				<xsl:if test="exists(rdf:Description/elmo:valueDatatype[@rdf:resource='http://purl.org/dc/dcmitype/Dataset'])">
