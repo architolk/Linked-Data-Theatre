@@ -2,7 +2,7 @@
 
     NAME     query.xpl
     VERSION  1.14.1-SNAPSHOT
-    DATE     2017-01-16
+    DATE     2017-01-24
 
     Copyright 2012-2017
 
@@ -668,7 +668,8 @@
 									<xsl:variable name="query5" select="replace($query4,'@STAGE@',/root/context/back-of-stage)"/>
 									<xsl:variable name="query6" select="replace($query5,'@TIMESTAMP@',/root/context/timestamp)"/>
 									<xsl:variable name="query7" select="replace($query6,'@DATE@',/root/context/date)"/>
-									<query><xsl:value-of select="replace($query7,'@SUBJECT@',/root/context/subject)"/></query>
+									<xsl:variable name="query8" select="replace($query7,'@DOCSUBJECT@',/root/context/docsubject)"/>
+									<query><xsl:value-of select="replace($query8,'@SUBJECT@',/root/context/subject)"/></query>
 									<default-graph-uri />
 									<error type=""/>
 								</parameters>

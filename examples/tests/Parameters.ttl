@@ -1,0 +1,41 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dbo: <http://dbpedia.org/ontology/>.
+@prefix dbpedia: <http://dbpedia.org/resource/>.
+@prefix dbp: <http://dbpedia.org/property/>.
+
+stage:Parameters a elmo:Representation;
+	elmo:uri-pattern "^http://localhost:8080/ldt/(id|doc)/parameters$";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:contains stage:Parameters_index;
+	elmo:index "2";
+	elmo:query '''
+		prefix para: <http://localhost:8080/def/parameters#>
+		construct {
+			<@DOCSUBJECT@> para:Subject "@SUBJECT@".
+			<@DOCSUBJECT@> para:DocumentSubject "@DOCSUBJECT@".
+			<@DOCSUBJECT@> para:Language "@LANGUAGE@".
+			<@DOCSUBJECT@> para:User "@USER@".
+			<@DOCSUBJECT@> para:CurrentMoment "@CURRENTMOMENT@".
+			<@DOCSUBJECT@> para:Stage "@STAGE@".
+			<@DOCSUBJECT@> para:Timestamp "@TIMESTAMP@".
+			<@DOCSUBJECT@> para:Date "@DATE@".
+			<@DOCSUBJECT@> para:Para1 "@PARA1@".
+		}
+		where {}
+	''';
+.
+stage:Parameters_index a elmo:Part;
+	elmo:index "1";
+	elmo:appearance elmo:IndexAppearance;
+	elmo:query '''
+		prefix html: <http://www.w3.org/1999/xhtml/vocab#>
+		select	(<http://localhost:8080/ldt/id/parameters?> as ?direct)
+				(<http://localhost:8080/ldt/resource?subject=http://localhost:8080/id/parameters> as ?dereferenced)
+				(<http://localhost:8080/ldt/resource?subject=http://localhost:8080/doc/parameters> as ?document)
+		where {}
+	''';
+.

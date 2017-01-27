@@ -209,6 +209,12 @@
 					<xsl:otherwise>text/html</xsl:otherwise> <!-- If all fails: simply html -->
 				</xsl:choose>
 			</format>
+			<docsubject>
+				<xsl:choose>
+					<xsl:when test="theatre/subject!=''"><xsl:value-of select="replace(theatre/subject,$uri-filter,'')"/></xsl:when>
+					<xsl:otherwise><xsl:value-of select="$url"/></xsl:otherwise>
+				</xsl:choose>
+			</docsubject>
 			<subject>
 				<xsl:choose>
 					<!-- For security reasons, subject of a container should ALWAYS be the same as the request-url -->

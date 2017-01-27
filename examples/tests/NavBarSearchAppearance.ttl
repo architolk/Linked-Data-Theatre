@@ -42,6 +42,7 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:data [elmo:index "07"; rdfs:label "Blank nodes"; html:link "query/BlankNodes"];
 			elmo:data [elmo:index "08"; rdfs:label "Parameter filter test"; html:link "query/paramtest"];
 			elmo:data [elmo:index "09"; rdfs:label "Form appearance DBPedia data"; html:link "query/FormAppearanceDbPedia"];
+			elmo:data [elmo:index "10"; rdfs:label "Parameters"; html:link "/ldt/id/parameters"];
 		];
 		elmo:data [
 			elmo:index "3";
