@@ -49,9 +49,17 @@ stage:FormAppearance-form a elmo:Form;
 		elmo:index "2";
 	];
 	elmo:fragment [
+		elmo:index "3";
+		elmo:applies-to "zipcode";
+		rdfs:label "Postcode"@nl;
+		rdfs:label "Zipcode"@en;
+		elmo:valuePattern "[0-9]{4}[A-Z]{2}";
+		elmo:valueHint "0000AA";
+	];
+	elmo:fragment [
 		elmo:appearance elmo:SubmitAppearance;
 		rdfs:label "Search"@nl;
-		elmo:index "3";
+		elmo:index "4";
 	];
 .
 

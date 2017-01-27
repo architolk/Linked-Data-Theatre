@@ -141,7 +141,10 @@
 									</textarea>
 								</xsl:when>
 								<xsl:otherwise>
-									<input type="text" class="form-control" id="{$applies-to}" name="{$applies-to}" value="{/results/context/parameters/parameter[name=$applies-to]/value[1]}"/>
+									<input type="text" class="form-control" id="{$applies-to}" name="{$applies-to}" value="{/results/context/parameters/parameter[name=$applies-to]/value[1]}">
+										<xsl:if test="elmo:valuePattern[1]!=''"><xsl:attribute name="pattern"><xsl:value-of select="elmo:valuePattern[1]"/></xsl:attribute></xsl:if>
+										<xsl:if test="elmo:valueHint[1]!=''"><xsl:attribute name="title"><xsl:value-of select="elmo:valueHint[1]"/></xsl:attribute></xsl:if>
+									</input>
 								</xsl:otherwise>
 							</xsl:choose>
 						</div>
