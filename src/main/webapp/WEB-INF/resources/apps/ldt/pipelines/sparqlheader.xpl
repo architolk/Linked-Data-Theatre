@@ -1,8 +1,8 @@
 <!--
 
     NAME     sparqlheader.xpl
-    VERSION  1.14.0
-    DATE     2017-01-04
+    VERSION  1.15.0
+    DATE     2017-01-27
 
     Copyright 2012-2017
 
@@ -60,15 +60,6 @@
 		<p:output name="data" id="roles"/>
 	</p:processor>
 
-	<!-- Create context -->
-	<!--
-	<p:processor name="oxf:xslt">
-		<p:input name="data" href="aggregate('root',#instance,#request)"/>
-		<p:input name="config" href="../transformations/context.xsl"/>
-		<p:output name="data" id="context"/>
-	</p:processor>
-	-->
-	
 	<p:choose href="#instance">
 		<!-- Only show header information in development-mode -->
 		<p:when test="theatre/@env='dev'">

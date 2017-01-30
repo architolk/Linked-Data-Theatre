@@ -1,8 +1,8 @@
 <!--
 
     NAME     context2info.xsl
-    VERSION  1.14.0
-    DATE     2017-01-04
+    VERSION  1.15.0
+    DATE     2017-01-27
 
     Copyright 2012-2017
 
@@ -25,7 +25,7 @@
 <!--
     DESCRIPTION
     Transformation of context to text format
-	
+
 -->
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
 
@@ -64,9 +64,12 @@ Stage:                   </xsl:text><xsl:value-of select="root/context/represent
 Docroot:                 </xsl:text><xsl:if test="not(root/context/@docroot!='')">/</xsl:if><xsl:value-of select="root/context/@docroot"/><xsl:text>
 Staticroot:              </xsl:text><xsl:if test="not(root/context/@staticroot!='')">/</xsl:if><xsl:value-of select="root/context/@staticroot"/><xsl:text>
 Public SPARQL endpoint:  </xsl:text><xsl:value-of select="root/context/@sparql"/><xsl:text>
-Public backstage:        </xsl:text><xsl:choose><xsl:when test="root/context/back-of-stage!=''">yes</xsl:when><xsl:otherwise>no</xsl:otherwise></xsl:choose><xsl:text>
+Public backstage:        </xsl:text><xsl:choose><xsl:when test="root/context/back-of-stage!=''">yes</xsl:when><xsl:otherwise>no</xsl:otherwise></xsl:choose><xsl:if test="root/context/@env='dev'"><xsl:text>
+Request hash:            </xsl:text><xsl:value-of select="root/context/request-hash"/><xsl:text>
+Request attribute(s):    </xsl:text><xsl:for-each select="root/context/attributes/attribute"><xsl:if test="position()!=1">, </xsl:if><xsl:value-of select="./name"/><xsl:text>:</xsl:text><xsl:value-of select="./value"/></xsl:for-each></xsl:if><xsl:text>
+Configuration cache:     </xsl:text><xsl:value-of select="root/context/querycache/validity"/><xsl:text>
+Data cache:              </xsl:text><xsl:value-of select="root/context/cache/validity"/><xsl:text>
 Config:                  </xsl:text><xsl:value-of select="$config"/><xsl:if test="$config='INVALID'"><xsl:text>
-
 Reason for invalid configuration:</xsl:text><xsl:for-each select="$configcheck/error"><xsl:text>
 </xsl:text><xsl:value-of select="."/></xsl:for-each></xsl:if>
 </xsl:template>

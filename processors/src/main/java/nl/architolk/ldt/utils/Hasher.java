@@ -1,5 +1,5 @@
 /**
- * NAME     icons.css
+ * NAME     Hasher.java
  * VERSION  1.15.0
  * DATE     2017-01-27
  *
@@ -21,10 +21,21 @@
  * along with the Linked Data Theatre.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * DESCRIPTION 
- * CSS with icons to be used for a specific style class (and elmo:name at elmo:Representation level)
+ * DESCRIPTION
+ * Creates an MD5 hash from a string
  *
- **/
-.city  h3>span:before {content: "\f192";
-	display:inline-block;font:normal normal normal 14px/1 FontAwesome;font-size:inherit;text-rendering:auto;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale; margin-right: 4px;
+ */
+package nl.architolk.ldt.utils;
+
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+public class Hasher {
+    public static String hash(String data) throws NoSuchAlgorithmException {
+        MessageDigest md5 = MessageDigest.getInstance("MD5");
+        byte[] digest = md5.digest(data.getBytes());
+        BigInteger digestValue = new BigInteger(1, digest);
+        return String.format("%032x", digestValue);
+    } 
 }

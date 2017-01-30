@@ -8,73 +8,72 @@ stage:FormAppearance	a	elmo:Representation;
 	elmo:url-pattern	"/query/FormAppearance$";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
-	elmo:contains	stage:FormAppearance-places;
+	elmo:contains	stage:FormAppearance-species;
 	elmo:appearance elmo:ContentAppearance;
-	elmo:endpoint <http://dbpedia.org/sparql>;
 	elmo:queryForm stage:FormAppearance-form;
 	elmo:fragment [
-		elmo:applies-to "person";
-		rdfs:label "Persoon"@nl;
-		rdfs:label "Person"@en;
+		elmo:applies-to "name";
+		rdfs:label "Naam"@nl;
+		rdfs:label "Name"@en;
 	];
 	elmo:fragment [
-		elmo:applies-to "birth";
-		rdfs:label "Geboortejaar"@nl;
-		rdfs:label "Year of birth"@en;
-	];
-	elmo:fragment [
-		elmo:applies-to "desc";
-		rdfs:label "Beroep"@nl;
-		rdfs:label "Occupation"@en;
+		elmo:applies-to "species";
+		rdfs:label "Soort"@nl;
+		rdfs:label "Species"@en;
 	];
 	elmo:query '''
-		select distinct ?person ?person_label ?birth ?desc
+		select distinct ?person ?person_label
 		where {
-			?person <http://dbpedia.org/property/placeOfBirth> <@BIRTHPLACE@>.
-			?person rdfs:label ?person_label.
-			?person <http://dbpedia.org/ontology/birthYear> ?birth.
-			FILTER (lang(?person_label)="@LANGUAGE@")
-			FILTER (lang(?desc)="")
-			FILTER (str(?birth)<"@BIRTHYEAR@" or "@BIRTHYEAR@"="")
-			OPTIONAL {?person <http://purl.org/dc/elements/1.1/description> ?desc}
+			graph <http://localhost:8080/stage> {
+				?person a <@SPECIES@>.
+				?person rdfs:label ?person_label.
+				FILTER (regex(?person_label,"@NAME@","i"))
+			}
 		}
 	'''
 .
 
 stage:FormAppearance-form a elmo:Form;
 	elmo:fragment [
-		elmo:applies-to "birthplace";
-		rdfs:label "Birth place"@nl;
+		elmo:applies-to "species";
+		rdfs:label "Soort"@nl;
+		rdfs:label "Species"@en;
 		elmo:constraint elmo:MandatoryConstraint;
-		elmo:valuesFrom stage:FormAppearance-places;
+		elmo:valuesFrom stage:FormAppearance-species;
 		elmo:index "1";
 	];
 	elmo:fragment [
-		elmo:applies-to "birthyear";
-		rdfs:label "Geboren VOOR"@nl;
-		elmo:valueDatatype xsd:Date;
+		elmo:applies-to "name";
+		rdfs:label "Naam"@nl;
+		rdfs:label "Name"@en;
 		elmo:index "2";
+	];
+	elmo:fragment [
+		elmo:index "3";
+		elmo:applies-to "zipcode";
+		rdfs:label "Postcode"@nl;
+		rdfs:label "Zipcode"@en;
+		elmo:valuePattern "[0-9]{4}[A-Z]{2}";
+		elmo:valueHint "0000AA";
 	];
 	elmo:fragment [
 		elmo:appearance elmo:SubmitAppearance;
 		rdfs:label "Search"@nl;
-		elmo:index "3";
+		elmo:index "4";
 	];
 .
 
-stage:FormAppearance-places elmo:appearance elmo:HiddenAppearance;
-	elmo:endpoint <http://dbpedia.org/sparql>;
+stage:FormAppearance-species elmo:appearance elmo:HiddenAppearance;
 	elmo:query '''
 		construct {
-			?bp rdfs:label ?bplabel
+			?species rdfs:label ?specieslabel
 		}
 		where {
-			?person <http://dbpedia.org/property/placeOfBirth> ?bp.
-			?person rdfs:label ?plabel.
-			?bp rdfs:label ?bplabel.
-			?bp <http://dbpedia.org/ontology/country> <http://dbpedia.org/resource/Netherlands>
-			FILTER (lang(?plabel)="@LANGUAGE@")
-			FILTER (lang(?bplabel)="@LANGUAGE@")
+			graph <http://localhost:8080/stage> {
+				?species rdf:type owl:Class.
+				?species rdfs:label ?specieslabel
+				FILTER (lang(?specieslabel)="" || lang(?specieslabel)="@LANGUAGE@")
+			}
 		}
 	''';
 .

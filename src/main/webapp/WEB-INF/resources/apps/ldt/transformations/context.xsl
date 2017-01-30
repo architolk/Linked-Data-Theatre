@@ -1,8 +1,8 @@
 <!--
 
     NAME     context.xsl
-    VERSION  1.14.0
-    DATE     2017-01-04
+    VERSION  1.15.0
+    DATE     2017-01-27
 
     Copyright 2012-2017
 
@@ -25,12 +25,12 @@
 <!--
 	DESCRIPTION
 	Generates the context, used in the info.xpl, version.xpl, query.xpl, sparql.xpl and container.xpl pipelines
-  
+
 -->
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-	<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="no"/>
-	
+	<xsl:output name="xml" method="xml" version="1.0" encoding="UTF-8" indent="no"/>
+
 	<xsl:template match="/root|/croot">
 		<xsl:variable name="uri-filter">[^a-zA-Z0-9:\.\-_~/()#&amp;=,]</xsl:variable> <!-- ampersand and equal-sign added for Juriconnect -->
 		<xsl:variable name="x-forwarded-host"><xsl:value-of select="replace(request/headers/header[name='x-forwarded-host']/value,'^([^,]+).*$','$1')"/></xsl:variable>
@@ -95,7 +95,7 @@
 				<xsl:text>/stage</xsl:text>
 			</xsl:if>
 		</xsl:variable>
-		
+
 		<!-- URL should be request-url, but in case of proxy we need to replace the host -->
 		<xsl:variable name="url-with-domain">
 			<xsl:choose>
@@ -111,7 +111,7 @@
 				<xsl:otherwise><xsl:value-of select="replace($url-with-domain,'^([a-z]+://[^/]+)(.*)$',concat('$1',$docroot,'$2'))"/></xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
-		
+
 		<xsl:variable name="datearray" select="tokenize(theatre/date,'[-/]')"/>
 		<xsl:variable name="normalized-date">
 			<xsl:if test="$datearray[1]!=''"><xsl:value-of select="format-number(number($datearray[1]),'0000')"/></xsl:if>
@@ -128,6 +128,7 @@
 				<xsl:otherwise><xsl:value-of select="replace($normalized-date,'[T:\.]','-')"/></xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
+		<xsl:variable name="request"><request><xsl:copy-of select="request/parameters|request/request-url"/></request></xsl:variable>
 		
 		<context env="{theatre/@env}" docroot="{$docroot}" staticroot="{$staticroot}" version="{version/number}" timestamp="{version/timestamp}" sparql="{theatre/@sparql}">
 			<configuration-endpoint><xsl:value-of select="theatre/@configuration-endpoint"/></configuration-endpoint>
@@ -144,6 +145,23 @@
 				</xsl:choose>
 			</title>
 			<url><xsl:value-of select="$url"/></url>
+			<request-hash><xsl:value-of xmlns:saxon="http://saxon.sf.net/" xmlns:Hasher="nl.architolk.ldt.utils.Hasher" select="Hasher:hash(saxon:serialize($request,'xml'))"/></request-hash>
+			<querycache>
+				<validity>
+					<xsl:choose>
+						<xsl:when test="theatre/@querycache!=''"><xsl:value-of select="theatre/@querycache"/></xsl:when>
+						<xsl:otherwise>none</xsl:otherwise>
+					</xsl:choose>
+				</validity>
+			</querycache>
+			<cache>
+				<validity>
+					<xsl:choose>
+						<xsl:when test="theatre/@cache!=''"><xsl:value-of select="theatre/@cache"/></xsl:when>
+						<xsl:otherwise>none</xsl:otherwise>
+					</xsl:choose>
+				</validity>
+			</cache>
 			<domain><xsl:value-of select="$domain"/></domain>
 			<subdomain><xsl:value-of select="$subdomain"/></subdomain>
 			<date><xsl:value-of select="$normal-date"/></date>
@@ -191,6 +209,12 @@
 					<xsl:otherwise>text/html</xsl:otherwise> <!-- If all fails: simply html -->
 				</xsl:choose>
 			</format>
+			<docsubject>
+				<xsl:choose>
+					<xsl:when test="theatre/subject!=''"><xsl:value-of select="replace(theatre/subject,$uri-filter,'')"/></xsl:when>
+					<xsl:otherwise><xsl:value-of select="$url"/></xsl:otherwise>
+				</xsl:choose>
+			</docsubject>
 			<subject>
 				<xsl:choose>
 					<!-- For security reasons, subject of a container should ALWAYS be the same as the request-url -->
@@ -226,6 +250,11 @@
 					<xsl:copy-of select="."/>
 				</xsl:for-each>
 			</parameters>
+			<attributes>
+				<xsl:for-each select="request/attributes/attribute[name!='']">
+					<xsl:copy-of select="."/>
+				</xsl:for-each>
+			</attributes>
 			<xsl:if test="request/body/@xsi:type='xs:anyURI'">
 				<xsl:choose>
 					<xsl:when test="request/method='POST'"><upload-file action='insert'><xsl:value-of select="request/body"/></upload-file></xsl:when>
