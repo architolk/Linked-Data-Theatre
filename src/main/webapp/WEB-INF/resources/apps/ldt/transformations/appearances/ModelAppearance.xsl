@@ -1,8 +1,8 @@
 <!--
 
     NAME     ModelAppearance.xsl
-    VERSION  1.15.0
-    DATE     2017-01-27
+    VERSION  1.15.1-SNAPSHOT
+    DATE     2017-01-30
 
     Copyright 2012-2017
 
@@ -78,6 +78,18 @@
 							<xsl:if test="$predicate/ref-class/@uri!=''">
 								<xsl:attribute name="refclass"><xsl:value-of select="$predicate/ref-class/@uri"/></xsl:attribute>
 							</xsl:if>
+							<xsl:attribute name="mincount">
+								<xsl:choose>
+									<xsl:when test="$predicate/mincount[1]!=''"><xsl:value-of select="$predicate/mincount[1]"/></xsl:when>
+									<xsl:otherwise>0</xsl:otherwise>
+								</xsl:choose>
+							</xsl:attribute>
+							<xsl:attribute name="maxcount">
+								<xsl:choose>
+									<xsl:when test="$predicate/maxcount[1]!=''"><xsl:value-of select="$predicate/maxcount[1]"/></xsl:when>
+									<xsl:otherwise>n</xsl:otherwise>
+								</xsl:choose>
+							</xsl:attribute>
 						</property>
 					</xsl:if>
 				</xsl:for-each>
@@ -171,18 +183,6 @@
 				<xsl:for-each-group select="$predicate/domain" group-by="@uri">
 					<domain uri="{@uri}"/>
 				</xsl:for-each-group>
-				<mincount>
-					<xsl:choose>
-						<xsl:when test="$predicate/mincount[1]!=''"><xsl:value-of select="$predicate/mincount[1]"/></xsl:when>
-						<xsl:otherwise>0</xsl:otherwise>
-					</xsl:choose>
-				</mincount>
-				<maxcount>
-					<xsl:choose>
-						<xsl:when test="$predicate/maxcount[1]!=''"><xsl:value-of select="$predicate/maxcount[1]"/></xsl:when>
-						<xsl:otherwise>n</xsl:otherwise>
-					</xsl:choose>
-				</maxcount>
 				<xsl:for-each select="current-group()/rdfs:subPropertyOf">
 					<super uri="{@rdf:resource}">
 						<xsl:variable name="ref" select="@rdf:resource"/>
@@ -232,7 +232,7 @@
 							<xsl:text>"</xsl:text>
 								<xsl:value-of select="$label"/><xsl:if test="$label=''"><xsl:value-of select="replace($propertyuri,'^.*(#|/)([^(#|/)]+)$','$2')"/></xsl:if>
 								<xsl:if test="$datatype!=''"> (<xsl:value-of select="replace($datatype,'^.*(#|/)([^(#|/)]+)$','$2')"/>)</xsl:if>
-								<xsl:text> [</xsl:text><xsl:value-of select="$property/mincount"/>,<xsl:value-of select="$property/maxcount"/>
+								<xsl:text> [</xsl:text><xsl:value-of select="@mincount"/>,<xsl:value-of select="@maxcount"/>
 							<xsl:text>]"</xsl:text>
 						</xsl:for-each>
 						<xsl:text>]</xsl:text>
@@ -269,7 +269,7 @@
 							<xsl:text>,connector:{name:"normal"}</xsl:text>
 							<xsl:text>,labels: [{ position: 0.5, attrs: { text: { text: "</xsl:text>
 								<xsl:value-of select="$label"/><xsl:if test="$label=''"><xsl:value-of select="replace($propertyuri,'^.*(#|/)([^(#|/)]+)$','$2')"/></xsl:if>
-								<xsl:text> [</xsl:text><xsl:value-of select="$property/mincount"/>,<xsl:value-of select="$property/maxcount"/>
+								<xsl:text> [</xsl:text><xsl:value-of select="@mincount"/>,<xsl:value-of select="@maxcount"/>
 							<xsl:text>]" } } }]</xsl:text>
 							<xsl:text>}</xsl:text>
 						</xsl:if>

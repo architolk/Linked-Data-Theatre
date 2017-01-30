@@ -78,6 +78,7 @@ stage:GraphAppearance_content elmo:index "2";
 		''';
 	];
 	elmo:query '''
+		prefix elmo: <http://bp4mc2.org/elmo/def#>
 		construct {
 			<@SUBJECT@> elmo:style ?subjecttype.
 			<@SUBJECT@> rdfs:label ?subjectlabel.
