@@ -20,7 +20,6 @@
 						<configuration>
 							<url>https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js</url>
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
-							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -31,7 +30,6 @@
 						<configuration>
 							<url>https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css</url>
 							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
-							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -42,7 +40,6 @@
 						<configuration>
 							<url>https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css</url>
 							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
-							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -103,7 +100,6 @@
 						<configuration>
 							<url>https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css</url>
 							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
-							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -174,7 +170,6 @@
 						<configuration>
 							<url>https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js</url>
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
-							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -185,7 +180,6 @@
 						<configuration>
 							<url>https://github.com/DataTables/DataTables/raw/master/media/js/dataTables.bootstrap.min.js</url>
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
-							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -196,7 +190,6 @@
 						<configuration>
 							<url>https://github.com/DataTables/DataTables/raw/master/media/css/dataTables.bootstrap.min.css</url>
 							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
-							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -218,7 +211,6 @@
 						<configuration>
 							<url>https://raw.githubusercontent.com/alxlit/bootstrap-chosen/master/bootstrap-chosen.css</url>
 							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
-							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -230,7 +222,6 @@
 							<url>https://github.com/alxlit/bootstrap-chosen/archive/master.zip</url>
 							<unpack>true</unpack>
 							<outputDirectory>zips</outputDirectory>
-							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -241,7 +232,6 @@
 						<configuration>
 							<url>http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js</url>
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
-							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -252,7 +242,6 @@
 						<configuration>
 							<url>http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css</url>
 							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
-							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -294,7 +283,6 @@
 						<configuration>
 							<url>https://github.com/CliffCloud/Leaflet.EasyButton/raw/master/src/easy-button.js</url>
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
-							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -352,7 +340,6 @@
 						<configuration>
 							<url>https://raw.githubusercontent.com/clientIO/joint/master/dist/joint.min.js</url>
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
-							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -363,7 +350,6 @@
 						<configuration>
 							<url>https://raw.githubusercontent.com/clientIO/joint/master/dist/joint.min.css</url>
 							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
-							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -375,7 +361,6 @@
 							<!-- Dependency with joint.js: version should be 3.x NOT 4.x -->
 							<url>https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js</url>
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
-							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -464,7 +449,7 @@
 						</goals>
 						<phase>package</phase>
 						<configuration>
-							<resources>          
+							<resources>
 								<resource>
 									<directory>zips/Proj4Leaflet-0.7.2/src</directory>
 								</resource>
@@ -516,9 +501,9 @@
 										<include>graphlib.min.js</include>
 									</includes>
 								</resource>
-							</resources>              
+							</resources>
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
-						</configuration>            
+						</configuration>
 					</execution>
 					<execution>
 						<id>copy-css-resources</id>
@@ -527,7 +512,7 @@
 						</goals>
 						<phase>package</phase>
 						<configuration>
-							<resources>          
+							<resources>
 								<resource>
 									<directory>zips/YASGUI.YASQE-2.8.3/dist</directory>
 									<includes>
@@ -542,13 +527,13 @@
 										<include>chosen-sprite@2x.png</include>
 									</includes>
 								</resource>
-							</resources>              
+							</resources>
 							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
-						</configuration>            
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
 		</plugins>
 	</build>
-	
+
 </project>
