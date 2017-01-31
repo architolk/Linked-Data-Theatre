@@ -1,0 +1,83 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+
+stage:FormAppearanceAjax	a	elmo:Representation;
+	elmo:url-pattern	"/query/FormAppearanceAjax$";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:contains	stage:FormAppearanceAjax-species;
+	elmo:contains	stage:FormAppearanceAjax-cities;
+	elmo:queryForm stage:FormAppearanceAjax-form;
+	elmo:fragment [
+		elmo:applies-to "species";
+		rdfs:label "Soort"@nl;
+		rdfs:label "Species"@en;
+	];
+	elmo:query '''
+		select distinct ?person ?person_label
+		where {
+			graph <http://localhost:8080/stage> {
+				?person a <@SPECIES@>.
+				?person rdfs:label ?person_label.
+			}
+		}
+	'''
+.
+
+stage:FormAppearanceAjax-form a elmo:Form;
+	elmo:fragment [
+		elmo:applies-to "species";
+		rdfs:label "Soort"@nl;
+		rdfs:label "Species"@en;
+		elmo:constraint elmo:MandatoryConstraint;
+		elmo:valuesFrom stage:FormAppearanceAjax-species;
+		elmo:index "1";
+	];
+	elmo:fragment [
+		elmo:applies-to "city";
+		rdfs:label "Stad (dbpedia)"@nl;
+		rdfs:label "City (dbpedia)"@en;
+		elmo:valuesFrom stage:FormAppearanceAjax-cities;
+		elmo:index "2";
+	];
+	elmo:fragment [
+		elmo:appearance elmo:SubmitAppearance;
+		rdfs:label "Search"@nl;
+		elmo:index "3";
+	];
+.
+
+stage:FormAppearanceAjax-species elmo:appearance elmo:HiddenAppearance;
+	elmo:with-parameter "species";
+	elmo:query '''
+		construct {
+			?species rdfs:label ?specieslabel
+		}
+		where {
+			graph <http://localhost:8080/stage> {
+				?species rdf:type owl:Class.
+				?species rdfs:label ?specieslabel
+				FILTER (lang(?specieslabel)="" || lang(?specieslabel)="@LANGUAGE@")
+				FILTER (regex(?specieslabel,"@SPECIES@","i"))
+			}
+		}
+	''';
+.
+stage:FormAppearanceAjax-cities elmo:appearance elmo:HiddenAppearance;
+	elmo:with-parameter "city";
+	elmo:endpoint <http://dbpedia.org/sparql>;
+	elmo:query '''
+		construct {
+			?city rdfs:label ?label
+		}
+		where {
+			?city rdf:type <http://dbpedia.org/ontology/City>.
+			?city rdfs:label ?label.
+			FILTER (lang(?label)="" || lang(?label)="@LANGUAGE@")
+			FILTER (regex(?label,"@CITY@","i"))
+		}
+	''';
+.

@@ -1,8 +1,8 @@
 <!--
 
     NAME     query.xpl
-    VERSION  1.15.0
-    DATE     2017-01-27
+    VERSION  1.15.1-SNAPSHOT
+    DATE     2017-01-31
 
     Copyright 2012-2017
 
@@ -1161,6 +1161,35 @@
 							</config>
 						</p:input>
 						<p:input name="data" href="#graphjson" />
+						<p:output name="data" id="converted" />
+					</p:processor>
+					<!-- Serialize -->
+					<p:processor name="oxf:http-serializer">
+						<p:input name="config">
+							<config>
+								<cache-control><use-local-cache>false</use-local-cache></cache-control>
+							</config>
+						</p:input>
+						<p:input name="data" href="#converted"/>
+					</p:processor>
+				</p:when>
+				<!-- JSON data in plain format for form representation -->
+				<p:when test="context/format='application/x.elmo.plain+json'">
+					<!-- Transform -->
+					<p:processor name="oxf:xslt">
+						<p:input name="data" href="aggregate('root',#context,#cache,#querytext)"/>
+						<p:input name="config" href="../transformations/rdf2plainjson.xsl"/>
+						<p:output name="data" id="plainjson"/>
+					</p:processor>
+					<!-- Convert XML result to plain text -->
+					<p:processor name="oxf:text-converter">
+						<p:input name="config">
+							<config>
+								<encoding>utf-8</encoding>
+								<content-type>application/ld+json</content-type>
+							</config>
+						</p:input>
+						<p:input name="data" href="#plainjson" />
 						<p:output name="data" id="converted" />
 					</p:processor>
 					<!-- Serialize -->
