@@ -1,8 +1,8 @@
 <!--
 
     NAME     GeoAppearance.xsl
-    VERSION  1.15.0
-    DATE     2017-01-27
+    VERSION  1.15.1-SNAPSHOT
+    DATE     2017-01-31
 
     Copyright 2012-2017
 
@@ -44,6 +44,11 @@
 >
 
 <xsl:output method="xml" indent="yes"/>
+
+<xsl:template match="*" mode="safejsonstring">
+	<xsl:variable name="filter">(")</xsl:variable>
+	<xsl:value-of select="replace(replace(replace(.,'\\','\\\\'),'[&#13;]{0,1}&#10;','\\n'),$filter,'\\$1')"/>
+</xsl:template>
 
 <xsl:template match="rdf:RDF" mode="GeoAppearance">
 	<xsl:param name="backmap"/>
@@ -175,11 +180,11 @@
 				<div id="map"></div>
 				<!-- TODO: width en height moet ergens vandaan komen. Liefst uit plaatje, maar mag ook uit eigenschappen -->
 				<script type="text/javascript">
-					initMap('<xsl:value-of select="$staticroot"/>',<xsl:value-of select="$zoom"/>,<xsl:value-of select="$lat"/>, <xsl:value-of select="$long"/>, '<xsl:value-of select="$backmap"/>', '<xsl:value-of select="$img"/>', '<xsl:value-of select="$container"/>', <xsl:value-of select="$left"/>, <xsl:value-of select="$top"/>, <xsl:value-of select="$width"/>, <xsl:value-of select="$height"/>);
+					initMap("<xsl:value-of select="$staticroot"/>",<xsl:value-of select="$zoom"/>,<xsl:value-of select="$lat"/>, <xsl:value-of select="$long"/>, "<xsl:value-of select="$backmap"/>", "<xsl:value-of select="$img"/>", "<xsl:value-of select="$container"/>", <xsl:value-of select="$left"/>, <xsl:value-of select="$top"/>, <xsl:value-of select="$width"/>, <xsl:value-of select="$height"/>);
 					
 					<xsl:for-each select="rdf:Description[geo:lat!='' and geo:long!='' and rdfs:label!='']">
 						<xsl:variable name="resource-uri"><xsl:call-template name="resource-uri"><xsl:with-param name="uri" select="@rdf:about"/></xsl:call-template></xsl:variable>
-						addPoint(<xsl:value-of select="geo:lat[1]"/>,<xsl:value-of select="geo:long[1]"/>,"<xsl:value-of select="rdfs:label"/>","<xsl:value-of select="$resource-uri"/>","<xsl:value-of select="rdf:value"/>","<xsl:value-of select="html:icon"/>");
+						addPoint(<xsl:value-of select="geo:lat[1]"/>,<xsl:value-of select="geo:long[1]"/>,"<xsl:apply-templates select="rdfs:label" mode="safejsonstring"/>","<xsl:value-of select="$resource-uri"/>","<xsl:value-of select="rdf:value"/>","<xsl:value-of select="html:icon"/>");
 					</xsl:for-each>
 					<xsl:for-each select="rdf:Description[geo:geometry!='']"><xsl:sort select="string-length(geo:geometry[1])" data-type="number" order="descending"/>
 						<!-- //<xsl:value-of select="string-length(geo:geometry[1])"/>-<xsl:value-of select="key('resource',elmo:style[1]/@rdf:resource)/elmo:name"/> -->
@@ -202,14 +207,14 @@
 								<xsl:otherwise><xsl:value-of select="key('resource',elmo:style[1]/@rdf:resource)/elmo:name[1]"/></xsl:otherwise>
 							</xsl:choose>
 						</xsl:variable>
-						addWKT('<xsl:value-of select="@rdf:about"/>','<xsl:value-of select="geo:geometry[1]"/>','<xsl:value-of select="rdfs:label[1]"/>','<xsl:value-of select="$resource-uri"/>','s<xsl:value-of select="$styleclass"/>');
+						addWKT("<xsl:value-of select="@rdf:about"/>","<xsl:value-of select="geo:geometry[1]"/>","<xsl:value-of select="rdfs:label[1]"/>","<xsl:value-of select="$resource-uri"/>","s<xsl:value-of select="$styleclass"/>");
 					</xsl:for-each>
 
 					<xsl:for-each select="rdf:Description[geo:geometry!='']/(* except (html:link|elmo:style))[exists(@rdf:resource)]">
-						addEdge('<xsl:value-of select="../@rdf:about"/>','<xsl:value-of select="name()"/>','<xsl:value-of select="@rdf:resource"/>');
+						addEdge("<xsl:value-of select="../@rdf:about"/>","<xsl:value-of select="name()"/>","<xsl:value-of select="@rdf:resource"/>");
 					</xsl:for-each>
 					
-					showLocations(<xsl:value-of select="$doZoom"/>,'<xsl:value-of select="$appearance"/>');
+					showLocations(<xsl:value-of select="$doZoom"/>,"<xsl:value-of select="$appearance"/>");
 				</script>
 			</div>
 		</div>
