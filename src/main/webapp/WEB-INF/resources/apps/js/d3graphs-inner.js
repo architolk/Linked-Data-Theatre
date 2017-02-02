@@ -90,9 +90,9 @@ container.append('defs').selectAll('marker')
 
 //Force definition
 var force = d3.layout.force()
-    .gravity(0.1)
+    .gravity(1)
     .distance(150)
-    .charge(-400)
+    .charge(-8000)
     .size([width, height])
 	.on("tick",tick);
 
@@ -142,7 +142,7 @@ d3.json(jsonApiCall+jsonApiSubject, function(error, json) {
 		n.outLinks = {};
 		n.linkCount = 0;
 		n.parentLink;
-		n.elementType = "rect"; //Maybe not the best place...
+		n.elementType = "ellipse"; //Maybe not the best place...
 	});
 	root.links.forEach(function(l) {
 		l.source.outLinks[l.uri] = l.source.outLinks[l.uri] || [];
@@ -392,6 +392,14 @@ function update() {
 		.attr("class", function(d) { return (d["class"] ? "s"+d["class"] : "default") })
 		.each(function(d) {d.arect = this;});
 
+	newNodes.filter(function(d) {return d.elementType==="ellipse"}).append("ellipse")
+		.attr("cx", function(d) { return d.rect.x + d.rect.width / 2})
+		.attr("cy", function(d) { return d.rect.y + d.rect.height / 2})
+		.attr("rx", function(d) { return 15 + d.rect.width/2 })
+		.attr("ry", function(d) { return 5 + d.rect.height/2 })
+		.attr("class", function(d) { return (d["class"] ? "s"+d["class"] : "default") })
+		.each(function(d) {d.arect = this;});
+
 	force
 		.nodes(nodes)
 		.links(links)
@@ -545,7 +553,7 @@ function dblclick(d) {
 					x.outLinks = {};
 					x.linkCount = 0;
 					x.parentLink;
-					x.elementType = "rect";
+					x.elementType = "ellipse";
 				})
 				//Only add new lines
 				json.links.forEach(function(x) {
