@@ -66,6 +66,8 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:data [elmo:index "81"; rdfs:label "Show uploaded shapes"; html:link "query/uploaded-shapes"];
 			elmo:data [elmo:index "82"; rdfs:label "Show uploaded shapes model"; html:link "query/uploaded-shapes-model"];
 			elmo:data [elmo:index "83"; rdfs:label "Show uploaded shapes yED model"; html:link "query/uploaded-shapes.yed"];
+			elmo:data [elmo:index "90"; rdfs:label "Archi container"; html:link "container/archi"];
+			elmo:data [elmo:index "91"; rdfs:label "Show archi container"; html:link "query/archicomponents"];
 		];
 		elmo:data [
 			elmo:index "5";

@@ -28,6 +28,12 @@ container:dmn a elmo:Container;
 	rdfs:label "Upload DMN";
 .
 
+container:archi a elmo:Container;
+	elmo:translator elmo:ArchiTranslator;
+	elmo:contains stage:NavbarSearchAppearance;
+	rdfs:label "Upload Archi";
+.
+
 container:query a elmo:Container;
 	elmo:contains stage:NavbarSearchAppearance;
 	rdfs:label "Upload with post query";
