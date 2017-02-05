@@ -1,8 +1,8 @@
 <!--
 
     NAME     TextAppearance.xsl
-    VERSION  1.15.0
-    DATE     2017-01-27
+    VERSION  1.15.1-SNAPSHOT
+    DATE     2017-02-05
 
     Copyright 2012-2017
 
@@ -154,11 +154,11 @@
 			</xsl:if>
 		</xsl:for-each>
 	</xsl:variable>
-	<link rel="stylesheet" href="/css/leaflet.css" />
-	<script src="/js/leaflet.js"></script>
-	<script src="/js/proj4-compressed.js"></script>
-	<script src="/js/proj4leaflet.js"></script>
-	<script src="/js/rdfmap.min.js"></script>
+	<link rel="stylesheet" href="/css/leaflet.css{$ldtversion}" />
+	<script src="/js/leaflet.js{$ldtversion}"></script>
+	<script src="/js/proj4-compressed.js{$ldtversion}"></script>
+	<script src="/js/proj4leaflet.js{$ldtversion}"></script>
+	<script src="/js/rdfmap.min.js{$ldtversion}"></script>
 	<style>
 			<xsl:for-each select="rdf:Description[xhtml:stylesheet!='' and elmo:applies-to!='']">
 				.s<xsl:value-of select="elmo:applies-to"/> {
