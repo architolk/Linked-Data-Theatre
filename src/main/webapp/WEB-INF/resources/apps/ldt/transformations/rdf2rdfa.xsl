@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2rdfa.xsl
-    VERSION  1.15.0
-    DATE     2017-01-27
+    VERSION  1.15.1-SNAPSHOT
+    DATE     2017-02-05
 
     Copyright 2012-2017
 
@@ -216,7 +216,7 @@
 					<rdf:Description rdf:nodeID="form">
 						<xsl:copy-of select="rdfs:label"/>
 					</rdf:Description>
-					<xsl:for-each select="fragment">
+					<xsl:for-each select="fragment[@satisfied='']">
 						<rdf:Description rdf:nodeID="f{position()}">
 							<xsl:if test="@applies-to!=''"><elmo:applies-to><xsl:value-of select="@applies-to"/></elmo:applies-to></xsl:if>
 							<xsl:copy-of select="*"/>

@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2view.xsl
-    VERSION  1.15.0
-    DATE     2017-01-27
+    VERSION  1.15.1-SNAPSHOT
+    DATE     2017-02-05
 
     Copyright 2012-2017
 
@@ -44,13 +44,23 @@
 <xsl:template match="elmo:fragment">
 	<xsl:if test="exists(@rdf:nodeID)">
 		<xsl:variable name="appliesTo" select="key('bnodes',@rdf:nodeID)/elmo:applies-to"/>
-		<fragment applies-to="{$appliesTo/@rdf:resource}{$appliesTo}">
+		<xsl:variable name="satisfied">
+			<xsl:for-each select="key('resources',key('bnodes',@rdf:nodeID)/elmo:valuesFrom/@rdf:resource)[elmo:with-parameter!=$appliesTo]">
+				<xsl:if test="not(exists(key('parameters',elmo:with-parameter)))">N</xsl:if>
+			</xsl:for-each>
+		</xsl:variable>
+		<fragment applies-to="{$appliesTo/@rdf:resource}{$appliesTo}" satisfied="{$satisfied}">
 			<xsl:copy-of select="key('bnodes',@rdf:nodeID)/(* except elmo:applies-to)"/>
 		</fragment>
 	</xsl:if>
 	<xsl:if test="exists(@rdf:resource)">
 		<xsl:variable name="appliesTo" select="key('resources',@rdf:resource)/elmo:applies-to"/>
-		<fragment applies-to="{$appliesTo/@rdf:resource}{$appliesTo}">
+		<xsl:variable name="satisfied">
+			<xsl:for-each select="key('resources',key('resources',@rdf:resource)/elmo:valuesFrom/@rdf:resource)[elmo:with-parameter!=$appliesTo]">
+				<xsl:if test="not(exists(key('parameters',elmo:with-parameter)))">N</xsl:if>
+			</xsl:for-each>
+		</xsl:variable>
+		<fragment applies-to="{$appliesTo/@rdf:resource}{$appliesTo}" satisfied="{$satisfied}">
 			<xsl:copy-of select="key('resources',@rdf:resource)/(* except elmo:applies-to)"/>
 		</fragment>
 	</xsl:if>

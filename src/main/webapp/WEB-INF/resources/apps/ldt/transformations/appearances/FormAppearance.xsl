@@ -2,7 +2,7 @@
 
     NAME     FormAppearance.xsl
     VERSION  1.15.1-SNAPSHOT
-    DATE     2017-01-31
+    DATE     2017-02-05
 
     Copyright 2012-2017
 
@@ -90,29 +90,35 @@
 								<xsl:when test="elmo:valuesFrom/@rdf:resource!=''">
 									<xsl:variable name="applies" select="elmo:applies-to"/>
 									<xsl:variable name="param" select="/results/context/parameters/parameter[name=$applies]/value[1]"/>
+									<xsl:variable name="paramlabel" select="/results/context/parameters/parameter[name=concat($applies,'_label')]/value[1]"/>
 									<xsl:variable name="selcount" select="count(key('rdf',elmo:valuesFrom/@rdf:resource)/rdf:Description)"/>
+									<xsl:variable name="paramquery">
+										<xsl:for-each select="/results/context/parameters/parameter[name!=$applies and not(ends-with(name,'_label'))]">&amp;<xsl:value-of select="name"/>=<xsl:value-of select="encode-for-uri(value[1])"/></xsl:for-each>
+									</xsl:variable>
 									<xsl:choose>
 										<xsl:when test="$selcount=0">
 											<script src="{$staticroot}/js/chosen.ajax.min.js" type="text/javascript"/>
 											<div class="input-group" style="width:100%;">
-												<select data-placeholder="Select..." class="chosen-select" multiple="multiple" id="{$applies}" name="{$applies}">
-													<option value=""/>
+												<input type="hidden" id="{$applies}_label" name="{$applies}_label" value="{$paramlabel}"/>
+												<select data-placeholder="Select..." class="chosen-select" multiple="multiple" id="{$applies}" name="{$applies}" onchange="$('#{$applies}_label').val($('option:selected',this).text());">
+													<xsl:if test="$param!=''"><option value="{$param}" selected="selected"><xsl:value-of select="$paramlabel"/></option></xsl:if>
 												</select>
 												<script>$('#<xsl:value-of select="$applies"/>').chosen({max_selected_options: 1});</script>
-												<script>$("#<xsl:value-of select="$applies"/>").ajaxChosen({type:'GET',jsonTermKey:'<xsl:value-of select="$applies"/>',url:'<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource.plainjson?representation=<xsl:value-of select="encode-for-uri(elmo:valuesFrom/@rdf:resource)"/>',dataType:'json'});</script>
+												<script>$("#<xsl:value-of select="$applies"/>").ajaxChosen({type:'GET',jsonTermKey:'<xsl:value-of select="$applies"/>',url:'<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource.plainjson?representation=<xsl:value-of select="encode-for-uri(elmo:valuesFrom/@rdf:resource)"/><xsl:value-of select="$paramquery"/>',dataType:'json'});</script>
 											</div>
 										</xsl:when>
 										<xsl:when test="$selcount>2">
 											<div class="input-group" style="width:100%;">
+												<input type="hidden" id="{$applies}_label" name="{$applies}_label" value="{$paramlabel}"/>
 												<select data-placeholder="Select..." class="chosen-select" multiple="multiple" id="{$applies}" name="{$applies}">
-													<xsl:if test="exists(elmo:value-to)">
-														<xsl:attribute name="onchange">
+													<xsl:attribute name="onchange">$('#<xsl:value-of select="$applies"/>_label').val($('option:selected',this).text());
+														<xsl:if test="exists(elmo:value-to)">
 															<xsl:choose>
 																<xsl:when test="elmo:value-to=$sparqlEditorID">if(this.selectedIndex!=-1) {editor.setValue($('option:selected',this).attr('data-rdfvalue'))};</xsl:when>
 																<xsl:otherwise>if(this.selectedIndex!=-1) {$('#<xsl:value-of select="elmo:value-to"/>').val($('option:selected',this).attr('data-rdfvalue'))};</xsl:otherwise>
 															</xsl:choose>
-														</xsl:attribute>
-													</xsl:if>
+														</xsl:if>
+													</xsl:attribute>
 													<xsl:for-each select="key('rdf',elmo:valuesFrom/@rdf:resource)/rdf:Description"><xsl:sort select="rdfs:label[1]"/>
 														<option value="{@rdf:about}" data-rdfvalue="{rdf:value}">
 															<xsl:if test="$param=@rdf:about"><xsl:attribute name="selected">selected</xsl:attribute></xsl:if>

@@ -21,6 +21,10 @@ stage:ContentAppearance a elmo:Representation;
 		rdfs:label "hoofdstad?";
 		rdfs:comment "Hoofdstad van een land";
 	];
+	elmo:query stage:ContentAppearanceQuery
+.
+stage:ContentAppearanceQuery a elmo:Query;
+	rdfs:label "Amersfoort";
 	elmo:query '''
 		construct {
 			?s?p?o
@@ -30,4 +34,4 @@ stage:ContentAppearance a elmo:Representation;
 			FILTER (?s = <http://dbpedia.org/resource/Amersfoort>)
 		}
 	''';
-.
+.	

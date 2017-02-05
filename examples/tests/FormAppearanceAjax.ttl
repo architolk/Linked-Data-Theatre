@@ -9,6 +9,7 @@ stage:FormAppearanceAjax	a	elmo:Representation;
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:contains	stage:FormAppearanceAjax-species;
+	elmo:contains	stage:FormAppearanceAjax-persons;
 	elmo:contains	stage:FormAppearanceAjax-cities;
 	elmo:queryForm stage:FormAppearanceAjax-form;
 	elmo:fragment [
@@ -16,12 +17,24 @@ stage:FormAppearanceAjax	a	elmo:Representation;
 		rdfs:label "Soort"@nl;
 		rdfs:label "Species"@en;
 	];
+	elmo:fragment [
+		elmo:applies-to rdfs:label;
+		elmo:appearance elmo:HiddenAppearance;
+	];
 	elmo:query '''
-		select distinct ?person ?person_label
+		construct {
+			<@NAME@> ?p ?o.
+			<urn:Parameters> rdfs:label "Parameters".
+			<urn:Parameters> <urn:Parameters#species> "@SPECIES@".
+			<urn:Parameters> <urn:Parameters#species_label> "@SPECIES_LABEL@".
+			<urn:Parameters> <urn:Parameters#name> "@NAME@".
+			<urn:Parameters> <urn:Parameters#name_label> "@NAME_LABEL@".
+			<urn:Parameters> <urn:Parameters#city> "@CITY@".
+			<urn:Parameters> <urn:Parameters#city_label> "@CITY_LABEL@".
+		}
 		where {
 			graph <http://localhost:8080/stage> {
-				?person a <@SPECIES@>.
-				?person rdfs:label ?person_label.
+				<@NAME@> ?p ?o
 			}
 		}
 	'''
@@ -37,16 +50,25 @@ stage:FormAppearanceAjax-form a elmo:Form;
 		elmo:index "1";
 	];
 	elmo:fragment [
+		elmo:applies-to "name";
+		rdfs:label "Naam"@nl;
+		rdfs:label "Name"@en;
+		elmo:constraint elmo:MandatoryConstraint;
+		elmo:valuesFrom stage:FormAppearanceAjax-persons;
+		elmo:index "2";
+	];
+	elmo:fragment [
 		elmo:applies-to "city";
 		rdfs:label "Stad (dbpedia)"@nl;
 		rdfs:label "City (dbpedia)"@en;
+		elmo:constraint elmo:MandatoryConstraint;
 		elmo:valuesFrom stage:FormAppearanceAjax-cities;
-		elmo:index "2";
+		elmo:index "3";
 	];
 	elmo:fragment [
 		elmo:appearance elmo:SubmitAppearance;
 		rdfs:label "Search"@nl;
-		elmo:index "3";
+		elmo:index "4";
 	];
 .
 
@@ -66,8 +88,25 @@ stage:FormAppearanceAjax-species elmo:appearance elmo:HiddenAppearance;
 		}
 	''';
 .
+
+stage:FormAppearanceAjax-persons elmo:appearance elmo:HiddenAppearance;
+	elmo:with-parameter "species";
+	elmo:query '''
+		construct {
+			?person rdfs:label ?person_label
+		}
+		where {
+			graph <http://localhost:8080/stage> {
+				?person a <@SPECIES@>.
+				?person rdfs:label ?person_label.
+			}
+		}
+	''';
+.
+
 stage:FormAppearanceAjax-cities elmo:appearance elmo:HiddenAppearance;
 	elmo:with-parameter "city";
+	elmo:with-parameter "name";
 	elmo:endpoint <http://dbpedia.org/sparql>;
 	elmo:query '''
 		construct {
