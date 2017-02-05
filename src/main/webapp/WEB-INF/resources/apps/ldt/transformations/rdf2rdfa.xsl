@@ -332,7 +332,7 @@
 
 <xsl:template match="/root">
 	<results>
-		<context docroot="{context/@docroot}" staticroot="{context/@staticroot}">
+		<context docroot="{context/@docroot}" staticroot="{context/@staticroot}" version="{context/@version}">
 			<!-- TODO: to much namespaces declarations in resulting XML due to copy-of statement -->
 			<xsl:copy-of select="context/*"/>
 			<xsl:copy-of select="view/stylesheet"/>

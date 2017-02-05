@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2html.xsl
-    VERSION  1.15.0
-    DATE     2017-01-27
+    VERSION  1.15.1-SNAPSHOT
+    DATE     2017-02-05
 
     Copyright 2012-2017
 
@@ -67,6 +67,7 @@
 <xsl:variable name="subject"><xsl:value-of select="/results/context/subject"/></xsl:variable>
 
 <xsl:variable name="language"><xsl:value-of select="/results/context/language"/></xsl:variable>
+<xsl:variable name="ldtversion">?version=<xsl:value-of select="/results/context/@version"/></xsl:variable>
 <!--
 	Helper templates
 -->
@@ -537,11 +538,11 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 		<title><xsl:value-of select="context/title"/></title>
 
-		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/bootstrap.min.css"/>
-		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/dataTables.bootstrap.min.css"/>
-		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/bootstrap-datepicker3.min.css"/>
-		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/ldt-theme.min.css"/>
-		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/font-awesome.min.css"/>
+		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/bootstrap.min.css{$ldtversion}"/>
+		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/dataTables.bootstrap.min.css{$ldtversion}"/>
+		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/bootstrap-datepicker3.min.css{$ldtversion}"/>
+		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/ldt-theme.min.css{$ldtversion}"/>
+		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/font-awesome.min.css{$ldtversion}"/>
 
 		<!-- Alternative styling -->
 		<xsl:for-each select="context/stylesheet">
@@ -550,17 +551,17 @@
 
 		<!-- TODO: Make this generic (appearances with specific stylesheets) -->
 		<xsl:if test="exists(rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#LoginAppearance'])">
-			<link rel="stylesheet" type="text/css" href="{$staticroot}/css/signin.min.css"/>
+			<link rel="stylesheet" type="text/css" href="{$staticroot}/css/signin.min.css{$ldtversion}"/>
 		</xsl:if>
 
-		<script type="text/javascript" src="{$staticroot}/js/jquery-3.1.1.min.js"></script>
-		<script type="text/javascript" src="{$staticroot}/js/jquery.dataTables.min.js"></script>
-		<script type="text/javascript" src="{$staticroot}/js/dataTables.bootstrap.min.js"></script>
-		<script type="text/javascript" src="{$staticroot}/js/bootstrap.min.js"></script>
-		<script type="text/javascript" src="{$staticroot}/js/bootstrap-datepicker.min.js"></script>
-		<script type="text/javascript" src="{$staticroot}/js/locales/bootstrap-datepicker.nl.min.js"></script>
-		<script type="text/javascript" src="{$staticroot}/js/d3.v3.min.js"></script>
-		<script type="text/javascript" src="{$staticroot}/js/ldt.min.js"></script>
+		<script type="text/javascript" src="{$staticroot}/js/jquery-3.1.1.min.js{$ldtversion}"></script>
+		<script type="text/javascript" src="{$staticroot}/js/jquery.dataTables.min.js{$ldtversion}"></script>
+		<script type="text/javascript" src="{$staticroot}/js/dataTables.bootstrap.min.js{$ldtversion}"></script>
+		<script type="text/javascript" src="{$staticroot}/js/bootstrap.min.js{$ldtversion}"></script>
+		<script type="text/javascript" src="{$staticroot}/js/bootstrap-datepicker.min.js{$ldtversion}"></script>
+		<script type="text/javascript" src="{$staticroot}/js/locales/bootstrap-datepicker.nl.min.js{$ldtversion}"></script>
+		<script type="text/javascript" src="{$staticroot}/js/d3.v3.min.js{$ldtversion}"></script>
+		<script type="text/javascript" src="{$staticroot}/js/ldt.min.js{$ldtversion}"></script>
 
 		<xsl:apply-templates select="context" mode="datatable-languageset"/>
 

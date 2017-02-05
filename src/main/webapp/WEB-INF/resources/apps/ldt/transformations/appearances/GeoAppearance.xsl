@@ -2,7 +2,7 @@
 
     NAME     GeoAppearance.xsl
     VERSION  1.15.1-SNAPSHOT
-    DATE     2017-01-31
+    DATE     2017-02-05
 
     Copyright 2012-2017
 
@@ -58,10 +58,10 @@
 
 		<xsl:choose>
 			<xsl:when test="$backmap='image'">
-				<link href="{$staticroot}/css/leaflet.css" rel="stylesheet"/>
-				<script src="{$staticroot}/js/leaflet.js"></script>
-				<script src="{$staticroot}/js/leaflet.label.js"></script>
-				<script src="{$staticroot}/js/easy-button.js"></script>
+				<link href="{$staticroot}/css/leaflet.css{$ldtversion}" rel="stylesheet"/>
+				<script src="{$staticroot}/js/leaflet.js{$ldtversion}"></script>
+				<script src="{$staticroot}/js/leaflet.label.js{$ldtversion}"></script>
+				<script src="{$staticroot}/js/easy-button.js{$ldtversion}"></script>
 				<!-- Print form -->
 				<form id="svgform" method="post" action="{$subdomain}/print-graph" enctype="multipart/form-data">
 					<input type="hidden" id="type" name="type" value=""/>
@@ -72,10 +72,10 @@
 				<!-- TOT HIER -->
 			</xsl:when>
 			<xsl:otherwise>
-				<link href="{$staticroot}/css/leaflet.css" rel="stylesheet"/>
-				<script src="{$staticroot}/js/leaflet.js"></script>
-				<script src="{$staticroot}/js/proj4-compressed.js"></script>
-				<script src="{$staticroot}/js/proj4leaflet.js"></script>
+				<link href="{$staticroot}/css/leaflet.css{$ldtversion}" rel="stylesheet"/>
+				<script src="{$staticroot}/js/leaflet.js{$ldtversion}"></script>
+				<script src="{$staticroot}/js/proj4-compressed.js{$ldtversion}"></script>
+				<script src="{$staticroot}/js/proj4leaflet.js{$ldtversion}"></script>
 				<!-- Clickable map form -->
 				<xsl:variable name="link" select="rdf:Description[elmo:applies-to='http://bp4mc2.org/elmo/def#Appearance']/html:link[1]"/>
 				<xsl:variable name="action">
@@ -91,7 +91,7 @@
 				</form>
 			</xsl:otherwise>
 		</xsl:choose>
-		<script src="{$staticroot}/js/linkeddatamap.min.js"></script>
+		<script src="{$staticroot}/js/linkeddatamap.min.js{$ldtversion}"></script>
 		
 		<xsl:variable name="latlocator" select="rdf:Description[rdf:type/@rdf:resource='http://bp4mc2.org/elmo/def#GeoLocator'][1]/geo:lat"/>
 		<xsl:variable name="latdata">

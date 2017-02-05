@@ -2,7 +2,7 @@
 
     NAME     query.xpl
     VERSION  1.15.1-SNAPSHOT
-    DATE     2017-01-31
+    DATE     2017-02-05
 
     Copyright 2012-2017
 
@@ -59,9 +59,20 @@
 		<p:output name="data" id="request"/>
 	</p:processor>
 
+	<!-- Version info -->
+	<p:processor name="oxf:url-generator">
+		<p:input name="config">
+			<config>
+				<url>../version.xml</url>
+				<content-type>application/xml</content-type>
+			</config>
+		</p:input>
+		<p:output name="data" id="version"/>
+	</p:processor>
+
 	<!-- Create context -->
 	<p:processor name="oxf:unsafe-xslt">
-		<p:input name="data" href="aggregate('root',#instance,#request)"/>
+		<p:input name="data" href="aggregate('root',#instance,#request,#version)"/>
 		<p:input name="config" href="../transformations/context.xsl"/>
 		<p:output name="data" id="context"/>
 	</p:processor>

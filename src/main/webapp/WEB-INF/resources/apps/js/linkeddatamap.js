@@ -1,7 +1,7 @@
 /*
  * NAME     linkeddatamap.js
- * VERSION  1.15.0
- * DATE     2017-01-27
+ * VERSION  1.15.1-SNAPSHOT
+ * DATE     2017-02-05
  *
  * Copyright 2012-2017
  *
@@ -522,7 +522,7 @@ function addPoint(latCor, longCor, text, url, value, iconvalue)
 function printMap() {
 
 	//Set zoom to level 1: everything should be visible
-	map.setZoom(1,{animate:false});
+	map.setZoom(1);
 	var img = document.getElementsByClassName("leaflet-image-layer")[0]; //Dit mag beter: er zijn mogelijk meerdere img met deze classname
 
 	//Size of the container should be the size of the image (don't know how to do this :-(
@@ -556,14 +556,14 @@ function mapClicked(e) {
 
 function initMap(staticroot, startZoom, latCor, longCor, baseLayer, imageMapURL, contURL, left, top, width, height) {
 	// Pad naar de icons goedmaken
-	L.Icon.Default.imagePath = staticroot + '/images';
+	L.Icon.Default.imagePath = staticroot + '/images/';
 
 	if (baseLayer === 'image') {
 		// create the slippy map
 		map = L.map('map', {
 		  minZoom: 1,
 		  maxZoom: 4,
-		  center: [0, 0],
+		  center: [width/2,0],
 		  zoom: 2,
 		  crs: L.CRS.Simple
 		});
@@ -595,19 +595,25 @@ function initMap(staticroot, startZoom, latCor, longCor, baseLayer, imageMapURL,
 		if (baseLayer === 'brt') {
 			//Use BRT tiles
 			//RD Projectie
-			var RD = L.CRS.proj4js('EPSG:28992', '+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +towgs84=565.2369,50.0087,465.658,-0.406857330322398,0.350732676542563,-1.8703473836068,4.0812 +no_defs', new L.Transformation(1, 285401.920, -1, 903401.920));
-			RD.scale = function(zoom) {
-				return 1 / res[zoom];
-			};
+			var RD = new L.Proj.CRS( 'EPSG:28992','+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +towgs84=565.2369,50.0087,465.658,-0.406857330322398,0.350732676542563,-1.8703473836068,4.0812 +no_defs',
+				{
+					resolutions: res,
+					bounds: L.bounds([-285401.92, 22598.08], [595401.9199999999, 903401.9199999999]),
+					origin: [-285401.92, 22598.08]
+				}
+			);
 			map = L.map('map',{crs: RD});
 			osm = new L.TileLayer('http://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png', {minZoom: 1, maxZoom: 13, tms: true, continuousWorld: true});
 		} else if (baseLayer=='brk') {
 			//Use BRK tiles
 			//RD Projectie
-			var RD = L.CRS.proj4js('EPSG:28992', '+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +towgs84=565.2369,50.0087,465.658,-0.406857330322398,0.350732676542563,-1.8703473836068,4.0812 +no_defs', new L.Transformation(1, 285401.920, -1, 903401.920));
-			RD.scale = function(zoom) {
-				return 1 / res[zoom];
-			};
+			var RD = new L.Proj.CRS( 'EPSG:28992','+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +towgs84=565.2369,50.0087,465.658,-0.406857330322398,0.350732676542563,-1.8703473836068,4.0812 +no_defs',
+				{
+					resolutions: res,
+					bounds: L.bounds([-285401.92, 22598.08], [595401.9199999999, 903401.9199999999]),
+					origin: [-285401.92, 22598.08]
+				}
+			);
 			map = L.map('map', {
 				crs: RD,
 				maxZoom: 13
@@ -627,9 +633,12 @@ function initMap(staticroot, startZoom, latCor, longCor, baseLayer, imageMapURL,
 		if (overlay) map.addLayer(overlay);
 	}
 
-	//Zoom option for circlemarkers
+	//Zoom and pan option for circlemarkers
+	//A bug in IE forces us to redraw any arrowheads
 	map.on('zoomstart',removeArrowheads);
 	map.on('zoomend',resizeCircle);
+	map.on('movestart',removeArrowheads);
+	map.on('moveend',resizeCircle);
 	map.invalidateSize();
 }
 
