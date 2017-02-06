@@ -2,7 +2,7 @@
 
     NAME     context.xsl
     VERSION  1.15.1-SNAPSHOT
-    DATE     2017-01-31
+    DATE     2017-02-06
 
     Copyright 2012-2017
 
@@ -178,15 +178,15 @@
 				<xsl:choose>
 					<xsl:when test="theatre/format='graphml'">application/graphml+xml</xsl:when> <!-- No specific mime-type is available for graphml, this seems the most logical -->
 					<xsl:when test="theatre/format='yed'">application/x.elmo.yed</xsl:when> <!-- Application specific mime-type -->
-					<xsl:when test="theatre/format='exml'">application/xml</xsl:when> <!-- Full XML, all resultsets -->
-					<xsl:when test="theatre/format='xml'">application/rdf+xml</xsl:when> <!-- Only first resultset, like ttl and json -->
+					<xsl:when test="theatre/format='exml'">application/x.elmo.xml</xsl:when> <!-- Full XML, all resultsets -->
+					<xsl:when test="theatre/format='xml'">application/xml</xsl:when> <!-- Only first resultset, like ttl and json -->
 					<xsl:when test="theatre/format='rdf'">application/rdf+xml</xsl:when>
 					<xsl:when test="theatre/format='sparql'">application/sparql-results+xml</xsl:when>
 					<xsl:when test="theatre/format='txt'">text/plain</xsl:when>
 					<xsl:when test="theatre/format='csv'">text/csv</xsl:when>
 					<xsl:when test="theatre/format='ttl'">text/turtle</xsl:when>
 					<xsl:when test="theatre/format='json'">application/json</xsl:when>
-					<xsl:when test="theatre/format='jsonld'">application/json</xsl:when>
+					<xsl:when test="theatre/format='jsonld'">application/ld+json</xsl:when>
 					<xsl:when test="theatre/format='xlsx'">application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</xsl:when>
 					<xsl:when test="theatre/format='docx'">application/vnd.openxmlformats-officedocument.wordprocessingml.document</xsl:when>
 					<xsl:when test="theatre/format='pdf'">application/pdf</xsl:when>
@@ -197,11 +197,12 @@
 					<xsl:when test="theatre/format='query'">application/x.elmo.query</xsl:when> <!-- Application specific mime-type -->
 					<xsl:when test="theatre/format='rdfa'">application/x.elmo.rdfa</xsl:when> <!-- Application specific mime-type -->
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/sparql-results+xml')">application/sparql-results+xml</xsl:when>
+					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/xml')">application/xml</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/rdf+xml')">application/rdf+xml</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'text/turtle')">text/turtle</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'text/csv')">text/csv</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/json')">application/json</xsl:when>
-					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/ld+json')">application/json</xsl:when>
+					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/ld+json')">application/ld+json</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')">application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/vnd.openxmlformats-officedocument.wordprocessingml.document')">application/vnd.openxmlformats-officedocument.wordprocessingml.document</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/pdf')">application/pdf</xsl:when>
