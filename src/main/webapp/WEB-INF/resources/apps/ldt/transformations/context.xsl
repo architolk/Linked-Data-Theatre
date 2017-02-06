@@ -196,6 +196,8 @@
 					<xsl:when test="theatre/format='plainjson'">application/x.elmo.plain+json</xsl:when> <!-- Application specific mime-type -->
 					<xsl:when test="theatre/format='query'">application/x.elmo.query</xsl:when> <!-- Application specific mime-type -->
 					<xsl:when test="theatre/format='rdfa'">application/x.elmo.rdfa</xsl:when> <!-- Application specific mime-type -->
+					<xsl:when test="contains(request/headers/header[name='accept']/value,'text/html')">text/html</xsl:when>
+					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/xhtml+xml')">text/html</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/sparql-results+xml')">application/sparql-results+xml</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/xml')">application/xml</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/rdf+xml')">application/rdf+xml</xsl:when>
@@ -207,7 +209,6 @@
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/vnd.openxmlformats-officedocument.wordprocessingml.document')">application/vnd.openxmlformats-officedocument.wordprocessingml.document</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/pdf')">application/pdf</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/vnd.xmi+xml')">application/vnd.xmi+xml</xsl:when>
-					<xsl:when test="contains(request/headers/header[name='accept']/value,'text/html')">text/html</xsl:when>
 					<xsl:otherwise>text/html</xsl:otherwise> <!-- If all fails: simply html -->
 				</xsl:choose>
 			</format>
