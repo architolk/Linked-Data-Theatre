@@ -2,7 +2,7 @@
 
     NAME     GeoAppearance.xsl
     VERSION  1.15.1-SNAPSHOT
-    DATE     2017-02-05
+    DATE     2017-02-06
 
     Copyright 2012-2017
 
@@ -181,6 +181,13 @@
 				<!-- TODO: width en height moet ergens vandaan komen. Liefst uit plaatje, maar mag ook uit eigenschappen -->
 				<script type="text/javascript">
 					initMap("<xsl:value-of select="$staticroot"/>",<xsl:value-of select="$zoom"/>,<xsl:value-of select="$lat"/>, <xsl:value-of select="$long"/>, "<xsl:value-of select="$backmap"/>", "<xsl:value-of select="$img"/>", "<xsl:value-of select="$container"/>", <xsl:value-of select="$left"/>, <xsl:value-of select="$top"/>, <xsl:value-of select="$width"/>, <xsl:value-of select="$height"/>);
+
+					<xsl:for-each select="rdf:Description[elmo:applies-to='http://bp4mc2.org/elmo/def#Appearance' and elmo:appearance/@rdf:resource='http://bp4mc2.org/elmo/def#TransparantOverlay']">
+						<xsl:variable name="layers">
+							<xsl:for-each select="elmo:layer[.!='']"><xsl:if test="position()!=1">,</xsl:if><xsl:value-of select="."/></xsl:for-each>
+						</xsl:variable>
+						addOverlay('<xsl:value-of select="elmo:service"/>','<xsl:value-of select="$layers"/>',true);
+					</xsl:for-each>
 					
 					<xsl:for-each select="rdf:Description[geo:lat!='' and geo:long!='' and rdfs:label!='']">
 						<xsl:variable name="resource-uri"><xsl:call-template name="resource-uri"><xsl:with-param name="uri" select="@rdf:about"/></xsl:call-template></xsl:variable>

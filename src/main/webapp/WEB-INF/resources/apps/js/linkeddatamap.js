@@ -1,7 +1,7 @@
 /*
  * NAME     linkeddatamap.js
  * VERSION  1.15.1-SNAPSHOT
- * DATE     2017-02-05
+ * DATE     2017-02-06
  *
  * Copyright 2012-2017
  *
@@ -640,6 +640,14 @@ function initMap(staticroot, startZoom, latCor, longCor, baseLayer, imageMapURL,
 	map.on('movestart',removeArrowheads);
 	map.on('moveend',resizeCircle);
 	map.invalidateSize();
+}
+
+function addOverlay(serviceSpec, layersSpec, transparantSpec) {
+	if (transparantSpec) {
+		map.addLayer(L.tileLayer.wms(serviceSpec, {layers: layersSpec,format: 'image/png',transparent: true}));
+	} else {
+		map.addLayer(L.tileLayer.wms(serviceSpec, {layers: layersSpec,format: 'image/jpeg',transparent: false}));
+	}
 }
 
 function showLocations(doZoom, appearance)
