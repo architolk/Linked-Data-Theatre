@@ -1,8 +1,8 @@
 <!--
 
     NAME     TextAppearance.xsl
-    VERSION  1.15.1-SNAPSHOT
-    DATE     2017-02-05
+    VERSION  1.16.0
+    DATE     2017-02-08
 
     Copyright 2012-2017
 

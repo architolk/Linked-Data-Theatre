@@ -4,7 +4,7 @@ The Linked Data Theatre (LDT) is a platform for an optimal presentation of Linke
 ### Installation and usage
 The easiest way of using the LDT is to install the latest release in a Tomcat container, by following the instructions in [DEPLOY.md](docs/DEPLOY.md): 
 
-- [ldt-1.15.0.war](https://github.com/architolk/Linked-Data-Theatre/releases/download/v1.15.0/ldt-1.15.0.war "ldt-1.15.0.war")
+- [ldt-1.16.0.war](https://github.com/architolk/Linked-Data-Theatre/releases/download/v1.16.0/ldt-1.16.0.war "ldt-1.16.0.war")
 
 **NB: Users that upgrade from version 1.9.0 or lower: the config.xml has changed with release 1.10.0. Please make sure that a `<date/>` entry exists after the upgrade!**
 
