@@ -10,6 +10,7 @@ curl -i -H "Accept: application/xml" -X GET http://localhost:8080/query/SelectFo
 curl -i -H "Accept: application/json" -X GET http://localhost:8080/query/SelectFormats > testresults\select.json
 curl -i -H "Accept: application/ld+json" -X GET http://localhost:8080/query/SelectFormats > testresults\select.ld.json
 curl -i -H "Accept: text/turtle" -X GET http://localhost:8080/query/SelectFormats > testresults\select.ttl
+curl -i -X GET http://localhost:8080/query/SelectFormats?format=ttl > testresults\selectparam.ttl
 curl -i -H "Accept: application/rdf+xml" -X GET http://localhost:8080/query/ConstructFormats > testresults\construct.rdf.xml
 curl -i -H "Accept: application/sparql-results+xml" -X GET http://localhost:8080/query/ConstructFormats > testresults\construct.sparql.xml
 curl -i -H "Accept: application/xml" -X GET http://localhost:8080/query/ConstructFormats > testresults\construct.xml

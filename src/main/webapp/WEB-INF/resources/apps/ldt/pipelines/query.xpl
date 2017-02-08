@@ -2,7 +2,7 @@
 
     NAME     query.xpl
     VERSION  1.15.1-SNAPSHOT
-    DATE     2017-02-06
+    DATE     2017-02-08
 
     Copyright 2012-2017
 
@@ -872,10 +872,14 @@
 					<p:choose href="#cache">
 						<p:when test="/results/(rdf:RDF|res:sparql)[1]/local-name()='sparql'">
 							<p:processor name="oxf:http-serializer">
-								<p:input name="config">
-									<config>
+								<p:input name="config" transform="oxf:xslt" href="#context">
+									<config xsl:version="2.0">
 										<status-code>406</status-code>
 										<empty-content>true</empty-content>
+										<header>
+											<name>Link</name>
+											<value>&lt;<xsl:value-of select="context/url"/>&gt;; rel=canonical, &lt;<xsl:value-of select="context/url"/>&amp;format=xml&gt;; rel=alternate</value>
+										</header>
 									</config>
 								</p:input>
 								<p:input name="data"><document/></p:input>
@@ -899,10 +903,14 @@
 					<p:choose href="#cache">
 						<p:when test="/results/(rdf:RDF|res:sparql)[1]/local-name()='RDF'">
 							<p:processor name="oxf:http-serializer">
-								<p:input name="config">
-									<config>
+								<p:input name="config" transform="oxf:xslt" href="#context">
+									<config xsl:version="2.0">
 										<status-code>406</status-code>
 										<empty-content>true</empty-content>
+										<header>
+											<name>Link</name>
+											<value>&lt;<xsl:value-of select="context/url"/>&gt;; rel=canonical, &lt;<xsl:value-of select="context/url"/>&amp;format=xml&gt;; rel=alternate</value>
+										</header>
 									</config>
 								</p:input>
 								<p:input name="data"><document/></p:input>
@@ -964,10 +972,14 @@
 					<p:choose href="#cache">
 						<p:when test="/results/(rdf:RDF|res:sparql)[1]/local-name()='sparql'">
 							<p:processor name="oxf:http-serializer">
-								<p:input name="config">
-									<config>
+								<p:input name="config" transform="oxf:xslt" href="#context">
+									<config xsl:version="2.0">
 										<status-code>406</status-code>
 										<empty-content>true</empty-content>
+										<header>
+											<name>Link</name>
+											<value>&lt;<xsl:value-of select="context/url"/>&gt;; rel=canonical, &lt;<xsl:value-of select="context/url"/>&amp;format=xml&gt;; rel=alternate, &lt;<xsl:value-of select="context/url"/>&amp;format=json&gt;; rel=alternate</value>
+										</header>
 									</config>
 								</p:input>
 								<p:input name="data"><document/></p:input>
@@ -1107,10 +1119,14 @@
 					<p:choose href="#cache">
 						<p:when test="/results/(rdf:RDF|res:sparql)[1]/local-name()='sparql'">
 							<p:processor name="oxf:http-serializer">
-								<p:input name="config">
-									<config>
+								<p:input name="config" transform="oxf:xslt" href="#context">
+									<config xsl:version="2.0">
 										<status-code>406</status-code>
 										<empty-content>true</empty-content>
+										<header>
+											<name>Link</name>
+											<value>&lt;<xsl:value-of select="context/url"/>&gt;; rel=canonical, &lt;<xsl:value-of select="context/url"/>&amp;format=json&gt;; rel=alternate</value>
+										</header>
 									</config>
 								</p:input>
 								<p:input name="data"><document/></p:input>
