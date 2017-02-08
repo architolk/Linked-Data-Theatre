@@ -2,7 +2,7 @@
 
     NAME     rdf2rdfa.xsl
     VERSION  1.15.1-SNAPSHOT
-    DATE     2017-02-05
+    DATE     2017-02-08
 
     Copyright 2012-2017
 
@@ -81,6 +81,11 @@
 		</xsl:variable>
 		<xsl:if test="$pcomment!=''"><xsl:attribute name="elmo:comment"><xsl:value-of select="$pcomment"/></xsl:attribute></xsl:if>
 		<!-- Other fragments -->
+		<xsl:choose>
+			<xsl:when test="$fragment/elmo:appearance[1]/@rdf:resource!=''"><xsl:attribute name="elmo:appearance"><xsl:value-of select="$fragment/elmo:appearance[1]/@rdf:resource"/></xsl:attribute></xsl:when>
+			<xsl:when test="exists($fragment)"/> <!-- Don't use default appearance if a fragment exists -->
+			<xsl:when test="$defaultFragment/elmo:appearance[1]/@rdf:resource!=''"><xsl:attribute name="elmo:appearance"><xsl:value-of select="$defaultFragment/elmo:appearance[1]/@rdf:resource"/></xsl:attribute></xsl:when>
+		</xsl:choose>
 		<xsl:if test="$fragment/elmo:appearance[1]/@rdf:resource!=''"><xsl:attribute name="elmo:appearance"><xsl:value-of select="$fragment/elmo:appearance[1]/@rdf:resource"/></xsl:attribute></xsl:if>
 		<xsl:if test="$fragment/html:link[1]!=''"><xsl:attribute name="elmo:link"><xsl:value-of select="$fragment/html:link[1]"/></xsl:attribute></xsl:if>
 		<xsl:if test="$fragment/elmo:index[1]!=''"><xsl:attribute name="elmo:index"><xsl:value-of select="$fragment/elmo:index[1]"/></xsl:attribute></xsl:if>
@@ -91,6 +96,15 @@
 			<xsl:otherwise />
 		</xsl:choose>
 		<xsl:choose>
+			<!-- If the fragment is a nested statement, include the object -->
+			<xsl:when test="exists(@rdf:resource) and $fragment/elmo:appearance/@rdf:resource='http://bp4mc2.org/elmo/def#NestedAppearance'">
+				<rdf:Description rdf:about="{@rdf:resource}">
+					<xsl:apply-templates select="key('resource',@rdf:resource)/*" mode="property">
+						<xsl:with-param name="fragments" select="$fragments"/>
+					</xsl:apply-templates>
+				</rdf:Description>
+			</xsl:when>
+			<!-- If the object is a resource -->
 			<xsl:when test="exists(@rdf:resource)">
 				<xsl:variable name="olabels">
 					<xsl:copy-of select="key('resource',@rdf:resource)/rdfs:label"/>

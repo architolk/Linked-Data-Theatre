@@ -14,6 +14,15 @@ stage:ContentAppearance a elmo:Representation;
 	elmo:fragment [
 		elmo:applies-to elmo:Fragment;
 		html:meta rdf:nil;
+		elmo:appearance elmo:HiddenAppearance;
+	];
+	elmo:fragment [
+		elmo:applies-to dbo:abstract;
+		rdfs:label "uitleg";
+	];
+	elmo:fragment [
+		elmo:applies-to dbo:isPartOf;
+		elmo:appearance elmo:NestedAppearance;
 	];
 	elmo:fragment [
 		elmo:applies-to <http://localhost:8080/def/test#capitalCity>;
@@ -26,11 +35,17 @@ stage:ContentAppearance a elmo:Representation;
 stage:ContentAppearanceQuery a elmo:Query;
 	rdfs:label "Amersfoort";
 	elmo:query '''
+		prefix dbo: <http://dbpedia.org/ontology/>
 		construct {
-			?s?p?o
+			?s?p?o.
+			?w ?wp ?wo
 		}
 		where {
-			?s?p?o
+			?s?p?o.
+			OPTIONAL {
+				?s dbo:isPartOf ?w.
+				?w ?wp ?wo
+			}
 			FILTER (?s = <http://dbpedia.org/resource/Amersfoort>)
 		}
 	''';

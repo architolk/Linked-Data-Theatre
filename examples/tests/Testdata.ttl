@@ -72,11 +72,13 @@ dbpedia:Amsterdam a dbo:City;
 dbpedia:Utrecht a dbo:City;
 	rdfs:label "Utrecht";
 	testo:capitalCity false;
+	dbo:isPartOf <http://dbpedia.org/resource/Utrecht_(province)>;
 .
 
 <http://dbpedia.org/resource/Utrecht_(province)> a dbo:Location;
 	rdfs:label "Utrecht (province)"@en;
 	rdfs:label "Utrecht (provincie)"@nl;
+	dbo:abstract "Utrecht (Geluidsfragment ) is met een oppervlakte van 1385 km\u00B2 de kleinste provincie van Nederland. De provincie telt ca. 1.268.489 inwoners (augustus 2015).De dichtbevolkte en centraal gelegen provincie wordt algemeen tot de Randstad gerekend. De hoofdstad en grootste stad is Utrecht. Deze stad was het centrum van het bisdom of Sticht Utrecht dat de voorloper was van de huidige provincie. De op een na grootste stad van de provincie is Amersfoort, gevolgd door Veenendaal, Zeist en Nieuwegein."@nl;
 	testo:largestCities (dbpedia:Amersfoort dbpedia:Utrecht)
 .
 

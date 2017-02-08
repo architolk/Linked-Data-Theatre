@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.15.1-SNAPSHOT
-    DATE     2017-02-05
+    DATE     2017-02-08
 
     Copyright 2012-2017
 
@@ -59,6 +59,8 @@
 <xsl:key name="rdf" match="results/rdf:RDF" use="@elmo:query"/>
 <xsl:key name="resource" match="results/rdf:RDF/rdf:Description" use="@rdf:about"/>
 <xsl:key name="nav-bnode" match="results/rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarSearchAppearance']/rdf:Description" use="@rdf:nodeID"/>
+
+<xsl:key name="nested" match="results/rdf:RDF/rdf:Description/*[@elmo:appearance='http://bp4mc2.org/elmo/def#NestedAppearance']/rdf:Description" use="@rdf:about"/>
 
 <xsl:variable name="serverdomain"><xsl:value-of select="substring-before(replace(/results/context/url,'^((http|https)://)',''),'/')"/></xsl:variable>
 <xsl:variable name="docroot"><xsl:value-of select="/results/context/@docroot"/></xsl:variable>
@@ -204,6 +206,24 @@
 					<xsl:otherwise><xsl:value-of select="@rdf:resource"/></xsl:otherwise>
 				</xsl:choose>
 			</a>
+		</xsl:when>
+		<!-- Reference to another resource, nested -->
+		<xsl:when test="exists(rdf:Description/@rdf:about) and @elmo:appearance='http://bp4mc2.org/elmo/def#NestedAppearance'">
+			<table>
+				<xsl:for-each-group select="rdf:Description/*" group-by="name()">
+					<xsl:if test="not(@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance')">
+						<tr>
+							<td><xsl:apply-templates select="." mode="predicate"/></td>
+							<td>
+								<xsl:for-each select="current-group()">
+									<xsl:if test="position()!=1">; </xsl:if>
+									<xsl:apply-templates select="." mode="object"/>
+								</xsl:for-each>
+							</td>
+						</tr>
+					</xsl:if>
+				</xsl:for-each-group>
+			</table>
 		</xsl:when>
 		<!-- Reference to another resource, with a label -->
 		<xsl:when test="exists(rdf:Description/@rdf:about)">
@@ -764,7 +784,10 @@
 	<!-- A construct query will have @rdf:about elements -->
 	<xsl:if test="exists(rdf:Description/@rdf:about)">
 		<xsl:for-each select="rdf:Description">
-			<xsl:apply-templates select="." mode="PropertyTable"/>
+			<!-- Don't show already nested resources -->
+			<xsl:if test="not(exists(key('nested',@rdf:about)))">
+				<xsl:apply-templates select="." mode="PropertyTable"/>
+			</xsl:if>
 		</xsl:for-each>
 	</xsl:if>
 </xsl:template>
