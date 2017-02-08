@@ -1,8 +1,8 @@
 <!--
 
     NAME     ttl2rdfaform.xsl
-    VERSION  1.15.0
-    DATE     2017-01-27
+    VERSION  1.15.1-SNAPSHOT
+    DATE     2017-02-08
 
     Copyright 2012-2017
 
@@ -48,7 +48,7 @@
 	<results>
 		<context docroot="{root/context/@docroot}" staticroot="{root/context/@staticroot}">
 			<language>nl</language>
-			<xsl:copy-of select="root/context/stylesheet"/>
+			<xsl:copy-of select="root/context/*"/>
 		</context>
 		<xsl:for-each select="root/rdf:RDF/rdf:Description[exists(elmo:appearance)]">
 			<rdf:RDF elmo:appearance="{elmo:appearance/@rdf:resource}">
