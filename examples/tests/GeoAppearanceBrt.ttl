@@ -20,6 +20,12 @@ stage:GeoAppearanceBrt a elmo:Representation;
 		elmo:layer "perceelnummer";
 	];
 	elmo:fragment [
+		elmo:applies-to elmo:Appearance;
+		elmo:appearance elmo:TransparantOverlay;
+		elmo:service "https://geodata.nationaalgeoregister.nl/bag/wms";
+		elmo:layer "pand";
+	];
+	elmo:fragment [
 		elmo:applies-to "gemeente";
 		html:stylesheet '''
 			fill: red;

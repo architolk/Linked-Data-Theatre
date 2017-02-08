@@ -1,7 +1,7 @@
 /*
  * NAME     linkeddatamap.js
  * VERSION  1.15.1-SNAPSHOT
- * DATE     2017-02-06
+ * DATE     2017-02-08
  *
  * Copyright 2012-2017
  *
@@ -602,7 +602,7 @@ function initMap(staticroot, startZoom, latCor, longCor, baseLayer, imageMapURL,
 					origin: [-285401.92, 22598.08]
 				}
 			);
-			map = L.map('map',{crs: RD});
+			map = L.map('map',{crs: RD, maxZoom: 13});
 			osm = new L.TileLayer('http://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png', {minZoom: 1, maxZoom: 13, tms: true, continuousWorld: true});
 		} else if (baseLayer=='brk') {
 			//Use BRK tiles
@@ -614,10 +614,7 @@ function initMap(staticroot, startZoom, latCor, longCor, baseLayer, imageMapURL,
 					origin: [-285401.92, 22598.08]
 				}
 			);
-			map = L.map('map', {
-				crs: RD,
-				maxZoom: 13
-			});
+			map = L.map('map',{crs: RD, maxZoom: 13});
 			osm = new L.TileLayer('http://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png', {minZoom: 1, maxZoom: 13, tms: true, continuousWorld: true});
 			overlay = new L.tileLayer.wms('https://geodata.nationaalgeoregister.nl/kadastralekaartv2/wms', {layers: 'perceel,perceelnummer',format: 'image/png',transparent: true});
 		} else {
