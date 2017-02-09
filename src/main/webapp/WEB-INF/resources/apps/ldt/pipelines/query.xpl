@@ -1,8 +1,8 @@
 <!--
 
     NAME     query.xpl
-    VERSION  1.16.0
-    DATE     2017-02-08
+    VERSION  1.16.1-SNAPSHOT
+    DATE     2017-02-09
 
     Copyright 2012-2017
 
@@ -245,22 +245,34 @@
 										?fragmentchild ?fragmentchildp ?fragmentchildo.
 										?rep elmo:query ?query.
 										?repchild elmo:query ?querychild.
+										?formfragment ?formfragmentp ?formfragmento.
+										?form ?formp ?formo.
 									}
 									WHERE {
 										GRAPH <]]><xsl:value-of select="root/context/representation-graph/@uri"/><![CDATA[>{
 										]]><xsl:for-each select="$representations/rep">
 											<xsl:if test="position()!=1">UNION</xsl:if>
 											<![CDATA[{
-												?rep ?repp ?repo.
-												FILTER (?rep=]]><xsl:value-of select="."/><![CDATA[)
-												OPTIONAL { ?rep elmo:fragment ?fragment. ?fragment ?fragmentp ?fragmento }
-												OPTIONAL {
-													?rep (elmo:contains|elmo:queryForm) ?repchild.
+												{
+													?rep ?repp ?repo.
+													FILTER (?rep=]]><xsl:value-of select="."/><![CDATA[)
+													OPTIONAL {?rep elmo:query/elmo:query ?query}
+												}
+												UNION
+												{]]><xsl:value-of select="."/><![CDATA[ elmo:fragment ?fragment. ?fragment ?fragmentp ?fragmento }
+												UNION
+												{
+													]]><xsl:value-of select="."/><![CDATA[ elmo:contains ?repchild.
 													?repchild ?repchildp ?repchildo.
 													OPTIONAL { ?repchild elmo:fragment ?fragmentchild. ?fragmentchild ?fragmentchildp ?fragmentchildo }
 													OPTIONAL { ?repchild elmo:query/elmo:query ?querychild }
 												}
-												OPTIONAL { ?rep elmo:query/elmo:query ?query }
+												UNION
+												{
+													]]><xsl:value-of select="."/><![CDATA[ elmo:queryForm ?form.
+													?form ?formp ?formo.
+													OPTIONAL {?form elmo:fragment ?formfragment. ?formfragment ?formfragmentp ?formfragmento}
+												}
 											}]]></xsl:for-each><![CDATA[
 										}
 									}
@@ -308,7 +320,7 @@
 		<p:input name="config" href="../transformations/rdf2view.xsl"/>
 		<p:output name="data" id="querytext"/>
 	</p:processor>
-	
+
 <!--
 <p:processor name="oxf:xml-serializer">
 	<p:input name="config">
@@ -317,6 +329,7 @@
 	<p:input name="data" href="#querytext"/>
 </p:processor>
 -->
+
 	<!-- More than one query is possible -->
 	<p:for-each href="#querytext" select="/view/representation" root="results" id="sparql">
 
