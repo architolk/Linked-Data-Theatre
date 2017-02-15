@@ -10,10 +10,23 @@ stage:DefaultResource a elmo:Representation;
 	elmo:index "1";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
+	elmo:contains stage:DefaultResource_graph;
 	elmo:layer elmo:BottomLayer;
 	elmo:query '''
 		construct {
 			<@SUBJECT@> ?p ?o
+		}
+		where {
+			<@SUBJECT@> ?p ?o
+		}
+	''';
+.
+stage:DefaultResource_graph a elmo:Part;
+	elmo:index "2";
+	elmo:appearance elmo:GraphAppearance;
+	elmo:query '''
+		construct {
+			<@SUBJECT@> ?p ?o.
 		}
 		where {
 			<@SUBJECT@> ?p ?o

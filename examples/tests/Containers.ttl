@@ -9,6 +9,11 @@ container:excel a elmo:Container;
 	rdfs:label "Upload Linked Data (Excel fie)";
 .
 
+container:simple a elmo:Container;
+	elmo:contains stage:NavbarSearchAppearance;
+	rdfs:label "Upload some linked data";
+.
+
 container:upload a elmo:Container;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:representation elmo:UploadRepresentation;

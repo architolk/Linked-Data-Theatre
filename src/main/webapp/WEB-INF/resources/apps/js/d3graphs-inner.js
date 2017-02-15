@@ -1,7 +1,7 @@
 /*
  * NAME     d3graphs-inner.js
- * VERSION  1.16.0
- * DATE     2017-02-08
+ * VERSION  1.16.1-SNAPSHOT
+ * DATE     2017-02-15
  *
  * Copyright 2012-2017
  *
@@ -109,7 +109,7 @@ var allLinks = container.selectAll(".link"),
 	currentNode = null;
 
 //Fetch data via Ajax-call and process
-d3.json(jsonApiCall+jsonApiSubject, function(error, json) {
+d3.json(jsonApiCall+encodeURIComponent(jsonApiSubject), function(error, json) {
 
 	root.nodes = json.nodes;
 	//Update nodes: the original data contains nodes with an uri-reference to the node, not the node itself (@id holds the uri-reference)
