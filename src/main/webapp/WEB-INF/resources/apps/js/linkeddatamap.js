@@ -259,6 +259,7 @@ function parse(_) {
 }
 
 function style(feature) {
+
 	// Most style element are created by the styleclass. Defaults should not be set by framework
 	return {
 		weight: 1,
@@ -267,8 +268,8 @@ function style(feature) {
 }
 
 function highlightFeature(e) {
-    var layer = e.target;
-	
+	var layer = e.target;
+    map.doubleClickZoom.disable();
 	map.dragging.disable();
 	//Not for markers!
 	if (!(layer instanceof L.Marker)) {
@@ -284,7 +285,7 @@ function highlightFeature(e) {
 
 function resetHighlight(e) {
     var layer = e.target;
-
+    map.doubleClickZoom.enable();
 	map.dragging.enable();
 	//Not for markers!
 	if (!(layer instanceof L.Marker)) {
@@ -299,8 +300,7 @@ function circleMoveStart(e) {
 	//Remove arrowhead (IE Bugfix)
 	if (movedItem.edge!=undefined) {
 		d3.select(movedItem.edge._path)
-			.attr("marker-end","none")
-		;
+			.attr("marker-end","none");
 	}
 	map.on('mousemove',circleMove);
 	map.on('mouseup',circleMoveEnd);
@@ -398,8 +398,7 @@ function resizeCircle(e) {
 	}
 }
 
-function addWKT(uri, wkt, text, url, styleclass)
-{
+function addWKT(uri, wkt, text, url, styleclass) {
 	var wktObject = parse(wkt);
 	wktObject.url = url;
 	wktObject.styleclass = styleclass
@@ -485,10 +484,8 @@ function updateMap() {
 	mapChanged = false;
 }
 
-function addPoint(latCor, longCor, text, url, value, iconvalue)
-{
+function addPoint(latCor, longCor, text, url, value, iconvalue) {
 	//Every location is a marker-object.
-	
 	var location = L.marker([latCor, longCor]).addTo(map);
 	
 	if (iconvalue!="") {
@@ -520,7 +517,6 @@ function addPoint(latCor, longCor, text, url, value, iconvalue)
 }
 
 function printMap() {
-
 	//Set zoom to level 1: everything should be visible
 	map.setZoom(1);
 	var img = document.getElementsByClassName("leaflet-image-layer")[0]; //Dit mag beter: er zijn mogelijk meerdere img met deze classname
@@ -547,10 +543,29 @@ function printMap() {
 }
 
 function mapClicked(e) {
+	map.clicked = map.clicked + 1;
+	// Default leaflet gedrag omzeilen (dblclick vuurt ook een click event af). 
+	setTimeout(function(){
+		if (map.clicked == 1) {
+			var form = document.getElementById("clickform");
+			form['lat'].value = e.latlng.lat;
+			form['long'].value = e.latlng.lng;
+			form['zoom'].value = map.getZoom();
+			form.submit();
+		} 
+	}, 300);
+}
+
+function mapDblClicked(e) {
+	map.clicked = 0;
 	var form = document.getElementById("clickform");
 	form['lat'].value = e.latlng.lat;
 	form['long'].value = e.latlng.lng;
-	form['zoom'].value = map.getZoom();
+	if (e.originalEvent.shiftKey){
+		form['zoom'].value = map.getZoom()-1;
+	} else {
+		form['zoom'].value = map.getZoom()+1;	
+	}
 	form.submit();
 }
 
@@ -567,7 +582,7 @@ function initMap(staticroot, startZoom, latCor, longCor, baseLayer, imageMapURL,
 		  zoom: 2,
 		  crs: L.CRS.Simple
 		});
-
+		
 		// calculate the edges of the image, in coordinate space
 		var southWest = map.unproject([left, height+top], map.getMaxZoom()-1);
 		var northEast = map.unproject([width+left, top], map.getMaxZoom()-1);
@@ -622,6 +637,8 @@ function initMap(staticroot, startZoom, latCor, longCor, baseLayer, imageMapURL,
 			map = L.map('map');
 			osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {minZoom: 1, maxZoom: 18});
 		}
+		
+
 		//We initialiseren de kaart met een set van coördinaten waarbij we hier kiezen voor simpele Latitude/Longitude coördinaten die ook gebruikt worden door GPS. De derde parameter is het standaard zoom-niveau van de kaart. Bij zoomen geldt: hoe hoger, hoe dichter bij.
 		map.setView(new L.LatLng(latCor, longCor), startZoom);
 
@@ -629,7 +646,10 @@ function initMap(staticroot, startZoom, latCor, longCor, baseLayer, imageMapURL,
 		map.addLayer(osm);
 		if (overlay) map.addLayer(overlay);
 	}
-
+	
+	//Events
+	map.on('dblclick', mapDblClicked);
+	map.on('click',mapClicked);
 	//Zoom and pan option for circlemarkers
 	//A bug in IE forces us to redraw any arrowheads
 	map.on('zoomstart',removeArrowheads);
@@ -647,8 +667,7 @@ function addOverlay(serviceSpec, layersSpec, transparantSpec) {
 	}
 }
 
-function showLocations(doZoom, appearance)
-{
+function showLocations(doZoom, appearance) {
 	d3.select(map.getPanes().overlayPane).selectAll("g").append('marker')
 	.attr('id'          , 'ArrowHead')
 	.attr('viewBox'     , '0 -5 10 10')
@@ -672,8 +691,7 @@ function showLocations(doZoom, appearance)
 
 	//No locations, show crosshair and register event
 	if (!(lastPolygon) || appearance=='GeoSelectAppearance') {
-		map.on('click',mapClicked);
+		map.clicked = 0;
 		document.getElementById('map').style.cursor = 'crosshair';
 	}
-	
 }
