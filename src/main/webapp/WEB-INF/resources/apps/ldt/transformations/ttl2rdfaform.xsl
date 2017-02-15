@@ -1,8 +1,8 @@
 <!--
 
     NAME     ttl2rdfaform.xsl
-    VERSION  1.16.0
-    DATE     2017-02-08
+    VERSION  1.16.1-SNAPSHOT
+    DATE     2017-02-15
 
     Copyright 2012-2017
 
@@ -86,7 +86,7 @@
 					<elmo:applies-to>error</elmo:applies-to>
 					<elmo:valueDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#String"/>
 					<rdf:value><xsl:value-of select="root/response"/></rdf:value>
-					<html:stylesheet>height:40px; background:red; color:white;</html:stylesheet>
+					<html:stylesheet>height:75px; background:red; color:white;</html:stylesheet>
 				</rdf:Description>
 			</xsl:if>
 			<xsl:if test="root/container/representation!='http://bp4mc2.org/elmo/def#UploadRepresentation' and root/container/representation!='http://bp4mc2.org/elmo/def#DownloadRepresentation'">
