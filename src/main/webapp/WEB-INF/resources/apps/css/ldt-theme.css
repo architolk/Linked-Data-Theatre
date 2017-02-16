@@ -308,22 +308,19 @@ body {
    font-weight: normal;
    font-size-adjust: none;
    font-stretch: normal;
- }
-
- .legend rect {
-   stroke: #fff !important;
+  font: 10px sans-serif;
  }
 
 /*GraphAppearance styling (and svgi) */
 /* Styling for the edge between nodes */
 .link line.border {
   stroke: #fff;
-  stroke-opacity: 1;
+  stroke-opacity: 0;
   stroke-width: 8px;
 }
 .link line.stroke {
   pointer-events: none;
-  stroke-width: 2px;
+  stroke-width: 1px;
   stroke: #696969;
 }
 .link text {
@@ -334,13 +331,9 @@ body {
   pointer-events: none;
 }
 
-.node .node-text {
+.node .node-text, .stroke-text {
   color: #000;
-}
-
-.node rect {
-  stroke: #fff !important;
-  stroke-width: 2px;
+  font: 10px sans-serif;
 }
 
 /* Styling of canvas */
