@@ -1,7 +1,7 @@
 /*
  * NAME     linkeddatamap.js
- * VERSION  1.16.0
- * DATE     2017-02-08
+ * VERSION  1.16.1-SNAPSHOT
+ * DATE     2017-02-16
  *
  * Copyright 2012-2017
  *
@@ -558,15 +558,6 @@ function mapClicked(e) {
 
 function mapDblClicked(e) {
 	map.clicked = 0;
-	var form = document.getElementById("clickform");
-	form['lat'].value = e.latlng.lat;
-	form['long'].value = e.latlng.lng;
-	if (e.originalEvent.shiftKey){
-		form['zoom'].value = map.getZoom()-1;
-	} else {
-		form['zoom'].value = map.getZoom()+1;	
-	}
-	form.submit();
 }
 
 function initMap(staticroot, startZoom, latCor, longCor, baseLayer, imageMapURL, contURL, left, top, width, height) {
@@ -649,7 +640,6 @@ function initMap(staticroot, startZoom, latCor, longCor, baseLayer, imageMapURL,
 	
 	//Events
 	map.on('dblclick', mapDblClicked);
-	map.on('click',mapClicked);
 	//Zoom and pan option for circlemarkers
 	//A bug in IE forces us to redraw any arrowheads
 	map.on('zoomstart',removeArrowheads);
@@ -692,6 +682,7 @@ function showLocations(doZoom, appearance) {
 	//No locations, show crosshair and register event
 	if (!(lastPolygon) || appearance=='GeoSelectAppearance') {
 		map.clicked = 0;
+		map.on('click',mapClicked);
 		document.getElementById('map').style.cursor = 'crosshair';
 	}
 }
