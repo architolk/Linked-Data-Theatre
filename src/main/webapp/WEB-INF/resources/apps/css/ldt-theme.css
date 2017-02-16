@@ -184,30 +184,30 @@ body {
 .nav-tree {color: #6C7587; background-color: #fff; padding: 20px 10px 30px;}
 .nav-tree a {
   color: #585858;
-  cursor: pointer; 
+  cursor: pointer;
 }
 .nav-tree a:hover {text-decoration: none; }
 .nav-tree a.selected {color: #2AB2EA; }
 .nav-tree ul, .nav-tree li {
   list-style: none;
   margin: 0;
-  padding: 0; 
+  padding: 0;
 }
 .nav-tree ul {padding-left: 1em; }
 .nav-tree ul li:last-child > ul {
   border-left: 1px solid #fff;
-  margin-left: -15px; 
+  margin-left: -15px;
 }
 .nav-tree li {
   padding-left: 1em;
   border: 1px solid #C9C9C9;
   border-top: 0;
   border-right: 0;
-  padding-top: 10px; 
+  padding-top: 10px;
 }
 .nav-tree li.has-child {
   border-bottom: 0;
-  position: relative; 
+  position: relative;
 }
 .nav-tree li.has-child i {
   position: absolute;
@@ -216,7 +216,7 @@ body {
   color: #C9C9C9;
   cursor: pointer;
   background-color: #fff;
-  z-index: 1; 
+  z-index: 1;
 }
 .nav-tree li.has-child.tree-collapsed {border-bottom: 1px solid #C9C9C9; }
 .nav-tree li p {
@@ -225,12 +225,12 @@ body {
   position: relative;
   top: 0.5em;
   line-height: 1;
-  z-index: 1; 
+  z-index: 1;
 }
 .nav-tree li ul {
   border-top: 1px solid #C9C9C9;
   margin-left: -1em;
-  padding-left: 2em; 
+  padding-left: 2em;
 }
 /* ------------------- */
 
@@ -281,7 +281,7 @@ body {
     border:1px solid #d9d9d9;
 }
 #textdoc .marker {
-	display:-moz-inline-block; display:-moz-inline-box; display:inline-block; 
+	display:-moz-inline-block; display:-moz-inline-box; display:inline-block;
 	font-weight: bold;
 	left: -40px;
 	width: 40px;
@@ -298,16 +298,33 @@ body {
 	max-width:600px;
 }
 /* ------------------- */
+/*
+ * Graph legend
+ */
+ .legend text {
+   line-height: normal;
+   font-style: normal;
+   font-variant: normal;
+   font-weight: normal;
+   font-size-adjust: none;
+   font-stretch: normal;
+ }
+
+ .legend rect {
+   stroke: #fff !important;
+ }
 
 /*GraphAppearance styling (and svgi) */
 /* Styling for the edge between nodes */
 .link line.border {
   stroke: #fff;
-  stroke-opacity: 0;
+  stroke-opacity: 1;
   stroke-width: 8px;
 }
 .link line.stroke {
   pointer-events: none;
+  stroke-width: 2px;
+  stroke: #696969;
 }
 .link text {
   pointer-events: none;
@@ -316,6 +333,16 @@ body {
 .node text {
   pointer-events: none;
 }
+
+.node .node-text {
+  color: #000;
+}
+
+.node rect {
+  stroke: #fff !important;
+  stroke-width: 2px;
+}
+
 /* Styling of canvas */
 .canvas {
   fill: none;
