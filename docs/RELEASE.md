@@ -38,7 +38,29 @@ You're now ready to create the war:
 	mvn clean package
 
 ##5. Test the package
-You should perform a regression test. A regression test is currently not part of the build procedure. 
+**NB: you should have a working triplestore with the test-configuration in place, or the test will fail.**
+
+If you have a working triplestore, but not sure whether your configuration is up to date, please go to `\examples` and execute `deploy-tests.bat` (windows) or `deploy-tests.sh` (linux).
+
+Please test the package for possible regression:
+
+	mvn verify
+
+This will install a temporary jetty application server at port 8888 (and port 8889 for the STOP commando). A jmeter functional test is performed. The build will fail if some regression has occured.
+
+JMeter will check every response with a preconfigured MD5 hash. If for some reason the response has changed (for example: a version number has changed), the test will fail. To correct this, you will have to change the asserted MD5 hash. Please follow these steps if you want to update the regression test set:
+
+1. Look into `/target/jmeter/results/*.jtl` and find out which test has failed. Write down the MD5 hash that has been generated from the response.
+2. Look into `/target/testFiles` and find the reponse file that corresponds with the failed test (should be the same index number).
+3. Please make sure that the result is actually what you want. You might have stumbled on a real error!
+4. Start the jmeter GUI: `mvn jmeter:gui`. Open the testplan (at `/src/test/jmeter/FunctionalTestPlan.jmx`. Go to the definition of the failed test and fix the MD5 hash, at the MD5Hex assertion page.
+5. Save the testplan and rerun the test.
+
+If you want to have a look at the theatre via a browser, you could start the jetty application as a forked JVM:
+
+	mvn jetty:run-forked
+
+Open a browser and go to `http://localhost:8888` to check the theatre. To end the jetty server, please use `CTRL-C` in the command windows.    
 
 ##6. Commit changes to github and create release tag
 For example (refering to release 1.6.0):

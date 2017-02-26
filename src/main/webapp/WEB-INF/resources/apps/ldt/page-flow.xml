@@ -1,8 +1,8 @@
 <!--
 
     NAME     page-flow.xml
-    VERSION  1.16.0
-    DATE     2017-02-08
+    VERSION  1.16.1-SNAPSHOT
+    DATE     2017-02-17
 
     Copyright 2012-2017
 
@@ -276,7 +276,7 @@
 		<!-- <setvalue ref="submission/query">index</setvalue> -->
 		<setvalue ref="theatre/format" matcher-group="2"/>
 	</page>
-	<page path="/([^/]*)" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
+	<page path="/([^/]*)(/|)" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
 		<!-- <setvalue ref="submission/query">index</setvalue> -->
 		<setvalue ref="theatre/format" parameter="format"/>
 		<setvalue ref="theatre/subdomain" matcher-group="1"/>
