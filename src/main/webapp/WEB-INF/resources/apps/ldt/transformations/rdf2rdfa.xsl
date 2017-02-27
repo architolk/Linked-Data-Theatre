@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2rdfa.xsl
-    VERSION  1.16.0
-    DATE     2017-02-08
+    VERSION  1.16.1-SNAPSHOT
+    DATE     2017-02-27
 
     Copyright 2012-2017
 
@@ -189,7 +189,7 @@
 			<xsl:otherwise><xsl:value-of select="$appearance1"/></xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>
-	<rdf:RDF elmo:appearance="{$appearance}" elmo:query="{$representation-uri}">
+	<rdf:RDF elmo:index="{$index}" elmo:appearance="{$appearance}" elmo:query="{$representation-uri}">
 		<xsl:if test="exists(@container)"><xsl:attribute name="elmo:container"><xsl:value-of select="@container"/></xsl:attribute></xsl:if>
 		<xsl:if test="exists(@name)"><xsl:attribute name="elmo:name"><xsl:value-of select="@name"/></xsl:attribute></xsl:if>
 		<xsl:if test="exists(@label)"><xsl:attribute name="elmo:label"><xsl:value-of select="@label"/></xsl:attribute></xsl:if>

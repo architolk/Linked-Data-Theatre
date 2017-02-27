@@ -210,6 +210,11 @@
 				<configuration>
 					<source>${project.build.directory}/jmeter/results/*</source>
 					<targetDirectory>${project.build.directory}/reports</targetDirectory>
+					<checkResult>
+						<errors>
+							<threshold>0</threshold>
+						</errors>
+					</checkResult>
 				</configuration>
 			</plugin>
 		</plugins>

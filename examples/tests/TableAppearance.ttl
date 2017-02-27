@@ -10,16 +10,38 @@ stage:TableAppearance a elmo:Representation;
 	elmo:url-pattern "/query/TableAppearance";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
-	elmo:query stage:TableAppearanceQuery;
+	elmo:contains stage:TableAppearance_table1;
+	elmo:contains stage:TableAppearance_table2;
 .
-stage:TableAppearanceQuery a elmo:Query;
+stage:TableAppearance_table1 a elmo:Part;
+	elmo:index "1";
+	elmo:query stage:TableAppearanceQuery1;
+.
+stage:TableAppearance_table2 a elmo:Part;
+	elmo:index "2";
+	elmo:query stage:TableAppearanceQuery2;
+.
+
+stage:TableAppearanceQuery1 a elmo:Query;
 	rdfs:label "All classes within the test dataset";
 	elmo:query '''
-		select distinct ?class ?class_label (count(*) as ?class_count)
+		select distinct ?class ?class_label (count(?item) as ?class_count)
 		where {
-			graph <http://localhost:8080/stage> {
+			graph <@STAGE@> {
 				?item rdf:type ?class.
 				OPTIONAL {?class rdfs:label ?class_label}
+			}
+		}
+	''';
+.
+stage:TableAppearanceQuery2 a elmo:Query;
+	rdfs:label "All properties within the test dataset";
+	elmo:query '''
+		select distinct ?property ?property_label (count(?item) as ?property_count)
+		where {
+			graph <@STAGE@> {
+				?item ?property ?object.
+				OPTIONAL {?property rdfs:label ?property_label}
 			}
 		}
 	''';

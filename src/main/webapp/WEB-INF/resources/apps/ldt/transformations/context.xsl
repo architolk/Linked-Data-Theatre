@@ -1,8 +1,8 @@
 <!--
 
     NAME     context.xsl
-    VERSION  1.16.0
-    DATE     2017-02-08
+    VERSION  1.16.1-SNAPSHOT
+    DATE     2017-02-27
 
     Copyright 2012-2017
 
@@ -129,8 +129,15 @@
 			</xsl:choose>
 		</xsl:variable>
 		<xsl:variable name="request"><request><xsl:copy-of select="request/parameters|request/request-url"/></request></xsl:variable>
+		<xsl:variable name="version">
+			<xsl:choose>
+				<!-- Ommit version number in case of functional testing (or regresssion would occur) -->
+				<xsl:when test="request/headers/header[name='user-agent']/value='jmeter-functional-test'">0.0.0</xsl:when>
+				<xsl:otherwise><xsl:value-of select="version/number"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
 		
-		<context env="{theatre/@env}" docroot="{$docroot}" staticroot="{$staticroot}" version="{version/number}" timestamp="{version/timestamp}" sparql="{theatre/@sparql}">
+		<context env="{theatre/@env}" docroot="{$docroot}" staticroot="{$staticroot}" version="{$version}" timestamp="{version/timestamp}" sparql="{theatre/@sparql}">
 			<configuration-endpoint><xsl:value-of select="theatre/@configuration-endpoint"/></configuration-endpoint>
 			<local-endpoint>
 				<xsl:choose>
