@@ -2,7 +2,7 @@
 
     NAME     query.xpl
     VERSION  1.16.1-SNAPSHOT
-    DATE     2017-02-09
+    DATE     2017-02-28
 
     Copyright 2012-2017
 
@@ -803,8 +803,10 @@
 				<p:input name="data" href="#converted"/>
 			</p:processor>
 		</p:when>
-		<!-- Check if there is any result, return 404 if no resource could be found and a subject is expected -->
-		<p:when test="root/context/representation='' and root/context/subject!='' and root/context/format!='application/x.elmo.query' and exists(root/results/rdf:RDF[1]) and not(exists(root/results/rdf:RDF[1]/*))">
+		<!-- Check if a representation could be found, return 404 if no representation is available -->
+		<!-- Also return 404 if a representation could be found, a subject is expected and the resultset for the representation is empty -->
+		<!-- If an explicit representation is available or the 'query' format is used, never return a 404 -->
+		<p:when test="root/context/representation='' and root/context/format!='application/x.elmo.query' and (not(exists(root/results/rdf:RDF)) or (root/context/subject!='' and not(exists(root/results/rdf:RDF[1]/*))))">
 			<p:processor name="oxf:identity">
 				<p:input name="data">
 					<parameters>
