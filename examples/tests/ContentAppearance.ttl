@@ -10,28 +10,9 @@ stage:ContentAppearance a elmo:Representation;
 	elmo:url-pattern "/query/ContentAppearance";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
-	elmo:index "1";
-	elmo:fragment [
-		elmo:applies-to elmo:Fragment;
-		html:meta rdf:nil;
-		elmo:appearance elmo:HiddenAppearance;
-	];
-	elmo:fragment [
-		elmo:applies-to dbo:abstract;
-		rdfs:label "uitleg";
-	];
-	elmo:fragment [
-		elmo:applies-to dbo:isPartOf;
-		elmo:appearance elmo:NestedAppearance;
-	];
-	elmo:fragment [
-		elmo:applies-to <http://localhost:8080/def/test#capitalCity>;
-		html:meta <http://localhost:8080/def/test#capitalCity>;
-		rdfs:label "hoofdstad?";
-		rdfs:comment "Hoofdstad van een land";
-	];
-	elmo:query stage:ContentAppearanceQuery
+	elmo:query stage:ContentAppearanceQuery;
 .
+
 stage:ContentAppearanceQuery a elmo:Query;
 	rdfs:label "Amersfoort";
 	elmo:query '''

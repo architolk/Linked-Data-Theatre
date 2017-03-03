@@ -7,7 +7,7 @@
 @prefix dbp: <http://dbpedia.org/property/>.
 
 stage:TableAppearance a elmo:Representation;
-	elmo:url-pattern "/query/TableAppearance";
+	elmo:url-pattern "/query/TableAppearance$";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:contains stage:TableAppearance_table1;
@@ -20,6 +20,13 @@ stage:TableAppearance_table1 a elmo:Part;
 stage:TableAppearance_table2 a elmo:Part;
 	elmo:index "2";
 	elmo:query stage:TableAppearanceQuery2;
+.
+
+#Special table appearance for regression test purposes (to minimize regression due to different data)
+stage:TableAppearance2 a elmo:Representation;
+	elmo:url-pattern "/query/TableAppearance2";
+	elmo:contains stage:TableAppearance2_table1;
+	elmo:contains stage:TableAppearance2_table2;
 .
 
 stage:TableAppearanceQuery1 a elmo:Query;
@@ -42,6 +49,40 @@ stage:TableAppearanceQuery2 a elmo:Query;
 			graph <@STAGE@> {
 				?item ?property ?object.
 				OPTIONAL {?property rdfs:label ?property_label}
+			}
+		}
+	''';
+.
+
+stage:TableAppearance2_table1 a elmo:Part;
+	rdfs:label "All defined classes within the test dataset";
+	elmo:index "1";
+	elmo:query '''
+		select ?class ?class_label (0 as ?class_count)
+		where {
+			graph <@STAGE@> {
+				?class rdf:type ?type.
+				?class rdfs:label ?class_label
+				FILTER (?type = rdfs:Class
+					||	?type = owl:Class
+				)
+			}
+		}
+	''';
+.
+stage:TableAppearance2_table2 a elmo:Part;
+	rdfs:label "All defined properties within the test dataset";
+	elmo:index "2";
+	elmo:query '''
+		select ?property ?property_label
+		where {
+			graph <@STAGE@> {
+				?property rdf:type ?type.
+				?property rdfs:label ?property_label
+				FILTER (?type = rdf:Property
+					||	?type = owl:DatatypeProperty
+					||	?type = owl:ObjectProperty
+				)
 			}
 		}
 	''';

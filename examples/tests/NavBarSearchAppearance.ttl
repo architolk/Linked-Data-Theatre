@@ -3,7 +3,13 @@
 @prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 
+stage:NavbarSearchAppearance_plain a elmo:Representation;
+	elmo:url-pattern "/query/NavbarSearchAppearance$";
+	elmo:contains stage:NavbarSearchAppearance;
+.
+
 stage:NavbarSearchAppearance a elmo:Part;
+	elmo:without-parameter "jmetertest";
 	elmo:appearance elmo:NavbarSearchAppearance;
 	elmo:index "~";
 	elmo:data [
