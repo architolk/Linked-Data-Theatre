@@ -1,14 +1,20 @@
 @prefix elmo: <http://bp4mc2.org/elmo/def#>.
-@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix stage: <http://localhost:8080/stage#>.
 
-<dbpedia> a elmo:Representation;
+stage:dbpedia a elmo:Representation;
 	elmo:url-pattern "/query/dbpedia$";
-	elmo:endpoint <http://dbpedia.org/sparql>;
+	elmo:endpoint <http://nl.dbpedia.org/sparql>;
+	elmo:fragment [
+		elmo:applies-to "type";
+		rdfs:label "Classes at nl.dbpedia"@en;
+		rdfs:label "Aanwezige klassen in nl.dbpedia"@nl;
+	];
 	elmo:query '''
-		SELECT DISTINCT ?type
+		SELECT DISTINCT ?type ?type_label (count(?s) as ?type_count)
 		WHERE {
 			?s rdf:type ?type.
+			OPTIONAL {?type rdfs:label ?type_label}
 		}
 		LIMIT 100
 	''';

@@ -1,0 +1,26 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix stage: <http://localhost:8080/stage#>.
+
+stage:geo a elmo:Representation;
+	elmo:url-pattern "query/geo$";
+	elmo:appearance elmo:GeoAppearance;
+	elmo:endpoint <https://data.pdok.nl/sparql>;
+	elmo:query '''
+		prefix geosparql: <http://www.opengis.net/ont/geosparql#>
+		prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+		construct {
+			?city geo:geometry ?wkt.
+			?city rdfs:label ?cityname.
+		}
+		WHERE {
+			select *
+			where {
+				?city rdfs:label ?cityname.
+				?city geosparql:hasGeometry ?geo.
+				?geo geosparql:asWKT ?wkt.
+				FILTER (?city = <http://bag.basisregistraties.overheid.nl/bag/id/woonplaats/1664>)
+			}
+			limit 1
+		}
+	'''
+.

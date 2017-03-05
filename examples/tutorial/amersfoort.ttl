@@ -1,16 +1,15 @@
 @prefix elmo: <http://bp4mc2.org/elmo/def#>.
-@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix stage: <http://localhost:8080/stage#>.
 
-<amersfoort> a elmo:Representation;
-	elmo:url-pattern "/query/amersfoort";
-	elmo:endpoint <http://dbpedia.org/sparql>;
+stage:amersfoort a elmo:Representation;
+	elmo:url-pattern "query/amersfoort$";
+	elmo:endpoint <http://nl.dbpedia.org/sparql>;
 	elmo:query '''
 		CONSTRUCT {
-			<http://dbpedia.org/resource/Amersfoort> ?p ?o
+			<http://nl.dbpedia.org/resource/Amersfoort> ?p ?o
 		}
 		WHERE {
-			<http://dbpedia.org/resource/Amersfoort> ?p ?o
+			<http://nl.dbpedia.org/resource/Amersfoort> ?p ?o
 		}
 	'''
 .
