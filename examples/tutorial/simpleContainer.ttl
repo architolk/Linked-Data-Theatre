@@ -1,0 +1,6 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix container: <http://localhost:8080/container/>.
+
+container:simple a elmo:Container;
+	elmo:representation elmo:UploadRepresentation;
+.

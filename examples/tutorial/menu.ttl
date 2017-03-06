@@ -1,0 +1,26 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix xhtml: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix stage: <http://localhost:8080/stage#>.
+
+stage:menu a elmo:Representation;
+	elmo:url-pattern "/";
+	elmo:index "~";
+	elmo:appearance elmo:NavbarSearchAppearance;
+	elmo:data [
+		rdfs:label "LDT Tutorial";
+		xhtml:link "/";
+		elmo:data [
+			elmo:index "1";
+			rdfs:label "backstage";
+			xhtml:link "backstage"
+		];
+		elmo:data [
+			elmo:index "2";
+			rdfs:label "Appearances";
+			elmo:data [elmo:index "1"; rdfs:label "Hello world"; xhtml:link "query/helloWorld"];
+			elmo:data [elmo:index "2"; rdfs:label "DBPedia Amersfoort"; xhtml:link "resource?subject=http://nl.dbpedia.org/resource/Amersfoort"];
+			elmo:data [elmo:index "3"; rdfs:label "Geospatial"; xhtml:link "query/geo"]
+		]
+	]
+.
