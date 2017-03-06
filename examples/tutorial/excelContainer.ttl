@@ -3,7 +3,7 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 
 container:excel a elmo:Container;
-	elmo:representation elmo:UploadRepresentation;
+#	elmo:representation elmo:UploadRepresentation;
 	elmo:translator elmo:SimpleExcelTranslator;
 	rdfs:label "Upload (excel)"
 .

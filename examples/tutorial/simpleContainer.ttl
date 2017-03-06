@@ -2,5 +2,5 @@
 @prefix container: <http://localhost:8080/container/>.
 
 container:simple a elmo:Container;
-	elmo:representation elmo:UploadRepresentation;
+#	elmo:representation elmo:UploadRepresentation;
 .

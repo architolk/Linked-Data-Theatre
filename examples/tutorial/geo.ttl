@@ -1,10 +1,12 @@
 @prefix elmo: <http://bp4mc2.org/elmo/def#>.
 @prefix stage: <http://localhost:8080/stage#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 
 stage:geo a elmo:Representation;
 	elmo:url-pattern "query/geo$";
 	elmo:appearance elmo:GeoAppearance;
 	elmo:endpoint <https://data.pdok.nl/sparql>;
+	elmo:queryForm stage:geoform;
 	elmo:query '''
 		prefix geosparql: <http://www.opengis.net/ont/geosparql#>
 		prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
@@ -15,12 +17,26 @@ stage:geo a elmo:Representation;
 		WHERE {
 			select *
 			where {
+				?city rdf:type <http://bag.basisregistraties.overheid.nl/def/bag#Woonplaats>.
 				?city rdfs:label ?cityname.
 				?city geosparql:hasGeometry ?geo.
 				?geo geosparql:asWKT ?wkt.
-				FILTER (?city = <http://bag.basisregistraties.overheid.nl/bag/id/woonplaats/1664>)
+#				FILTER (?city = <http://bag.basisregistraties.overheid.nl/bag/id/woonplaats/1664>)
+				FILTER REGEX(?cityname,"^@NAAM@","i")
 			}
 			limit 1
 		}
 	'''
+.
+
+stage:geoform a elmo:Form;
+	elmo:fragment [
+		rdfs:label "Woonplaats";
+		elmo:applies-to "naam";
+		elmo:constraint elmo:MandatoryConstraint
+	];
+	elmo:fragment [
+		rdfs:label "Toon";
+		elmo:appearance elmo:SubmitAppearance;
+	]
 .
