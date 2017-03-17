@@ -1,7 +1,7 @@
 /*
  * NAME     linkeddatamap.js
  * VERSION  1.16.1-SNAPSHOT
- * DATE     2017-02-16
+ * DATE     2017-03-17
  *
  * Copyright 2012-2017
  *
@@ -26,7 +26,7 @@
  *
  */
 var map;
-var osm;
+var osm = null;
 var listOfLocations = [];
 var listOfMarkers = [];
 var listOfGeoObjects = [];
@@ -623,6 +623,8 @@ function initMap(staticroot, startZoom, latCor, longCor, baseLayer, imageMapURL,
 			map = L.map('map',{crs: RD, maxZoom: 13});
 			osm = new L.TileLayer('http://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png', {minZoom: 1, maxZoom: 13, tms: true, continuousWorld: true});
 			overlay = new L.tileLayer.wms('https://geodata.nationaalgeoregister.nl/kadastralekaartv2/wms', {layers: 'perceel,perceelnummer',format: 'image/png',transparent: true});
+		} else if (baseLayer=='none') {
+			map = L.map('map');
 		} else {
 			//Use OpenStreetMap tiles
 			map = L.map('map');
@@ -634,8 +636,10 @@ function initMap(staticroot, startZoom, latCor, longCor, baseLayer, imageMapURL,
 		map.setView(new L.LatLng(latCor, longCor), startZoom);
 
 		//Add tile layer to map
-		map.addLayer(osm);
-		if (overlay) map.addLayer(overlay);
+		if (osm) {
+			map.addLayer(osm);
+			if (overlay) map.addLayer(overlay);
+		}
 	}
 	
 	//Events
