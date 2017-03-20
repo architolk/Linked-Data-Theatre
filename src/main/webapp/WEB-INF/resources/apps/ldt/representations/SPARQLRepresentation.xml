@@ -1,8 +1,8 @@
 <!--
 
     NAME     SPARQLRepresentation.xml
-    VERSION  1.16.0
-    DATE     2017-02-08
+    VERSION  1.16.1-SNAPSHOT
+    DATE     2017-03-20
 
     Copyright 2012-2017
 
@@ -58,6 +58,47 @@
 		<rdf:Description rdf:nodeID="vb2">
 			<rdfs:label>Aantal objecten</rdfs:label>
 			<html:link>?query=select+(count(*)+as+%3Fcnt)+where+%7B%3Fx%3Fy%3Fz%7D</html:link>
+		</rdf:Description>
+	</rdf:RDF>
+	<rdf:RDF elmo:appearance="http://bp4mc2.org/elmo/def#FormAppearance">
+		<rdf:Description rdf:nodeID="form">
+			<rdfs:label>Query</rdfs:label>
+		</rdf:Description>
+		<rdf:Description rdf:nodeID="error">
+			<rdfs:label>Error</rdfs:label>
+		</rdf:Description>
+		<rdf:Description rdf:nodeID="queries">
+			<rdfs:label>Select</rdfs:label>
+		</rdf:Description>
+		<rdf:Description rdf:nodeID="query">
+			<rdfs:label>Query</rdfs:label>
+		</rdf:Description>
+		<rdf:Description rdf:nodeID="format">
+			<rdfs:label>Format</rdfs:label>
+			<elmo:valuesFrom rdf:resource="http://bp4mc2.org/elmo/def#Formats"/>
+		</rdf:Description>
+		<rdf:Description rdf:nodeID="button">
+			<rdfs:label>Go!</rdfs:label>
+		</rdf:Description>
+	</rdf:RDF>
+	<rdf:RDF elmo:query="http://bp4mc2.org/elmo/def#Formats" elmo:appearance="http://bp4mc2.org/elmo/def#HiddenAppearance">
+		<rdf:Description rdf:about="html">
+			<rdfs:label>Show result in viewer</rdfs:label>
+		</rdf:Description>
+		<rdf:Description rdf:about="ttl">
+			<rdfs:label>Turtle</rdfs:label>
+		</rdf:Description>
+		<rdf:Description rdf:about="xml">
+			<rdfs:label>XML</rdfs:label>
+		</rdf:Description>
+		<rdf:Description rdf:about="rdf">
+			<rdfs:label>RDF/XML</rdfs:label>
+		</rdf:Description>
+		<rdf:Description rdf:about="sparql">
+			<rdfs:label>XML SPARQL Result set</rdfs:label>
+		</rdf:Description>
+		<rdf:Description rdf:about="xlsx">
+			<rdfs:label>Excel</rdfs:label>
 		</rdf:Description>
 	</rdf:RDF>
 </representation>

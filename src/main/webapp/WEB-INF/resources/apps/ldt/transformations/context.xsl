@@ -2,7 +2,7 @@
 
     NAME     context.xsl
     VERSION  1.16.1-SNAPSHOT
-    DATE     2017-02-27
+    DATE     2017-03-20
 
     Copyright 2012-2017
 
@@ -145,6 +145,14 @@
 					<xsl:otherwise><xsl:value-of select="theatre/@local-endpoint"/></xsl:otherwise>
 				</xsl:choose>
 			</local-endpoint>
+			<sparql-endpoint>
+				<xsl:choose>
+					<xsl:when test="theatre/site[@domain=$domain]/@sparql-endpoint!=''"><xsl:value-of select="theatre/site[@domain=$domain]/@sparql-endpoint"/></xsl:when>
+					<xsl:when test="theatre/@sparql-endpoint!=''"><xsl:value-of select="theatre/@sparql-endpoint"/></xsl:when>
+					<xsl:when test="theatre/site[@domain=$domain]/@site-endpoint!=''"><xsl:value-of select="theatre/site[@domain=$domain]/@site-endpoint"/></xsl:when>
+					<xsl:otherwise><xsl:value-of select="theatre/@local-endpoint"/></xsl:otherwise>
+				</xsl:choose>
+			</sparql-endpoint>
 			<title>
 				<xsl:choose>
 					<xsl:when test="$stage/@title!=''"><xsl:value-of select="$stage/@title"/></xsl:when>

@@ -1,8 +1,8 @@
 <!--
 
     NAME     config.xml
-    VERSION  1.16.0
-    DATE     2017-02-08
+    VERSION  1.16.1-SNAPSHOT
+    DATE     2017-03-20
 
     Copyright 2012-2017
 
@@ -33,6 +33,7 @@
 	- env: the environment (prod, test, dev). Only in dev will runtime errors be visible. Default = prod
     - configuration-endpoint: the SPARQL endpoint which contains the configurations of the Linked Data Theatre
     - local-endpoint: the SPARQL endpoint that is used as the default endpoint to fetch data
+	- sparql-endpoint: (optional) the SPARQL endpoint that is used for the /sparql page (default is the local-endpoint)
     - the tempdir, if any: the absolute path to the directory to be used by the linked data theatre for temporary files (default is the tomcat temp dir)
 	- sparql: states if a public sparql endpoint should be available at /sparql. "yes" means: make a public endpoint available.
 	- cors: states if the json-ld service should support CORS (no value defaults to 'yes')
@@ -42,7 +43,8 @@
       - domain: the domainname for this configuration
   	  - icon: (optional) the favicon.ico that is visible for this domain
 	  - css: (optional) an alternative css stylesheet for this domain
-	  - site-endpoint: (optional): the SPARQL endpoint that is used as the default endpoint to fetch date (overrides the theatre setting)
+	  - site-endpoint: (optional) the SPARQL endpoint that is used as the default endpoint to fetch date (overrides the theatre setting)
+	  - sparql-endpoint: (optional) the SPARQL endpoint that is used for the /sparql page at this site (overrides the theatre setting)
 	  - docroot: (optional): use a docroot, if the LDT is not installed in the tomcat ROOT and is only serving a subdirectory
 			(for example: http://mydomain.org/linkeddatatheatre/...)
 			When using the docroot, all URI's will be made relative to this docroot and not the root itself
