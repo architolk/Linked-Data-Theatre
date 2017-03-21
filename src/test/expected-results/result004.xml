@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+ <request>
+  <container-type>servlet</container-type>
+  <container-namespace/>
+  <character-encoding>ISO-8859-1</character-encoding>
+  <content-length>0</content-length>
+  <content-type>text/plain; charset=ISO-8859-1</content-type>
+  <parameters/>
+  <body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xsi:type="xs:anyURI"/>
+  <protocol>HTTP/1.1</protocol>
+  <remote-addr>127.0.0.1</remote-addr>
+  <remote-host>127.0.0.1</remote-host>
+  <scheme>http</scheme>
+  <server-name>localhost</server-name>
+  <server-port>8888</server-port>
+  <is-secure>false</is-secure>
+  <context-path/>
+  <headers>
+   <header>
+    <name>content-length</name>
+    <value>0</value>
+   </header>
+   <header>
+    <name>host</name>
+    <value>localhost:8888</value>
+   </header>
+   <header>
+    <name>connection</name>
+    <value>keep-alive</value>
+   </header>
+   <header>
+    <name>content-type</name>
+    <value>text/plain; charset=ISO-8859-1</value>
+   </header>
+   <header>
+    <name>user-agent</name>
+    <value>jmeter-functional-test</value>
+   </header>
+  </headers>
+  <attributes>
+   <attribute>
+    <name>org.orbeon.lifecycle.request-id</name>
+    <value>4</value>
+   </attribute>
+  </attributes>
+  <method>GET</method>
+  <request-uri>/header.xml</request-uri>
+  <request-url>http://localhost:8888/header.xml</request-url>
+  <servlet-path>/header.xml</servlet-path>
+  <request-path>/header.xml</request-path>
+ </request>
+ <request-security>
+  <secure>false</secure>
+ </request-security>
+</root>

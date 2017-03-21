@@ -83,6 +83,8 @@
 						<exclude>images/**</exclude>
 						<exclude>**/robots.txt</exclude>
 						<exclude>**/*.yml</exclude>
+						<exclude>**/*.archimate</exclude>
+						<exclude>src/test/**</exclude>
 					</excludes>
 				</configuration>
 				<dependencies>

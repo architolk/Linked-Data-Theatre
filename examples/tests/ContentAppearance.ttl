@@ -17,15 +17,17 @@ stage:ContentAppearanceQuery a elmo:Query;
 	rdfs:label "Amersfoort";
 	elmo:query '''
 		prefix dbo: <http://dbpedia.org/ontology/>
+		prefix testo: <http://localhost:8080/def/test#>
 		construct {
 			?s?p?o.
-			?w ?wp ?wo
+			?w ?wp ?wo.
 		}
 		where {
 			?s?p?o.
 			OPTIONAL {
 				?s dbo:isPartOf ?w.
 				?w ?wp ?wo
+				FILTER (?wp!=testo:largestCities)
 			}
 			FILTER (?s = <http://dbpedia.org/resource/Amersfoort>)
 		}

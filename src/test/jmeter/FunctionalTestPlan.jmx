@@ -118,7 +118,7 @@
           </ResponseAssertion>
           <hashTree/>
           <MD5HexAssertion guiclass="MD5HexAssertionGUI" testclass="MD5HexAssertion" testname="MD5Hex Assertion" enabled="true">
-            <stringProp name="MD5HexAssertion.size">ecf56bb0af409a233db205a1e98701c6</stringProp>
+            <stringProp name="MD5HexAssertion.size">5fb2ff1f4d8a3fe07a55da40dea99b0f</stringProp>
           </MD5HexAssertion>
           <hashTree/>
         </hashTree>
@@ -186,7 +186,7 @@
           </ResponseAssertion>
           <hashTree/>
           <MD5HexAssertion guiclass="MD5HexAssertionGUI" testclass="MD5HexAssertion" testname="MD5Hex Assertion" enabled="true">
-            <stringProp name="MD5HexAssertion.size">66a72befb0138240b36b3084be813a50</stringProp>
+            <stringProp name="MD5HexAssertion.size">08b62a167c4fc53b6e33181aee1135c7</stringProp>
           </MD5HexAssertion>
           <hashTree/>
         </hashTree>
