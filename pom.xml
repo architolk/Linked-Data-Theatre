@@ -214,7 +214,9 @@
 					<targetDirectory>${project.build.directory}/reports</targetDirectory>
 					<checkResult>
 						<errors>
-							<threshold>0</threshold>
+							<!-- The analyzer finds a 406 an error, and at this moment 25% of all tests are 406s -->
+							<threshold>25</threshold>
+							<toleranceDirection>EQUALS</toleranceDirection>
 						</errors>
 					</checkResult>
 				</configuration>
