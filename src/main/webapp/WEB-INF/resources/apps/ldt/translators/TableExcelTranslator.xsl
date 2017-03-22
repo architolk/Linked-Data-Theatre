@@ -1,8 +1,8 @@
 <!--
 
     NAME     TableExcelTranslator.xsl
-    VERSION  1.16.0
-    DATE     2017-02-08
+    VERSION  1.16.1-SNAPSHOT
+    DATE     2017-03-22
 
     Copyright 2012-2017
 
@@ -208,7 +208,7 @@
 							<!-- Only proces regular properties -->
 							<xsl:for-each select="$properties/property">
 								<xsl:variable name="column" select="@column"/>
-								<xsl:variable name="condition-value" select="$columns/column[@id=$conditions/condition[@column=$column and @class='']/@checkcolumn[1]]"/>
+								<xsl:variable name="condition-value" select="$columns[@id=$conditions/condition[@column=$column and @class='']/@checkcolumn[1]]"/>
 								<xsl:variable name="objecturi">
 									<xsl:choose>
 										<xsl:when test="exists($conditions/value[@column=$column and @class=''])">
