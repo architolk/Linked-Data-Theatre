@@ -1,0 +1,10 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix stage: <http://localhost:8080/stage#>.
+
+stage:buienradar a elmo:Representation;
+	elmo:url-pattern "/query/buienradar$";
+	elmo:appearance elmo:GeoAppearance;
+	elmo:service "http://xml.buienradar.nl";
+	elmo:accept "application/xml";
+	elmo:translator elmo:BuienradarTranslator;
+.

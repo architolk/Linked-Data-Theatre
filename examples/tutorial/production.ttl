@@ -1,0 +1,36 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix updatestage: <http://localhost:8080/update/>.
+@prefix stage: <http://localhost:8080/stage/>.
+
+#Production for root installations
+updatestage:production a elmo:Production;
+	elmo:contains stage:production_scene1;
+	elmo:contains stage:production_scene2;
+.
+stage:production_scene1 a elmo:Scene;
+	elmo:index "1";
+	rdfs:label "Clear graph";
+	elmo:query "clear graph <http://localhost:8080/container/concept>";
+.
+stage:production_scene2 a elmo:Scene;
+	elmo:index "2";
+	rdfs:label "Add converted excel data";
+	elmo:query '''
+		prefix container: <http://localhost:8080/container/excel#>
+		insert into <http://localhost:8080/container/concept> {
+			?resource rdf:type skos:Concept.
+			?resource rdfs:label ?concept.
+			?resource skos:definition ?definition.
+		}
+		where {
+			select (iri(concat("http://localhost:8080/id/concept/",?concept)) as ?resource) ?concept ?definition
+			where {
+				graph <http://localhost:8080/container/excel> {
+					?item container:Concept ?concept.
+					?item container:Definition ?definition.
+				}
+			}
+		}
+	'''
+.

@@ -239,7 +239,7 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js</url>
+							<url>http://cdn.leafletjs.com/leaflet/v1.0.3/leaflet.js</url>
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
 							<skipCache>true</skipCache>
 						</configuration>
@@ -250,7 +250,7 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css</url>
+							<url>http://cdn.leafletjs.com/leaflet/v1.0.3/leaflet.css</url>
 							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
 							<skipCache>true</skipCache>
 						</configuration>
@@ -314,7 +314,7 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>https://github.com/kartena/Proj4Leaflet/archive/0.7.2.zip</url>
+							<url>https://github.com/kartena/Proj4Leaflet/archive/1.0.1.zip</url>
 							<unpack>true</unpack>
 							<outputDirectory>zips</outputDirectory>
 						</configuration>
@@ -466,10 +466,10 @@
 						<configuration>
 							<resources>          
 								<resource>
-									<directory>zips/Proj4Leaflet-0.7.2/src</directory>
+									<directory>zips/Proj4Leaflet-1.0.1/src</directory>
 								</resource>
 								<resource>
-									<directory>zips/Proj4Leaflet-0.7.2/lib</directory>
+									<directory>zips/Proj4Leaflet-1.0.1/lib</directory>
 									<includes>
 										<include>proj4-compressed.js</include>
 									</includes>

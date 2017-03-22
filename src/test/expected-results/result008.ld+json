@@ -1,0 +1,83 @@
+{"@context":
+	{"graph":"@graph"
+	,"s":{"@id":"urn:s","@type":"@id"}
+	,"s_label":{"@id":"urn:s_label"}
+	,"type":{"@id":"urn:type","@type":"@id"}
+	,"s_count":{"@id":"urn:s_count"}
+	}
+,"graph":
+[
+	{"s": "http://dbpedia.org/resource/Amersfoort"
+	,"s_label": "Amersfoort"
+	,"type": "http://dbpedia.org/ontology/City"
+	,"s_count": 153773
+	},
+	{"s": "http://dbpedia.org/resource/Amersfoort"
+	,"s_label": "Amersfoort"
+	,"type": "http://dbpedia.org/ontology/City"
+	,"s_count": 153773
+	},
+	{"s": "http://dbpedia.org/resource/Amersfoort"
+	,"s_label": "Amersfoort"
+	,"type": "http://dbpedia.org/ontology/City"
+	,"s_count": 153773
+	},
+	{"s": "http://dbpedia.org/resource/Amersfoort"
+	,"s_label": "Amersfoort"
+	,"type": "http://dbpedia.org/ontology/City"
+	,"s_count": 153773
+	},
+	{"s": "http://dbpedia.org/resource/Amersfoort"
+	,"s_label": "Amersfoort"
+	,"type": "http://dbpedia.org/ontology/City"
+	,"s_count": 153773
+	},
+	{"s": "http://dbpedia.org/resource/Amersfoort"
+	,"s_label": "Amersfoort"
+	,"type": "http://dbpedia.org/ontology/City"
+	,"s_count": 153773
+	},
+	{"s": "http://dbpedia.org/resource/Amersfoort"
+	,"s_label": "Amersfoort"
+	,"type": "http://dbpedia.org/ontology/City"
+	,"s_count": 153773
+	},
+	{"s": "http://dbpedia.org/resource/Amersfoort"
+	,"s_label": "Amersfoort"
+	,"type": "http://dbpedia.org/ontology/City"
+	,"s_count": 153773
+	},
+	{"s": "http://dbpedia.org/resource/Amsterdam"
+	,"s_label": "Amsterdam"
+	,"type": "http://dbpedia.org/ontology/City"
+	},
+	{"s": "http://dbpedia.org/resource/Amsterdam"
+	,"s_label": "Amsterdam"
+	,"type": "http://dbpedia.org/ontology/City"
+	},
+	{"s": "http://dbpedia.org/resource/Amsterdam"
+	,"s_label": "Amsterdam"
+	,"type": "http://dbpedia.org/ontology/City"
+	},
+	{"s": "http://dbpedia.org/resource/Amsterdam"
+	,"s_label": "Amsterdam"
+	,"type": "http://dbpedia.org/ontology/City"
+	},
+	{"s": "http://dbpedia.org/resource/Utrecht"
+	,"s_label": "Utrecht"
+	,"type": "http://dbpedia.org/ontology/City"
+	},
+	{"s": "http://dbpedia.org/resource/Utrecht"
+	,"s_label": "Utrecht"
+	,"type": "http://dbpedia.org/ontology/City"
+	},
+	{"s": "http://dbpedia.org/resource/Utrecht"
+	,"s_label": "Utrecht"
+	,"type": "http://dbpedia.org/ontology/City"
+	},
+	{"s": "http://dbpedia.org/resource/Utrecht"
+	,"s_label": "Utrecht"
+	,"type": "http://dbpedia.org/ontology/City"
+	}
+]
+}

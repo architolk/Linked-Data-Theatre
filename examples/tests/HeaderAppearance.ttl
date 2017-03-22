@@ -3,7 +3,9 @@
 @prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 
-stage:HeaderAppearance elmo:appearance elmo:HeaderAppearance;
+stage:HeaderAppearance a elmo:Part;
+	elmo:appearance elmo:HeaderAppearance;
 	elmo:index "~";
+	elmo:without-parameter "jmetertest";
 	elmo:data	[ elmo:html "<img src='/images/ldt-logo.png'></img>"^^rdf:HTML];
 .

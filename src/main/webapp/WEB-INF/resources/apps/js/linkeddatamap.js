@@ -1,7 +1,7 @@
 /*
  * NAME     linkeddatamap.js
- * VERSION  1.15.0
- * DATE     2017-01-27
+ * VERSION  1.16.1-SNAPSHOT
+ * DATE     2017-03-17
  *
  * Copyright 2012-2017
  *
@@ -26,7 +26,7 @@
  *
  */
 var map;
-var osm;
+var osm = null;
 var listOfLocations = [];
 var listOfMarkers = [];
 var listOfGeoObjects = [];
@@ -259,6 +259,7 @@ function parse(_) {
 }
 
 function style(feature) {
+
 	// Most style element are created by the styleclass. Defaults should not be set by framework
 	return {
 		weight: 1,
@@ -267,8 +268,8 @@ function style(feature) {
 }
 
 function highlightFeature(e) {
-    var layer = e.target;
-	
+	var layer = e.target;
+    map.doubleClickZoom.disable();
 	map.dragging.disable();
 	//Not for markers!
 	if (!(layer instanceof L.Marker)) {
@@ -284,7 +285,7 @@ function highlightFeature(e) {
 
 function resetHighlight(e) {
     var layer = e.target;
-
+    map.doubleClickZoom.enable();
 	map.dragging.enable();
 	//Not for markers!
 	if (!(layer instanceof L.Marker)) {
@@ -299,8 +300,7 @@ function circleMoveStart(e) {
 	//Remove arrowhead (IE Bugfix)
 	if (movedItem.edge!=undefined) {
 		d3.select(movedItem.edge._path)
-			.attr("marker-end","none")
-		;
+			.attr("marker-end","none");
 	}
 	map.on('mousemove',circleMove);
 	map.on('mouseup',circleMoveEnd);
@@ -398,8 +398,7 @@ function resizeCircle(e) {
 	}
 }
 
-function addWKT(uri, wkt, text, url, styleclass)
-{
+function addWKT(uri, wkt, text, url, styleclass) {
 	var wktObject = parse(wkt);
 	wktObject.url = url;
 	wktObject.styleclass = styleclass
@@ -485,10 +484,8 @@ function updateMap() {
 	mapChanged = false;
 }
 
-function addPoint(latCor, longCor, text, url, value, iconvalue)
-{
+function addPoint(latCor, longCor, text, url, value, iconvalue) {
 	//Every location is a marker-object.
-	
 	var location = L.marker([latCor, longCor]).addTo(map);
 	
 	if (iconvalue!="") {
@@ -520,9 +517,8 @@ function addPoint(latCor, longCor, text, url, value, iconvalue)
 }
 
 function printMap() {
-
 	//Set zoom to level 1: everything should be visible
-	map.setZoom(1,{animate:false});
+	map.setZoom(1);
 	var img = document.getElementsByClassName("leaflet-image-layer")[0]; //Dit mag beter: er zijn mogelijk meerdere img met deze classname
 
 	//Size of the container should be the size of the image (don't know how to do this :-(
@@ -547,27 +543,37 @@ function printMap() {
 }
 
 function mapClicked(e) {
-	var form = document.getElementById("clickform");
-	form['lat'].value = e.latlng.lat;
-	form['long'].value = e.latlng.lng;
-	form['zoom'].value = map.getZoom();
-	form.submit();
+	map.clicked = map.clicked + 1;
+	// Default leaflet gedrag omzeilen (dblclick vuurt ook een click event af). 
+	setTimeout(function(){
+		if (map.clicked == 1) {
+			var form = document.getElementById("clickform");
+			form['lat'].value = e.latlng.lat;
+			form['long'].value = e.latlng.lng;
+			form['zoom'].value = map.getZoom();
+			form.submit();
+		} 
+	}, 300);
+}
+
+function mapDblClicked(e) {
+	map.clicked = 0;
 }
 
 function initMap(staticroot, startZoom, latCor, longCor, baseLayer, imageMapURL, contURL, left, top, width, height) {
 	// Pad naar de icons goedmaken
-	L.Icon.Default.imagePath = staticroot + '/images';
+	L.Icon.Default.imagePath = staticroot + '/images/';
 
 	if (baseLayer === 'image') {
 		// create the slippy map
 		map = L.map('map', {
 		  minZoom: 1,
 		  maxZoom: 4,
-		  center: [0, 0],
+		  center: [width/2,0],
 		  zoom: 2,
 		  crs: L.CRS.Simple
 		});
-
+		
 		// calculate the edges of the image, in coordinate space
 		var southWest = map.unproject([left, height+top], map.getMaxZoom()-1);
 		var northEast = map.unproject([width+left, top], map.getMaxZoom()-1);
@@ -595,46 +601,67 @@ function initMap(staticroot, startZoom, latCor, longCor, baseLayer, imageMapURL,
 		if (baseLayer === 'brt') {
 			//Use BRT tiles
 			//RD Projectie
-			var RD = L.CRS.proj4js('EPSG:28992', '+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +towgs84=565.2369,50.0087,465.658,-0.406857330322398,0.350732676542563,-1.8703473836068,4.0812 +no_defs', new L.Transformation(1, 285401.920, -1, 903401.920));
-			RD.scale = function(zoom) {
-				return 1 / res[zoom];
-			};
-			map = L.map('map',{crs: RD});
+			var RD = new L.Proj.CRS( 'EPSG:28992','+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +towgs84=565.2369,50.0087,465.658,-0.406857330322398,0.350732676542563,-1.8703473836068,4.0812 +no_defs',
+				{
+					resolutions: res,
+					bounds: L.bounds([-285401.92, 22598.08], [595401.9199999999, 903401.9199999999]),
+					origin: [-285401.92, 22598.08]
+				}
+			);
+			map = L.map('map',{crs: RD, maxZoom: 13});
 			osm = new L.TileLayer('http://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png', {minZoom: 1, maxZoom: 13, tms: true, continuousWorld: true});
 		} else if (baseLayer=='brk') {
 			//Use BRK tiles
 			//RD Projectie
-			var RD = L.CRS.proj4js('EPSG:28992', '+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +towgs84=565.2369,50.0087,465.658,-0.406857330322398,0.350732676542563,-1.8703473836068,4.0812 +no_defs', new L.Transformation(1, 285401.920, -1, 903401.920));
-			RD.scale = function(zoom) {
-				return 1 / res[zoom];
-			};
-			map = L.map('map', {
-				crs: RD,
-				maxZoom: 13
-			});
+			var RD = new L.Proj.CRS( 'EPSG:28992','+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +towgs84=565.2369,50.0087,465.658,-0.406857330322398,0.350732676542563,-1.8703473836068,4.0812 +no_defs',
+				{
+					resolutions: res,
+					bounds: L.bounds([-285401.92, 22598.08], [595401.9199999999, 903401.9199999999]),
+					origin: [-285401.92, 22598.08]
+				}
+			);
+			map = L.map('map',{crs: RD, maxZoom: 13});
 			osm = new L.TileLayer('http://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png', {minZoom: 1, maxZoom: 13, tms: true, continuousWorld: true});
 			overlay = new L.tileLayer.wms('https://geodata.nationaalgeoregister.nl/kadastralekaartv2/wms', {layers: 'perceel,perceelnummer',format: 'image/png',transparent: true});
+		} else if (baseLayer=='none') {
+			map = L.map('map');
 		} else {
 			//Use OpenStreetMap tiles
 			map = L.map('map');
 			osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {minZoom: 1, maxZoom: 18});
 		}
+		
+
 		//We initialiseren de kaart met een set van coördinaten waarbij we hier kiezen voor simpele Latitude/Longitude coördinaten die ook gebruikt worden door GPS. De derde parameter is het standaard zoom-niveau van de kaart. Bij zoomen geldt: hoe hoger, hoe dichter bij.
 		map.setView(new L.LatLng(latCor, longCor), startZoom);
 
 		//Add tile layer to map
-		map.addLayer(osm);
-		if (overlay) map.addLayer(overlay);
+		if (osm) {
+			map.addLayer(osm);
+			if (overlay) map.addLayer(overlay);
+		}
 	}
-
-	//Zoom option for circlemarkers
+	
+	//Events
+	map.on('dblclick', mapDblClicked);
+	//Zoom and pan option for circlemarkers
+	//A bug in IE forces us to redraw any arrowheads
 	map.on('zoomstart',removeArrowheads);
 	map.on('zoomend',resizeCircle);
+	map.on('movestart',removeArrowheads);
+	map.on('moveend',resizeCircle);
 	map.invalidateSize();
 }
 
-function showLocations(doZoom, appearance)
-{
+function addOverlay(serviceSpec, layersSpec, transparantSpec) {
+	if (transparantSpec) {
+		map.addLayer(L.tileLayer.wms(serviceSpec, {layers: layersSpec,format: 'image/png',transparent: true}));
+	} else {
+		map.addLayer(L.tileLayer.wms(serviceSpec, {layers: layersSpec,format: 'image/jpeg',transparent: false}));
+	}
+}
+
+function showLocations(doZoom, appearance) {
 	d3.select(map.getPanes().overlayPane).selectAll("g").append('marker')
 	.attr('id'          , 'ArrowHead')
 	.attr('viewBox'     , '0 -5 10 10')
@@ -658,8 +685,8 @@ function showLocations(doZoom, appearance)
 
 	//No locations, show crosshair and register event
 	if (!(lastPolygon) || appearance=='GeoSelectAppearance') {
+		map.clicked = 0;
 		map.on('click',mapClicked);
 		document.getElementById('map').style.cursor = 'crosshair';
 	}
-	
 }

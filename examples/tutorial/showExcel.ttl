@@ -1,0 +1,13 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix stage: <http://localhost:8080/stage#>.
+
+stage:showExcel a elmo:Representation;
+	elmo:url-pattern "query/excel$";
+	elmo:appearance elmo:TableAppearance;
+	elmo:query '''
+		CONSTRUCT {?s?p?o}
+		WHERE {
+			GRAPH <http://localhost:8080/container/excel> {?s?p?o}
+		}
+	'''
+.

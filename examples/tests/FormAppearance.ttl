@@ -11,6 +11,8 @@ stage:FormAppearance	a	elmo:Representation;
 	elmo:contains	stage:FormAppearance-species;
 	elmo:appearance elmo:ContentAppearance;
 	elmo:queryForm stage:FormAppearance-form;
+	elmo:contains stage:FormAppearance_text;
+	elmo:index "2";
 	elmo:fragment [
 		elmo:applies-to "name";
 		rdfs:label "Naam"@nl;
@@ -31,6 +33,17 @@ stage:FormAppearance	a	elmo:Representation;
 			}
 		}
 	'''
+.
+
+stage:FormAppearance_text a elmo:Part;
+	elmo:appearance elmo:MarkdownAppearance;
+	elmo:index "1";
+	elmo:data [
+		rdfs:label "Example form"@en;
+		rdfs:label "Voorbeeld formulier"@nl;
+		elmo:md "You can use a form to query for specific results. For example: to show all characters from a specific species. The other two fields are only for the example and not used in the query."@en;
+		elmo:md "Je kunt een formulier gebruik om naar specifieke zaken te zoeken. Bijvoorbeeld: een lijst van alle karakter van een bepaalde soort. De andere twee velden zijn alleen voor dit voorbeeld en worden niet gebruikt in de query."@nl;
+	]
 .
 
 stage:FormAppearance-form a elmo:Form;

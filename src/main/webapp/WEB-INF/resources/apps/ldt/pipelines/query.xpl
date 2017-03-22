@@ -1,8 +1,8 @@
 <!--
 
     NAME     query.xpl
-    VERSION  1.15.0
-    DATE     2017-01-27
+    VERSION  1.16.1-SNAPSHOT
+    DATE     2017-02-28
 
     Copyright 2012-2017
 
@@ -59,9 +59,20 @@
 		<p:output name="data" id="request"/>
 	</p:processor>
 
+	<!-- Version info -->
+	<p:processor name="oxf:url-generator">
+		<p:input name="config">
+			<config>
+				<url>../version.xml</url>
+				<content-type>application/xml</content-type>
+			</config>
+		</p:input>
+		<p:output name="data" id="version"/>
+	</p:processor>
+
 	<!-- Create context -->
 	<p:processor name="oxf:unsafe-xslt">
-		<p:input name="data" href="aggregate('root',#instance,#request)"/>
+		<p:input name="data" href="aggregate('root',#instance,#request,#version)"/>
 		<p:input name="config" href="../transformations/context.xsl"/>
 		<p:output name="data" id="context"/>
 	</p:processor>
@@ -234,22 +245,34 @@
 										?fragmentchild ?fragmentchildp ?fragmentchildo.
 										?rep elmo:query ?query.
 										?repchild elmo:query ?querychild.
+										?formfragment ?formfragmentp ?formfragmento.
+										?form ?formp ?formo.
 									}
 									WHERE {
 										GRAPH <]]><xsl:value-of select="root/context/representation-graph/@uri"/><![CDATA[>{
 										]]><xsl:for-each select="$representations/rep">
 											<xsl:if test="position()!=1">UNION</xsl:if>
 											<![CDATA[{
-												?rep ?repp ?repo.
-												FILTER (?rep=]]><xsl:value-of select="."/><![CDATA[)
-												OPTIONAL { ?rep elmo:fragment ?fragment. ?fragment ?fragmentp ?fragmento }
-												OPTIONAL {
-													?rep (elmo:contains|elmo:queryForm) ?repchild.
+												{
+													?rep ?repp ?repo.
+													FILTER (?rep=]]><xsl:value-of select="."/><![CDATA[)
+													OPTIONAL {?rep elmo:query/elmo:query ?query}
+												}
+												UNION
+												{]]><xsl:value-of select="."/><![CDATA[ elmo:fragment ?fragment. ?fragment ?fragmentp ?fragmento }
+												UNION
+												{
+													]]><xsl:value-of select="."/><![CDATA[ elmo:contains ?repchild.
 													?repchild ?repchildp ?repchildo.
 													OPTIONAL { ?repchild elmo:fragment ?fragmentchild. ?fragmentchild ?fragmentchildp ?fragmentchildo }
 													OPTIONAL { ?repchild elmo:query/elmo:query ?querychild }
 												}
-												OPTIONAL { ?rep elmo:query/elmo:query ?query }
+												UNION
+												{
+													]]><xsl:value-of select="."/><![CDATA[ elmo:queryForm ?form.
+													?form ?formp ?formo.
+													OPTIONAL {?form elmo:fragment ?formfragment. ?formfragment ?formfragmentp ?formfragmento}
+												}
 											}]]></xsl:for-each><![CDATA[
 										}
 									}
@@ -297,7 +320,7 @@
 		<p:input name="config" href="../transformations/rdf2view.xsl"/>
 		<p:output name="data" id="querytext"/>
 	</p:processor>
-	
+
 <!--
 <p:processor name="oxf:xml-serializer">
 	<p:input name="config">
@@ -306,6 +329,7 @@
 	<p:input name="data" href="#querytext"/>
 </p:processor>
 -->
+
 	<!-- More than one query is possible -->
 	<p:for-each href="#querytext" select="/view/representation" root="results" id="sparql">
 
@@ -779,8 +803,10 @@
 				<p:input name="data" href="#converted"/>
 			</p:processor>
 		</p:when>
-		<!-- Check if there is any result, return 404 if no resource could be found and a subject is expected -->
-		<p:when test="root/context/representation='' and root/context/subject!='' and root/context/format!='application/x.elmo.query' and exists(root/results/rdf:RDF[1]) and not(exists(root/results/rdf:RDF[1]/*))">
+		<!-- Check if a representation could be found, return 404 if no representation is available -->
+		<!-- Also return 404 if a representation could be found, a subject is expected and the resultset for the representation is empty -->
+		<!-- If an explicit representation is available or the 'query' format is used, never return a 404 -->
+		<p:when test="root/context/representation='' and root/context/format!='application/x.elmo.query' and (not(exists(root/results/rdf:RDF)) or (root/context/subject!='' and not(exists(root/results/rdf:RDF[1]/*))))">
 			<p:processor name="oxf:identity">
 				<p:input name="data">
 					<parameters>
@@ -818,8 +844,8 @@
 		<p:otherwise>
 			<!-- Render to specific presentation format -->
 			<p:choose href="#context">
-				<!-- XML -->
-				<p:when test="context/format='application/xml'">
+				<!-- All XML results -->
+				<p:when test="context/format='application/x.elmo.xml'">
 					<p:processor name="oxf:xml-serializer">
 						<p:input name="config">
 							<config>
@@ -829,29 +855,94 @@
 						<p:input name="data" href="aggregate('results',#cache#xpointer(/results/*))"/>
 					</p:processor>
 				</p:when>
+				<!-- XML, return rdf/xml or sparql-result/xml -->
+				<p:when test="context/format='application/xml'">
+					<p:choose href="#cache">
+						<p:when test="/results/(rdf:RDF|res:sparql)[1]/local-name()='sparql'">
+							<p:processor name="oxf:xml-serializer">
+								<p:input name="config">
+									<config>
+										<encoding>utf-8</encoding>
+										<content-type>application/sparql-results+xml</content-type>
+									</config>
+								</p:input>
+								<p:input name="data" href="#cache#xpointer(/results/res:sparql[1])"/>
+							</p:processor>
+						</p:when>
+						<p:otherwise>
+							<p:processor name="oxf:xml-serializer">
+								<p:input name="config">
+									<config>
+										<encoding>utf-8</encoding>
+										<content-type>application/rdf+xml</content-type>
+									</config>
+								</p:input>
+								<p:input name="data" href="#cache#xpointer(/results/rdf:RDF[1])"/>
+							</p:processor>
+						</p:otherwise>
+					</p:choose>
+				</p:when>
 				<!-- RDF/XML -->
 				<p:when test="context/format='application/rdf+xml'">
-					<p:processor name="oxf:xml-serializer">
-						<p:input name="config">
-							<config>
-								<encoding>utf-8</encoding>
-								<content-type>application/rdf+xml</content-type>
-							</config>
-						</p:input>
-						<p:input name="data" href="#cache#xpointer((/results/res:sparql|/results/rdf:RDF)[1])"/>
-					</p:processor>
+					<p:choose href="#cache">
+						<p:when test="/results/(rdf:RDF|res:sparql)[1]/local-name()='sparql'">
+							<p:processor name="oxf:http-serializer">
+								<p:input name="config" transform="oxf:xslt" href="#context">
+									<config xsl:version="2.0">
+										<status-code>406</status-code>
+										<empty-content>true</empty-content>
+										<header>
+											<name>Link</name>
+											<value>&lt;<xsl:value-of select="context/url"/>&gt;; rel=canonical, &lt;<xsl:value-of select="context/url"/>&amp;format=xml&gt;; rel=alternate</value>
+										</header>
+									</config>
+								</p:input>
+								<p:input name="data"><document/></p:input>
+							</p:processor>
+						</p:when>
+						<p:otherwise>
+							<p:processor name="oxf:xml-serializer">
+								<p:input name="config">
+									<config>
+										<encoding>utf-8</encoding>
+										<content-type>application/rdf+xml</content-type>
+									</config>
+								</p:input>
+								<p:input name="data" href="#cache#xpointer(/results/rdf:RDF[1])"/>
+							</p:processor>
+						</p:otherwise>
+					</p:choose>
 				</p:when>
 				<!-- SPARQL/XML -->
 				<p:when test="context/format='application/sparql-results+xml'">
-					<p:processor name="oxf:xml-serializer">
-						<p:input name="config">
-							<config>
-								<encoding>utf-8</encoding>
-								<content-type>application/sparql-results+xml</content-type>
-							</config>
-						</p:input>
-						<p:input name="data" href="#cache#xpointer((/results/res:sparql|/results/rdf:RDF)[1])"/>
-					</p:processor>
+					<p:choose href="#cache">
+						<p:when test="/results/(rdf:RDF|res:sparql)[1]/local-name()='RDF'">
+							<p:processor name="oxf:http-serializer">
+								<p:input name="config" transform="oxf:xslt" href="#context">
+									<config xsl:version="2.0">
+										<status-code>406</status-code>
+										<empty-content>true</empty-content>
+										<header>
+											<name>Link</name>
+											<value>&lt;<xsl:value-of select="context/url"/>&gt;; rel=canonical, &lt;<xsl:value-of select="context/url"/>&amp;format=xml&gt;; rel=alternate</value>
+										</header>
+									</config>
+								</p:input>
+								<p:input name="data"><document/></p:input>
+							</p:processor>
+						</p:when>
+						<p:otherwise>
+							<p:processor name="oxf:xml-serializer">
+								<p:input name="config">
+									<config>
+										<encoding>utf-8</encoding>
+										<content-type>application/sparql-results+xml</content-type>
+									</config>
+								</p:input>
+								<p:input name="data" href="#cache#xpointer(/results/res:sparql[1])"/>
+							</p:processor>
+						</p:otherwise>
+					</p:choose>
 				</p:when>
 				<!-- Show query instead of the result -->
 				<p:when test="context/format='application/x.elmo.query'">
@@ -893,32 +984,51 @@
 				</p:when>
 				<!-- Turtle -->
 				<p:when test="context/format='text/turtle'">
-					<!-- Transform -->
-					<p:processor name="oxf:xslt">
-						<p:input name="data" href="#cache"/>
-						<p:input name="config" href="../transformations/rdf2ttl.xsl"/>
-						<p:output name="data" id="ttl"/>
-					</p:processor>
-					<!-- Convert XML result to plain text -->
-					<p:processor name="oxf:text-converter">
-						<p:input name="config">
-							<config>
-								<encoding>utf-8</encoding>
-								<content-type>text/turtle</content-type>
-							</config>
-						</p:input>
-						<p:input name="data" href="#ttl" />
-						<p:output name="data" id="converted" />
-					</p:processor>
-					<!-- Serialize -->
-					<p:processor name="oxf:http-serializer">
-						<p:input name="config">
-							<config>
-								<cache-control><use-local-cache>false</use-local-cache></cache-control>
-							</config>
-						</p:input>
-						<p:input name="data" href="#converted"/>
-					</p:processor>
+					<p:choose href="#cache">
+						<p:when test="/results/(rdf:RDF|res:sparql)[1]/local-name()='sparql'">
+							<p:processor name="oxf:http-serializer">
+								<p:input name="config" transform="oxf:xslt" href="#context">
+									<config xsl:version="2.0">
+										<status-code>406</status-code>
+										<empty-content>true</empty-content>
+										<header>
+											<name>Link</name>
+											<value>&lt;<xsl:value-of select="context/url"/>&gt;; rel=canonical, &lt;<xsl:value-of select="context/url"/>&amp;format=xml&gt;; rel=alternate, &lt;<xsl:value-of select="context/url"/>&amp;format=json&gt;; rel=alternate</value>
+										</header>
+									</config>
+								</p:input>
+								<p:input name="data"><document/></p:input>
+							</p:processor>
+						</p:when>
+						<p:otherwise>
+							<!-- Transform -->
+							<p:processor name="oxf:xslt">
+								<p:input name="data" href="#cache"/>
+								<p:input name="config" href="../transformations/rdf2ttl.xsl"/>
+								<p:output name="data" id="ttl"/>
+							</p:processor>
+							<!-- Convert XML result to plain text -->
+							<p:processor name="oxf:text-converter">
+								<p:input name="config">
+									<config>
+										<encoding>utf-8</encoding>
+										<content-type>text/turtle</content-type>
+									</config>
+								</p:input>
+								<p:input name="data" href="#ttl" />
+								<p:output name="data" id="converted" />
+							</p:processor>
+							<!-- Serialize -->
+							<p:processor name="oxf:http-serializer">
+								<p:input name="config">
+									<config>
+										<cache-control><use-local-cache>false</use-local-cache></cache-control>
+									</config>
+								</p:input>
+								<p:input name="data" href="#converted"/>
+							</p:processor>
+						</p:otherwise>
+					</p:choose>
 				</p:when>
 				<!-- CSV -->
 				<p:when test="context/format='text/csv'">
@@ -950,7 +1060,7 @@
 					</p:processor>
 				</p:when>
 				<!-- JSON (LD) - Special case: context -->
-				<p:when test="context/format='application/json' and substring-before(context/url,'/context/')!=''">
+				<p:when test="(context/format='application/json' or context/format='application/ld+json') and substring-before(context/url,'/context/')!=''">
 					<!-- Transform -->
 					<p:processor name="oxf:xslt">
 						<p:input name="data" href="#cache"/>
@@ -1018,6 +1128,60 @@
 						</p:input>
 						<p:input name="data" href="#converted"/>
 					</p:processor>
+				</p:when>
+				<!-- JSON-LD -->
+				<p:when test="context/format='application/ld+json'">
+					<p:choose href="#cache">
+						<p:when test="/results/(rdf:RDF|res:sparql)[1]/local-name()='sparql'">
+							<p:processor name="oxf:http-serializer">
+								<p:input name="config" transform="oxf:xslt" href="#context">
+									<config xsl:version="2.0">
+										<status-code>406</status-code>
+										<empty-content>true</empty-content>
+										<header>
+											<name>Link</name>
+											<value>&lt;<xsl:value-of select="context/url"/>&gt;; rel=canonical, &lt;<xsl:value-of select="context/url"/>&amp;format=json&gt;; rel=alternate</value>
+										</header>
+									</config>
+								</p:input>
+								<p:input name="data"><document/></p:input>
+							</p:processor>
+						</p:when>
+						<p:otherwise>
+							<!-- Transform -->
+							<p:processor name="oxf:xslt">
+								<p:input name="data" href="#cache"/>
+								<p:input name="config" href="../transformations/rdf2jsonld.xsl"/>
+								<p:output name="data" id="jsonld"/>
+							</p:processor>
+							<!-- Convert XML result to plain text -->
+							<p:processor name="oxf:text-converter">
+								<p:input name="config">
+									<config>
+										<encoding>utf-8</encoding>
+										<content-type>application/ld+json</content-type>
+									</config>
+								</p:input>
+								<p:input name="data" href="#jsonld" />
+								<p:output name="data" id="converted" />
+							</p:processor>
+							<!-- Serialize -->
+							<p:processor name="oxf:http-serializer">
+								<p:input name="config" href="#instance" transform="oxf:xslt">
+									<config xsl:version="2.0">
+										<cache-control><use-local-cache>false</use-local-cache></cache-control>
+										<xsl:if test="not(theatre/@cors='no')">
+											<header>
+												<name>Access-Control-Allow-Origin</name>
+												<value>*</value>
+											</header>
+										</xsl:if>
+									</config>
+								</p:input>
+								<p:input name="data" href="#converted"/>
+							</p:processor>
+						</p:otherwise>
+					</p:choose>
 				</p:when>
 				<!-- Graphml -->
 				<p:when test="context/format='application/graphml+xml'">
@@ -1161,6 +1325,35 @@
 							</config>
 						</p:input>
 						<p:input name="data" href="#graphjson" />
+						<p:output name="data" id="converted" />
+					</p:processor>
+					<!-- Serialize -->
+					<p:processor name="oxf:http-serializer">
+						<p:input name="config">
+							<config>
+								<cache-control><use-local-cache>false</use-local-cache></cache-control>
+							</config>
+						</p:input>
+						<p:input name="data" href="#converted"/>
+					</p:processor>
+				</p:when>
+				<!-- JSON data in plain format for form representation -->
+				<p:when test="context/format='application/x.elmo.plain+json'">
+					<!-- Transform -->
+					<p:processor name="oxf:xslt">
+						<p:input name="data" href="aggregate('root',#context,#cache,#querytext)"/>
+						<p:input name="config" href="../transformations/rdf2plainjson.xsl"/>
+						<p:output name="data" id="plainjson"/>
+					</p:processor>
+					<!-- Convert XML result to plain text -->
+					<p:processor name="oxf:text-converter">
+						<p:input name="config">
+							<config>
+								<encoding>utf-8</encoding>
+								<content-type>application/ld+json</content-type>
+							</config>
+						</p:input>
+						<p:input name="data" href="#plainjson" />
 						<p:output name="data" id="converted" />
 					</p:processor>
 					<!-- Serialize -->

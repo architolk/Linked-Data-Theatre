@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2jsonld.xsl
-    VERSION  1.15.0
-    DATE     2017-01-27
+    VERSION  1.16.0
+    DATE     2017-02-08
 
     Copyright 2012-2017
 
@@ -79,10 +79,9 @@
 </xsl:template>
 
 <!-- Select -->
-<xsl:template match="res:sparql">
-{"@context":
-	{"graph":"@graph"<xsl:for-each-group select="res:results/res:result/res:binding[exists(res:uri)]" group-by="@name">
-	,"<xsl:value-of select="@name"/>":{"@type":"@id"}</xsl:for-each-group>
+<xsl:template match="res:sparql">{"@context":
+	{"graph":"@graph"<xsl:for-each-group select="res:results/res:result/res:binding" group-by="@name">
+	,"<xsl:value-of select="@name"/>":{"@id":"urn:<xsl:value-of select="@name"/>"<xsl:if test="exists(res:uri)">,"@type":"@id"</xsl:if>}</xsl:for-each-group>
 	}
 ,"graph":
 [<xsl:for-each select="res:results/res:result"><xsl:if test="position()!=1">,</xsl:if>

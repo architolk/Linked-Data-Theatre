@@ -1,8 +1,8 @@
 <!--
 
     NAME     error2html.xsl
-    VERSION  1.15.0
-    DATE     2017-01-27
+    VERSION  1.16.1-SNAPSHOT
+    DATE     2017-02-13
 
     Copyright 2012-2017
 
@@ -30,6 +30,7 @@
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
 <xsl:variable name="staticroot"><xsl:value-of select="/results/context/@staticroot"/></xsl:variable>
+<xsl:variable name="ldtversion">?version=<xsl:value-of select="/results/context/@version"/></xsl:variable>
 
 <xsl:template match="/">
 
@@ -53,19 +54,19 @@
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title><xsl:value-of select="$title"/></title>
 
-			<link rel="stylesheet" type="text/css" href="{$staticroot}/css/bootstrap.min.css"/>
-			<link rel="stylesheet" type="text/css" href="{$staticroot}/css/dataTables.bootstrap.min.css"/>
-			<link rel="stylesheet" type="text/css" href="{$staticroot}/css/ldt-theme.css"/>
+			<link rel="stylesheet" type="text/css" href="{$staticroot}/css/bootstrap.min.css{$ldtversion}"/>
+			<link rel="stylesheet" type="text/css" href="{$staticroot}/css/dataTables.bootstrap.min.css{$ldtversion}"/>
+			<link rel="stylesheet" type="text/css" href="{$staticroot}/css/ldt-theme.min.css{$ldtversion}"/>
 
 			<!-- Alternatieve stijlen -->
 			<xsl:for-each select="results/context/stylesheet">
 				<link rel="stylesheet" type="text/css" href="{$staticroot}{@href}"/>
 			</xsl:for-each>
 
-			<script type="text/javascript" language="javascript" src="{$staticroot}/js/jquery-1.11.3.min.js"></script>
-			<script type="text/javascript" language="javascript" src="{$staticroot}/js/jquery.dataTables.min.js"></script>
-			<script type="text/javascript" language="javascript" src="{$staticroot}/js/dataTables.bootstrap.min.js"></script>
-			<script type="text/javascript" language="javascript" src="{$staticroot}/js/bootstrap.min.js"></script>
+			<script type="text/javascript" src="{$staticroot}/js/jquery-3.1.1.min.js{$ldtversion}"></script>
+			<script type="text/javascript" src="{$staticroot}/js/jquery.dataTables.min.js{$ldtversion}"></script>
+			<script type="text/javascript" src="{$staticroot}/js/dataTables.bootstrap.min.js{$ldtversion}"></script>
+			<script type="text/javascript" src="{$staticroot}/js/bootstrap.min.js{$ldtversion}"></script>
 			<!-- TODO: This won't work for multi language -->
 			<script type="text/javascript" language="javascript" charset="utf-8">
 				var elmo_language = {language:{info:"_START_ tot _END_ van _TOTAL_ resultaten",search:"Zoeken:",lengthMenu:"Toon _MENU_ rijen",zeroRecords:"Niets gevonden",infoEmpty: "Geen resultaten",paginate:{first:"Eerste",previous:"Vorige",next:"Volgende",last:"Laatste"}},paging:true,searching:true,info:true}

@@ -1,0 +1,37 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+stage:ArchiComponents a elmo:Representation;
+	elmo:url-pattern "/query/archicomponents";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:fragment [
+		elmo:applies-to "type";
+		rdfs:label "Type";
+	];
+	elmo:fragment [
+		elmo:applies-to "comp";
+		rdfs:label "Element";
+		elmo:name "SUBJECT";
+	];
+	elmo:fragment [
+		elmo:applies-to "rel";
+		rdfs:label "Realized by";
+	];
+	elmo:query '''
+		prefix archi: <http://bp4mc2.org/def/archi#>
+		select ?type ?comp ?comp_label ?rel ?rel_label
+		where {
+			graph <http://localhost:8080/container/archi> {
+				?comp rdf:type ?type.
+				?comp rdfs:label ?comp_label.
+				OPTIONAL {
+					?rel archi:realizes ?comp.
+					?rel rdfs:label ?rel_label
+				}
+			}
+		}
+	''';
+.

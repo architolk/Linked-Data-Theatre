@@ -3,7 +3,13 @@
 @prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 
+stage:NavbarSearchAppearance_plain a elmo:Representation;
+	elmo:url-pattern "/query/NavbarSearchAppearance$";
+	elmo:contains stage:NavbarSearchAppearance;
+.
+
 stage:NavbarSearchAppearance a elmo:Part;
+	elmo:without-parameter "jmetertest";
 	elmo:appearance elmo:NavbarSearchAppearance;
 	elmo:index "~";
 	elmo:data [
@@ -43,6 +49,7 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:data [elmo:index "08"; rdfs:label "Parameter filter test"; html:link "query/paramtest"];
 			elmo:data [elmo:index "09"; rdfs:label "Form appearance DBPedia data"; html:link "query/FormAppearanceDbPedia"];
 			elmo:data [elmo:index "10"; rdfs:label "Parameters"; html:link "/ldt/id/parameters"];
+			elmo:data [elmo:index "11"; rdfs:label "Ajax form"; html:link "/query/FormAppearanceAjax"];
 		];
 		elmo:data [
 			elmo:index "3";
@@ -54,7 +61,7 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:index "4";
 			rdfs:label "Containers";
 			elmo:data [elmo:index "10"; rdfs:label "Excel container"; html:link "container/excel"];
-			elmo:data [elmo:index "20"; rdfs:label "XPL container"; html:link "container/xpl"];
+			elmo:data [elmo:index "20"; rdfs:label "Simple container"; html:link "container/simple"];
 			elmo:data [elmo:index "30"; rdfs:label "Container with post query"; html:link "container/query"];
 			elmo:data [elmo:index "40"; rdfs:label "Container with predef post query"; html:link "container/defquery"];
 			elmo:data [elmo:index "50"; rdfs:label "DMN container"; html:link "container/dmn"];
@@ -65,6 +72,8 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:data [elmo:index "81"; rdfs:label "Show uploaded shapes"; html:link "query/uploaded-shapes"];
 			elmo:data [elmo:index "82"; rdfs:label "Show uploaded shapes model"; html:link "query/uploaded-shapes-model"];
 			elmo:data [elmo:index "83"; rdfs:label "Show uploaded shapes yED model"; html:link "query/uploaded-shapes.yed"];
+			elmo:data [elmo:index "90"; rdfs:label "Archi container"; html:link "container/archi"];
+			elmo:data [elmo:index "91"; rdfs:label "Show archi container"; html:link "query/archicomponents"];
 		];
 		elmo:data [
 			elmo:index "5";
