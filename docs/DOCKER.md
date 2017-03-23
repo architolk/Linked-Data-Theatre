@@ -1,4 +1,4 @@
-#Docker build instructions
+# Docker build instructions
 This document describes the steps to run the Linked Data Theatre with Docker.
 
 A complete dockercompose file is already part of the Linked Data Theatre. The dockercompose file exists of 2 services/Docker containers:
