@@ -1,8 +1,8 @@
 <!--
 
     NAME     url.xpl
-    VERSION  1.16.0
-    DATE     2017-02-08
+    VERSION  1.16.1-SNAPSHOT
+    DATE     2017-03-31
 
     Copyright 2012-2017
 
@@ -70,7 +70,26 @@
 		<p:input name="data" href="aggregate('root',#instance,#query,#services)"/>
 		<p:input name="config">
 			<xsl:stylesheet version="2.0">
-				<xsl:template match="/">
+			<xsl:template match="parameter" mode="replace">
+				<xsl:param name="text"/>
+				<xsl:variable name="value">
+					<xsl:value-of select="encode-for-uri(value[1])"/>
+				</xsl:variable>
+				<xsl:choose>
+					<xsl:when test="exists(following-sibling::*[1])">
+						<xsl:variable name="service">
+							<xsl:apply-templates select="following-sibling::*[1]" mode="replace">
+								<xsl:with-param name="text" select="$text"/>
+							</xsl:apply-templates>
+						</xsl:variable>
+						<xsl:value-of select="replace($service,concat('@',upper-case(name),'@'),$value)"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="replace($text,concat('@',upper-case(name),'@'),$value)"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:template>
+			<xsl:template match="/">
 					<xsl:variable name="subject">
 						<xsl:value-of select="root/query/group[1]/triple[1]/subject/@uri"/>
 						<xsl:value-of select="root/query/group[1]/group[1]/triple[1]/subject/@uri"/>
@@ -109,6 +128,23 @@
 								<xsl:otherwise>rdf</xsl:otherwise>
 							</xsl:choose>
 						</output>
+						<xsl:variable name="params">
+							<xsl:for-each select="root/query/group[1]/triple[subject/@uri=$graph]">
+								<xsl:variable name="name"><xsl:value-of select="substring-after(predicate/@uri,'#')"/></xsl:variable>
+								<xsl:if test="$name!='' and object!=''">
+									<parameter>
+										<name><xsl:value-of select="$name"/></name>
+										<value><xsl:value-of select="object"/></value>
+									</parameter>
+								</xsl:if>
+							</xsl:for-each>
+						</xsl:variable>
+						<params>
+							<xsl:apply-templates select="$params/parameter[1]" mode="replace">
+								<xsl:with-param name="text" select="$service/@query"/>
+							</xsl:apply-templates>
+							<xsl:if test="not(exists($params/parameter))"><xsl:value-of select="$service/@query"/></xsl:if>
+						</params>
 						<xsl:if test="$service/@translator!=''"><translator><xsl:value-of select="$service/@translator"/></translator></xsl:if>
 					</filecontext>
 				</xsl:template>
@@ -124,7 +160,10 @@
 				<input-type>text</input-type>
 				<output-type><xsl:value-of select="filecontext/output"/></output-type>
 				<tidy>yes</tidy> <!-- Tidy output in case of html (html pages on the internet don't always follow the rules...). HTML result should be a valid XML file. tidy does that for us. -->
-				<url><xsl:value-of select="filecontext/graph"/></url>
+				<url>
+					<xsl:value-of select="filecontext/graph"/>
+					<xsl:if test="filecontext/params!=''">?<xsl:value-of select="filecontext/params"/></xsl:if>
+				</url>
 				<method>get</method>
 				<xsl:if test="filecontext/output='rdf'"><accept>application/rdf+xml, text/rdf+n3, text/rdf+ttl, text/rdf+turtle, text/turtle, application/turtle, application/x-turtle, application/xml, */*</accept></xsl:if> <!-- Accept almost anything, but we prefer something RDF -->
 			</config>
@@ -175,7 +214,7 @@
 	<p:input name="config">
 		<config/>
 	</p:input>
-	<p:input name="data" href="#output"/>
+	<p:input name="data" href="#filecontext"/>
 </p:processor>
 -->
 	

@@ -55,7 +55,7 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:index "3";
 			rdfs:label "Triplestore tests";
 			elmo:data [elmo:index "1"; rdfs:label "Formats - SELECT"; html:link "query/sesame/SelectFormats"];
-			elmo:data [elmo:index "1"; rdfs:label "Formats - CONSTRUCT"; html:link "query/sesame/ConstructFormats"];
+			elmo:data [elmo:index "2"; rdfs:label "Formats - CONSTRUCT"; html:link "query/sesame/ConstructFormats"];
 		];
 		elmo:data [
 			elmo:index "4";
@@ -95,6 +95,7 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:data [elmo:index "08"; rdfs:label "Virtual sparql endpoint - Buienradar"; html:link "query/sparql/buienradar?zoom=7"];
 			elmo:data [elmo:index "09"; rdfs:label "Service call - WOW"; html:link "query/wow?zoom=8"];
 			elmo:data [elmo:index "10"; rdfs:label "Federated - Musicbrainz"; html:link "ldt/resource?subject=http%3A%2F%2Fmusicbrainz.org%2Fws%2F2%2Fartist%2F0383dadf-2a4e-4d10-a46a-e9e041da8eb3"];
+			elmo:data [elmo:index "11"; rdfs:label "Virtual sparql endpoint - BAG WFS"; html:link "query/sparql/bagwfs"];
 		];
 		elmo:data [
 			elmo:index "7";

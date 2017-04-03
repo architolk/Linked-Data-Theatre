@@ -1,10 +1,10 @@
-#LDT for production environment
+# LDT for production environment
 
 To deploy the LDT in a production environment, you should secure some parts of the LDT. All changes are made in the config.xml file.
 
 **NB: Securing Tomcat is not part of this instruction, but should be done!**
 
-###1. Hide the backstage
+### 1. Hide the backstage
 You probably don't want a public backstage (or your users could change the configuration of the LDT!). You have two options:
 
 1. Delete any reference to the backstage in your config.xml;
@@ -30,7 +30,7 @@ To hide the backstage behind a VPN, change the config to:
 
 (where `backstage.mydomain.internal` refers to a server behind the VPN).
 
-###2. Set the environment to production, remove public sparql endpoint
+### 2. Set the environment to production, remove public sparql endpoint
 The default config start with:
 
 	<theatre env="dev" sparql="yes" configuration-endpoint="...
@@ -39,7 +39,7 @@ Change this to:
 
 	<theatre env="prod" sparql="no" configuration-endpoint="...
 
-###3. Enable caching
+### 3. Enable caching
 In production, you probably won't change the configuration itself, so you might want to enable caching of the configuration:
 
 	<theatre env="prod" querycache="PT1H" ...

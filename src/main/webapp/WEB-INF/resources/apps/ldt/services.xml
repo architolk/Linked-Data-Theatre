@@ -1,8 +1,8 @@
 <!--
 
     NAME     services.xml
-    VERSION  1.16.0
-    DATE     2017-02-08
+    VERSION  1.16.1-SNAPSHOT
+    DATE     2017-03-31
 
     Copyright 2012-2017
 
@@ -32,4 +32,5 @@
 -->
 <services>
 	<service applies-to="http://xml.buienradar.nl" accept="application/xml" translator="BuienradarTranslator"/>
+	<service applies-to="http://geodata.nationaalgeoregister.nl/bag/wfs" accept="application/xml" query="service=wfs&amp;version=2.0.0&amp;request=GetFeature&amp;typeName=bag:verblijfsobject&amp;cql_filter=dwithin%28bag:geometrie,@GEOMETRY@,100,meters%29" translator="BAGWFSTranslator"/>
 </services>
