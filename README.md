@@ -13,7 +13,7 @@ The Linked Data Theatre uses a configuration graph containing all the triples th
 The wiki contains a [tutorial](https://github.com/architolk/Linked-Data-Theatre/wiki/Tutorial) to guide you through the most common features of the Theatre.
 
 ### Build it yourself, linux and docker installations
-See [BUILD.md](BUILD.md) for instructions to build the Linked Data Theatre yourself. To deploy the Linked Data Theatre in a tomcat container, follow the instructions in [DEPLOY.md](docs/DEPLOY.md). A step-by-step installation guide for Linux is also available: [LINUX_SETUP.md](docs/LINUX_SETUP.md). You can also opt for a docker installation, see [DOCKER.md](docs/DOCKER.md).
+See [BUILD.md](docs/BUILD.md) for instructions to build the Linked Data Theatre yourself. To deploy the Linked Data Theatre in a tomcat container, follow the instructions in [DEPLOY.md](docs/DEPLOY.md). A step-by-step installation guide for Linux is also available: [LINUX_SETUP.md](docs/LINUX_SETUP.md). You can also opt for a docker installation, see [DOCKER.md](docs/DOCKER.md).
 
 ### Advanced installation - production settings
 The default setting of the LDT is for development purposes. Read [PRODUCTION.md](docs/PRODUCTION.md) for information about securing the LDT for a production environment.

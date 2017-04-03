@@ -75,3 +75,26 @@ stage:Musicbrainz a elmo:Representation;
 	elmo:accept "application/xml";
 	elmo:translator elmo:MusicbrainzTranslator;
 .
+
+stage:BAGWFSVirtualSparql a elmo:Representation;
+	elmo:url-pattern "/query/sparql/bagwfs$";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:fragment [
+		elmo:applies-to "adres";
+		elmo:appearance elmo:GlobalLink;
+	];
+	elmo:query '''
+		prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+		prefix bag: <http://bag.basisregistraties.overheid.nl/def/bag#>
+		select *
+		where {
+			service <http://localhost:8080/url> {
+				<http://geodata.nationaalgeoregister.nl/bag/wfs> geo:geometry "POINT(155000 463007)".
+				graph <http://geodata.nationaalgeoregister.nl/bag/wfs> {
+					?adres bag:adres ?adres_label
+				}
+			}
+		}
+	''';
+.

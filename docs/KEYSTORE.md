@@ -1,4 +1,4 @@
-#Accessing remote endpoints via https with unsecure certificate
+# Accessing remote endpoints via https with unsecure certificate
 If you are using the Linked Data Theatre and want to access a secure (https) endpoint, in some cases the certificate is not trusted (for example: self-signed certificates, or certificates has no chain to a trusted ROOT certificate in the default Java keystore).
 
 The Linked Data Theatre is capable of trusting certificates in its own keystore, via the SSL functionality of Orbeon.

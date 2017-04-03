@@ -1,9 +1,9 @@
-#License
+# License
 
-##Prerequisite
+## Prerequisite
 To use the license builder, please compile and install the license builder subproject.
  
-##Usage
+## Usage
 As the Linked Data Theatre is open source software, every file should contain a reference to the license.
 
 It is not needed to manually place the license header, this can be done with the maven instruction:
@@ -23,7 +23,7 @@ To check which files are out-of-date, you can use:
 
     mvn license:check
 
-##Update version without updating all files
+## Update version without updating all files
 It is possible to update the project version without updating all files. For this purpose the main POM contains the properties release.version and release.date. The file-headers are considered out of date only if:
 
 - The file date is older than the release data, AND
