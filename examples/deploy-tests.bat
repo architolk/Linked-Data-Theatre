@@ -10,4 +10,7 @@ for %%y in (*.ttl) do (
 	curl.exe -X POST -T %%y http://localhost:8890/sparql-graph-crud?graph-uri=http://localhost:8080/stage
 	curl.exe -X POST -T %%y http://localhost:8890/sparql-graph-crud?graph-uri=http://localhost:8888/stage
 )
+echo Site check
+curl.exe -X PUT -T SiteWelcome.ttl http://localhost:8890/sparql-graph-crud?graph-uri=http://localhost:8080/stagename/substagename/stage
+curl.exe -X PUT -T SiteWelcome.ttl http://localhost:8890/sparql-graph-crud?graph-uri=http://localhost:8888/stagename/substagename/stage
 pause

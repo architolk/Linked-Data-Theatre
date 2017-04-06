@@ -2,7 +2,7 @@
 
     NAME     config.xml
     VERSION  1.16.1-SNAPSHOT
-    DATE     2017-03-20
+    DATE     2017-04-06
 
     Copyright 2012-2017
 
@@ -81,8 +81,9 @@
 <!-- Set env="dev" to env="prod" in a production environment -->
 <theatre env="dev" configuration-endpoint="http://127.0.0.1:8890/sparql" local-endpoint="http://127.0.0.1:8890/sparql" sparql="yes">
 	<!-- Remove the "backstage" attribute in a production environment (or secure that particular URL) -->
-	<!-- The configuration of the LDT for the stage below is used for integration test purposes (during the maven verify phase) -->
+	<!-- The configuration of the LDT for the site below is used for integration test purposes (during the maven verify phase) -->
 	<site domain="localhost:8888" icon="favicon.ico" backstage="localhost:8888">
+		<stage name="stagename/substagename"/>
 		<stage/>
 	</site>
 	<!-- The default port of Tomcat is 8080, so the site below will give you access to a LDT on a default Tomcat install -->

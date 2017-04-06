@@ -20,7 +20,7 @@ stage:DummyProduction_text a elmo:Part;
 		elmo:md '''This dummy production creates a new graph `<http://localhost:8080/id/dataset/dummy>` with exactly one triple `<urntest> rdfs:label "testvalue"`. The label will be according to the value entered below.'''@en;
 		elmo:md '''Deze dummy productie creeert een nieuwe graph `<http://localhost:8080/id/dataset/dummy>` met precies een triple `<urntest> rdfs:label "testwaarde"`. Het label zal gelijk zijn aan de waarde die hieronder wordt opgegeven.'''@nl;
 	];
-.	
+.
 
 #Production for installations at /ldt
 ldtupdatestage:DummyProduction a elmo:Production;
@@ -46,9 +46,30 @@ stage:DummyProduction_form a elmo:Form;
 		elmo:constraint elmo:MandatoryConstraint;
 	];
 	elmo:fragment [
+		elmo:applies-to "check";
+		rdfs:label "ja-nee veld"@nl;
+		rdfs:label "yes-no field"@en;
+		elmo:index "2";
+		elmo:constraint elmo:MandatoryConstraint;
+		elmo:valuesFrom stage:DummyProduction_yesno;
+		rdf:value <urn:yes>;
+	];
+	elmo:fragment [
 		elmo:appearance elmo:SubmitAppearance;
 		rdfs:label "Omzetten"@nl;
 	];
+.
+stage:DummyProduction_yesno a elmo:Part;
+	elmo:appearance elmo:HiddenAppearance;
+	elmo:query '''
+		construct {
+			<http://pdok-ld-gck.so.kadaster.nl/geostandaarden> rdfs:label "pdok-ld-gck.so.kadaster.nl/geostandaarden".
+			<http://pdok-ld-gck.in.kadaster.nl/geostandaarden> rdfs:label "pdok-ld-gck.in.kadaster.nl/geostandaarden".
+			<http://pdok-ld-gck.cs.kadaster.nl/geostandaarden> rdfs:label "pdok-ld-gck.cs.kadaster.nl/geostandaarden".
+			<http://definities.geostandaarden.nl> rdfs:label "definities.geostandaarden.nl".
+		}
+		where {}
+	''';
 .
 
 stage:DummyProduction_scene1 a elmo:Scene;

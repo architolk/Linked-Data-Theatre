@@ -1,0 +1,16 @@
+@prefix stage: <http://localhost:8080/stage/test/blub#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+stage:HtmlAppearance a elmo:Representation;
+	elmo:url-pattern "^http://localhost:(8080|8888)/stagename/substagename/welcome$";
+	elmo:index "1";
+	elmo:appearance elmo:HtmlAppearance;
+	elmo:data [
+		rdfs:label "Stage test (en)"@en;
+		elmo:html '''
+			<p>This is a test for a specific stage. The stagename containts a slash, and is available at "/stagename/substagename".</p>
+		''';
+	]
+.
