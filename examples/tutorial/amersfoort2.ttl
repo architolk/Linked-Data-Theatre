@@ -9,7 +9,7 @@ stage:amersfoort2 a elmo:Representation;
 	];
 	elmo:fragment [
 		elmo:applies-to rdfs:comment;
-		rdfs:label "discription"@en;
+		rdfs:label "description"@en;
 		rdfs:label "omschrijving"@nl;
 	];
 	elmo:fragment [
