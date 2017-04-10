@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.16.1-SNAPSHOT
-    DATE     2017-03-03
+    DATE     2017-04-10
 
     Copyright 2012-2017
 
@@ -144,6 +144,18 @@
 	</xsl:if>
 </xsl:template>
 
+<xsl:template name="cross-site-target-marker">
+	<xsl:param name="url"/>
+
+	<xsl:variable name="urlpart"><xsl:value-of select="replace($url,'^((http|https)://)','')"/></xsl:variable>
+	<xsl:variable name="domain"><xsl:value-of select="substring-before($urlpart,'/')"/></xsl:variable>
+
+	<xsl:choose>
+		<xsl:when test="$domain!='' and $domain!=$serverdomain">_blank</xsl:when>
+		<xsl:otherwise>_self</xsl:otherwise>
+	</xsl:choose>
+</xsl:template>
+
 <xsl:template match="*" mode="glossary">
 	<xsl:param name="glossary"/>
 	<xsl:param name="uri"/>
@@ -162,7 +174,7 @@
 	<xsl:choose>
 		<xsl:when test="$tokenizer!=''">
 			<!-- Tokenizer works for terms separated with spaces. To fix the problem with ',' and '.', spaces are added before the ',' and '.' -->
-			<xsl:for-each select="tokenize(replace(replace(concat(' ',.,' '),'(,|\.)',' $0'),substring($tokenizer,2,9999),'@@$0@@','i'),'@@')">
+			<xsl:for-each select="tokenize(replace(replace(concat(' ',.,' '),'(,|\.|:)',' $0'),substring($tokenizer,2,9999),'@@$0@@','i'),'@@')">
 				<xsl:variable name="term" select="substring(.,2,string-length(.)-2)"/>
 				<xsl:variable name="termlink" select="$termlist/rdf:Description[upper-case(elmo:name[1])=upper-case($term)]"/>
 				<xsl:choose>
@@ -233,7 +245,12 @@
 					<xsl:with-param name="var" select="."/>
 				</xsl:call-template>
 			</xsl:variable>
-			<a href="{$resource-uri}">
+			<xsl:variable name="target">
+				<xsl:call-template name="cross-site-target-marker">
+					<xsl:with-param name="url" select="$resource-uri"/>
+				</xsl:call-template>
+			</xsl:variable>
+			<a href="{$resource-uri}" target="{$target}">
 				<xsl:choose>
 					<xsl:when test="rdf:Description/rdfs:label!=''"><xsl:value-of select="rdf:Description/rdfs:label"/></xsl:when>
 					<xsl:otherwise><xsl:value-of select="rdf:Description/@rdf:about"/></xsl:otherwise>
@@ -504,8 +521,8 @@
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#ModelAppearance'">
 			<xsl:apply-templates select="." mode="ModelAppearance"/>
 		</xsl:when>
-		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#MarkdownAppearance'">
-			<xsl:apply-templates select="." mode="MarkdownAppearance"/>
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#MarkdownAppearance'">		
+			<xsl:apply-templates select="." mode="MarkdownAppearance"/>		
 		</xsl:when>
 		<xsl:otherwise>
 			<!-- No, or an unknown appearance, use the data to select a suitable appearance -->
@@ -687,7 +704,7 @@
 		<xsl:text>representation=</xsl:text><xsl:value-of select="encode-for-uri(@elmo:query)"/>
 		<xsl:text>&amp;format=</xsl:text>
 	</xsl:variable>
-	<!-- Unique number for this datatable -->
+	<!-- Unique number for this datatable -->		
 	<xsl:variable name="table-id" select="@elmo:index"/>
 	<!-- A select query will have @rdf:nodeID elements, with id 'rset' -->
 	<xsl:for-each select="rdf:Description[@rdf:nodeID='rset']">
