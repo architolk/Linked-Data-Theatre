@@ -1,0 +1,8 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix stage: <http://localhost:8080/stage#>.
+
+stage:vocabulary a elmo:Representation;
+	elmo:url-pattern "query/vocabulary$";
+	elmo:appearance elmo:VocabularyAppearance;
+	elmo:webpage "http://www.w3.org/2000/01/rdf-schema";
+.

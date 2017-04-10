@@ -1,10 +1,10 @@
 <!--
 
     NAME     rdf2rdfa.xsl
-    VERSION  1.13.0
-    DATE     2016-12-06
+    VERSION  1.16.1-SNAPSHOT
+    DATE     2017-02-27
 
-    Copyright 2012-2016
+    Copyright 2012-2017
 
     This file is part of the Linked Data Theatre.
 
@@ -81,6 +81,11 @@
 		</xsl:variable>
 		<xsl:if test="$pcomment!=''"><xsl:attribute name="elmo:comment"><xsl:value-of select="$pcomment"/></xsl:attribute></xsl:if>
 		<!-- Other fragments -->
+		<xsl:choose>
+			<xsl:when test="$fragment/elmo:appearance[1]/@rdf:resource!=''"><xsl:attribute name="elmo:appearance"><xsl:value-of select="$fragment/elmo:appearance[1]/@rdf:resource"/></xsl:attribute></xsl:when>
+			<xsl:when test="exists($fragment)"/> <!-- Don't use default appearance if a fragment exists -->
+			<xsl:when test="$defaultFragment/elmo:appearance[1]/@rdf:resource!=''"><xsl:attribute name="elmo:appearance"><xsl:value-of select="$defaultFragment/elmo:appearance[1]/@rdf:resource"/></xsl:attribute></xsl:when>
+		</xsl:choose>
 		<xsl:if test="$fragment/elmo:appearance[1]/@rdf:resource!=''"><xsl:attribute name="elmo:appearance"><xsl:value-of select="$fragment/elmo:appearance[1]/@rdf:resource"/></xsl:attribute></xsl:if>
 		<xsl:if test="$fragment/html:link[1]!=''"><xsl:attribute name="elmo:link"><xsl:value-of select="$fragment/html:link[1]"/></xsl:attribute></xsl:if>
 		<xsl:if test="$fragment/elmo:index[1]!=''"><xsl:attribute name="elmo:index"><xsl:value-of select="$fragment/elmo:index[1]"/></xsl:attribute></xsl:if>
@@ -91,6 +96,15 @@
 			<xsl:otherwise />
 		</xsl:choose>
 		<xsl:choose>
+			<!-- If the fragment is a nested statement, include the object -->
+			<xsl:when test="exists(@rdf:resource) and $fragment/elmo:appearance/@rdf:resource='http://bp4mc2.org/elmo/def#NestedAppearance'">
+				<rdf:Description rdf:about="{@rdf:resource}">
+					<xsl:apply-templates select="key('resource',@rdf:resource)/*" mode="property">
+						<xsl:with-param name="fragments" select="$fragments"/>
+					</xsl:apply-templates>
+				</rdf:Description>
+			</xsl:when>
+			<!-- If the object is a resource -->
 			<xsl:when test="exists(@rdf:resource)">
 				<xsl:variable name="olabels">
 					<xsl:copy-of select="key('resource',@rdf:resource)/rdfs:label"/>
@@ -175,7 +189,7 @@
 			<xsl:otherwise><xsl:value-of select="$appearance1"/></xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>
-	<rdf:RDF elmo:appearance="{$appearance}" elmo:query="{$representation-uri}">
+	<rdf:RDF elmo:index="{$index}" elmo:appearance="{$appearance}" elmo:query="{$representation-uri}">
 		<xsl:if test="exists(@container)"><xsl:attribute name="elmo:container"><xsl:value-of select="@container"/></xsl:attribute></xsl:if>
 		<xsl:if test="exists(@name)"><xsl:attribute name="elmo:name"><xsl:value-of select="@name"/></xsl:attribute></xsl:if>
 		<xsl:if test="exists(@label)"><xsl:attribute name="elmo:label"><xsl:value-of select="@label"/></xsl:attribute></xsl:if>
@@ -216,7 +230,7 @@
 					<rdf:Description rdf:nodeID="form">
 						<xsl:copy-of select="rdfs:label"/>
 					</rdf:Description>
-					<xsl:for-each select="fragment">
+					<xsl:for-each select="fragment[@satisfied='']">
 						<rdf:Description rdf:nodeID="f{position()}">
 							<xsl:if test="@applies-to!=''"><elmo:applies-to><xsl:value-of select="@applies-to"/></elmo:applies-to></xsl:if>
 							<xsl:copy-of select="*"/>
@@ -332,7 +346,7 @@
 
 <xsl:template match="/root">
 	<results>
-		<context docroot="{context/@docroot}" staticroot="{context/@staticroot}">
+		<context docroot="{context/@docroot}" staticroot="{context/@staticroot}" version="{context/@version}">
 			<!-- TODO: to much namespaces declarations in resulting XML due to copy-of statement -->
 			<xsl:copy-of select="context/*"/>
 			<xsl:copy-of select="view/stylesheet"/>

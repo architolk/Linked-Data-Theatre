@@ -1,10 +1,10 @@
 <!--
 
     NAME     ttl2rdfaform.xsl
-    VERSION  1.13.0
-    DATE     2016-12-06
+    VERSION  1.16.1-SNAPSHOT
+    DATE     2017-02-15
 
-    Copyright 2012-2016
+    Copyright 2012-2017
 
     This file is part of the Linked Data Theatre.
 
@@ -48,7 +48,7 @@
 	<results>
 		<context docroot="{root/context/@docroot}" staticroot="{root/context/@staticroot}">
 			<language>nl</language>
-			<xsl:copy-of select="root/context/stylesheet"/>
+			<xsl:copy-of select="root/context/*"/>
 		</context>
 		<xsl:for-each select="root/rdf:RDF/rdf:Description[exists(elmo:appearance)]">
 			<rdf:RDF elmo:appearance="{elmo:appearance/@rdf:resource}">
@@ -86,7 +86,7 @@
 					<elmo:applies-to>error</elmo:applies-to>
 					<elmo:valueDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#String"/>
 					<rdf:value><xsl:value-of select="root/response"/></rdf:value>
-					<html:stylesheet>height:40px; background:red; color:white;</html:stylesheet>
+					<html:stylesheet>height:75px; background:red; color:white;</html:stylesheet>
 				</rdf:Description>
 			</xsl:if>
 			<xsl:if test="root/container/representation!='http://bp4mc2.org/elmo/def#UploadRepresentation' and root/container/representation!='http://bp4mc2.org/elmo/def#DownloadRepresentation'">

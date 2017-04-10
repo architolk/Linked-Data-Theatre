@@ -20,6 +20,7 @@
 						<configuration>
 							<url>https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js</url>
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
+							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -30,6 +31,7 @@
 						<configuration>
 							<url>https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css</url>
 							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
+							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -40,6 +42,7 @@
 						<configuration>
 							<url>https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css</url>
 							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
+							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -100,6 +103,7 @@
 						<configuration>
 							<url>https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css</url>
 							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
+							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -170,6 +174,7 @@
 						<configuration>
 							<url>https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js</url>
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
+							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -180,6 +185,7 @@
 						<configuration>
 							<url>https://github.com/DataTables/DataTables/raw/master/media/js/dataTables.bootstrap.min.js</url>
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
+							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -190,6 +196,7 @@
 						<configuration>
 							<url>https://github.com/DataTables/DataTables/raw/master/media/css/dataTables.bootstrap.min.css</url>
 							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
+							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -211,6 +218,7 @@
 						<configuration>
 							<url>https://raw.githubusercontent.com/alxlit/bootstrap-chosen/master/bootstrap-chosen.css</url>
 							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
+							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -222,6 +230,7 @@
 							<url>https://github.com/alxlit/bootstrap-chosen/archive/master.zip</url>
 							<unpack>true</unpack>
 							<outputDirectory>zips</outputDirectory>
+							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -230,8 +239,9 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js</url>
+							<url>http://cdn.leafletjs.com/leaflet/v1.0.3/leaflet.js</url>
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
+							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -240,8 +250,9 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css</url>
+							<url>http://cdn.leafletjs.com/leaflet/v1.0.3/leaflet.css</url>
 							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
+							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -283,6 +294,7 @@
 						<configuration>
 							<url>https://github.com/CliffCloud/Leaflet.EasyButton/raw/master/src/easy-button.js</url>
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
+							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -291,7 +303,7 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>http://codemirror.net/codemirror.zip</url>
+							<url>https://github.com/codemirror/CodeMirror/archive/5.12.0.zip</url>
 							<unpack>true</unpack>
 							<outputDirectory>zips</outputDirectory>
 						</configuration>
@@ -302,7 +314,7 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>https://github.com/kartena/Proj4Leaflet/archive/0.7.2.zip</url>
+							<url>https://github.com/kartena/Proj4Leaflet/archive/1.0.1.zip</url>
 							<unpack>true</unpack>
 							<outputDirectory>zips</outputDirectory>
 						</configuration>
@@ -340,6 +352,7 @@
 						<configuration>
 							<url>https://raw.githubusercontent.com/clientIO/joint/master/dist/joint.min.js</url>
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
+							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -350,6 +363,7 @@
 						<configuration>
 							<url>https://raw.githubusercontent.com/clientIO/joint/master/dist/joint.min.css</url>
 							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
+							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -361,6 +375,7 @@
 							<!-- Dependency with joint.js: version should be 3.x NOT 4.x -->
 							<url>https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js</url>
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
+							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
 					<execution>
@@ -451,16 +466,16 @@
 						<configuration>
 							<resources>          
 								<resource>
-									<directory>zips/Proj4Leaflet-0.7.2/src</directory>
+									<directory>zips/Proj4Leaflet-1.0.1/src</directory>
 								</resource>
 								<resource>
-									<directory>zips/Proj4Leaflet-0.7.2/lib</directory>
+									<directory>zips/Proj4Leaflet-1.0.1/lib</directory>
 									<includes>
 										<include>proj4-compressed.js</include>
 									</includes>
 								</resource>
 								<resource>
-									<directory>zips/codemirror-5.12/lib</directory>
+									<directory>zips/Codemirror-5.12.0/lib</directory>
 									<includes>
 										<include>codemirror.js</include>
 									</includes>

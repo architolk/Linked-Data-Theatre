@@ -1,0 +1,70 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+stage:search a elmo:Representation;
+	elmo:url-pattern "/query/search$";
+	elmo:contains stage:searchAdvanced;
+	elmo:contains stage:searchClasses;
+	elmo:endpoint <http://nl.dbpedia.org/sparql>;
+	elmo:without-parameter "class";
+	elmo:queryForm stage:searchForm;
+	elmo:query '''
+		SELECT ?item ?item_label
+		WHERE {
+			?item rdf:type skos:Concept.
+			?item rdfs:label ?item_label.
+			FILTER REGEX(?item_label,"^@TERM@","i")
+		}
+		LIMIT 10
+	''';
+.
+stage:searchAdvanced a elmo:Part;
+	elmo:endpoint <http://nl.dbpedia.org/sparql>;
+	elmo:with-parameter "class";
+	elmo:query '''
+		SELECT ?item ?item_label
+		WHERE {
+			?item rdf:type <@CLASS@>.
+			?item rdfs:label ?item_label.
+			FILTER REGEX(?item_label,"^@TERM@","i")
+		}
+		LIMIT 10
+	''';
+.
+
+stage:searchForm a elmo:Form;
+	elmo:fragment [
+		elmo:applies-to "class";
+		elmo:valuesFrom stage:searchClasses;
+		elmo:index "1";
+	];
+	elmo:fragment [
+		elmo:applies-to "term";
+		elmo:constraint elmo:MandatoryConstraint;
+		elmo:index "2";
+	];
+	elmo:fragment [
+		elmo:appearance elmo:SubmitAppearance;
+		rdfs:label "Search";
+		elmo:index "3";
+	];
+.
+stage:searchClasses a elmo:Part;
+	elmo:appearance elmo:HiddenAppearance;
+	elmo:endpoint <http://dbpedia.org/sparql>;
+	elmo:query '''
+		construct {
+			?class rdfs:label ?classlabel
+		}
+		where {
+			select distinct ?class ?classlabel
+			where {
+				?class rdf:type owl:Class.
+				?class rdfs:label ?classlabel.
+				FILTER (lang(?classlabel)="@LANGUAGE@")
+				FILTER REGEX(str(?class),"^http://dbpedia.org/ontology/")
+			}
+		}
+	''';
+.

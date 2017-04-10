@@ -6,16 +6,16 @@
 	<groupId>nl.architolk.ldt</groupId>
 	<artifactId>processors</artifactId>
 	<packaging>jar</packaging>
-	<version>1.10.0</version>
+	<version>1.15.0</version>
 	<name>processors</name>
 	<properties>
 		<maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
 		<buildTimestamp>${maven.build.timestamp}</buildTimestamp>
 		<license-maven-plugin.version>2.11</license-maven-plugin.version>
 		<license.failIfMissing>false</license.failIfMissing>
-		<release.version>1.10.0</release.version>
-		<release.date>2016-08-29</release.date>
-		<patch.date>2016-08-29</patch.date>
+		<release.version>1.15.0</release.version>
+		<release.date>2017-01-27</release.date>
+		<patch.date>2017-01-27</patch.date>
 	</properties>
 	<dependencies>
 		<!-- Dependency for testing -->
@@ -84,6 +84,11 @@
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>2.5</version>
+		</dependency>
+		<dependency>
+    	<groupId>org.apache.commons</groupId>
+    	<artifactId>commons-csv</artifactId>
+    	<version>1.0</version>
 		</dependency>
 		<!-- Explicit version numbering to force recent version, semargl is not necessary -->
 		<dependency>

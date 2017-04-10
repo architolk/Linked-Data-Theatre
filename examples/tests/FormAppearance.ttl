@@ -1,0 +1,92 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+
+stage:FormAppearance	a	elmo:Representation;
+	elmo:url-pattern	"/query/FormAppearance$";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:contains	stage:FormAppearance-species;
+	elmo:appearance elmo:ContentAppearance;
+	elmo:queryForm stage:FormAppearance-form;
+	elmo:contains stage:FormAppearance_text;
+	elmo:index "2";
+	elmo:fragment [
+		elmo:applies-to "name";
+		rdfs:label "Naam"@nl;
+		rdfs:label "Name"@en;
+	];
+	elmo:fragment [
+		elmo:applies-to "species";
+		rdfs:label "Soort"@nl;
+		rdfs:label "Species"@en;
+	];
+	elmo:query '''
+		select distinct ?person ?person_label
+		where {
+			graph <http://localhost:8080/stage> {
+				?person a <@SPECIES@>.
+				?person rdfs:label ?person_label.
+				FILTER (regex(?person_label,"@NAME@","i"))
+			}
+		}
+	'''
+.
+
+stage:FormAppearance_text a elmo:Part;
+	elmo:appearance elmo:MarkdownAppearance;
+	elmo:index "1";
+	elmo:data [
+		rdfs:label "Example form"@en;
+		rdfs:label "Voorbeeld formulier"@nl;
+		elmo:md "You can use a form to query for specific results. For example: to show all characters from a specific species. The other two fields are only for the example and not used in the query."@en;
+		elmo:md "Je kunt een formulier gebruik om naar specifieke zaken te zoeken. Bijvoorbeeld: een lijst van alle karakter van een bepaalde soort. De andere twee velden zijn alleen voor dit voorbeeld en worden niet gebruikt in de query."@nl;
+	]
+.
+
+stage:FormAppearance-form a elmo:Form;
+	elmo:fragment [
+		elmo:applies-to "species";
+		rdfs:label "Soort"@nl;
+		rdfs:label "Species"@en;
+		elmo:constraint elmo:MandatoryConstraint;
+		elmo:valuesFrom stage:FormAppearance-species;
+		elmo:index "1";
+	];
+	elmo:fragment [
+		elmo:applies-to "name";
+		rdfs:label "Naam"@nl;
+		rdfs:label "Name"@en;
+		elmo:index "2";
+	];
+	elmo:fragment [
+		elmo:index "3";
+		elmo:applies-to "zipcode";
+		rdfs:label "Postcode"@nl;
+		rdfs:label "Zipcode"@en;
+		elmo:valuePattern "[0-9]{4}[A-Z]{2}";
+		elmo:valueHint "0000AA";
+	];
+	elmo:fragment [
+		elmo:appearance elmo:SubmitAppearance;
+		rdfs:label "Search"@nl;
+		elmo:index "4";
+	];
+.
+
+stage:FormAppearance-species elmo:appearance elmo:HiddenAppearance;
+	elmo:query '''
+		construct {
+			?species rdfs:label ?specieslabel
+		}
+		where {
+			graph <http://localhost:8080/stage> {
+				?species rdf:type owl:Class.
+				?species rdfs:label ?specieslabel
+				FILTER (lang(?specieslabel)="" || lang(?specieslabel)="@LANGUAGE@")
+			}
+		}
+	''';
+.

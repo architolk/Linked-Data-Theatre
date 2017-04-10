@@ -1,0 +1,36 @@
+<!--
+
+    NAME     services.xml
+    VERSION  1.16.1-SNAPSHOT
+    DATE     2017-03-31
+
+    Copyright 2012-2017
+
+    This file is part of the Linked Data Theatre.
+
+    The Linked Data Theatre is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    The Linked Data Theatre is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with the Linked Data Theatre.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!--
+    DESCRIPTION
+	Definitions of services for virtual sparql endpoint.
+	By default, an url will be considered a linked data resource, but you can override this behavior by adding a rule in this file, like:
+	<service applies-to="{url}" type="{mime-type}" translator="name of the translator"/>
+	
+	An example is added for the Buienradar service
+-->
+<services>
+	<service applies-to="http://xml.buienradar.nl" accept="application/xml" translator="BuienradarTranslator"/>
+	<service applies-to="http://geodata.nationaalgeoregister.nl/bag/wfs" accept="application/xml" query="service=wfs&amp;version=2.0.0&amp;request=GetFeature&amp;typeName=bag:verblijfsobject&amp;cql_filter=dwithin%28bag:geometrie,@GEOMETRY@,100,meters%29" translator="BAGWFSTranslator"/>
+</services>

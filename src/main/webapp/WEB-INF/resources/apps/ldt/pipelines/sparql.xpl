@@ -1,10 +1,10 @@
 <!--
 
     NAME     sparql.xpl
-    VERSION  1.13.0
-    DATE     2016-12-06
+    VERSION  1.16.1-SNAPSHOT
+    DATE     2017-03-20
 
-    Copyright 2012-2016
+    Copyright 2012-2017
 
     This file is part of the Linked Data Theatre.
 
@@ -69,21 +69,21 @@
 	</p:processor>	
 	
 	<!-- Create context -->
-	<p:processor name="oxf:xslt">
+	<p:processor name="oxf:unsafe-xslt">
 		<p:input name="data" href="aggregate('croot',#instance,#request,#roles)"/>
 		<p:input name="config" href="../transformations/context.xsl"/>
 		<p:output name="data" id="context"/>
 	</p:processor>
 
 	<p:choose href="#context">
-		<!--backstage should be available, or else - show 404 -->
+		<!--sparql or backstage should be available, or else - show 404 -->
 		<p:when test="(context/back-of-stage!='' and matches(context/url,'backstage/sparql$')) or (context/@sparql='yes' and matches(context/url,'/sparql$'))">
 	
 			<p:choose href="#context">
 				<p:when test="context/parameters/parameter[name='query']/value!=''">
 					<p:processor name="oxf:xforms-submission">
 						<p:input name="submission" transform="oxf:xslt" href="#context">
-							<xforms:submission method="get" xsl:version="2.0" action="{context/local-endpoint}">
+							<xforms:submission method="get" xsl:version="2.0" action="{context/sparql-endpoint}">
 								<xforms:header>
 									<xforms:name>Accept</xforms:name>
 									<xforms:value>application/sparql-results+xml</xforms:value>
@@ -297,7 +297,7 @@
 	
 		</p:when>
 		<p:otherwise>
-			<!-- Container doesn't exist in definition: 404 return code -->
+			<!-- Sparql endpoint is not available: 404 return code -->
 			<p:processor name="oxf:xslt">
 				<p:input name="data">
 					<results>

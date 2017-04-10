@@ -1,9 +1,9 @@
 /**
  * NAME     SparqlProcessor.java
- * VERSION  1.10.0
- * DATE     2016-12-08
+ * VERSION  1.15.0
+ * DATE     2017-01-30
  *
- * Copyright 2012-2016
+ * Copyright 2012-2017
  *
  * This file is part of the Linked Data Theatre.
  *
@@ -52,6 +52,7 @@ import org.orbeon.oxf.xml.ForwardingXMLReceiver;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.rdfxml.xmlinput.SAX2Model;
 
 import org.apache.jena.query.QueryExecutionFactory;
@@ -92,6 +93,7 @@ public class SparqlProcessor extends SimpleProcessor {
 			try {
 				contentHandler.startDocument();
 				contentHandler.startPrefixMapping("sparql","http://www.w3.org/2005/sparql-results#");
+				contentHandler.startPrefixMapping("rdf","http://www.w3.org/1999/02/22-rdf-syntax-ns#");
 				contentHandler.startElement("http://www.w3.org/2005/sparql-results#", "sparql", "sparql:sparql", new AttributesImpl());
 				contentHandler.startElement("http://www.w3.org/2005/sparql-results#", "head", "sparql:head", new AttributesImpl());
 				List<String> vars = results.getResultVars();
@@ -115,8 +117,13 @@ public class SparqlProcessor extends SimpleProcessor {
 						varAttr.addAttribute("", "name", "name", "CDATA", varname);
 						contentHandler.startElement("http://www.w3.org/2005/sparql-results#", "binding", "sparql:binding", varAttr);
 						if (valueNode.isLiteral()) {
-							String value = valueNode.toString();
-							contentHandler.startElement("http://www.w3.org/2005/sparql-results#", "literal", "sparql:literal", new AttributesImpl());
+							String value = valueNode.asLiteral().getLexicalForm();
+							AttributesImpl varAttrLiteral = new AttributesImpl();
+							RDFDatatype valueDatatype = valueNode.asLiteral().getDatatype();
+							if (valueDatatype!=null) {
+								varAttrLiteral.addAttribute("http://www.w3.org/1999/02/22-rdf-syntax-ns#", "datatype", "rdf:datatype","CDATA",valueDatatype.getURI());
+							}
+							contentHandler.startElement("http://www.w3.org/2005/sparql-results#", "literal", "sparql:literal", varAttrLiteral);
 							contentHandler.characters(value.toCharArray(),0,value.length());
 							contentHandler.endElement("http://www.w3.org/2005/sparql-results#", "literal", "sparql:literal");
 						}
@@ -138,6 +145,7 @@ public class SparqlProcessor extends SimpleProcessor {
 				}
 				contentHandler.endElement("http://www.w3.org/2005/sparql-results#", "results", "sparql:results");
 				contentHandler.endElement("http://www.w3.org/2005/sparql-results#", "sparql", "sparql:sparql");
+				contentHandler.endPrefixMapping("rdf");
 				contentHandler.endPrefixMapping("sparql");
 				contentHandler.endDocument();
 			} catch (Exception e) {

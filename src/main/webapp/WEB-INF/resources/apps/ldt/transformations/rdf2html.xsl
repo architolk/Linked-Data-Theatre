@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2html.xsl
-    VERSION  1.13.2-SNAPSHOT
-    DATE     2017-01-02
+    VERSION  1.16.1-SNAPSHOT
+    DATE     2017-03-03
 
     Copyright 2012-2017
 
@@ -60,6 +60,8 @@
 <xsl:key name="resource" match="results/rdf:RDF/rdf:Description" use="@rdf:about"/>
 <xsl:key name="nav-bnode" match="results/rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarSearchAppearance']/rdf:Description" use="@rdf:nodeID"/>
 
+<xsl:key name="nested" match="results/rdf:RDF/rdf:Description/*[@elmo:appearance='http://bp4mc2.org/elmo/def#NestedAppearance']/rdf:Description" use="@rdf:about"/>
+
 <xsl:variable name="serverdomain"><xsl:value-of select="substring-before(replace(/results/context/url,'^((http|https)://)',''),'/')"/></xsl:variable>
 <xsl:variable name="docroot"><xsl:value-of select="/results/context/@docroot"/></xsl:variable>
 <xsl:variable name="staticroot"><xsl:value-of select="/results/context/@staticroot"/></xsl:variable>
@@ -67,6 +69,7 @@
 <xsl:variable name="subject"><xsl:value-of select="/results/context/subject"/></xsl:variable>
 
 <xsl:variable name="language"><xsl:value-of select="/results/context/language"/></xsl:variable>
+<xsl:variable name="ldtversion">?version=<xsl:value-of select="/results/context/@version"/></xsl:variable>
 <!--
 	Helper templates
 -->
@@ -203,6 +206,24 @@
 					<xsl:otherwise><xsl:value-of select="@rdf:resource"/></xsl:otherwise>
 				</xsl:choose>
 			</a>
+		</xsl:when>
+		<!-- Reference to another resource, nested -->
+		<xsl:when test="exists(rdf:Description/@rdf:about) and @elmo:appearance='http://bp4mc2.org/elmo/def#NestedAppearance'">
+			<table>
+				<xsl:for-each-group select="rdf:Description/*" group-by="name()">
+					<xsl:if test="not(@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance')">
+						<tr>
+							<td><xsl:apply-templates select="." mode="predicate"/></td>
+							<td>
+								<xsl:for-each select="current-group()">
+									<xsl:if test="position()!=1">; </xsl:if>
+									<xsl:apply-templates select="." mode="object"/>
+								</xsl:for-each>
+							</td>
+						</tr>
+					</xsl:if>
+				</xsl:for-each-group>
+			</table>
 		</xsl:when>
 		<!-- Reference to another resource, with a label -->
 		<xsl:when test="exists(rdf:Description/@rdf:about)">
@@ -483,6 +504,9 @@
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#ModelAppearance'">
 			<xsl:apply-templates select="." mode="ModelAppearance"/>
 		</xsl:when>
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#MarkdownAppearance'">
+			<xsl:apply-templates select="." mode="MarkdownAppearance"/>
+		</xsl:when>
 		<xsl:otherwise>
 			<!-- No, or an unknown appearance, use the data to select a suitable appearance -->
 			<xsl:apply-templates select="." mode="ContentAppearance"/>
@@ -537,11 +561,11 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 		<title><xsl:value-of select="context/title"/></title>
 
-		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/bootstrap.min.css"/>
-		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/dataTables.bootstrap.min.css"/>
-		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/bootstrap-datepicker3.min.css"/>
-		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/ldt-theme.min.css"/>
-		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/font-awesome.min.css"/>
+		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/bootstrap.min.css{$ldtversion}"/>
+		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/dataTables.bootstrap.min.css{$ldtversion}"/>
+		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/bootstrap-datepicker3.min.css{$ldtversion}"/>
+		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/ldt-theme.min.css{$ldtversion}"/>
+		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/font-awesome.min.css{$ldtversion}"/>
 
 		<!-- Alternative styling -->
 		<xsl:for-each select="context/stylesheet">
@@ -550,17 +574,17 @@
 
 		<!-- TODO: Make this generic (appearances with specific stylesheets) -->
 		<xsl:if test="exists(rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#LoginAppearance'])">
-			<link rel="stylesheet" type="text/css" href="{$staticroot}/css/signin.min.css"/>
+			<link rel="stylesheet" type="text/css" href="{$staticroot}/css/signin.min.css{$ldtversion}"/>
 		</xsl:if>
 
-		<script type="text/javascript" src="{$staticroot}/js/jquery-3.1.1.min.js"></script>
-		<script type="text/javascript" src="{$staticroot}/js/jquery.dataTables.min.js"></script>
-		<script type="text/javascript" src="{$staticroot}/js/dataTables.bootstrap.min.js"></script>
-		<script type="text/javascript" src="{$staticroot}/js/bootstrap.min.js"></script>
-		<script type="text/javascript" src="{$staticroot}/js/bootstrap-datepicker.min.js"></script>
-		<script type="text/javascript" src="{$staticroot}/js/locales/bootstrap-datepicker.nl.min.js"></script>
-		<script type="text/javascript" src="{$staticroot}/js/d3.v3.min.js"></script>
-		<script type="text/javascript" src="{$staticroot}/js/ldt.min.js"></script>
+		<script type="text/javascript" src="{$staticroot}/js/jquery-3.1.1.min.js{$ldtversion}"></script>
+		<script type="text/javascript" src="{$staticroot}/js/jquery.dataTables.min.js{$ldtversion}"></script>
+		<script type="text/javascript" src="{$staticroot}/js/dataTables.bootstrap.min.js{$ldtversion}"></script>
+		<script type="text/javascript" src="{$staticroot}/js/bootstrap.min.js{$ldtversion}"></script>
+		<script type="text/javascript" src="{$staticroot}/js/bootstrap-datepicker.min.js{$ldtversion}"></script>
+		<script type="text/javascript" src="{$staticroot}/js/locales/bootstrap-datepicker.nl.min.js{$ldtversion}"></script>
+		<script type="text/javascript" src="{$staticroot}/js/d3.v3.min.js{$ldtversion}"></script>
+		<script type="text/javascript" src="{$staticroot}/js/ldt.min.js{$ldtversion}"></script>
 
 		<xsl:apply-templates select="context" mode="datatable-languageset"/>
 
@@ -663,6 +687,8 @@
 		<xsl:text>representation=</xsl:text><xsl:value-of select="encode-for-uri(@elmo:query)"/>
 		<xsl:text>&amp;format=</xsl:text>
 	</xsl:variable>
+	<!-- Unique number for this datatable -->
+	<xsl:variable name="table-id" select="@elmo:index"/>
 	<!-- A select query will have @rdf:nodeID elements, with id 'rset' -->
 	<xsl:for-each select="rdf:Description[@rdf:nodeID='rset']">
 		<xsl:if test="$paging='true' or exists(res:solution)">
@@ -672,10 +698,10 @@
 					elmo_language.searching = <xsl:value-of select="$paging"/>;
 					elmo_language.info = <xsl:value-of select="$paging"/>;
 					elmo_language.order = [];
-					$('#datatable<xsl:value-of select="generate-id()"/>').dataTable(elmo_language);
+					$('#datatable<xsl:value-of select="$table-id"/>').dataTable(elmo_language);
 				} );
 			</script>
-			<table id="datatable{generate-id()}" class="table table-striped table-bordered">
+			<table id="datatable{$table-id}" class="table table-striped table-bordered">
 				<thead>
 					<tr>
 						<xsl:for-each select="res:resultVariable[not(@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance' or matches(.,'[^_]*_(label|details|count|uri)'))]">
@@ -736,7 +762,7 @@
 				<column name="{local-name()}" label="{$label}"/>
 			</xsl:for-each-group>
 		</xsl:variable>
-		<table id="datatable{generate-id()}" class="table table-striped table-bordered">
+		<table id="datatable{$table-id}" class="table table-striped table-bordered">
 			<thead>
 				<tr>
 					<xsl:for-each select="$columns/column">
@@ -763,7 +789,10 @@
 	<!-- A construct query will have @rdf:about elements -->
 	<xsl:if test="exists(rdf:Description/@rdf:about)">
 		<xsl:for-each select="rdf:Description">
-			<xsl:apply-templates select="." mode="PropertyTable"/>
+			<!-- Don't show already nested resources -->
+			<xsl:if test="not(exists(key('nested',@rdf:about)))">
+				<xsl:apply-templates select="." mode="PropertyTable"/>
+			</xsl:if>
 		</xsl:for-each>
 	</xsl:if>
 </xsl:template>
@@ -791,7 +820,7 @@
 <xsl:template match="rdf:RDF" mode="CarouselAppearance">
 	<xsl:choose>
 		<xsl:when test="exists(rdf:Description/@rdf:about)">
-			<xsl:variable name="carousel-id" select="generate-id()"/>
+			<xsl:variable name="carousel-id" select="@elmo:index"/>
 			<div class="carousel slide" id="carousel{$carousel-id}" data-ride="carousel">
 				<ol class="carousel-indicators">
 					<xsl:for-each select="rdf:Description">
@@ -963,5 +992,6 @@
 <xsl:include href="appearances/VocabularyAppearance.xsl"/>
 <xsl:include href="appearances/FrameAppearance.xsl"/>
 <xsl:include href="appearances/ModelAppearance.xsl"/>
+<xsl:include href="appearances/MarkdownAppearance.xsl"/>
 
 </xsl:stylesheet>

@@ -5,9 +5,46 @@
 
 stage:BlankNodes a elmo:Representation;
 	elmo:url-pattern "/query/BlankNodes$";
-	elmo:index "1";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
+	elmo:contains stage:BlankNodes_content;
+	elmo:contains stage:BlankNodes_tab;
+	elmo:contains stage:BlankNodes_data;
+.
+
+stage:BlankNodes_data a elmo:Part;
+	elmo:index "0";
+	elmo:appearance elmo:HiddenAppearance;
+	elmo:query '''
+		prefix testo: <http://localhost:8080/def/test#>
+		construct {
+			?s rdfs:label ?label.
+			?s testo:largestCities ?list.
+			?head rdf:rest ?rest.
+			?head rdf:first ?city.
+		}
+		where {
+			?s rdfs:label ?label.
+			?s testo:largestCities ?list.
+			?list rdf:rest* ?head.
+			?head rdf:rest ?rest.
+			?head rdf:first ?city.
+			FILTER (?s = <http://dbpedia.org/resource/Utrecht_(province)>)
+		}
+	''';
+.
+
+stage:BlankNodes_tab elmo:index "1";
+	elmo:appearance elmo:IndexAppearance;
+	elmo:data [
+		elmo:name "format";
+		rdfs:label "xml|json|ttl";
+		rdf:value "xml|json|ttl";
+	];
+.
+
+stage:BlankNodes_content a elmo:Part;
+	elmo:index "2";
 	elmo:query '''
 		prefix testo: <http://localhost:8080/def/test#>
 		construct {

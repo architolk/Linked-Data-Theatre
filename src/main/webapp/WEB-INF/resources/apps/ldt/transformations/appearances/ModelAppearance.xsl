@@ -1,10 +1,10 @@
 <!--
 
     NAME     ModelAppearance.xsl
-    VERSION  1.13.1
-    DATE     2016-12-20
+    VERSION  1.16.0
+    DATE     2017-02-08
 
-    Copyright 2012-2016
+    Copyright 2012-2017
 
     This file is part of the Linked Data Theatre.
 
@@ -55,6 +55,12 @@
 				<xsl:for-each select="current-group()/shacl:in">
 					<domain uri="{@rdf:resource}"/>
 				</xsl:for-each>
+				<xsl:for-each select="current-group()/shacl:minCount">
+					<mincount><xsl:value-of select="."/></mincount>
+				</xsl:for-each>
+				<xsl:for-each select="current-group()/shacl:maxCount">
+					<maxcount><xsl:value-of select="."/></maxcount>
+				</xsl:for-each>
 			</property>
 		</xsl:for-each-group>
 	</xsl:variable>
@@ -72,6 +78,18 @@
 							<xsl:if test="$predicate/ref-class/@uri!=''">
 								<xsl:attribute name="refclass"><xsl:value-of select="$predicate/ref-class/@uri"/></xsl:attribute>
 							</xsl:if>
+							<xsl:attribute name="mincount">
+								<xsl:choose>
+									<xsl:when test="$predicate/mincount[1]!=''"><xsl:value-of select="$predicate/mincount[1]"/></xsl:when>
+									<xsl:otherwise>0</xsl:otherwise>
+								</xsl:choose>
+							</xsl:attribute>
+							<xsl:attribute name="maxcount">
+								<xsl:choose>
+									<xsl:when test="$predicate/maxcount[1]!=''"><xsl:value-of select="$predicate/maxcount[1]"/></xsl:when>
+									<xsl:otherwise>n</xsl:otherwise>
+								</xsl:choose>
+							</xsl:attribute>
 						</property>
 					</xsl:if>
 				</xsl:for-each>
@@ -141,6 +159,7 @@
 				<xsl:value-of select="rdfs:label"/>
 				<xsl:if test="not(rdfs:label!='')"><xsl:value-of select="$name"/></xsl:if>
 			</xsl:variable>
+			<xsl:variable name="predicate" select="$all-predicates/property[@predicate=$about]"/>
 			<property uri="{$about}" label="{$label}">
 				<xsl:if test="not(exists(* except rdf:type))"><xsl:attribute name="ref">true</xsl:attribute></xsl:if>
 				<xsl:choose>
@@ -155,13 +174,13 @@
 						</xsl:for-each>
 					</xsl:otherwise>
 				</xsl:choose>
-				<xsl:for-each-group select="$all-predicates/property[@predicate=$about]/ref-class" group-by="@uri">
+				<xsl:for-each-group select="$predicate/ref-class" group-by="@uri">
 					<ref-class uri="{@uri}"/>
 				</xsl:for-each-group>
-				<xsl:for-each-group select="$all-predicates/property[@predicate=$about]/datatype" group-by="@uri">
+				<xsl:for-each-group select="$predicate/datatype" group-by="@uri">
 					<datatype uri="{@uri}"/>
 				</xsl:for-each-group>
-				<xsl:for-each-group select="$all-predicates/property[@predicate=$about]/domain" group-by="@uri">
+				<xsl:for-each-group select="$predicate/domain" group-by="@uri">
 					<domain uri="{@uri}"/>
 				</xsl:for-each-group>
 				<xsl:for-each select="current-group()/rdfs:subPropertyOf">
@@ -189,66 +208,78 @@
 	<script src="{$staticroot}/js/graphlib.min.js"></script>
 	<script src="{$staticroot}/js/dagre.min.js"></script>
     <script src="{$staticroot}/js/joint.min.js"></script>
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h3 class="panel-title">Model</h3>
-		</div>
-		<div class="panel-body">
-			<div id="jointmodel"/>
-			<xsl:variable name="cells">
-				<!-- Nodes -->
-				<xsl:for-each select="$vocabulary/classes/class">
-					<xsl:if test="position()!=1">,</xsl:if>
-					<xsl:text>{id:"</xsl:text><xsl:value-of select="@uri"/><xsl:text>"</xsl:text>
-					<xsl:text>,type:"uml.State"</xsl:text>
-					<xsl:text>,name:"</xsl:text><xsl:value-of select="@label"/><xsl:text>"</xsl:text>
-					<xsl:text>,events:[</xsl:text>
-					<xsl:for-each select="property[not(exists(@refclass))]">
-						<xsl:variable name="property" select="@uri"/>
-						<xsl:variable name="label"><xsl:value-of select="../../../properties/property[@uri=$property]/@label"/></xsl:variable>
+	<div id="graphcanvas" style="position:relative;">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title">Model<span class="glyphicon glyphicon-fullscreen" style="position:absolute;right:10px;margin-top:10px;cursor:pointer" onclick="togglefullscreen()"/></h3>
+			</div>
+			<div class="panel-body">
+				<div id="jointmodel"/>
+				<xsl:variable name="cells">
+					<!-- Nodes -->
+					<xsl:for-each select="$vocabulary/classes/class">
 						<xsl:if test="position()!=1">,</xsl:if>
-						<xsl:text>"</xsl:text><xsl:value-of select="$label"/><xsl:if test="$label=''"><xsl:value-of select="replace($property,'^.*(#|/)([^(#|/)]+)$','$2')"/></xsl:if><xsl:text>"</xsl:text>
+						<xsl:text>{id:"</xsl:text><xsl:value-of select="@uri"/><xsl:text>"</xsl:text>
+						<xsl:text>,type:"uml.State"</xsl:text>
+						<xsl:text>,name:"</xsl:text><xsl:value-of select="@label"/><xsl:text>"</xsl:text>
+						<xsl:text>,events:[</xsl:text>
+						<xsl:for-each select="property[not(exists(@refclass))]">
+							<xsl:variable name="propertyuri" select="@uri"/>
+							<xsl:variable name="property" select="../../../properties/property[@uri=$propertyuri]"/>
+							<xsl:variable name="label"><xsl:value-of select="$property/@label"/></xsl:variable>
+							<xsl:variable name="datatype"><xsl:value-of select="$property/datatype/@uri"/></xsl:variable>
+							<xsl:if test="position()!=1">,</xsl:if>
+							<xsl:text>"</xsl:text>
+								<xsl:value-of select="$label"/><xsl:if test="$label=''"><xsl:value-of select="replace($propertyuri,'^.*(#|/)([^(#|/)]+)$','$2')"/></xsl:if>
+								<xsl:if test="$datatype!=''"> (<xsl:value-of select="replace($datatype,'^.*(#|/)([^(#|/)]+)$','$2')"/>)</xsl:if>
+								<xsl:text> [</xsl:text><xsl:value-of select="@mincount"/>,<xsl:value-of select="@maxcount"/>
+							<xsl:text>]"</xsl:text>
+						</xsl:for-each>
+						<xsl:text>]</xsl:text>
+						<xsl:text>,position:{x:300,y:300}</xsl:text>
+						<xsl:text>,size:{width:100,height:100}</xsl:text>
+						<xsl:text>}</xsl:text>
 					</xsl:for-each>
-					<xsl:text>]</xsl:text>
-					<xsl:text>,position:{x:300,y:300}</xsl:text>
-					<xsl:text>,size:{width:100,height:100}</xsl:text>
-					<xsl:text>}</xsl:text>
-				</xsl:for-each>
-				<!-- Links: superclasses -->
-				<xsl:for-each select="$vocabulary/classes/class/super">
-					<xsl:variable name="target" select="@uri"/>
-					<xsl:if test="exists($vocabulary/classes/class[@uri=$target])">
-						<xsl:text>,{id:"</xsl:text><xsl:value-of select="../@uri"/><xsl:value-of select="$target"/><xsl:text>"</xsl:text>
-						<xsl:text>,type:"link"</xsl:text>
-						<xsl:text>,source:{id:"</xsl:text><xsl:value-of select="../@uri"/><xsl:text>"}</xsl:text>
-						<xsl:text>,target:{id:"</xsl:text><xsl:value-of select="$target"/><xsl:text>"}</xsl:text>
-						<xsl:text>,router:{name:"manhattan"}</xsl:text>
-						<xsl:text>,connector:{name:"normal"}</xsl:text>
-						<xsl:text>,ldttype: "isa"</xsl:text>
-						<xsl:text>}</xsl:text>
-					</xsl:if>
-				</xsl:for-each>
-				<!-- Links: objectproperties -->
-				<xsl:for-each select="$vocabulary/classes/class/property[@refclass!='']">
-					<xsl:variable name="target" select="@refclass"/>
-					<xsl:if test="exists($vocabulary/classes/class[@uri=$target])">
-						<xsl:variable name="property" select="@uri"/>
-						<xsl:variable name="label"><xsl:value-of select="../../../properties/property[@uri=$property]/@label"/></xsl:variable>
-						<xsl:text>,{id:"</xsl:text><xsl:value-of select="../@uri"/><xsl:value-of select="$target"/><xsl:text>"</xsl:text>
-						<xsl:text>,type:"link"</xsl:text>
-						<xsl:text>,source:{id:"</xsl:text><xsl:value-of select="../@uri"/><xsl:text>"}</xsl:text>
-						<xsl:text>,target:{id:"</xsl:text><xsl:value-of select="$target"/><xsl:text>"}</xsl:text>
-						<xsl:text>,router:{name:"manhattan"}</xsl:text>
-						<xsl:text>,connector:{name:"normal"}</xsl:text>
-						<xsl:text>,labels: [{ position: 0.5, attrs: { text: { text: "</xsl:text><xsl:value-of select="$label"/><xsl:if test="$label=''"><xsl:value-of select="replace($property,'^.*(#|/)([^(#|/)]+)$','$2')"/></xsl:if><xsl:text>" } } }]</xsl:text>
-						<xsl:text>}</xsl:text>
-					</xsl:if>
-				</xsl:for-each>
-			</xsl:variable>
-			<script type="text/javascript">
-				var cells = {cells: [<xsl:value-of select="$cells"/>]};
-			</script>
-			<script src="{$staticroot}/js/linkedmodel.min.js"></script>
+					<!-- Links: superclasses -->
+					<xsl:for-each select="$vocabulary/classes/class/super">
+						<xsl:variable name="target" select="@uri"/>
+						<xsl:if test="exists($vocabulary/classes/class[@uri=$target])">
+							<xsl:text>,{id:"</xsl:text><xsl:value-of select="../@uri"/><xsl:value-of select="$target"/><xsl:text>"</xsl:text>
+							<xsl:text>,type:"link"</xsl:text>
+							<xsl:text>,source:{id:"</xsl:text><xsl:value-of select="../@uri"/><xsl:text>"}</xsl:text>
+							<xsl:text>,target:{id:"</xsl:text><xsl:value-of select="$target"/><xsl:text>"}</xsl:text>
+							<xsl:text>,router:{name:"manhattan"}</xsl:text>
+							<xsl:text>,connector:{name:"normal"}</xsl:text>
+							<xsl:text>,ldttype: "isa"</xsl:text>
+							<xsl:text>}</xsl:text>
+						</xsl:if>
+					</xsl:for-each>
+					<!-- Links: objectproperties -->
+					<xsl:for-each select="$vocabulary/classes/class/property[@refclass!='']">
+						<xsl:variable name="target" select="@refclass"/>
+						<xsl:if test="exists($vocabulary/classes/class[@uri=$target])">
+							<xsl:variable name="propertyuri" select="@uri"/>
+							<xsl:variable name="property" select="../../../properties/property[@uri=$propertyuri]"/>
+							<xsl:variable name="label"><xsl:value-of select="$property/@label"/></xsl:variable>
+							<xsl:text>,{id:"</xsl:text><xsl:value-of select="../@uri"/><xsl:value-of select="$propertyuri"/><xsl:value-of select="$target"/><xsl:text>"</xsl:text>
+							<xsl:text>,type:"link"</xsl:text>
+							<xsl:text>,source:{id:"</xsl:text><xsl:value-of select="../@uri"/><xsl:text>"}</xsl:text>
+							<xsl:text>,target:{id:"</xsl:text><xsl:value-of select="$target"/><xsl:text>"}</xsl:text>
+							<xsl:text>,router:{name:"manhattan"}</xsl:text>
+							<xsl:text>,connector:{name:"normal"}</xsl:text>
+							<xsl:text>,labels: [{ position: 0.5, attrs: { text: { text: "</xsl:text>
+								<xsl:value-of select="$label"/><xsl:if test="$label=''"><xsl:value-of select="replace($propertyuri,'^.*(#|/)([^(#|/)]+)$','$2')"/></xsl:if>
+								<xsl:text> [</xsl:text><xsl:value-of select="@mincount"/>,<xsl:value-of select="@maxcount"/>
+							<xsl:text>]" } } }]</xsl:text>
+							<xsl:text>}</xsl:text>
+						</xsl:if>
+					</xsl:for-each>
+				</xsl:variable>
+				<script type="text/javascript">
+					var cells = {cells: [<xsl:value-of select="$cells"/>]};
+				</script>
+				<script src="{$staticroot}/js/linkedmodel.min.js"></script>
+			</div>
 		</div>
 	</div>
 </xsl:template>

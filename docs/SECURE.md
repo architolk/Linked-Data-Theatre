@@ -1,4 +1,4 @@
-#Adding security to the Linked Data Theatre
+# Adding security to the Linked Data Theatre
 
 The Linked Data Theatre supports authentication and autorisation. It uses the regular authentication mechanism of Tomcat or any web application server.
 

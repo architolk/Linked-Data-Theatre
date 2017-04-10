@@ -1,0 +1,50 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix stage: <http://localhost:8080/stage#>.
+
+stage:dbpediaNLResource a elmo:Representation;
+	elmo:uri-pattern "^http://nl.dbpedia.org/";
+	elmo:endpoint <http://nl.dbpedia.org/sparql>;
+	elmo:query stage:ResourceQuery;
+	elmo:index "1";
+	elmo:contains stage:dbpediaNLResourceGraph;
+.
+stage:dbpediaResource a elmo:Representation;
+	elmo:uri-pattern "^http://dbpedia.org/";
+	elmo:endpoint <http://dbpedia.org/sparql>;
+	elmo:query stage:ResourceQuery;
+.
+stage:ResourceQuery a elmo:Query;
+	elmo:query '''
+	CONSTRUCT {
+			<@SUBJECT@> ?p ?o.
+			?o rdfs:label ?olabel
+		}
+		WHERE {
+			<@SUBJECT@> ?p ?o
+			FILTER (isIri(?o) or lang(?o)="" or lang(?o)="@LANGUAGE@")
+			OPTIONAL {
+				?o rdfs:label ?olabel.
+				FILTER (lang(?olabel) or lang(?olabel)="@LANGUAGE@")
+			}
+		}
+	'''
+.
+
+stage:dbpediaNLResourceGraph a elmo:Part;
+	elmo:appearance elmo:GraphAppearance;
+	elmo:index "2";
+	elmo:endpoint <http://nl.dbpedia.org/sparql>;
+	elmo:query '''
+		CONSTRUCT {
+			<@SUBJECT@> ?p ?o.
+			<@SUBJECT@> rdfs:label ?slabel.
+			?o rdfs:label ?olabel
+		}
+		WHERE {
+			<@SUBJECT@> ?p ?o.
+			<@SUBJECT@> rdfs:label ?slabel.
+			?o rdfs:label ?olabel
+			FILTER (?p!=<http://dbpedia.org/ontology/wikiPageWikiLink>)
+		}
+	''';
+.

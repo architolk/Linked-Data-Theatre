@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>nl.architolk.ldt</groupId>
 	<artifactId>ldt</artifactId>
-	<version>1.13.2-SNAPSHOT</version>
+	<version>1.16.1-SNAPSHOT</version>
 	<name>ldt</name>
 	<packaging>war</packaging>
 	<properties>
@@ -10,15 +10,15 @@
 		<buildTimestamp>${maven.build.timestamp}</buildTimestamp>
 		<license-maven-plugin.version>2.11</license-maven-plugin.version>
 		<license.failIfMissing>false</license.failIfMissing>
-		<release.version>1.13.0</release.version>
-		<release.date>2016-12-06</release.date>
-		<patch.date>2016-12-20</patch.date>
+		<release.version>1.16.0</release.version>
+		<release.date>2017-02-08</release.date>
+		<patch.date>2017-02-08</patch.date>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>nl.architolk.ldt</groupId>
 			<artifactId>processors</artifactId>
-			<version>1.10.0</version>
+			<version>1.15.0</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -83,6 +83,8 @@
 						<exclude>images/**</exclude>
 						<exclude>**/robots.txt</exclude>
 						<exclude>**/*.yml</exclude>
+						<exclude>**/*.archimate</exclude>
+						<exclude>src/test/**</exclude>
 					</excludes>
 				</configuration>
 				<dependencies>
@@ -123,6 +125,7 @@
 								<jsSourceFile>linkedmodel.js</jsSourceFile>
 								<jsSourceFile>rdfmap.js</jsSourceFile>
 								<jsSourceFile>ldt.js</jsSourceFile>
+								<jsSourceFile>chosen.ajax.js</jsSourceFile>
 							</jsSourceFiles>
 						</configuration>
 						<goals>
@@ -148,6 +151,75 @@
 					 </goals>
 				   </execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>9.2.10.v20150310</version>
+				<configuration>
+					<classesDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</classesDirectory>
+					<webAppSourceDirectory>${project.build.directory}/${project.build.finalName}</webAppSourceDirectory>
+					<jettyXml>${basedir}/src/test/jetty/jetty.xml</jettyXml>
+					<stopPort>8889</stopPort>
+					<stopKey>STOP</stopKey>
+					<stopWait>10</stopWait>
+				</configuration>
+				<executions>
+					<execution>
+						<id>start-jetty</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>start</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>stop-jetty</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>stop</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.lazerycode.jmeter</groupId>
+				<artifactId>jmeter-maven-plugin</artifactId>
+				<version>2.1.0</version>
+				<executions>
+					<execution>
+						<id>jmeter-tests</id>
+						<goals>
+							<goal>jmeter</goal>
+						</goals>
+						<configuration>
+							<ignoreResultFailures>true</ignoreResultFailures>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.lazerycode.jmeter</groupId>
+				<artifactId>jmeter-analysis-maven-plugin</artifactId>
+				<version>1.0.6</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>analyze</goal>
+						</goals>
+						<phase>post-integration-test</phase>
+					</execution>
+				</executions>
+				<configuration>
+					<source>${project.build.directory}/jmeter/results/*</source>
+					<targetDirectory>${project.build.directory}/reports</targetDirectory>
+					<checkResult>
+						<errors>
+							<!-- The analyzer finds a 406 an error, and at this moment 23,5% of all tests are 406s -->
+							<threshold>24</threshold>
+							<tolerance>2</tolerance>
+						</errors>
+					</checkResult>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

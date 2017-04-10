@@ -1,10 +1,10 @@
 <!--
 
     NAME     update.xpl
-    VERSION  1.13.0
-    DATE     2016-12-06
+    VERSION  1.16.0
+    DATE     2017-02-08
 
-    Copyright 2012-2016
+    Copyright 2012-2017
 
     This file is part of the Linked Data Theatre.
 
@@ -68,7 +68,7 @@
 	</p:processor>
 	
 	<!-- Create context -->
-	<p:processor name="oxf:xslt">
+	<p:processor name="oxf:unsafe-xslt">
 		<p:input name="data" href="aggregate('croot',#instance,#request,#roles)"/>
 		<p:input name="config" href="../transformations/context.xsl"/>
 		<p:output name="data" id="context"/>
@@ -301,7 +301,7 @@
 				<p:input name="data" href="#converted"/>
 			</p:processor>
 		</p:when>
-		<p:otherwise>
+		<p:when test="exists(results/rdf:RDF)">
 			<!-- Transform -->
 			<p:processor name="oxf:unsafe-xslt">
 				<p:input name="data" href="#rdfa"/>
@@ -327,6 +327,42 @@
 					</config>
 				</p:input>
 				<p:input name="data" href="#converted"/>
+			</p:processor>
+		</p:when>
+		<p:otherwise>
+			<!-- Production doesn't exist in definition: 404 return code -->
+			<p:processor name="oxf:identity">
+				<p:input name="data">
+					<parameters>
+							<error-nr>404</error-nr>
+					</parameters>
+				</p:input>
+				<p:output name="data" id="errortext"/>
+			</p:processor>
+			<p:processor name="oxf:xslt">
+				<p:input name="data" href="aggregate('results',#context,#errortext)"/>
+				<p:input name="config" href="../transformations/error2html.xsl"/>
+				<p:output name="data" id="html"/>
+			</p:processor>
+			<p:processor name="oxf:html-converter">
+				<p:input name="config">
+					<config>
+						<encoding>utf-8</encoding>
+						<version>5.0</version>
+					</config>
+				</p:input>
+				<p:input name="data" href="#html"/>
+				<p:output name="data" id="htmlres" />
+			</p:processor>
+			<!-- Serialize -->
+			<p:processor name="oxf:http-serializer">
+				<p:input name="config">
+					<config>
+						<cache-control><use-local-cache>false</use-local-cache></cache-control>
+						<status-code>404</status-code>
+					</config>
+				</p:input>
+				<p:input name="data" href="#htmlres"/>
 			</p:processor>
 		</p:otherwise>
 	</p:choose>

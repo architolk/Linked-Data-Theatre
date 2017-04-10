@@ -1,0 +1,13 @@
+<!--
+    This file is an empty template for your own properties-local.xml file. Please follow the instructions here:
+
+    http://wiki.orbeon.com/forms/doc/developer-guide/configuration-properties
+-->
+<properties xmlns:xs="http://www.w3.org/2001/XMLSchema"
+            xmlns:oxf="http://www.orbeon.com/oxf/processors">
+
+	<property as="xs:string" name="oxf.http.ssl.hostname-verifier" value="allow-all"/>
+	<property as="xs:anyURI" name="oxf.http.ssl.keystore.uri" value="file:/D:/Tomcat/webapps/ROOT/WEB-INF/resources/config/ldt.jks"/>
+    <property as="xs:string" name="oxf.http.ssl.keystore.password" value="ldtldt"/>
+			
+</properties>

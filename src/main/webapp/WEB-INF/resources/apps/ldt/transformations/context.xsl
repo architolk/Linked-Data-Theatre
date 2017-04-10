@@ -1,10 +1,10 @@
 <!--
 
     NAME     context.xsl
-    VERSION  1.13.0
-    DATE     2016-12-06
+    VERSION  1.16.1-SNAPSHOT
+    DATE     2017-03-20
 
-    Copyright 2012-2016
+    Copyright 2012-2017
 
     This file is part of the Linked Data Theatre.
 
@@ -25,12 +25,12 @@
 <!--
 	DESCRIPTION
 	Generates the context, used in the info.xpl, version.xpl, query.xpl, sparql.xpl and container.xpl pipelines
-  
+
 -->
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-	<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="no"/>
-	
+	<xsl:output name="xml" method="xml" version="1.0" encoding="UTF-8" indent="no"/>
+
 	<xsl:template match="/root|/croot">
 		<xsl:variable name="uri-filter">[^a-zA-Z0-9:\.\-_~/()#&amp;=,]</xsl:variable> <!-- ampersand and equal-sign added for Juriconnect -->
 		<xsl:variable name="x-forwarded-host"><xsl:value-of select="replace(request/headers/header[name='x-forwarded-host']/value,'^([^,]+).*$','$1')"/></xsl:variable>
@@ -95,7 +95,7 @@
 				<xsl:text>/stage</xsl:text>
 			</xsl:if>
 		</xsl:variable>
-		
+
 		<!-- URL should be request-url, but in case of proxy we need to replace the host -->
 		<xsl:variable name="url-with-domain">
 			<xsl:choose>
@@ -111,7 +111,7 @@
 				<xsl:otherwise><xsl:value-of select="replace($url-with-domain,'^([a-z]+://[^/]+)(.*)$',concat('$1',$docroot,'$2'))"/></xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
-		
+
 		<xsl:variable name="datearray" select="tokenize(theatre/date,'[-/]')"/>
 		<xsl:variable name="normalized-date">
 			<xsl:if test="$datearray[1]!=''"><xsl:value-of select="format-number(number($datearray[1]),'0000')"/></xsl:if>
@@ -128,8 +128,16 @@
 				<xsl:otherwise><xsl:value-of select="replace($normalized-date,'[T:\.]','-')"/></xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
+		<xsl:variable name="request"><request><xsl:copy-of select="request/parameters|request/request-url"/></request></xsl:variable>
+		<xsl:variable name="version">
+			<xsl:choose>
+				<!-- Ommit version number in case of functional testing (or regresssion would occur) -->
+				<xsl:when test="request/headers/header[name='user-agent']/value='jmeter-functional-test'">0.0.0</xsl:when>
+				<xsl:otherwise><xsl:value-of select="version/number"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
 		
-		<context env="{theatre/@env}" docroot="{$docroot}" staticroot="{$staticroot}" version="{version/number}" timestamp="{version/timestamp}" sparql="{theatre/@sparql}">
+		<context env="{theatre/@env}" docroot="{$docroot}" staticroot="{$staticroot}" version="{$version}" timestamp="{version/timestamp}" sparql="{theatre/@sparql}">
 			<configuration-endpoint><xsl:value-of select="theatre/@configuration-endpoint"/></configuration-endpoint>
 			<local-endpoint>
 				<xsl:choose>
@@ -137,6 +145,14 @@
 					<xsl:otherwise><xsl:value-of select="theatre/@local-endpoint"/></xsl:otherwise>
 				</xsl:choose>
 			</local-endpoint>
+			<sparql-endpoint>
+				<xsl:choose>
+					<xsl:when test="theatre/site[@domain=$domain]/@sparql-endpoint!=''"><xsl:value-of select="theatre/site[@domain=$domain]/@sparql-endpoint"/></xsl:when>
+					<xsl:when test="theatre/@sparql-endpoint!=''"><xsl:value-of select="theatre/@sparql-endpoint"/></xsl:when>
+					<xsl:when test="theatre/site[@domain=$domain]/@site-endpoint!=''"><xsl:value-of select="theatre/site[@domain=$domain]/@site-endpoint"/></xsl:when>
+					<xsl:otherwise><xsl:value-of select="theatre/@local-endpoint"/></xsl:otherwise>
+				</xsl:choose>
+			</sparql-endpoint>
 			<title>
 				<xsl:choose>
 					<xsl:when test="$stage/@title!=''"><xsl:value-of select="$stage/@title"/></xsl:when>
@@ -144,6 +160,23 @@
 				</xsl:choose>
 			</title>
 			<url><xsl:value-of select="$url"/></url>
+			<request-hash><xsl:value-of xmlns:saxon="http://saxon.sf.net/" xmlns:Hasher="nl.architolk.ldt.utils.Hasher" select="Hasher:hash(saxon:serialize($request,'xml'))"/></request-hash>
+			<querycache>
+				<validity>
+					<xsl:choose>
+						<xsl:when test="theatre/@querycache!=''"><xsl:value-of select="theatre/@querycache"/></xsl:when>
+						<xsl:otherwise>none</xsl:otherwise>
+					</xsl:choose>
+				</validity>
+			</querycache>
+			<cache>
+				<validity>
+					<xsl:choose>
+						<xsl:when test="theatre/@cache!=''"><xsl:value-of select="theatre/@cache"/></xsl:when>
+						<xsl:otherwise>none</xsl:otherwise>
+					</xsl:choose>
+				</validity>
+			</cache>
 			<domain><xsl:value-of select="$domain"/></domain>
 			<subdomain><xsl:value-of select="$subdomain"/></subdomain>
 			<date><xsl:value-of select="$normal-date"/></date>
@@ -160,37 +193,46 @@
 				<xsl:choose>
 					<xsl:when test="theatre/format='graphml'">application/graphml+xml</xsl:when> <!-- No specific mime-type is available for graphml, this seems the most logical -->
 					<xsl:when test="theatre/format='yed'">application/x.elmo.yed</xsl:when> <!-- Application specific mime-type -->
-					<xsl:when test="theatre/format='exml'">application/xml</xsl:when> <!-- Full XML, all resultsets -->
-					<xsl:when test="theatre/format='xml'">application/rdf+xml</xsl:when> <!-- Only first resultset, like ttl and json -->
+					<xsl:when test="theatre/format='exml'">application/x.elmo.xml</xsl:when> <!-- Full XML, all resultsets -->
+					<xsl:when test="theatre/format='xml'">application/xml</xsl:when> <!-- Only first resultset, like ttl and json -->
 					<xsl:when test="theatre/format='rdf'">application/rdf+xml</xsl:when>
 					<xsl:when test="theatre/format='sparql'">application/sparql-results+xml</xsl:when>
 					<xsl:when test="theatre/format='txt'">text/plain</xsl:when>
 					<xsl:when test="theatre/format='csv'">text/csv</xsl:when>
 					<xsl:when test="theatre/format='ttl'">text/turtle</xsl:when>
 					<xsl:when test="theatre/format='json'">application/json</xsl:when>
-					<xsl:when test="theatre/format='jsonld'">application/json</xsl:when>
+					<xsl:when test="theatre/format='jsonld'">application/ld+json</xsl:when>
 					<xsl:when test="theatre/format='xlsx'">application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</xsl:when>
 					<xsl:when test="theatre/format='docx'">application/vnd.openxmlformats-officedocument.wordprocessingml.document</xsl:when>
 					<xsl:when test="theatre/format='pdf'">application/pdf</xsl:when>
 					<xsl:when test="theatre/format='xmi'">application/vnd.xmi+xml</xsl:when>
 					<xsl:when test="theatre/format='svgi'">application/x.elmo.svg+xml</xsl:when> <!-- Application specific mime-type -->
 					<xsl:when test="theatre/format='d3json'">application/x.elmo.d3+json</xsl:when> <!-- Application specific mime-type -->
+					<xsl:when test="theatre/format='plainjson'">application/x.elmo.plain+json</xsl:when> <!-- Application specific mime-type -->
 					<xsl:when test="theatre/format='query'">application/x.elmo.query</xsl:when> <!-- Application specific mime-type -->
 					<xsl:when test="theatre/format='rdfa'">application/x.elmo.rdfa</xsl:when> <!-- Application specific mime-type -->
+					<xsl:when test="contains(request/headers/header[name='accept']/value,'text/html')">text/html</xsl:when>
+					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/xhtml+xml')">text/html</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/sparql-results+xml')">application/sparql-results+xml</xsl:when>
+					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/xml')">application/xml</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/rdf+xml')">application/rdf+xml</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'text/turtle')">text/turtle</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'text/csv')">text/csv</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/json')">application/json</xsl:when>
-					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/ld+json')">application/json</xsl:when>
+					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/ld+json')">application/ld+json</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')">application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/vnd.openxmlformats-officedocument.wordprocessingml.document')">application/vnd.openxmlformats-officedocument.wordprocessingml.document</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/pdf')">application/pdf</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/vnd.xmi+xml')">application/vnd.xmi+xml</xsl:when>
-					<xsl:when test="contains(request/headers/header[name='accept']/value,'text/html')">text/html</xsl:when>
 					<xsl:otherwise>text/html</xsl:otherwise> <!-- If all fails: simply html -->
 				</xsl:choose>
 			</format>
+			<docsubject>
+				<xsl:choose>
+					<xsl:when test="theatre/subject!=''"><xsl:value-of select="replace(theatre/subject,$uri-filter,'')"/></xsl:when>
+					<xsl:otherwise><xsl:value-of select="$url"/></xsl:otherwise>
+				</xsl:choose>
+			</docsubject>
 			<subject>
 				<xsl:choose>
 					<!-- For security reasons, subject of a container should ALWAYS be the same as the request-url -->
@@ -226,6 +268,11 @@
 					<xsl:copy-of select="."/>
 				</xsl:for-each>
 			</parameters>
+			<attributes>
+				<xsl:for-each select="request/attributes/attribute[name!='']">
+					<xsl:copy-of select="."/>
+				</xsl:for-each>
+			</attributes>
 			<xsl:if test="request/body/@xsi:type='xs:anyURI'">
 				<xsl:choose>
 					<xsl:when test="request/method='POST'"><upload-file action='insert'><xsl:value-of select="request/body"/></upload-file></xsl:when>

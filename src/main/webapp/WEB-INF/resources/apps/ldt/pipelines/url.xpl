@@ -1,10 +1,10 @@
 <!--
 
     NAME     url.xpl
-    VERSION  1.13.1
-    DATE     2016-12-20
+    VERSION  1.16.1-SNAPSHOT
+    DATE     2017-03-31
 
-    Copyright 2012-2016
+    Copyright 2012-2017
 
     This file is part of the Linked Data Theatre.
 
@@ -46,6 +46,17 @@
 	<!-- Configuration> -->
 	<p:param type="input" name="instance"/>
 	
+	<!-- Services info -->
+	<p:processor name="oxf:url-generator">
+		<p:input name="config">
+			<config>
+				<url>../services.xml</url>
+				<content-type>application/xml</content-type>
+			</config>
+		</p:input>
+		<p:output name="data" id="services"/>
+	</p:processor>
+
 	<!-- Parse SPARQL query -->
 	<p:processor name="oxf:sparql-parser">
 		<p:input name="data" transform="oxf:xslt" href="#instance">
@@ -56,10 +67,29 @@
 	
 	<!-- Translate to file context -->
 	<p:processor name="oxf:xslt">
-		<p:input name="data" href="aggregate('root',#instance,#query)"/>
+		<p:input name="data" href="aggregate('root',#instance,#query,#services)"/>
 		<p:input name="config">
 			<xsl:stylesheet version="2.0">
-				<xsl:template match="/">
+			<xsl:template match="parameter" mode="replace">
+				<xsl:param name="text"/>
+				<xsl:variable name="value">
+					<xsl:value-of select="encode-for-uri(value[1])"/>
+				</xsl:variable>
+				<xsl:choose>
+					<xsl:when test="exists(following-sibling::*[1])">
+						<xsl:variable name="service">
+							<xsl:apply-templates select="following-sibling::*[1]" mode="replace">
+								<xsl:with-param name="text" select="$text"/>
+							</xsl:apply-templates>
+						</xsl:variable>
+						<xsl:value-of select="replace($service,concat('@',upper-case(name),'@'),$value)"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="replace($text,concat('@',upper-case(name),'@'),$value)"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:template>
+			<xsl:template match="/">
 					<xsl:variable name="subject">
 						<xsl:value-of select="root/query/group[1]/triple[1]/subject/@uri"/>
 						<xsl:value-of select="root/query/group[1]/group[1]/triple[1]/subject/@uri"/>
@@ -67,6 +97,10 @@
 					</xsl:variable>
 					<xsl:variable name="graph">
 						<xsl:value-of select="root/query/group[1]/graph[1]/@uri"/>
+					</xsl:variable>
+					<xsl:variable name="service-url">
+						<xsl:value-of select="$graph"/>
+						<xsl:if test="$graph=''"><xsl:value-of select="$subject"/></xsl:if>
 					</xsl:variable>
 					<filecontext>
 						<type>
@@ -76,10 +110,7 @@
 								<xsl:otherwise>unknown</xsl:otherwise>
 							</xsl:choose>
 						</type>
-						<graph>
-							<xsl:value-of select="$graph"/>
-							<xsl:if test="$graph=''"><xsl:value-of select="$subject"/></xsl:if>
-						</graph>
+						<graph><xsl:value-of select="$service-url"/></graph>
 						<subject><xsl:value-of select="$subject"/></subject>
 						<query>
 							<xsl:choose>
@@ -87,6 +118,34 @@
 								<xsl:otherwise><xsl:value-of select="root/theatre/query"/></xsl:otherwise>
 							</xsl:choose>
 						</query>
+						<xsl:variable name="service" select="root/services/service[@applies-to=$service-url]"/>
+						<output>
+							<xsl:choose>
+								<xsl:when test="$service/@accept='text/plain'">txt</xsl:when>
+								<xsl:when test="$service/@accept='application/xml'">xml</xsl:when>
+								<xsl:when test="$service/@accept='application/json'">json</xsl:when>
+								<xsl:when test="$service/@applies-to!=''">json-ld</xsl:when>
+								<xsl:otherwise>rdf</xsl:otherwise>
+							</xsl:choose>
+						</output>
+						<xsl:variable name="params">
+							<xsl:for-each select="root/query/group[1]/triple[subject/@uri=$graph]">
+								<xsl:variable name="name"><xsl:value-of select="substring-after(predicate/@uri,'#')"/></xsl:variable>
+								<xsl:if test="$name!='' and object!=''">
+									<parameter>
+										<name><xsl:value-of select="$name"/></name>
+										<value><xsl:value-of select="object"/></value>
+									</parameter>
+								</xsl:if>
+							</xsl:for-each>
+						</xsl:variable>
+						<params>
+							<xsl:apply-templates select="$params/parameter[1]" mode="replace">
+								<xsl:with-param name="text" select="$service/@query"/>
+							</xsl:apply-templates>
+							<xsl:if test="not(exists($params/parameter))"><xsl:value-of select="$service/@query"/></xsl:if>
+						</params>
+						<xsl:if test="$service/@translator!=''"><translator><xsl:value-of select="$service/@translator"/></translator></xsl:if>
 					</filecontext>
 				</xsl:template>
 			</xsl:stylesheet>
@@ -99,24 +158,56 @@
 		<p:input name="config" transform="oxf:xslt" href="#filecontext">
 			<config xsl:version="2.0">
 				<input-type>text</input-type>
-				<output-type>rdf</output-type>
+				<output-type><xsl:value-of select="filecontext/output"/></output-type>
 				<tidy>yes</tidy> <!-- Tidy output in case of html (html pages on the internet don't always follow the rules...). HTML result should be a valid XML file. tidy does that for us. -->
-				<url><xsl:value-of select="filecontext/graph"/></url>
+				<url>
+					<xsl:value-of select="filecontext/graph"/>
+					<xsl:if test="filecontext/params!=''">?<xsl:value-of select="filecontext/params"/></xsl:if>
+				</url>
 				<method>get</method>
-				<accept>application/rdf+xml, text/rdf+n3, text/rdf+ttl, text/rdf+turtle, text/turtle, application/turtle, application/x-turtle, application/xml, */*</accept> <!-- Accept almost anything, but we prefer something RDF -->
+				<xsl:if test="filecontext/output='rdf'"><accept>application/rdf+xml, text/rdf+n3, text/rdf+ttl, text/rdf+turtle, text/turtle, application/turtle, application/x-turtle, application/xml, */*</accept></xsl:if> <!-- Accept almost anything, but we prefer something RDF -->
 			</config>
 		</p:input>
 		<p:output name="data" id="output"/>
 	</p:processor>
 
-	<!-- Process federated query from in memory triplestore -->
-	<p:processor name="oxf:sparql-processor">
-		<p:input name="config" transform="oxf:xslt" href="#filecontext">
-			<sparql xsl:version="2.0"><xsl:value-of select="filecontext/query"/></sparql>
-		</p:input>
-		<p:input name="data" href="#output#xpointer(response/rdf:RDF)"/>
-		<p:output name="data" id="result"/>
-	</p:processor>
+	<p:choose href="#filecontext">
+		<p:when test="filecontext/translator!=''">
+			<p:processor name="oxf:url-generator">
+				<p:input name="config" transform="oxf:xslt" href="#filecontext">
+					<config xsl:version="2.0">
+						<url>../translators/<xsl:value-of select="filecontext/translator"/>.xsl</url>
+						<content-type>application/xml</content-type>
+					</config>
+				</p:input>
+				<p:output name="data" id="translator"/>
+			</p:processor>
+			<!-- Translate -->
+			<p:processor name="oxf:xslt">
+				<p:input name="config" href="#translator"/>
+				<p:input name="data" href="#output"/>
+				<p:output name="data" id="rdf"/>
+			</p:processor>
+			<!-- Process federated query from in memory triplestore -->
+			<p:processor name="oxf:sparql-processor">
+				<p:input name="config" transform="oxf:xslt" href="#filecontext">
+					<sparql xsl:version="2.0"><xsl:value-of select="filecontext/query"/></sparql>
+				</p:input>
+				<p:input name="data" href="#rdf"/>
+				<p:output name="data" id="result"/>
+			</p:processor>
+		</p:when>
+		<p:otherwise>
+			<!-- Process federated query from in memory triplestore -->
+			<p:processor name="oxf:sparql-processor">
+				<p:input name="config" transform="oxf:xslt" href="#filecontext">
+					<sparql xsl:version="2.0"><xsl:value-of select="filecontext/query"/></sparql>
+				</p:input>
+				<p:input name="data" href="#output#xpointer(response/rdf:RDF)"/>
+				<p:output name="data" id="result"/>
+			</p:processor>
+		</p:otherwise>
+	</p:choose>
 	
 <!--
 <p:processor name="oxf:xml-serializer">

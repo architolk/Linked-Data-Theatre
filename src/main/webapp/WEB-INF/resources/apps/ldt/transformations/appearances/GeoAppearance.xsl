@@ -1,10 +1,10 @@
 <!--
 
     NAME     GeoAppearance.xsl
-    VERSION  1.13.0
-    DATE     2016-12-06
+    VERSION  1.16.0
+    DATE     2017-02-08
 
-    Copyright 2012-2016
+    Copyright 2012-2017
 
     This file is part of the Linked Data Theatre.
 
@@ -45,6 +45,11 @@
 
 <xsl:output method="xml" indent="yes"/>
 
+<xsl:template match="*" mode="safejsonstring">
+	<xsl:variable name="filter">(")</xsl:variable>
+	<xsl:value-of select="replace(replace(replace(.,'\\','\\\\'),'[&#13;]{0,1}&#10;','\\n'),$filter,'\\$1')"/>
+</xsl:template>
+
 <xsl:template match="rdf:RDF" mode="GeoAppearance">
 	<xsl:param name="backmap"/>
 	<xsl:param name="appearance"/>
@@ -53,10 +58,10 @@
 
 		<xsl:choose>
 			<xsl:when test="$backmap='image'">
-				<link href="{$staticroot}/css/leaflet.css" rel="stylesheet"/>
-				<script src="{$staticroot}/js/leaflet.js"></script>
-				<script src="{$staticroot}/js/leaflet.label.js"></script>
-				<script src="{$staticroot}/js/easy-button.js"></script>
+				<link href="{$staticroot}/css/leaflet.css{$ldtversion}" rel="stylesheet"/>
+				<script src="{$staticroot}/js/leaflet.js{$ldtversion}"></script>
+				<script src="{$staticroot}/js/leaflet.label.js{$ldtversion}"></script>
+				<script src="{$staticroot}/js/easy-button.js{$ldtversion}"></script>
 				<!-- Print form -->
 				<form id="svgform" method="post" action="{$subdomain}/print-graph" enctype="multipart/form-data">
 					<input type="hidden" id="type" name="type" value=""/>
@@ -67,19 +72,26 @@
 				<!-- TOT HIER -->
 			</xsl:when>
 			<xsl:otherwise>
-				<link href="{$staticroot}/css/leaflet.css" rel="stylesheet"/>
-				<script src="{$staticroot}/js/leaflet.js"></script>
-				<script src="{$staticroot}/js/proj4-compressed.js"></script>
-				<script src="{$staticroot}/js/proj4leaflet.js"></script>
+				<link href="{$staticroot}/css/leaflet.css{$ldtversion}" rel="stylesheet"/>
+				<script src="{$staticroot}/js/leaflet.js{$ldtversion}"></script>
+				<script src="{$staticroot}/js/proj4-compressed.js{$ldtversion}"></script>
+				<script src="{$staticroot}/js/proj4leaflet.js{$ldtversion}"></script>
 				<!-- Clickable map form -->
-				<form id="clickform" method="get" action="#">
+				<xsl:variable name="link" select="rdf:Description[elmo:applies-to='http://bp4mc2.org/elmo/def#Appearance']/html:link[1]"/>
+				<xsl:variable name="action">
+					<xsl:choose>
+						<xsl:when test="$link!=''"><xsl:value-of select="$link"/></xsl:when>
+						<xsl:otherwise>#</xsl:otherwise>
+					</xsl:choose>
+				</xsl:variable>
+				<form id="clickform" method="get" action="{$action}">
 					<input type="hidden" id="lat" name="lat" value=""/>
 					<input type="hidden" id="long" name="long" value=""/>
 					<input type="hidden" id="zoom" name="zoom" value=""/>
 				</form>
 			</xsl:otherwise>
 		</xsl:choose>
-		<script src="{$staticroot}/js/linkeddatamap.min.js"></script>
+		<script src="{$staticroot}/js/linkeddatamap.min.js{$ldtversion}"></script>
 		
 		<xsl:variable name="latlocator" select="rdf:Description[rdf:type/@rdf:resource='http://bp4mc2.org/elmo/def#GeoLocator'][1]/geo:lat"/>
 		<xsl:variable name="latdata">
@@ -168,11 +180,18 @@
 				<div id="map"></div>
 				<!-- TODO: width en height moet ergens vandaan komen. Liefst uit plaatje, maar mag ook uit eigenschappen -->
 				<script type="text/javascript">
-					initMap('<xsl:value-of select="$staticroot"/>',<xsl:value-of select="$zoom"/>,<xsl:value-of select="$lat"/>, <xsl:value-of select="$long"/>, '<xsl:value-of select="$backmap"/>', '<xsl:value-of select="$img"/>', '<xsl:value-of select="$container"/>', <xsl:value-of select="$left"/>, <xsl:value-of select="$top"/>, <xsl:value-of select="$width"/>, <xsl:value-of select="$height"/>);
+					initMap("<xsl:value-of select="$staticroot"/>",<xsl:value-of select="$zoom"/>,<xsl:value-of select="$lat"/>, <xsl:value-of select="$long"/>, "<xsl:value-of select="$backmap"/>", "<xsl:value-of select="$img"/>", "<xsl:value-of select="$container"/>", <xsl:value-of select="$left"/>, <xsl:value-of select="$top"/>, <xsl:value-of select="$width"/>, <xsl:value-of select="$height"/>);
+
+					<xsl:for-each select="rdf:Description[elmo:applies-to='http://bp4mc2.org/elmo/def#Appearance' and elmo:appearance/@rdf:resource='http://bp4mc2.org/elmo/def#TransparantOverlay']">
+						<xsl:variable name="layers">
+							<xsl:for-each select="elmo:layer[.!='']"><xsl:if test="position()!=1">,</xsl:if><xsl:value-of select="."/></xsl:for-each>
+						</xsl:variable>
+						addOverlay('<xsl:value-of select="elmo:service"/>','<xsl:value-of select="$layers"/>',true);
+					</xsl:for-each>
 					
 					<xsl:for-each select="rdf:Description[geo:lat!='' and geo:long!='' and rdfs:label!='']">
 						<xsl:variable name="resource-uri"><xsl:call-template name="resource-uri"><xsl:with-param name="uri" select="@rdf:about"/></xsl:call-template></xsl:variable>
-						addPoint(<xsl:value-of select="geo:lat[1]"/>,<xsl:value-of select="geo:long[1]"/>,"<xsl:value-of select="rdfs:label"/>","<xsl:value-of select="$resource-uri"/>");
+						addPoint(<xsl:value-of select="geo:lat[1]"/>,<xsl:value-of select="geo:long[1]"/>,"<xsl:apply-templates select="rdfs:label" mode="safejsonstring"/>","<xsl:value-of select="$resource-uri"/>","<xsl:value-of select="rdf:value"/>","<xsl:value-of select="html:icon"/>");
 					</xsl:for-each>
 					<xsl:for-each select="rdf:Description[geo:geometry!='']"><xsl:sort select="string-length(geo:geometry[1])" data-type="number" order="descending"/>
 						<!-- //<xsl:value-of select="string-length(geo:geometry[1])"/>-<xsl:value-of select="key('resource',elmo:style[1]/@rdf:resource)/elmo:name"/> -->
@@ -195,14 +214,14 @@
 								<xsl:otherwise><xsl:value-of select="key('resource',elmo:style[1]/@rdf:resource)/elmo:name[1]"/></xsl:otherwise>
 							</xsl:choose>
 						</xsl:variable>
-						addWKT('<xsl:value-of select="@rdf:about"/>','<xsl:value-of select="geo:geometry[1]"/>','<xsl:value-of select="rdfs:label[1]"/>','<xsl:value-of select="$resource-uri"/>','s<xsl:value-of select="$styleclass"/>');
+						addWKT("<xsl:value-of select="@rdf:about"/>","<xsl:value-of select="geo:geometry[1]"/>","<xsl:value-of select="rdfs:label[1]"/>","<xsl:value-of select="$resource-uri"/>","s<xsl:value-of select="$styleclass"/>");
 					</xsl:for-each>
 
 					<xsl:for-each select="rdf:Description[geo:geometry!='']/(* except (html:link|elmo:style))[exists(@rdf:resource)]">
-						addEdge('<xsl:value-of select="../@rdf:about"/>','<xsl:value-of select="name()"/>','<xsl:value-of select="@rdf:resource"/>');
+						addEdge("<xsl:value-of select="../@rdf:about"/>","<xsl:value-of select="name()"/>","<xsl:value-of select="@rdf:resource"/>");
 					</xsl:for-each>
 					
-					showLocations(<xsl:value-of select="$doZoom"/>,'<xsl:value-of select="$appearance"/>');
+					showLocations(<xsl:value-of select="$doZoom"/>,"<xsl:value-of select="$appearance"/>");
 				</script>
 			</div>
 		</div>

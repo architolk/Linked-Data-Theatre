@@ -1,10 +1,10 @@
 <!--
 
     NAME     info.xpl
-    VERSION  1.13.0
-    DATE     2016-12-06
+    VERSION  1.16.0
+    DATE     2017-02-08
 
-    Copyright 2012-2016
+    Copyright 2012-2017
 
     This file is part of the Linked Data Theatre.
 
@@ -26,7 +26,7 @@
     DESCRIPTION
     Page that shows information about this version of the Linked Data Theatre
 	In prod, this page will show only a minimum of information.
-	
+
 -->
 <p:config xmlns:p="http://www.orbeon.com/oxf/pipeline"
 		  xmlns:xforms="http://www.w3.org/2002/xforms"
@@ -57,6 +57,7 @@
 				<include>/request/headers/header</include>
 				<include>/request/request-url</include>
 				<include>/request/parameters/parameter</include>
+				<include>/request/attributes/attribute</include>
 				<include>/request/remote-user</include>
 				<include>/request/request-path</include>
 			</config>
@@ -66,18 +67,18 @@
 
 	<!-- Get credentials and user roles -->
 	<p:processor name="oxf:request-security">
-		<p:input name="config" transform="oxf:xslt" href="#instance">        
+		<p:input name="config" transform="oxf:xslt" href="#instance">
 			<config xsl:version="2.0">
 				<xsl:for-each select="theatre/roles/role">
 					<role><xsl:value-of select="."/></role>
 				</xsl:for-each>
-			</config>    
+			</config>
 		</p:input>
 		<p:output name="data" id="roles"/>
 	</p:processor>
-	
+
 	<!-- Create context -->
-	<p:processor name="oxf:xslt">
+	<p:processor name="oxf:unsafe-xslt">
 		<p:input name="data" href="aggregate('root',#instance,#request,#roles,#version)"/>
 		<p:input name="config" href="../transformations/context.xsl"/>
 		<p:output name="data" id="context"/>
@@ -89,7 +90,7 @@
 		<p:input name="config" href="../transformations/context2info.xsl"/>
 		<p:output name="data" id="info"/>
 	</p:processor>
-	
+
 	<!-- Convert XML result to plain text -->
 	<p:processor name="oxf:text-converter">
 		<p:input name="config">

@@ -1,9 +1,9 @@
 #
 # NAME     build.sh
-# VERSION  1.13.0
-# DATE     2016-12-06
+# VERSION  1.16.0
+# DATE     2017-02-08
 #
-# Copyright 2012-2016
+# Copyright 2012-2017
 #
 # This file is part of the Linked Data Theatre.
 #
@@ -38,4 +38,4 @@ cd ..
 # package ldt
 mvn clean package
 # cp files to tomcat webapps dir
-cp -R target/ldt*/ webapps/ldt/
+cp -R target/ldt*/ webapps/ROOT/

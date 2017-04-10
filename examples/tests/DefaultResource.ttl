@@ -10,13 +10,98 @@ stage:DefaultResource a elmo:Representation;
 	elmo:index "1";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
+	elmo:contains stage:DefaultResource_graph;
 	elmo:layer elmo:BottomLayer;
 	elmo:query '''
 		construct {
-			<@SUBJECT@> ?p ?o
+			<@SUBJECT@> ?p ?o.
+			?o rdfs:label ?olabel
 		}
 		where {
 			<@SUBJECT@> ?p ?o
+			OPTIONAL {
+				?o rdfs:label ?olabel
+				FILTER (lang(?olabel)="@LANGUAGE@" or lang(?olabel)="")
+			}
+		}
+	''';
+.
+stage:DefaultResource_graph a elmo:Part;
+	elmo:index "2";
+	elmo:appearance elmo:GraphAppearance;
+	elmo:fragment [
+		elmo:applies-to "rdfs-Class";
+		html:stylesheet '''
+			fill: blue;
+			fill-opacity: .3;
+			stroke: #666;
+		''';
+	];
+	elmo:fragment [
+		elmo:applies-to "owl-Class";
+		html:stylesheet '''
+			fill: blue;
+			fill-opacity: .3;
+			stroke: #666;
+		''';
+	];
+	elmo:fragment [
+		elmo:applies-to "skos:Concept";
+		html:stylesheet '''
+			fill: red;
+			fill-opacity: .3;
+			stroke: #666;
+		''';
+	];
+	elmo:query '''
+		construct {
+			<@SUBJECT@> rdfs:label ?slabel.
+			<@SUBJECT@> ?p ?o.
+			?o rdfs:label ?olabel.
+			?o elmo:style ?otype.
+			?or ?pr <@SUBJECT@>.
+			?or rdfs:label ?orlabel.
+			?or elmo:style ?ortype.
+			<@SUBJECT@> elmo:style ?stype.
+			owl:Class elmo:name "owl-Class".
+			rdfs:Class elmo:name "rdfs-Class".
+			skos:Concept elmo:name "skos-Concept".
+		}
+		where {
+			{
+				<@SUBJECT@> rdfs:label ?slabel.
+			}
+			UNION
+			{
+				<@SUBJECT@> rdf:type ?stype.
+			}
+			UNION
+			{
+				select distinct ?o ?p (str(?ol) as ?olabel) ?otype
+				where {
+					<@SUBJECT@> ?p ?o
+					FILTER (isIRI(?o))
+					OPTIONAL {?o rdf:type ?otype}
+					OPTIONAL {
+						?o rdfs:label ?ol
+						FILTER (lang(?ol)="@LANGUAGE@" or lang(?ol)="")
+					}
+				}
+				limit 100
+			}
+			UNION
+			{
+				select distinct ?or ?pr (str(?orl) as ?orlabel) ?ortype
+				where {
+					?or ?pr <@SUBJECT@>.
+					OPTIONAL {?or rdf:type ?ortype}
+					OPTIONAL {
+						?or rdfs:label ?orl
+						FILTER (lang(?orl)="@LANGUAGE@" or lang(?orl)="")
+					}
+				}
+				limit 100
+			}
 		}
 	''';
 .

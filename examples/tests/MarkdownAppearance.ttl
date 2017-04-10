@@ -8,23 +8,54 @@ stage:MarkdownAppearance	a	elmo:Representation;
 	elmo:url-pattern	"/query/MarkdownAppearance$";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
-	elmo:contains stage:MarkdownAppearance_form;
+	elmo:contains stage:MarkdownAppearance_data;
+	elmo:contains stage:MarkdownAppearance_select;
+	elmo:contains stage:MarkdownAppearance_content;
 	elmo:contains stage:MarkdownAppearance_table;
 .
 
-stage:MarkdownAppearance_form elmo:index "1";
+stage:MarkdownAppearance_data a elmo:Part;
+	elmo:index "1";
+	elmo:appearance elmo:MarkdownAppearance;
+	elmo:data [
+		rdfs:label "Markdown as stand alone part";
+		elmo:md '''#Test
+Dit is een **test** van *markdown*.
+Kijken of `code` ook werkt:
+
+	Dit gaat dus anders
+	En dit ook
+	
+##Nummers
+En nummers:
+
+- dot 1
+- dot 2
+- dot 3'''
+	]
+.
+
+stage:MarkdownAppearance_select a elmo:Part;
+	elmo:index "2";
+	elmo:appearance elmo:MarkdownAppearance;
+	elmo:query "select distinct ?md where {<http://elmo.localhost/markdowntest> skos:definition ?md}"
+.
+
+stage:MarkdownAppearance_content a elmo:Part;
+	elmo:index "3";
 	elmo:fragment [
 		elmo:applies-to skos:definition;
 		elmo:appearance elmo:MarkdownAppearance;
 	];
 	elmo:query "construct {?s?p?o} where {?s?p?o filter (?s = <http://localhost:8080/id/test/markdowntest>)}"
 .
-stage:MarkdownAppearance_table elmo:index "2";
+stage:MarkdownAppearance_table a elmo:Part;
+	elmo:index "4";
 	elmo:fragment [
 		elmo:applies-to "definition";
 		elmo:appearance elmo:MarkdownAppearance;
 	];
-	elmo:query "select ?begrip ?label ?definition where {?begrip rdfs:label ?label.?begrip skos:definition ?definition.filter (?begrip = <http://elmo.localhost/markdowntest>)}"
+	elmo:query "select distinct ?begrip ?label ?definition where {?begrip rdfs:label ?label.?begrip skos:definition ?definition.filter (?begrip = <http://elmo.localhost/markdowntest>)}"
 .
 
 <http://localhost:8080/id/test/markdowntest> rdf:type skos:Concept;

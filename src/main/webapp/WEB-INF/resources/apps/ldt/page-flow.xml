@@ -1,10 +1,10 @@
 <!--
 
     NAME     page-flow.xml
-    VERSION  1.13.0
-    DATE     2016-12-06
+    VERSION  1.16.1-SNAPSHOT
+    DATE     2017-02-28
 
-    Copyright 2012-2016
+    Copyright 2012-2017
 
     This file is part of the Linked Data Theatre.
 
@@ -271,12 +271,13 @@
 		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 	</page>
 	
-	<!-- Default indexpage -->
-	<page path="/([^/]*)\.([^ ]*)" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
+	<!-- Default indexpage for subdomain -->
+	<page path="/([^\.]*)\.([^ ]*)" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
 		<!-- <setvalue ref="submission/query">index</setvalue> -->
 		<setvalue ref="theatre/format" matcher-group="2"/>
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 	</page>
-	<page path="/([^/]*)" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
+	<page path="/(.*)" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
 		<!-- <setvalue ref="submission/query">index</setvalue> -->
 		<setvalue ref="theatre/format" parameter="format"/>
 		<setvalue ref="theatre/subdomain" matcher-group="1"/>

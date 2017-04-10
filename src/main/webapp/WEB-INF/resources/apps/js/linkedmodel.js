@@ -1,9 +1,9 @@
 /*
  * NAME     linkedmodel.js
- * VERSION  1.13.1
- * DATE     2016-12-20
+ * VERSION  1.16.0
+ * DATE     2017-02-08
  *
- * Copyright 2012-2016
+ * Copyright 2012-2017
  *
  * This file is part of the Linked Data Theatre.
  *
@@ -25,6 +25,20 @@
  * Javascript to show linked data as a model, using joint.js
  *
  */
+//Full screen toggle
+var fullScreenFlag = false;
+ 
+function togglefullscreen() {
+	if (fullScreenFlag) {
+		$('#graphcanvas').css({position:'relative',left:'',top:'',width:'',height:'',zIndex:''});
+		d3.select("#jointmodel").select("svg").attr("height",400);
+	} else {
+		$('#graphcanvas').css({position:'absolute',left:0,top:0,width: $(window).width(), height: $(window).height(), zIndex: 1000});
+		d3.select("#jointmodel").select("svg").attr("height",$(window).height()-100);
+	}
+	fullScreenFlag = !fullScreenFlag;
+}
+
 var graph = new joint.dia.Graph;
 
 var paper = new joint.dia.Paper({
@@ -67,6 +81,7 @@ _.each(graph.getLinks(),function(link) {
 			".connection": { stroke: '#000000', 'stroke-width': 1 },
 			".marker-target": { fill: '#000000', stroke: '#000000', d: 'M 8 0 L 0 4 L 8 8 z' }
 		});
+		link.label(0,{attrs:{text:{'font-size':12, 'font-weight': 'normal'}}});
 	}
 });
 

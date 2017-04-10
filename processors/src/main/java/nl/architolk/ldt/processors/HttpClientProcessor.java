@@ -1,9 +1,9 @@
 /**
  * NAME     HttpClientProcessor.java
- * VERSION  1.10.0
- * DATE     2016-09-27
+ * VERSION  1.15.0
+ * DATE     2017-01-27
  *
- * Copyright 2012-2016
+ * Copyright 2012-2017
  *
  * This file is part of the Linked Data Theatre.
  *
@@ -54,7 +54,6 @@ import org.apache.http.client.methods.HttpOptions;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.Header;
@@ -176,14 +175,16 @@ public class HttpClientProcessor extends SimpleProcessor {
     public void generateData(PipelineContext context, ContentHandler contentHandler) throws SAXException {
 
 		try {
-			CloseableHttpClient httpclient = HttpClients.createDefault();
+			CloseableHttpClient httpclient = HttpClientProperties.createHttpClient();
+			
 			try {
 				// Read content of config pipe
 				Document configDocument = readInputAsDOM4J(context, INPUT_CONFIG);
 				Node configNode = configDocument.selectSingleNode("//config");
 
+				URL theURL = new URL(configNode.valueOf("url"));
+				
 				if (configNode.valueOf("auth-method").equals("basic")) {
-					URL theURL = new URL(configNode.valueOf("url"));
 					HttpHost targetHost = new HttpHost(theURL.getHost(),theURL.getPort(),theURL.getProtocol());
 					//Authentication support
 					CredentialsProvider credsProvider = new BasicCredentialsProvider();
@@ -241,6 +242,8 @@ public class HttpClientProcessor extends SimpleProcessor {
 					if (!acceptHeader.isEmpty()) {
 						httpRequest.addHeader("accept",configNode.valueOf("accept"));
 					}
+					//Add proxy route if needed
+					HttpClientProperties.setProxy(httpRequest,theURL.getHost());
 					response = executeRequest(httpRequest, httpclient);
 				}
 
@@ -351,7 +354,7 @@ public class HttpClientProcessor extends SimpleProcessor {
 			} finally {
 				httpclient.close();
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			throw new OXFException(e);
 		}
 

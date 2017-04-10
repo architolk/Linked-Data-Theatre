@@ -5,6 +5,7 @@
 @prefix story: <http://localhost:8080/id/user-story/>.
 @prefix storystatus: <http://localhost:8080/id/status/>.
 @prefix lotro: <http://localhost:8080/def/lotr#>.
+@prefix lotrs: <http://localhost:8080/def/lotr/>.
 @prefix lotrc: <http://localhost:8080/id/character/>.
 @prefix lotrg: <http://localhost:8080/id/group/>.
 @prefix owl: <http://www.w3.org/2002/07/owl#>.
@@ -13,6 +14,7 @@
 @prefix dbp: <http://dbpedia.org/property/>.
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
+@prefix shacl: <http://www.w3.org/ns/shacl#>.
 
 #
 # Scrumboard testdata
@@ -70,11 +72,13 @@ dbpedia:Amsterdam a dbo:City;
 dbpedia:Utrecht a dbo:City;
 	rdfs:label "Utrecht";
 	testo:capitalCity false;
+	dbo:isPartOf <http://dbpedia.org/resource/Utrecht_(province)>;
 .
 
 <http://dbpedia.org/resource/Utrecht_(province)> a dbo:Location;
 	rdfs:label "Utrecht (province)"@en;
 	rdfs:label "Utrecht (provincie)"@nl;
+	dbo:abstract "Utrecht (Geluidsfragment ) is met een oppervlakte van 1385 km\u00B2 de kleinste provincie van Nederland. De provincie telt ca. 1.268.489 inwoners (augustus 2015).De dichtbevolkte en centraal gelegen provincie wordt algemeen tot de Randstad gerekend. De hoofdstad en grootste stad is Utrecht. Deze stad was het centrum van het bisdom of Sticht Utrecht dat de voorloper was van de huidige provincie. De op een na grootste stad van de provincie is Amersfoort, gevolgd door Veenendaal, Zeist en Nieuwegein."@nl;
 	testo:largestCities (dbpedia:Amersfoort dbpedia:Utrecht)
 .
 
@@ -86,12 +90,38 @@ dbpedia:Utrecht a dbo:City;
 #	rdfs:comment "blablabla";
 #.
 
-foaf:Group rdfs:label "Group".
+foaf:Group rdf:type owl:Class;
+	rdfs:label "Group"
+.
+
+lotro:Person rdf:type owl:Class;
+	rdfs:label "Person";
+.
+lotrs:Person a shacl:Shape;
+	shacl:targetClass lotro:Person;
+	shacl:property lotrs:Person_label;
+	shacl:property lotrs:Person_member;
+	shacl:property lotrs:Person_founded;
+.
+lotrs:Person_label a shacl:PropertyConstraint;
+	shacl:predicate rdfs:label;
+	shacl:minCount 1;
+	shacl:maxCount 1;
+.
+lotrs:Person_member a shacl:PropertyConstraint;
+	shacl:predicate foaf:member;
+	shacl:class foaf:Group;
+.
+lotrs:Person_founded a shacl:PropertyConstraint;
+	shacl:predicate lotro:founded;
+	shacl:class foaf:Group;
+.
 
 lotro:Hobbit rdf:type owl:Class;
 	rdfs:label "Hobbit";
 	rdfs:subClassOf lotro:Mortal;
 .
+
 lotro:Wizard rdf:type owl:Class;
 	rdfs:label "Wizard";
 .

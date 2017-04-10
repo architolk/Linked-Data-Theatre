@@ -1,0 +1,29 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix stage: <http://localhost:8080/stage#>.
+
+stage:amersfoort2 a elmo:Representation;
+	elmo:fragment [
+		elmo:applies-to elmo:Fragment;
+		elmo:appearance elmo:HiddenAppearance;
+	];
+	elmo:fragment [
+		elmo:applies-to rdfs:comment;
+		rdfs:label "description"@en;
+		rdfs:label "omschrijving"@nl;
+	];
+	elmo:fragment [
+		elmo:applies-to <http://nl.dbpedia.org/property/postcode>;
+		rdfs:label "Het postcodegebied"
+	];
+	elmo:url-pattern "query/amersfoort2$";
+	elmo:endpoint <http://nl.dbpedia.org/sparql>;
+	elmo:query '''
+		CONSTRUCT {
+			<http://nl.dbpedia.org/resource/Amersfoort> ?p ?o
+		}
+		WHERE {
+			<http://nl.dbpedia.org/resource/Amersfoort> ?p ?o
+		}
+	'''
+.

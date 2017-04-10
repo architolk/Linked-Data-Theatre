@@ -1,10 +1,10 @@
 <!--
 
     NAME     GraphAppearance.xsl
-    VERSION  1.13.0
-    DATE     2016-12-06
+    VERSION  1.16.0
+    DATE     2017-02-08
 
-    Copyright 2012-2016
+    Copyright 2012-2017
 
     This file is part of the Linked Data Theatre.
 
@@ -25,9 +25,9 @@
 <!--
     DESCRIPTION
 	GraphAppearance, add-on of rdf2html.xsl
-	
+
 	A GraphAppearance shows Linked Data as a graph, plus the opportunity to navigate through the linked data (expand the graph)
-	
+
 	TODO: Including a <style> element within a <div> is not compliant to html5: this has to change
 		  Solution might be to migrate the code to the javascript part
 -->
@@ -46,12 +46,12 @@
 	<div id="graphcanvas" style="position: relative">
 		<xsl:if test="exists(rdf:Description[html:stylesheet!='' and elmo:applies-to!=''])">
 			<div class="panel panel-primary" style="position:absolute;right:20px;top:50px">
-				<div class="panel-heading"><span class="glyphicon glyphicon-off" style="position:absolute;right:5px;margin-top:2px;cursor:pointer" onclick="this.parentNode.parentNode.style.display='none'"/></div>	
+				<div class="panel-heading"><span class="glyphicon glyphicon-off" style="position:absolute;right:5px;margin-top:2px;cursor:pointer" onclick="this.parentNode.parentNode.style.display='none'"/></div>
 				<table style="margin-left:10px">
 					<xsl:for-each select="rdf:Description[html:stylesheet!='' and elmo:applies-to!='']"><xsl:sort select="elmo:index"/>
 						<tr>
 							<td><input name="{elmo:applies-to}" type="checkbox" checked="checked" onclick="togglenode(this.checked,this.name);"/></td>
-							<td><svg style="display: inline;" width="140" height="30"><g><rect x="5" y="5" width="120" height="20" class="s{elmo:applies-to}"/><text x="15" y="18" style="line-height: normal; font-family: sans-serif; font-size: 10px; font-style: normal; font-variant: normal; font-weight: normal; font-size-adjust: none; font-stretch: normal;"><xsl:value-of select="elmo:applies-to"/></text></g></svg></td>
+							<td><svg style="display: inline;" class="legend" width="140" height="30"><g><rect x="5" y="5" width="120" height="22" class="s{elmo:applies-to}"/><text x="15" y="20" class="graph-legend"><xsl:value-of select="elmo:applies-to"/></text></g></svg></td>
 						</tr>
 					</xsl:for-each>
 				</table>

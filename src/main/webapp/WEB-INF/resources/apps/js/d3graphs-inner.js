@@ -1,9 +1,9 @@
 /*
  * NAME     d3graphs-inner.js
- * VERSION  1.13.1
- * DATE     2016-12-20
+ * VERSION  1.16.1-SNAPSHOT
+ * DATE     2017-02-15
  *
- * Copyright 2012-2016
+ * Copyright 2012-2017
  *
  * This file is part of the Linked Data Theatre.
  *
@@ -30,11 +30,11 @@ var width = $("#graph").width(),
 	aspect = height/width;
 
 //Maximum number of nodes allowed before links and nodes are aggregated
-var maxNodes = 10;
+var maxNodes = 4;
 
 //Full screen toggle
 var fullScreenFlag = false;
-	
+
 // zoom features
 var zoom = d3.behavior.zoom()
 	.scaleExtent([0.1,10])
@@ -51,7 +51,7 @@ var svg = d3.select("#graph").append("svg")
 
 // detailbox div
 var detailBox = d3.select("#graphtitle");
-	
+
 // propertybox div
 var pt = document.getElementsByTagName('svg')[0].createSVGPoint();
 var propertyBox = d3.select("#propertybox");
@@ -61,12 +61,12 @@ var propertyNode = null;
 var infoNode = null;
 var propertyBoxVisible = false;
 
-//Rectangle area for panning		
+//Rectangle area for panning
 var rect = svg.append("rect")
     .attr("width", "100%")
     .attr("height", "100%")
 	.attr("class","canvas");
- 
+
 //Container that holds all the graphical elements
 var container = svg.append("g");
 
@@ -109,12 +109,12 @@ var allLinks = container.selectAll(".link"),
 	currentNode = null;
 
 //Fetch data via Ajax-call and process
-d3.json(jsonApiCall+jsonApiSubject, function(error, json) {
+d3.json(jsonApiCall+encodeURIComponent(jsonApiSubject), function(error, json) {
 
 	root.nodes = json.nodes;
 	//Update nodes: the original data contains nodes with an uri-reference to the node, not the node itself (@id holds the uri-reference)
 	root.nodes.forEach(function(x) { nodeMap[x['@id']] = x; });
-	
+
 	//Update links
 	root.links = [];
 	json.links.forEach(function(x) {
@@ -128,14 +128,14 @@ d3.json(jsonApiCall+jsonApiSubject, function(error, json) {
 			root.links.push(l);
 		}
 	});
-	
+
 	//Place first node in the center and set to fixed
 	root.nodes[0].x = width/2;
 	root.nodes[0].y = height/2;
 	root.nodes[0].fixed = true;
 	root.nodes[0].expanded = true;
 	updateTitle(root.nodes[0]);
-	
+
 	//Create network
 	root.nodes.forEach(function(n) {
 		n.inLinks = {};
@@ -154,7 +154,7 @@ d3.json(jsonApiCall+jsonApiSubject, function(error, json) {
 		l.target.linkCount++;
 		l.target.parentLink = l;
 	});
-	
+
 	createAggregateNodes();
 	update();
 
@@ -311,11 +311,11 @@ function dragend(d) {
 	tick();
 	force.resume();
 }
-	
+
 function zoomed() {
 	container.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
 }
-	
+
 function update() {
 
 	//Keep only the visible nodes
@@ -327,7 +327,7 @@ function update() {
 	links = root.links.filter(function(d) {
 		return d.source.aggregateNode ? (!d.source.expanded) && (d.source.count>0) : d.target.aggregateNode ? (!d.target.expanded) && (d.target.count>0) : (((d.source.linkCount>1) && (d.target.linkCount>1)) || ((d.source.outLinks[d.uri].length < maxNodes) && (d.target.inLinks[d.uri].length < maxNodes)))
 	});
-	
+
 	// Update the links
 	allLinks = allLinks.data(links,function(d) {return d.id});
 
@@ -342,20 +342,18 @@ function update() {
 	newLinks.append("line")
 		.attr("class","border")
 	newLinks.append("line")
-		.style("stroke", "#696969")
-		.style("stroke-width", "1px")
 		.style("marker-end", "url(#ArrowHead)")
 		.attr("class","stroke");
 	newLinks.append("text")
 		.attr("dx", 0)
 		.attr("dy", 0)
 		.attr("text-anchor", "middle")
-		.style("font", "10px sans-serif")
+		.attr("class","stroke-text")
 		.text(function(d) { return d.label });
 
 	// Update the nodes
 	allNodes = allNodes.data(nodes,function(d) {return d["@id"]});
-	
+
 	// Update text (count of an aggregateNode might change)
 	allNodes.select("text").text(function(d) { return d.aggregateNode ? d.count : d.label });
 
@@ -375,7 +373,7 @@ function update() {
 		.attr("dx", 0)
 		.attr("dy", 0)
 		.attr("text-anchor", "middle")
-		.style("font", "10px sans-serif")
+		.attr("class","node-text")
 		.text(function(d) { return d.aggregateNode ? d.count : d.label })
 		.each(function(d) {d.rect = this.getBBox();	});
 
@@ -393,7 +391,7 @@ function update() {
 		.attr("r", function(d) { return 5+d.rect.height/2 })
 		.attr("class", function(d) { return (d["class"] ? "s"+d["class"] : "default") })
 		.each(function(d) {d.arect = this;});
-		
+
 	force
 		.nodes(nodes)
 		.links(links)
@@ -454,7 +452,7 @@ function clickInfoBox() {
 		}
 	}
 }
-  
+
 function tick(e) {
 	//Extra: Calculate change
 	if (typeof e != "undefined") {
@@ -466,7 +464,7 @@ function tick(e) {
 			d.source.y += k;
 			d.target.y -= k;
 		}
-	
+
 		//Calculating the edge of the rectangle
 		//+1 to avoid divide by zero
 		var dx = Math.abs(d.target.x - d.source.x)+1,
@@ -477,7 +475,7 @@ function tick(e) {
 			yt = d.target.y+(d.source.y < d.target.y ? Math.max(d.target.rect.y-5,(d.target.rect.x-5)*dy/dx) : Math.min(d.target.rect.y-5+d.target.rect.height+10,-(d.target.rect.x-5)*dy/dx)),
 			xs = d.source.x+(d.target.x < d.source.x ? Math.max(d.source.rect.x-5,(d.source.rect.y-5)*dx/dy) : Math.min(d.source.rect.x-5+d.source.rect.width+10,-(d.source.rect.y-5)*dx/dy)),
 			ys = d.source.y+(d.target.y < d.source.y ? Math.max(d.source.rect.y-5,(d.source.rect.x-5)*dy/dx) : Math.min(d.source.rect.y-5+d.source.rect.height+10,-(d.source.rect.x-5)*dy/dx));
-			
+
 			if (d.target.elementType==="circle") {
 				var pl = Math.sqrt((ddx*ddx)+(ddy*ddy)),
 					rad = 5+d.target.rect.height/2;
@@ -490,14 +488,14 @@ function tick(e) {
 				xs = d.source.x-((ddx*rad)/pl);
 				ys = d.source.y-((ddy*rad)/pl)-5;
 			}
-			
+
 		//Change the position of the lines, to match the border of the rectangle instead of the centre of the rectangle
 		d3.select(this).selectAll("line")
 			.attr("x1",xs)
 			.attr("y1",ys)
 			.attr("x2",xt)
 			.attr("y2",yt);
-			
+
 		//Rotate the text to match the angle of the lines
 		var tx = xs+(xt-xs)*2/3, //set label at 2/3 of edge (to solve situation with overlapping edges)
 			ty = ys+(yt-ys)*2/3;
@@ -505,7 +503,7 @@ function tick(e) {
 			.attr("x",tx)
 			.attr("y",ty-3)
 			.attr("transform","rotate("+Math.atan(ddy/ddx)*57+" "+tx+" "+ty+")");
-			
+
 		//IE10 and IE11 bugfix
 		if (bugIE) {
 			this.parentNode.insertBefore(this,this);

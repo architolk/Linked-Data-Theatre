@@ -1,10 +1,10 @@
 <!--
 
     NAME     container.xpl
-    VERSION  1.13.0
-    DATE     2016-12-06
+    VERSION  1.16.0
+    DATE     2017-02-08
 
-    Copyright 2012-2016
+    Copyright 2012-2017
 
     This file is part of the Linked Data Theatre.
 
@@ -157,7 +157,7 @@
 	</p:processor>
 
 	<!-- Create context -->
-	<p:processor name="oxf:xslt" rdfs:label="create context">
+	<p:processor name="oxf:unsafe-xslt" rdfs:label="create context">
 		<p:input name="data" href="aggregate('croot',#instance,#request,#requestbody,#roles)"/>
 		<p:input name="config" href="../transformations/context.xsl"/>
 		<p:output name="data" id="context"/>

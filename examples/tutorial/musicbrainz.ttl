@@ -1,0 +1,10 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix stage: <http://localhost:8080/stage#>.
+
+stage:musicbrainz a elmo:Representation;
+	elmo:appearance elmo:GraphAppearance;
+	elmo:uri-pattern "^http://musicbrainz.org/ws/2/artist";
+	elmo:service "@SUBJECT@?inc=artist-rels";
+	elmo:accept "application/xml";
+	elmo:translator elmo:MusicbrainzTranslator;
+.

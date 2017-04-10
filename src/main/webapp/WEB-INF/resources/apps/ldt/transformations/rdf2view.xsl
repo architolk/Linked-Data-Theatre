@@ -1,10 +1,10 @@
 <!--
 
     NAME     rdf2view.xsl
-    VERSION  1.13.0
-    DATE     2016-12-06
+    VERSION  1.16.0
+    DATE     2017-02-08
 
-    Copyright 2012-2016
+    Copyright 2012-2017
 
     This file is part of the Linked Data Theatre.
 
@@ -44,13 +44,23 @@
 <xsl:template match="elmo:fragment">
 	<xsl:if test="exists(@rdf:nodeID)">
 		<xsl:variable name="appliesTo" select="key('bnodes',@rdf:nodeID)/elmo:applies-to"/>
-		<fragment applies-to="{$appliesTo/@rdf:resource}{$appliesTo}">
+		<xsl:variable name="satisfied">
+			<xsl:for-each select="key('resources',key('bnodes',@rdf:nodeID)/elmo:valuesFrom/@rdf:resource)[elmo:with-parameter!=$appliesTo]">
+				<xsl:if test="not(exists(key('parameters',elmo:with-parameter)))">N</xsl:if>
+			</xsl:for-each>
+		</xsl:variable>
+		<fragment applies-to="{$appliesTo/@rdf:resource}{$appliesTo}" satisfied="{$satisfied}">
 			<xsl:copy-of select="key('bnodes',@rdf:nodeID)/(* except elmo:applies-to)"/>
 		</fragment>
 	</xsl:if>
 	<xsl:if test="exists(@rdf:resource)">
 		<xsl:variable name="appliesTo" select="key('resources',@rdf:resource)/elmo:applies-to"/>
-		<fragment applies-to="{$appliesTo/@rdf:resource}{$appliesTo}">
+		<xsl:variable name="satisfied">
+			<xsl:for-each select="key('resources',key('resources',@rdf:resource)/elmo:valuesFrom/@rdf:resource)[elmo:with-parameter!=$appliesTo]">
+				<xsl:if test="not(exists(key('parameters',elmo:with-parameter)))">N</xsl:if>
+			</xsl:for-each>
+		</xsl:variable>
+		<fragment applies-to="{$appliesTo/@rdf:resource}{$appliesTo}" satisfied="{$satisfied}">
 			<xsl:copy-of select="key('resources',@rdf:resource)/(* except elmo:applies-to)"/>
 		</fragment>
 	</xsl:if>
@@ -117,7 +127,7 @@
 <xsl:template match="/root">
 	<view>
 		<xsl:apply-templates select="rdf:RDF/rdf:Description[rdf:type/@rdf:resource!='http://bp4mc2.org/elmo/def#fragment']/html:stylesheet"/>
-		<xsl:for-each-group select="rdf:RDF/rdf:Description[exists(elmo:data[1]) or exists(elmo:query[.!='']) or exists(elmo:service[1]) or exists(elmo:webpage[1]) or exists(elmo:queryForm[1])]" group-by="@rdf:about"><xsl:sort select="concat(elmo:index[1],'~')"/>
+		<xsl:for-each-group select="rdf:RDF/rdf:Description[exists(elmo:data[1]) or exists(elmo:query[.!='']) or exists(elmo:service[1]) or exists(elmo:webpage[1]) or exists(elmo:queryForm[1]) or rdf:type/@rdf:resource='http://bp4mc2.org/elmo/def#Production']" group-by="@rdf:about"><xsl:sort select="concat(elmo:index[1],'~')"/>
 			<xsl:variable name="with-filter-notok">
 				<xsl:for-each select="elmo:with-parameter">
 					<xsl:if test="not(exists(key('parameters', .)))">x</xsl:if>
@@ -228,8 +238,16 @@
 							<xsl:apply-templates select="elmo:fragment"/>
 							<service>
 								<url><xsl:value-of select="elmo:service[1]"/></url>
-								<output>jsonld</output>
+								<output>
+									<xsl:choose>
+										<xsl:when test="elmo:accept[1]='text/plain'">txt</xsl:when>
+										<xsl:when test="elmo:accept[1]='application/xml'">xml</xsl:when>
+										<xsl:when test="elmo:accept[1]='application/json'">json</xsl:when>
+										<xsl:otherwise>jsonld</xsl:otherwise>
+									</xsl:choose>
+								</output>
 								<xsl:if test="elmo:post[1]!=''"><body><xsl:value-of select="elmo:post[1]"/></body></xsl:if>
+								<xsl:if test="elmo:translator[1]/@rdf:resource!=''"><translator><xsl:value-of select="substring-after(elmo:translator[1]/@rdf:resource,'#')"/></translator></xsl:if>
 							</service>
 						</representation>
 					</xsl:when>
