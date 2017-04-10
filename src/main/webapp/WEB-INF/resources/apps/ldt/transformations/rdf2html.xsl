@@ -174,7 +174,7 @@
 	<xsl:choose>
 		<xsl:when test="$tokenizer!=''">
 			<!-- Tokenizer works for terms separated with spaces. To fix the problem with ',' and '.', spaces are added before the ',' and '.' -->
-			<xsl:for-each select="tokenize(replace(replace(concat(' ',.,' '),'(,|\.)',' $0'),substring($tokenizer,2,9999),'@@$0@@','i'),'@@')">
+			<xsl:for-each select="tokenize(replace(replace(concat(' ',.,' '),'(,|\.|:)',' $0'),substring($tokenizer,2,9999),'@@$0@@','i'),'@@')">
 				<xsl:variable name="term" select="substring(.,2,string-length(.)-2)"/>
 				<xsl:variable name="termlink" select="$termlist/rdf:Description[upper-case(elmo:name[1])=upper-case($term)]"/>
 				<xsl:choose>
