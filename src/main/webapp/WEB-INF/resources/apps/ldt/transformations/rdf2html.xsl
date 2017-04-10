@@ -521,6 +521,9 @@
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#ModelAppearance'">
 			<xsl:apply-templates select="." mode="ModelAppearance"/>
 		</xsl:when>
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#MarkdownAppearance'">		
+			<xsl:apply-templates select="." mode="MarkdownAppearance"/>		
+		</xsl:when>
 		<xsl:otherwise>
 			<!-- No, or an unknown appearance, use the data to select a suitable appearance -->
 			<xsl:apply-templates select="." mode="ContentAppearance"/>
@@ -701,6 +704,8 @@
 		<xsl:text>representation=</xsl:text><xsl:value-of select="encode-for-uri(@elmo:query)"/>
 		<xsl:text>&amp;format=</xsl:text>
 	</xsl:variable>
+	<!-- Unique number for this datatable -->		
+	<xsl:variable name="table-id" select="@elmo:index"/>
 	<!-- A select query will have @rdf:nodeID elements, with id 'rset' -->
 	<xsl:for-each select="rdf:Description[@rdf:nodeID='rset']">
 		<xsl:if test="$paging='true' or exists(res:solution)">
@@ -710,10 +715,10 @@
 					elmo_language.searching = <xsl:value-of select="$paging"/>;
 					elmo_language.info = <xsl:value-of select="$paging"/>;
 					elmo_language.order = [];
-					$('#datatable<xsl:value-of select="generate-id()"/>').dataTable(elmo_language);
+					$('#datatable<xsl:value-of select="$table-id"/>').dataTable(elmo_language);
 				} );
 			</script>
-			<table id="datatable{generate-id()}" class="table table-striped table-bordered">
+			<table id="datatable{$table-id}" class="table table-striped table-bordered">
 				<thead>
 					<tr>
 						<xsl:for-each select="res:resultVariable[not(@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance' or matches(.,'[^_]*_(label|details|count|uri)'))]">
@@ -774,7 +779,7 @@
 				<column name="{local-name()}" label="{$label}"/>
 			</xsl:for-each-group>
 		</xsl:variable>
-		<table id="datatable{generate-id()}" class="table table-striped table-bordered">
+		<table id="datatable{$table-id}" class="table table-striped table-bordered">
 			<thead>
 				<tr>
 					<xsl:for-each select="$columns/column">
@@ -832,7 +837,7 @@
 <xsl:template match="rdf:RDF" mode="CarouselAppearance">
 	<xsl:choose>
 		<xsl:when test="exists(rdf:Description/@rdf:about)">
-			<xsl:variable name="carousel-id" select="generate-id()"/>
+			<xsl:variable name="carousel-id" select="@elmo:index"/>
 			<div class="carousel slide" id="carousel{$carousel-id}" data-ride="carousel">
 				<ol class="carousel-indicators">
 					<xsl:for-each select="rdf:Description">
@@ -1004,5 +1009,6 @@
 <xsl:include href="appearances/VocabularyAppearance.xsl"/>
 <xsl:include href="appearances/FrameAppearance.xsl"/>
 <xsl:include href="appearances/ModelAppearance.xsl"/>
+<xsl:include href="appearances/MarkdownAppearance.xsl"/>
 
 </xsl:stylesheet>
