@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2html.xsl
-    VERSION  1.16.1-SNAPSHOT
-    DATE     2017-03-03
+    VERSION  1.16.0
+    DATE     2017-02-08
 
     Copyright 2012-2017
 
@@ -144,6 +144,18 @@
 	</xsl:if>
 </xsl:template>
 
+<xsl:template name="cross-site-target-marker">
+	<xsl:param name="url"/>
+
+	<xsl:variable name="urlpart"><xsl:value-of select="replace($url,'^((http|https)://)','')"/></xsl:variable>
+	<xsl:variable name="domain"><xsl:value-of select="substring-before($urlpart,'/')"/></xsl:variable>
+
+	<xsl:choose>
+		<xsl:when test="$domain!='' and $domain!=$serverdomain">_blank</xsl:when>
+		<xsl:otherwise>_self</xsl:otherwise>
+	</xsl:choose>
+</xsl:template>
+
 <xsl:template match="*" mode="glossary">
 	<xsl:param name="glossary"/>
 	<xsl:param name="uri"/>
@@ -233,7 +245,12 @@
 					<xsl:with-param name="var" select="."/>
 				</xsl:call-template>
 			</xsl:variable>
-			<a href="{$resource-uri}">
+			<xsl:variable name="target">
+				<xsl:call-template name="cross-site-target-marker">
+					<xsl:with-param name="url" select="$resource-uri"/>
+				</xsl:call-template>
+			</xsl:variable>
+			<a href="{$resource-uri}" target="{$target}">
 				<xsl:choose>
 					<xsl:when test="rdf:Description/rdfs:label!=''"><xsl:value-of select="rdf:Description/rdfs:label"/></xsl:when>
 					<xsl:otherwise><xsl:value-of select="rdf:Description/@rdf:about"/></xsl:otherwise>
@@ -504,9 +521,6 @@
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#ModelAppearance'">
 			<xsl:apply-templates select="." mode="ModelAppearance"/>
 		</xsl:when>
-		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#MarkdownAppearance'">
-			<xsl:apply-templates select="." mode="MarkdownAppearance"/>
-		</xsl:when>
 		<xsl:otherwise>
 			<!-- No, or an unknown appearance, use the data to select a suitable appearance -->
 			<xsl:apply-templates select="." mode="ContentAppearance"/>
@@ -687,8 +701,6 @@
 		<xsl:text>representation=</xsl:text><xsl:value-of select="encode-for-uri(@elmo:query)"/>
 		<xsl:text>&amp;format=</xsl:text>
 	</xsl:variable>
-	<!-- Unique number for this datatable -->
-	<xsl:variable name="table-id" select="@elmo:index"/>
 	<!-- A select query will have @rdf:nodeID elements, with id 'rset' -->
 	<xsl:for-each select="rdf:Description[@rdf:nodeID='rset']">
 		<xsl:if test="$paging='true' or exists(res:solution)">
@@ -698,10 +710,10 @@
 					elmo_language.searching = <xsl:value-of select="$paging"/>;
 					elmo_language.info = <xsl:value-of select="$paging"/>;
 					elmo_language.order = [];
-					$('#datatable<xsl:value-of select="$table-id"/>').dataTable(elmo_language);
+					$('#datatable<xsl:value-of select="generate-id()"/>').dataTable(elmo_language);
 				} );
 			</script>
-			<table id="datatable{$table-id}" class="table table-striped table-bordered">
+			<table id="datatable{generate-id()}" class="table table-striped table-bordered">
 				<thead>
 					<tr>
 						<xsl:for-each select="res:resultVariable[not(@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance' or matches(.,'[^_]*_(label|details|count|uri)'))]">
@@ -762,7 +774,7 @@
 				<column name="{local-name()}" label="{$label}"/>
 			</xsl:for-each-group>
 		</xsl:variable>
-		<table id="datatable{$table-id}" class="table table-striped table-bordered">
+		<table id="datatable{generate-id()}" class="table table-striped table-bordered">
 			<thead>
 				<tr>
 					<xsl:for-each select="$columns/column">
@@ -820,7 +832,7 @@
 <xsl:template match="rdf:RDF" mode="CarouselAppearance">
 	<xsl:choose>
 		<xsl:when test="exists(rdf:Description/@rdf:about)">
-			<xsl:variable name="carousel-id" select="@elmo:index"/>
+			<xsl:variable name="carousel-id" select="generate-id()"/>
 			<div class="carousel slide" id="carousel{$carousel-id}" data-ride="carousel">
 				<ol class="carousel-indicators">
 					<xsl:for-each select="rdf:Description">
@@ -992,6 +1004,5 @@
 <xsl:include href="appearances/VocabularyAppearance.xsl"/>
 <xsl:include href="appearances/FrameAppearance.xsl"/>
 <xsl:include href="appearances/ModelAppearance.xsl"/>
-<xsl:include href="appearances/MarkdownAppearance.xsl"/>
 
 </xsl:stylesheet>
