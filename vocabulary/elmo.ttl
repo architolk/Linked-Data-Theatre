@@ -25,7 +25,8 @@
 @prefix owl: <http://www.w3.org/2002/07/owl#>.
 @prefix void: <http://rdfs.org/ns/void#>.
 @prefix sh: <http://www.w3.org/ns/shacl#>.
-@prefix html: <http://www.w3.org/1999/xhtml/vocab#>
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix xs: <http://www.w3.org/2001/XMLSchema#>.
 
 @prefix elmo: <http://bp4mc2.org/elmo/def#>.
 @prefix yed: <http://bp4mc2.org/yed/def#>.
@@ -35,6 +36,7 @@
 @prefix RepresentationShape: <http://bp4mc2.org/elmo/def/shape/Representation#>.
 @prefix FragmentShape: <http://bp4mc2.org/elmo/def/shape/Fragment#>.
 @prefix DatabaseShape: <http://bp4mc2.org/morph/def/shape/Database#>.
+@prefix ContainerShape: <http://bp4mc2.org/elmo/def/shape/Container#>.
 
 ### Vocabulary and dataset ###
 <http://bp4mc2.org/elmo/def#> a	owl:Ontology;
@@ -140,6 +142,7 @@ RepresentationShape:queryForm	a	sh:PropertyConstraint;
 FragmentShape:label	a			sh:PropertyConstraint;
 	sh:predicate	rdfs:label;
 	sh:nodeKind		sh:Literal;
+	sh:datatype		xs:string;
 .
 FragmentShape:glossary	a		sh:PropertyConstraint;
 	sh:predicate	html:glossary;
@@ -156,6 +159,17 @@ FragmentShape:link	a			sh:PropertyConstraint;
 FragmentShape:backgroundColor	a	sh:PropertyConstraint;
 	sh:predicate	yed:backgroundColor;
 	sh:nodeKind		sh:Literal;
+.
+
+# Container #
+<http://bp4mc2.org/elmo/def/shape/Container#> a sh:Shape;
+	sh:scopeClass	elmo:Container;
+	sh:property		ContainerShape:translator;
+.
+ContainerShape:translator	a sh:PropertyConstraint;
+	sh:predicate	elmo:translator;
+	sh:nodeKind		sh:IRI;
+	sh:class		elmo:Translator;
 .
 
 ### Classes ###
