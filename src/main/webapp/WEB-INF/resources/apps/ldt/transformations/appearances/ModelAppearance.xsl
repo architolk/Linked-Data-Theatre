@@ -1,8 +1,8 @@
 <!--
 
     NAME     ModelAppearance.xsl
-    VERSION  1.16.0
-    DATE     2017-02-08
+    VERSION  1.16.1-SNAPSHOT
+    DATE     2017-02-11
 
     Copyright 2012-2017
 
@@ -27,6 +27,10 @@
 	ModelAppearance, add-on of rdf2html.xsl
 	
 	A Model appearance creates a model from some linked data. It looks a bit like the GraphAppearance, but used for static models.
+
+	NB: Model appearance uses the class structure, not the shape structure. A better approach could be to use both
+	
+	Depended on: ModelTemplates.xsl (in case of a elmo:VocabularyAppearance)
 	
 -->
 <xsl:stylesheet version="2.0"
@@ -41,7 +45,7 @@
 <xsl:output method="xml" indent="yes"/>
 
 <!-- These parts are from VocabularyAppearance and should be reused! -->
-<xsl:template match="rdf:RDF" mode="VocabularyVariable">
+<xsl:template match="rdf:RDF" mode="DEPRECATED-VocabularyVariable">
 	<!-- All predicates -->
 	<xsl:variable name="all-predicates">
 		<xsl:for-each-group select="rdf:Description[exists(shacl:predicate)]" group-by="@rdf:about">
@@ -223,17 +227,20 @@
 						<xsl:text>,type:"uml.State"</xsl:text>
 						<xsl:text>,name:"</xsl:text><xsl:value-of select="@label"/><xsl:text>"</xsl:text>
 						<xsl:text>,events:[</xsl:text>
-						<xsl:for-each select="property[not(exists(@refclass))]">
-							<xsl:variable name="propertyuri" select="@uri"/>
-							<xsl:variable name="property" select="../../../properties/property[@uri=$propertyuri]"/>
-							<xsl:variable name="label"><xsl:value-of select="$property/@label"/></xsl:variable>
-							<xsl:variable name="datatype"><xsl:value-of select="$property/datatype/@uri"/></xsl:variable>
-							<xsl:if test="position()!=1">,</xsl:if>
-							<xsl:text>"</xsl:text>
-								<xsl:value-of select="$label"/><xsl:if test="$label=''"><xsl:value-of select="replace($propertyuri,'^.*(#|/)([^(#|/)]+)$','$2')"/></xsl:if>
-								<xsl:if test="$datatype!=''"> (<xsl:value-of select="replace($datatype,'^.*(#|/)([^(#|/)]+)$','$2')"/>)</xsl:if>
-								<xsl:text> [</xsl:text><xsl:value-of select="@mincount"/>,<xsl:value-of select="@maxcount"/>
-							<xsl:text>]"</xsl:text>
+						<xsl:for-each select="shape">
+							<xsl:variable name="shape" select="@uri"/>
+							<xsl:for-each select="$vocabulary/nodeShapes/shape[@uri=$shape]/property[not(exists(@refclass))]">
+								<xsl:variable name="propertyuri" select="@uri"/>
+								<xsl:variable name="property" select="$vocabulary/properties/property[@uri=$propertyuri]"/>
+								<xsl:variable name="label"><xsl:value-of select="$property/@label"/></xsl:variable>
+								<xsl:variable name="datatype"><xsl:value-of select="$property/datatype/@uri"/></xsl:variable>
+								<xsl:if test="position()!=1">,</xsl:if>
+								<xsl:text>"</xsl:text>
+									<xsl:value-of select="$label"/><xsl:if test="$label=''"><xsl:value-of select="replace($propertyuri,'^.*(#|/)([^(#|/)]+)$','$2')"/></xsl:if>
+									<xsl:if test="$datatype!=''"> (<xsl:value-of select="replace($datatype,'^.*(#|/)([^(#|/)]+)$','$2')"/>)</xsl:if>
+									<xsl:text> [</xsl:text><xsl:value-of select="@mincount"/>,<xsl:value-of select="@maxcount"/>
+								<xsl:text>]"</xsl:text>
+							</xsl:for-each>
 						</xsl:for-each>
 						<xsl:text>]</xsl:text>
 						<xsl:text>,position:{x:300,y:300}</xsl:text>
@@ -255,24 +262,27 @@
 						</xsl:if>
 					</xsl:for-each>
 					<!-- Links: objectproperties -->
-					<xsl:for-each select="$vocabulary/classes/class/property[@refclass!='']">
-						<xsl:variable name="target" select="@refclass"/>
-						<xsl:if test="exists($vocabulary/classes/class[@uri=$target])">
-							<xsl:variable name="propertyuri" select="@uri"/>
-							<xsl:variable name="property" select="../../../properties/property[@uri=$propertyuri]"/>
-							<xsl:variable name="label"><xsl:value-of select="$property/@label"/></xsl:variable>
-							<xsl:text>,{id:"</xsl:text><xsl:value-of select="../@uri"/><xsl:value-of select="$propertyuri"/><xsl:value-of select="$target"/><xsl:text>"</xsl:text>
-							<xsl:text>,type:"link"</xsl:text>
-							<xsl:text>,source:{id:"</xsl:text><xsl:value-of select="../@uri"/><xsl:text>"}</xsl:text>
-							<xsl:text>,target:{id:"</xsl:text><xsl:value-of select="$target"/><xsl:text>"}</xsl:text>
-							<xsl:text>,router:{name:"manhattan"}</xsl:text>
-							<xsl:text>,connector:{name:"normal"}</xsl:text>
-							<xsl:text>,labels: [{ position: 0.5, attrs: { text: { text: "</xsl:text>
-								<xsl:value-of select="$label"/><xsl:if test="$label=''"><xsl:value-of select="replace($propertyuri,'^.*(#|/)([^(#|/)]+)$','$2')"/></xsl:if>
-								<xsl:text> [</xsl:text><xsl:value-of select="@mincount"/>,<xsl:value-of select="@maxcount"/>
-							<xsl:text>]" } } }]</xsl:text>
-							<xsl:text>}</xsl:text>
-						</xsl:if>
+					<xsl:for-each select="$vocabulary/classes/class/shape">
+						<xsl:variable name="shape" select="@uri"/>
+						<xsl:for-each select="$vocabulary/nodeShapes/shape[@uri=$shape]/property[@refclass!='']">
+							<xsl:variable name="target" select="@refclass"/>
+							<xsl:if test="exists($vocabulary/classes/class[@uri=$target])">
+								<xsl:variable name="propertyuri" select="@uri"/>
+								<xsl:variable name="property" select="$vocabulary/properties/property[@uri=$propertyuri]"/>
+								<xsl:variable name="label"><xsl:value-of select="$property/@label"/></xsl:variable>
+								<xsl:text>,{id:"</xsl:text><xsl:value-of select="../@class-uri"/><xsl:value-of select="$propertyuri"/><xsl:value-of select="$target"/><xsl:text>"</xsl:text>
+								<xsl:text>,type:"link"</xsl:text>
+								<xsl:text>,source:{id:"</xsl:text><xsl:value-of select="../@class-uri"/><xsl:text>"}</xsl:text>
+								<xsl:text>,target:{id:"</xsl:text><xsl:value-of select="$target"/><xsl:text>"}</xsl:text>
+								<xsl:text>,router:{name:"manhattan"}</xsl:text>
+								<xsl:text>,connector:{name:"normal"}</xsl:text>
+								<xsl:text>,labels: [{ position: 0.5, attrs: { text: { text: "</xsl:text>
+									<xsl:value-of select="$label"/><xsl:if test="$label=''"><xsl:value-of select="replace($propertyuri,'^.*(#|/)([^(#|/)]+)$','$2')"/></xsl:if>
+									<xsl:text> [</xsl:text><xsl:value-of select="@mincount"/>,<xsl:value-of select="@maxcount"/>
+								<xsl:text>]" } } }]</xsl:text>
+								<xsl:text>}</xsl:text>
+							</xsl:if>
+						</xsl:for-each>
 					</xsl:for-each>
 				</xsl:variable>
 				<script type="text/javascript">

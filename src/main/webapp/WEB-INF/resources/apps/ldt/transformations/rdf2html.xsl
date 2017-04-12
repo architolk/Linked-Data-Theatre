@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.16.1-SNAPSHOT
-    DATE     2017-04-10
+    DATE     2017-04-12
 
     Copyright 2012-2017
 
@@ -1006,9 +1006,10 @@
 <xsl:include href="appearances/LoginAppearance.xsl"/>
 <xsl:include href="appearances/TextAppearance.xsl"/>
 <xsl:include href="appearances/TreeAppearance.xsl"/>
-<xsl:include href="appearances/VocabularyAppearance.xsl"/>
 <xsl:include href="appearances/FrameAppearance.xsl"/>
-<xsl:include href="appearances/ModelAppearance.xsl"/>
 <xsl:include href="appearances/MarkdownAppearance.xsl"/>
+<xsl:include href="appearances/ModelTemplates.xsl"/>
+<xsl:include href="appearances/ModelAppearance.xsl"/>
+<xsl:include href="appearances/VocabularyAppearance.xsl"/>
 
 </xsl:stylesheet>
