@@ -1,25 +1,18 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 @prefix ns4: <http://localhost:8080/def/test#>.
 @prefix ns2: <http://dbpedia.org/ontology/>.
 @prefix dbpprop: <http://dbpedia.org/property/>.
-@prefix n4: <http://dbpedia.org/resource/>.
-rdf:type rdfs:label "type";
-    rdfs:comment "The subject is an instance of a class."
-.
-rdfs:label rdfs:label "label";
-    rdfs:comment ""@en;
-    rdfs:comment "A human-readable name for the subject."
-.
-n4:Amsterdam rdf:type ns2:City;
+@prefix n2: <http://dbpedia.org/resource/>.
+n2:Amsterdam rdf:type ns2:City;
     rdfs:label "Amsterdam";
     ns4:capitalCity true
 .
-n4:Amersfoort rdf:type ns2:City;
+n2:Amersfoort rdf:type ns2:City;
     rdfs:label "Amersfoort";
     ns2:isPartOf <http://dbpedia.org/resource/Utrecht_(province)>;
-    dbpprop:east n4:Amsterdam;
+    dbpprop:east n2:Amsterdam;
     ns2:abstract "Amersfoort is een stad en gemeente in het oosten van de Nederlandse provincie Utrecht. Het is in bevolkingsaantal de tweede stad van de provincie Utrecht en de veertiende van Nederland. Amersfoort is een groeistad en vervult economisch een regiofunctie met een sterk gegroeid bedrijfsleven, heeft een van de grootste spoorwegknooppunten van Nederland en is een belangrijke garnizoensstad. De binnenstad bezit een middeleeuws karakter met grachten"@nl;
     ns2:altitude 2.9;
     ns2:population 153773;
@@ -30,7 +23,7 @@ ns4:capitalCity rdfs:label "capital city"@en;
     rdfs:label "hoofdstad"@nl;
     rdfs:comment "De hoofdstad van een land"@nl
 .
-n4:Utrecht rdf:type ns2:City;
+n2:Utrecht rdf:type ns2:City;
     rdfs:label "Utrecht";
     ns2:isPartOf <http://dbpedia.org/resource/Utrecht_(province)>;
     ns4:capitalCity false
