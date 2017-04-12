@@ -1,8 +1,8 @@
 <!--
 
     NAME     header2html.xsl
-    VERSION  1.16.0
-    DATE     2017-02-08
+    VERSION  1.16.1-SNAPSHOT
+    DATE     2017-04-11
 
     Copyright 2012-2017
 
@@ -29,13 +29,15 @@
 -->
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
 
+<xsl:variable name="para-filter-relaxed">[\p{Cc}-[\t\n]]</xsl:variable> <!-- Remove control characters, except new line and tab -->
+
 <xsl:template match="*" mode="rec">
 
 	<ul>
 		<li><span><xsl:value-of select="name()"/></span>
 			<xsl:choose>
 				<xsl:when test="exists(*)"><xsl:apply-templates select="*" mode="rec"/></xsl:when>
-				<xsl:otherwise><span style="padding-left: 10px; float:right;"><xsl:value-of select="."/></span></xsl:otherwise>
+				<xsl:otherwise><span style="padding-left: 10px; float:right;"><xsl:value-of select="replace(.,$para-filter-relaxed,'')"/></span></xsl:otherwise>
 			</xsl:choose>
 		</li>
 	</ul>

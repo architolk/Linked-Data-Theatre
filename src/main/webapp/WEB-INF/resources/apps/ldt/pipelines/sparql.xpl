@@ -2,7 +2,7 @@
 
     NAME     sparql.xpl
     VERSION  1.16.1-SNAPSHOT
-    DATE     2017-03-20
+    DATE     2017-04-11
 
     Copyright 2012-2017
 
@@ -70,7 +70,7 @@
 	
 	<!-- Create context -->
 	<p:processor name="oxf:unsafe-xslt">
-		<p:input name="data" href="aggregate('croot',#instance,#request,#roles)"/>
+		<p:input name="data" href="aggregate('sroot',#instance,#request,#roles)"/>
 		<p:input name="config" href="../transformations/context.xsl"/>
 		<p:output name="data" id="context"/>
 	</p:processor>
