@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>nl.architolk.ldt</groupId>
 	<artifactId>ldt</artifactId>
-	<version>1.16.1-SNAPSHOT</version>
+	<version>1.17.0</version>
 	<name>ldt</name>
 	<packaging>war</packaging>
 	<properties>
@@ -10,8 +10,8 @@
 		<buildTimestamp>${maven.build.timestamp}</buildTimestamp>
 		<license-maven-plugin.version>2.11</license-maven-plugin.version>
 		<license.failIfMissing>false</license.failIfMissing>
-		<release.version>1.16.0</release.version>
-		<release.date>2017-02-08</release.date>
+		<release.version>1.17.0</release.version>
+		<release.date>2017-04-16</release.date>
 		<patch.date>2017-02-08</patch.date>
 	</properties>
 	<dependencies>
@@ -84,6 +84,7 @@
 						<exclude>**/robots.txt</exclude>
 						<exclude>**/*.yml</exclude>
 						<exclude>**/*.archimate</exclude>
+						<exclude>**/*.archimate.bak</exclude>
 						<exclude>src/test/**</exclude>
 					</excludes>
 				</configuration>
