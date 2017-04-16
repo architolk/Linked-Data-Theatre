@@ -2,7 +2,7 @@
 
     NAME     context.xsl
     VERSION  1.16.1-SNAPSHOT
-    DATE     2017-04-11
+    DATE     2017-04-16
 
     Copyright 2012-2017
 
@@ -33,7 +33,7 @@
 
 	<xsl:template match="/root|/croot|/sroot">
 		<xsl:variable name="uri-filter">[^a-zA-Z0-9:\.\-_~/()#&amp;=,]</xsl:variable> <!-- ampersand and equal-sign added for Juriconnect -->
-		<xsl:variable name="para-filter">[^a-zA-Z0-9:\.\-_~/()#&amp;=,&lt;&gt;{} `!\?\*\+@\[\]\^]</xsl:variable> <!-- Remove anything that's not in the list - maybe to strict?? -->
+		<xsl:variable name="para-filter">[^a-zA-Z0-9:\.\-_~/()#%&amp;=,&lt;&gt;{} `!\?\*\+@\[\]\^\$]</xsl:variable> <!-- Remove anything that's not in the list - maybe to strict?? -->
 		<xsl:variable name="para-filter-relaxed">[\p{Cc}-[\t\n]]</xsl:variable> <!-- Remove control characters, except new line and tab -->
 		<xsl:variable name="x-forwarded-host"><xsl:value-of select="replace(request/headers/header[name='x-forwarded-host']/value,'^([^,]+).*$','$1')"/></xsl:variable>
 		<xsl:variable name="domain">
