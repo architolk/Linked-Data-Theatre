@@ -1,8 +1,8 @@
 {"@context":
 	{"id":"@id"
 	,"graph":"@graph"
-	,"rdfs":"http://www.w3.org/2000/01/rdf-schema#"
 	,"rdf":"http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	,"rdfs":"http://www.w3.org/2000/01/rdf-schema#"
 	,"ns4":"http://localhost:8080/def/test#"
 	,"ns2":"http://dbpedia.org/ontology/"
 	,"dbpprop":"http://dbpedia.org/property/"
@@ -12,14 +12,6 @@
 	}
 ,"graph":
 [
-    {"id":"http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-    ,"rdfs:label": "type"
-    ,"rdfs:comment": "The subject is an instance of a class."
-    },
-    {"id":"http://www.w3.org/2000/01/rdf-schema#label"
-    ,"rdfs:label": "label"
-    ,"rdfs:comment": ["","A human-readable name for the subject."]
-    },
     {"id":"http://dbpedia.org/resource/Amsterdam"
     ,"rdf:type": "http://dbpedia.org/ontology/City"
     ,"rdfs:label": "Amsterdam"

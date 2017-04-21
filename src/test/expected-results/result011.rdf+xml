@@ -4,15 +4,6 @@
          xmlns:ns2="http://dbpedia.org/ontology/"
          xmlns:dbpprop="http://dbpedia.org/property/"
          xmlns:ns4="http://localhost:8080/def/test#">
-  <rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#type">
-    <rdfs:label>type</rdfs:label>
-    <rdfs:comment>The subject is an instance of a class.</rdfs:comment>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#label">
-    <rdfs:label>label</rdfs:label>
-    <rdfs:comment xml:lang="en"/>
-    <rdfs:comment>A human-readable name for the subject.</rdfs:comment>
-  </rdf:Description>
   <rdf:Description rdf:about="http://dbpedia.org/resource/Amsterdam">
     <rdf:type rdf:resource="http://dbpedia.org/ontology/City"/>
     <rdfs:label>Amsterdam</rdfs:label>

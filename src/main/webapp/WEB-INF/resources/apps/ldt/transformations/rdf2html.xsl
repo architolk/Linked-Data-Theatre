@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2html.xsl
-    VERSION  1.16.1-SNAPSHOT
-    DATE     2017-04-10
+    VERSION  1.17.0
+    DATE     2017-04-16
 
     Copyright 2012-2017
 
@@ -250,7 +250,8 @@
 					<xsl:with-param name="url" select="$resource-uri"/>
 				</xsl:call-template>
 			</xsl:variable>
-			<a href="{$resource-uri}" target="{$target}">
+			<a href="{$resource-uri}">
+				<xsl:if test="$target!='_self'"><xsl:attribute name="target"><xsl:value-of select="$target"/></xsl:attribute></xsl:if>
 				<xsl:choose>
 					<xsl:when test="rdf:Description/rdfs:label!=''"><xsl:value-of select="rdf:Description/rdfs:label"/></xsl:when>
 					<xsl:otherwise><xsl:value-of select="rdf:Description/@rdf:about"/></xsl:otherwise>
@@ -1006,9 +1007,10 @@
 <xsl:include href="appearances/LoginAppearance.xsl"/>
 <xsl:include href="appearances/TextAppearance.xsl"/>
 <xsl:include href="appearances/TreeAppearance.xsl"/>
-<xsl:include href="appearances/VocabularyAppearance.xsl"/>
 <xsl:include href="appearances/FrameAppearance.xsl"/>
-<xsl:include href="appearances/ModelAppearance.xsl"/>
 <xsl:include href="appearances/MarkdownAppearance.xsl"/>
+<xsl:include href="appearances/ModelTemplates.xsl"/>
+<xsl:include href="appearances/ModelAppearance.xsl"/>
+<xsl:include href="appearances/VocabularyAppearance.xsl"/>
 
 </xsl:stylesheet>

@@ -1,8 +1,8 @@
 <!--
 
     NAME     context.xsl
-    VERSION  1.16.1-SNAPSHOT
-    DATE     2017-03-20
+    VERSION  1.17.0
+    DATE     2017-04-16
 
     Copyright 2012-2017
 
@@ -31,8 +31,10 @@
 
 	<xsl:output name="xml" method="xml" version="1.0" encoding="UTF-8" indent="no"/>
 
-	<xsl:template match="/root|/croot">
+	<xsl:template match="/root|/croot|/sroot">
 		<xsl:variable name="uri-filter">[^a-zA-Z0-9:\.\-_~/()#&amp;=,]</xsl:variable> <!-- ampersand and equal-sign added for Juriconnect -->
+		<xsl:variable name="para-filter">[^a-zA-Z0-9:\.\-_~/()#%&amp;=,&lt;&gt;{} `!\?\*\+@\[\]\^\$]</xsl:variable> <!-- Remove anything that's not in the list - maybe to strict?? -->
+		<xsl:variable name="para-filter-relaxed">[\p{Cc}-[\t\n]]</xsl:variable> <!-- Remove control characters, except new line and tab -->
 		<xsl:variable name="x-forwarded-host"><xsl:value-of select="replace(request/headers/header[name='x-forwarded-host']/value,'^([^,]+).*$','$1')"/></xsl:variable>
 		<xsl:variable name="domain">
 			<xsl:value-of select="$x-forwarded-host"/> <!-- Use original hostname in case of proxy, first one in case of multiple proxies -->
@@ -193,7 +195,6 @@
 				<xsl:choose>
 					<xsl:when test="theatre/format='graphml'">application/graphml+xml</xsl:when> <!-- No specific mime-type is available for graphml, this seems the most logical -->
 					<xsl:when test="theatre/format='yed'">application/x.elmo.yed</xsl:when> <!-- Application specific mime-type -->
-					<xsl:when test="theatre/format='exml'">application/x.elmo.xml</xsl:when> <!-- Full XML, all resultsets -->
 					<xsl:when test="theatre/format='xml'">application/xml</xsl:when> <!-- Only first resultset, like ttl and json -->
 					<xsl:when test="theatre/format='rdf'">application/rdf+xml</xsl:when>
 					<xsl:when test="theatre/format='sparql'">application/sparql-results+xml</xsl:when>
@@ -209,8 +210,9 @@
 					<xsl:when test="theatre/format='svgi'">application/x.elmo.svg+xml</xsl:when> <!-- Application specific mime-type -->
 					<xsl:when test="theatre/format='d3json'">application/x.elmo.d3+json</xsl:when> <!-- Application specific mime-type -->
 					<xsl:when test="theatre/format='plainjson'">application/x.elmo.plain+json</xsl:when> <!-- Application specific mime-type -->
-					<xsl:when test="theatre/format='query'">application/x.elmo.query</xsl:when> <!-- Application specific mime-type -->
-					<xsl:when test="theatre/format='rdfa'">application/x.elmo.rdfa</xsl:when> <!-- Application specific mime-type -->
+					<xsl:when test="theatre/@env='dev' and theatre/format='exml'">application/x.elmo.xml</xsl:when> <!-- ONLY FOR DEV: Full XML, all resultsets -->
+					<xsl:when test="theatre/@env='dev' and theatre/format='query'">application/x.elmo.query</xsl:when> <!-- ONLY FOR DEV: Application specific mime-type -->
+					<xsl:when test="theatre/@env='dev' and theatre/format='rdfa'">application/x.elmo.rdfa</xsl:when> <!-- ONLY FOR DEV: Application specific mime-type -->
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'text/html')">text/html</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/xhtml+xml')">text/html</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/sparql-results+xml')">application/sparql-results+xml</xsl:when>
@@ -265,7 +267,23 @@
 			</subject>
 			<parameters>
 				<xsl:for-each select="request/parameters/parameter[name!='subject' and name!='format' and name!='representation' and name!='date']">
-					<xsl:copy-of select="."/>
+					<xsl:choose>
+						<xsl:when test="exists(filename)">
+							<xsl:copy-of select="."/>
+						</xsl:when>
+						<xsl:otherwise>
+							<parameter>
+								<name><xsl:value-of select="name"/></name>
+								<value>
+									<xsl:choose>
+										<xsl:when test="exists(/sroot) and name='query'"><xsl:value-of select="replace(value,$para-filter-relaxed,'')"/></xsl:when> <!-- Relaxed filter for SPARQL queries -->
+										<xsl:when test="exists(/croot)"><xsl:value-of select="replace(value,$para-filter-relaxed,'')"/></xsl:when> <!-- Relaxed filter for containers (currently, should be improved) -->
+										<xsl:otherwise><xsl:value-of select="replace(value,$para-filter,'')"/></xsl:otherwise>
+									</xsl:choose>
+								</value> <!-- Remove illegal characters to reduce cross site scripting errors -->
+							</parameter>
+						</xsl:otherwise>
+					</xsl:choose>
 				</xsl:for-each>
 			</parameters>
 			<attributes>
