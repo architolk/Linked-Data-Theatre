@@ -24,12 +24,14 @@ stage:BlankNodes_data a elmo:Part;
 			?head rdf:first ?city.
 		}
 		where {
-			?s rdfs:label ?label.
-			?s testo:largestCities ?list.
-			?list rdf:rest* ?head.
-			?head rdf:rest ?rest.
-			?head rdf:first ?city.
-			FILTER (?s = <http://dbpedia.org/resource/Utrecht_(province)>)
+			graph <@STAGE@> {
+				?s rdfs:label ?label.
+				?s testo:largestCities ?list.
+				?list rdf:rest* ?head.
+				?head rdf:rest ?rest.
+				?head rdf:first ?city.
+				FILTER (?s = <http://dbpedia.org/resource/Utrecht_(province)>)
+			}
 		}
 	''';
 .

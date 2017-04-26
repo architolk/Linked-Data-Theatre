@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2ttl.xsl
-    VERSION  1.17.0
-    DATE     2017-04-16
+    VERSION  1.17.1-SNAPSHOT
+    DATE     2017-04-26
 
     Copyright 2012-2017
 
@@ -31,11 +31,23 @@
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:fn="fn"
+	exclude-result-prefixes="xs fn"
 >
 
 <xsl:key name="bnodes" match="results/rdf:RDF[1]/rdf:Description|xmlresult/rdf:RDF[1]/rdf:Description" use="@rdf:nodeID"/>
 
-<xsl:variable name="spaces">.                                            .</xsl:variable>
+<xsl:variable name="spaces">. .</xsl:variable>
+
+<xsl:function name="fn:spaces" as="xs:string">
+	<xsl:param name="tab" as="xs:integer"/>
+	<xsl:variable name="result">
+		<xsl:for-each select="2 to $tab"><xsl:value-of select="substring($spaces,2,1)"/></xsl:for-each>
+	</xsl:variable>
+	<xsl:value-of select="$result"/>
+</xsl:function>
 
 <xsl:variable name="prefix">
 	<!-- Default prefixes -->
@@ -120,11 +132,27 @@
 	</xsl:if>
 </xsl:template>
 
-<xsl:template match="*" mode="triple"><xsl:param name="tab"/>
-<xsl:apply-templates select="." mode="property"/><xsl:text> </xsl:text><xsl:choose><xsl:when test="exists(@rdf:resource)"><xsl:apply-templates select="@rdf:resource" mode="uri"/></xsl:when><xsl:when test="exists(@rdf:nodeID)">[
+<xsl:template match="*" mode="listrec">
+	<xsl:for-each select="rdf:first">
+		<xsl:choose>
+			<!-- NOTE: blank nodes and lists not supported within a list yet -->
+			<xsl:when test="exists(@rdf:resource)"><xsl:apply-templates select="@rdf:resource" mode="uri"/></xsl:when>
+			<xsl:otherwise><xsl:apply-templates select="." mode="literal"/></xsl:otherwise>
+		</xsl:choose>
+	</xsl:for-each>
+	<xsl:text> </xsl:text>
+	<xsl:apply-templates select="key('bnodes',rdf:rest/@rdf:nodeID)" mode="listrec"/>
+</xsl:template>
+
+<xsl:template match="*" mode="list">
+	<xsl:text>(</xsl:text><xsl:apply-templates select="." mode="listrec"/><xsl:text>)</xsl:text>
+</xsl:template>
+
+<xsl:template match="*" mode="triple"><xsl:param name="tab" as="xs:integer"/>
+<xsl:apply-templates select="." mode="property"/><xsl:text> </xsl:text><xsl:choose><xsl:when test="exists(@rdf:resource)"><xsl:apply-templates select="@rdf:resource" mode="uri"/></xsl:when><xsl:when test="exists(@rdf:nodeID) and exists(key('bnodes',@rdf:nodeID)/rdf:first)"><xsl:apply-templates select="key('bnodes',@rdf:nodeID)" mode="list"/></xsl:when><xsl:when test="exists(@rdf:nodeID)">[
 <xsl:for-each select="key('bnodes',@rdf:nodeID)/*"><xsl:if test="position()!=1">;
-</xsl:if><xsl:value-of select="substring($spaces,2,$tab)"/><xsl:apply-templates select="." mode="triple"><xsl:with-param name="tab" select="$tab+4"/></xsl:apply-templates></xsl:for-each><xsl:text>
-</xsl:text><xsl:value-of select="substring($spaces,2,-4+$tab)"/>]</xsl:when><xsl:otherwise><xsl:apply-templates select="." mode="literal"/></xsl:otherwise></xsl:choose>
+</xsl:if><xsl:value-of select="fn:spaces($tab)"/><xsl:apply-templates select="." mode="triple"><xsl:with-param name="tab" select="$tab+4"/></xsl:apply-templates></xsl:for-each><xsl:text>
+</xsl:text><xsl:value-of select="fn:spaces(-4+$tab)"/>]</xsl:when><xsl:otherwise><xsl:apply-templates select="." mode="literal"/></xsl:otherwise></xsl:choose>
 </xsl:template>
 
 <xsl:template match="rdf:RDF">

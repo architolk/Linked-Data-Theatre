@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2html.xsl
-    VERSION  1.17.0
-    DATE     2017-04-16
+    VERSION  1.17.1-SNAPSHOT
+    DATE     2017-04-26
 
     Copyright 2012-2017
 
@@ -260,6 +260,14 @@
 					<xsl:with-param name="url" select="$resource-uri"/>
 				</xsl:call-template>
 			</a>
+		</xsl:when>
+		<!-- Blank node (list) -->
+		<xsl:when test="exists(rdf:Description/rdf:first)">
+			<xsl:apply-templates select="rdf:Description/rdf:first" mode="object"/>
+			<xsl:if test="not(rdf:Description/rdf:rest/@rdf:resource='http://www.w3.org/1999/02/22-rdf-syntax-ns#nil')">
+				<xsl:text>, </xsl:text>
+				<xsl:apply-templates select="rdf:Description/rdf:rest" mode="object"/>
+			</xsl:if>
 		</xsl:when>
 		<!-- Blank node -->
 		<xsl:when test="exists(rdf:Description/@rdf:nodeID)">

@@ -63,6 +63,7 @@ dbpedia:Amersfoort a dbo:City;
 	dbo:populationAsOf "2016-04-01"^^xsd:date;
 	dbo:altitude 2.9;
 	testo:capitalCity false;
+	testo:districtNames ("stadskern" "soesterkwartier" "koppel" "kruiskamp" "schothorst" "liendert" "rustenburg" "schuilenburg" "randenbroek" "dorrestein" "leusderkwartier" "bergkwartier" "zielhorst" "kattenbroek" "nieuwland" "vathorst" "vermeerkwartier");
 .
 dbpedia:Amsterdam a dbo:City;
 	rdfs:label "Amsterdam";
