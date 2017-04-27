@@ -23,13 +23,16 @@ stage:ContentAppearanceQuery a elmo:Query;
 			?w ?wp ?wo.
 		}
 		where {
-			?s?p?o.
-			OPTIONAL {
-				?s dbo:isPartOf ?w.
-				?w ?wp ?wo
-				FILTER (?wp!=testo:largestCities)
+			graph <@STAGE@> {
+				?s?p?o.
+				OPTIONAL {
+					?s dbo:isPartOf ?w.
+					?w ?wp ?wo
+					FILTER (?wp!=testo:largestCities)
+				}
+				FILTER (?s = <http://dbpedia.org/resource/Amersfoort>)
+				FILTER (?p != testo:districtNames)
 			}
-			FILTER (?s = <http://dbpedia.org/resource/Amersfoort>)
 		}
 	''';
 .	
