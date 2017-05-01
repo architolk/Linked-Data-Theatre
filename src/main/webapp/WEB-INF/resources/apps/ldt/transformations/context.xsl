@@ -1,8 +1,8 @@
 <!--
 
     NAME     context.xsl
-    VERSION  1.17.0
-    DATE     2017-04-16
+    VERSION  1.17.1-SNAPSHOT
+    DATE     2017-05-01
 
     Copyright 2012-2017
 
@@ -35,6 +35,7 @@
 		<xsl:variable name="uri-filter">[^a-zA-Z0-9:\.\-_~/()#&amp;=,]</xsl:variable> <!-- ampersand and equal-sign added for Juriconnect -->
 		<xsl:variable name="para-filter">[^a-zA-Z0-9:\.\-_~/()#%&amp;=,&lt;&gt;{} `!\?\*\+@\[\]\^\$]</xsl:variable> <!-- Remove anything that's not in the list - maybe to strict?? -->
 		<xsl:variable name="para-filter-relaxed">[\p{Cc}-[\t\n]]</xsl:variable> <!-- Remove control characters, except new line and tab -->
+		<xsl:variable name="para-name-filter">[^a-zA-Z\-_]</xsl:variable>
 		<xsl:variable name="x-forwarded-host"><xsl:value-of select="replace(request/headers/header[name='x-forwarded-host']/value,'^([^,]+).*$','$1')"/></xsl:variable>
 		<xsl:variable name="domain">
 			<xsl:value-of select="$x-forwarded-host"/> <!-- Use original hostname in case of proxy, first one in case of multiple proxies -->
@@ -268,6 +269,7 @@
 			<parameters>
 				<xsl:for-each select="request/parameters/parameter[name!='subject' and name!='format' and name!='representation' and name!='date']">
 					<xsl:choose>
+						<xsl:when test="name!=replace(name,$para-name-filter,'')"/> <!-- Remove illegal parameter names -->
 						<xsl:when test="exists(filename)">
 							<xsl:copy-of select="."/>
 						</xsl:when>
