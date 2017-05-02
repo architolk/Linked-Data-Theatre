@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2jsonld.xsl
-    VERSION  1.17.0
-    DATE     2017-04-16
+    VERSION  1.17.1-SNAPSHOT
+    DATE     2017-04-27
 
     Copyright 2012-2017
 
@@ -31,13 +31,24 @@
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 	xmlns:res="http://www.w3.org/2005/sparql-results#"
+
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:fn="fn"
+	exclude-result-prefixes="xs fn"
 >
 
 <xsl:variable name="dblquote"><xsl:text>"&#10;&#13;</xsl:text></xsl:variable>
 <xsl:variable name="quote">'  </xsl:variable>
-<xsl:variable name="spaces">.                                            .</xsl:variable>
 
+<xsl:variable name="spaces">. .</xsl:variable>
+
+<xsl:function name="fn:spaces" as="xs:string">
+	<xsl:param name="tab" as="xs:integer"/>
+	<xsl:variable name="result">
+		<xsl:for-each select="2 to $tab"><xsl:value-of select="substring($spaces,2,1)"/></xsl:for-each>
+	</xsl:variable>
+	<xsl:value-of select="$result"/>
+</xsl:function>
 
 <xsl:key name="bnodes" match="/results/rdf:RDF[1]/rdf:Description" use="@rdf:nodeID"/>
 
@@ -111,11 +122,11 @@
 	<xsl:if test="$cnt=position() and $cnt!=1">]</xsl:if>
 </xsl:template>
 
-<xsl:template match="*" mode="objectpart"><xsl:param name="tab"/>
+<xsl:template match="*" mode="objectpart"><xsl:param name="tab" as="xs:integer"/>
 <xsl:choose><xsl:when test="exists(@rdf:nodeID)"><xsl:text>
-</xsl:text><xsl:value-of select="substring($spaces,2,$tab)"/>{<xsl:for-each select="key('bnodes',@rdf:nodeID)/*"><xsl:if test="position()!=1"><xsl:text>
-</xsl:text><xsl:value-of select="substring($spaces,2,$tab)"/>,</xsl:if><xsl:apply-templates select="." mode="triple"><xsl:with-param name="tab" select="$tab+4"/></xsl:apply-templates></xsl:for-each><xsl:text>
-</xsl:text><xsl:value-of select="substring($spaces,2,$tab)"/>}</xsl:when><xsl:otherwise><xsl:apply-templates select="." mode="constructliteral"/></xsl:otherwise></xsl:choose>
+</xsl:text><xsl:value-of select="fn:spaces($tab)"/>{<xsl:for-each select="key('bnodes',@rdf:nodeID)/*"><xsl:if test="position()!=1"><xsl:text>
+</xsl:text><xsl:value-of select="fn:spaces($tab)"/>,</xsl:if><xsl:apply-templates select="." mode="triple"><xsl:with-param name="tab" select="$tab+4"/></xsl:apply-templates></xsl:for-each><xsl:text>
+</xsl:text><xsl:value-of select="fn:spaces($tab)"/>}</xsl:when><xsl:otherwise><xsl:apply-templates select="." mode="constructliteral"/></xsl:otherwise></xsl:choose>
 </xsl:template>
 
 <xsl:template match="rdf:RDF">{"@context":

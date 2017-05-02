@@ -105,16 +105,28 @@ stage:ConstructFormats_content a elmo:Representation;
 	elmo:index "2";
 	elmo:query '''
 		prefix dbo: <http://dbpedia.org/ontology/>
+		prefix testo: <http://localhost:8080/def/test#>
 		construct {
 			?s?p?o.
 			?p rdfs:label ?plabel.
 			?p rdfs:comment ?pcomment.
+			?s testo:districtNames ?list.
+			?head rdf:rest ?rest.
+			?head rdf:first ?district.
 		}
 		where {
-			?s rdf:type dbo:City.
-			?s?p?o.
-			OPTIONAL {?p rdfs:label ?plabel}
-			OPTIONAL {?p rdfs:comment ?pcomment}
+			graph <@STAGE@> {
+				?s rdf:type dbo:City.
+				?s?p?o.
+				OPTIONAL {?p rdfs:label ?plabel}
+				OPTIONAL {?p rdfs:comment ?pcomment}
+				OPTIONAL {
+					?s testo:districtNames ?list.
+					?list rdf:rest* ?head.
+					?head rdf:rest ?rest.
+					?head rdf:first ?district.
+				}
+			}
 		}
 	''';
 .

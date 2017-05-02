@@ -9,6 +9,7 @@
 	,"rdf:type":{"@type":"@id"}
 	,"ns2:isPartOf":{"@type":"@id"}
 	,"dbpprop:east":{"@type":"@id"}
+	,"rdf:rest":{"@type":"@id"}
 	}
 ,"graph":
 [
@@ -27,6 +28,58 @@
     ,"ns2:population": 153773
     ,"ns2:populationAsOf": "2016-04-01"
     ,"ns4:capitalCity": false
+    ,"ns4:districtNames": 
+       {"rdf:first": "stadskern"
+       ,"rdf:rest": 
+           {"rdf:first": "soesterkwartier"
+           ,"rdf:rest": 
+               {"rdf:first": "koppel"
+               ,"rdf:rest": 
+                   {"rdf:first": "kruiskamp"
+                   ,"rdf:rest": 
+                       {"rdf:first": "schothorst"
+                       ,"rdf:rest": 
+                           {"rdf:first": "liendert"
+                           ,"rdf:rest": 
+                               {"rdf:first": "rustenburg"
+                               ,"rdf:rest": 
+                                   {"rdf:first": "schuilenburg"
+                                   ,"rdf:rest": 
+                                       {"rdf:first": "randenbroek"
+                                       ,"rdf:rest": 
+                                           {"rdf:first": "dorrestein"
+                                           ,"rdf:rest": 
+                                               {"rdf:first": "leusderkwartier"
+                                               ,"rdf:rest": 
+                                                   {"rdf:first": "bergkwartier"
+                                                   ,"rdf:rest": 
+                                                       {"rdf:first": "zielhorst"
+                                                       ,"rdf:rest": 
+                                                           {"rdf:first": "kattenbroek"
+                                                           ,"rdf:rest": 
+                                                               {"rdf:first": "nieuwland"
+                                                               ,"rdf:rest": 
+                                                                   {"rdf:first": "vathorst"
+                                                                   ,"rdf:rest": 
+                                                                       {"rdf:first": "vermeerkwartier"
+                                                                       ,"rdf:rest": "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"
+                                                                       }
+                                                                   }
+                                                               }
+                                                           }
+                                                       }
+                                                   }
+                                               }
+                                           }
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   }
+               }
+           }
+       }
     },
     {"id":"http://localhost:8080/def/test#capitalCity"
     ,"rdfs:label": ["capital city","hoofdstad"]

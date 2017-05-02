@@ -17,7 +17,8 @@ n2:Amersfoort rdf:type ns2:City;
     ns2:altitude 2.9;
     ns2:population 153773;
     ns2:populationAsOf "2016-04-01"^^xsd:date;
-    ns4:capitalCity false
+    ns4:capitalCity false;
+    ns4:districtNames ("stadskern" "soesterkwartier" "koppel" "kruiskamp" "schothorst" "liendert" "rustenburg" "schuilenburg" "randenbroek" "dorrestein" "leusderkwartier" "bergkwartier" "zielhorst" "kattenbroek" "nieuwland" "vathorst" "vermeerkwartier" )
 .
 ns4:capitalCity rdfs:label "capital city"@en;
     rdfs:label "hoofdstad"@nl;

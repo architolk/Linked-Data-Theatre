@@ -484,6 +484,7 @@
           <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
           <boolProp name="HTTPSampler.monitor">false</boolProp>
           <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="TestPlan.comments">Removed md5hex assertion, because the result contains blank nodes, which might differ per test run</stringProp>
         </HTTPSamplerProxy>
         <hashTree>
           <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
@@ -503,10 +504,6 @@
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
-          <MD5HexAssertion guiclass="MD5HexAssertionGUI" testclass="MD5HexAssertion" testname="MD5Hex Assertion" enabled="true">
-            <stringProp name="MD5HexAssertion.size">2287dc17eeb8a4550133033dd50ec041</stringProp>
-          </MD5HexAssertion>
           <hashTree/>
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="012 ConstructFormats sparql-results+xml" enabled="true">
@@ -566,6 +563,7 @@
           <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
           <boolProp name="HTTPSampler.monitor">false</boolProp>
           <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="TestPlan.comments">Removed md5hex assertion, because the result contains blank nodes, which might differ per test run</stringProp>
         </HTTPSamplerProxy>
         <hashTree>
           <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
@@ -585,10 +583,6 @@
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
-          <MD5HexAssertion guiclass="MD5HexAssertionGUI" testclass="MD5HexAssertion" testname="MD5Hex Assertion" enabled="true">
-            <stringProp name="MD5HexAssertion.size">2287dc17eeb8a4550133033dd50ec041</stringProp>
-          </MD5HexAssertion>
           <hashTree/>
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="014 ConstructFormats json" enabled="true">
@@ -630,7 +624,7 @@
           </ResponseAssertion>
           <hashTree/>
           <MD5HexAssertion guiclass="MD5HexAssertionGUI" testclass="MD5HexAssertion" testname="MD5Hex Assertion" enabled="true">
-            <stringProp name="MD5HexAssertion.size">7e6d2769021fd976798bb462485fc213</stringProp>
+            <stringProp name="MD5HexAssertion.size">26c85887a901de47cc2b15eadb761e76</stringProp>
           </MD5HexAssertion>
           <hashTree/>
         </hashTree>
@@ -673,7 +667,7 @@
           </ResponseAssertion>
           <hashTree/>
           <MD5HexAssertion guiclass="MD5HexAssertionGUI" testclass="MD5HexAssertion" testname="MD5Hex Assertion" enabled="true">
-            <stringProp name="MD5HexAssertion.size">7e6d2769021fd976798bb462485fc213</stringProp>
+            <stringProp name="MD5HexAssertion.size">26c85887a901de47cc2b15eadb761e76</stringProp>
           </MD5HexAssertion>
           <hashTree/>
         </hashTree>
@@ -716,7 +710,7 @@
           </ResponseAssertion>
           <hashTree/>
           <MD5HexAssertion guiclass="MD5HexAssertionGUI" testclass="MD5HexAssertion" testname="MD5Hex Assertion" enabled="true">
-            <stringProp name="MD5HexAssertion.size">62675a6c8db935f131758f7e0d419365</stringProp>
+            <stringProp name="MD5HexAssertion.size">b327c839e0458dd535d1fc7e27f4d72f</stringProp>
           </MD5HexAssertion>
           <hashTree/>
         </hashTree>
