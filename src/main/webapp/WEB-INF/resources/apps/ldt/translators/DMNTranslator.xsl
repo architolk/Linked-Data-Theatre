@@ -56,6 +56,7 @@
 		Unfortunately, we cannot be certain all elements have an id. In case it doesn't, we create an id ourselves, based on the predicate
 		and the position in which the item appears in the source file.
 	-->	
+	
 	<xsl:template match="dmn:allowedValues">
 		<xsl:variable name="number"><xsl:number level="any"/></xsl:variable>
 		<xsl:variable name="id">
@@ -303,7 +304,7 @@
 			</dmno:ItemDefinition>
 		</dmno:itemComponent>
 	</xsl:template>
-	
+		
 	<xsl:template match="dmn:itemDefinition">
 		<xsl:variable name="number"><xsl:number level="any"/></xsl:variable>
 		<xsl:variable name="id">
@@ -512,5 +513,7 @@
 			</dmno:LiteralExpression>
 		</dmno:outputEntry>
 	</xsl:template>
+	
+	<xsl:template match="*"/>
 
 </xsl:stylesheet>
