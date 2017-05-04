@@ -1,8 +1,8 @@
 <!--
 
     NAME     DMNTranslator.xsl
-    VERSION  1.17.0
-    DATE     2017-04-16
+    VERSION  1.17.0-SNAPSHOT
+    DATE     2017-05-02
 
     Copyright 2012-2017
 
@@ -45,123 +45,423 @@
 		</rdf:RDF>
 	</xsl:template>
 	
-	<!-- Classes -->
-	<xsl:template match="dmn:businessKnowledgeModel">
-		<dmno:BusinessKnowledgeModel rdf:about="{@id}">
-			<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
-			<xsl:apply-templates select="dmn:informationRequirement|dmn:knowledgeRequirement|dmn:authorityRequirement"/>
-			<xsl:apply-templates select="dmn:description"/>
-			<xsl:apply-templates select="dmn:variable"/>
-			<xsl:apply-templates select="dmn:encapsulatedLogic"/>
-		</dmno:BusinessKnowledgeModel>
-	</xsl:template>
-	
-	<xsl:template match="dmn:decision">
-		<dmno:Decision rdf:about="{@id}">
-			<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
-			<xsl:apply-templates select="dmn:informationRequirement|dmn:knowledgeRequirement|dmn:authorityRequirement"/>
-			<xsl:apply-templates select="dmn:description"/>
-			<xsl:apply-templates select="dmn:variable"/>
-			<xsl:apply-templates select="dmn:decisionTable"/>
-			<xsl:apply-templates select="dmn:invocation">
-				<xsl:with-param name="parentid"><xsl:value-of select="@id"/></xsl:with-param>
-			</xsl:apply-templates>
-		</dmno:Decision>
-	</xsl:template>
-	
 	<xsl:template match="dmn:definitions">
-		<xsl:apply-templates select="dmn:decision|dmn:inputData|dmn:itemDefinition|dmn:knowledgeSource|dmn:businessKnowledgeModel|dmn:organizationUnit"/>
-	</xsl:template>
-	
-	<xsl:template match="dmn:inputData">
-		<dmno:InputData rdf:about="{@id}">
+		<dmno:Definitions rdf:about="{@id}">
 			<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
-			<xsl:apply-templates select="dmn:informationRequirement|dmn:knowledgeRequirement|dmn:authorityRequirement"/>
-			<xsl:apply-templates select="dmn:description"/>
-			<xsl:apply-templates select="dmn:variable"/>
-		</dmno:InputData>
+			<xsl:apply-templates/>
+		</dmno:Definitions>
 	</xsl:template>
-	
-	<xsl:template match="dmn:itemDefinition">
-		<dmno:ItemDefinition rdf:about="{@id}">
-			<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
-			<xsl:apply-templates select="dmn:allowedValues"/>
-			<xsl:apply-templates select="dmn:itemComponent"/>
-		</dmno:ItemDefinition>
-	</xsl:template>
-
-	<xsl:template match="dmn:knowledgeSource">
-		<dmno:KnowledgeSource rdf:about="{@id}">
-			<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
-			<xsl:if test="exists(@locationURI)"><dmno:locationURI rdf:resource="{@locationURI}"/></xsl:if>
-			<xsl:apply-templates select="dmn:description"/>
-			<xsl:apply-templates select="dmn:type"/>
-			<xsl:apply-templates select="dmn:owner"/>
-		</dmno:KnowledgeSource>
-	</xsl:template>
-	
-	<!-- This class is not part of the DMN specification. It is needed, however, to properly model objects of the property "owner". -->
-	<xsl:template match="dmn:organizationUnit">
-		<dmno:OrganizationUnit rdf:about="{@id}">
-			<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
-			<xsl:apply-templates select="dmn:description"/>
-		</dmno:OrganizationUnit>
-	</xsl:template>
-	
-	<!-- Property/class hybrids -->
 	
 	<!--
-		Unfortunately, we cannot be certain all elements have an id. In case it doesn't, we create an id ourselves, usually by either postfixing the id of its parent
-		or by stripping its own name of whitespaces and postfixing the resulting string.
+		Unfortunately, we cannot be certain all elements have an id. In case it doesn't, we create an id ourselves, based on the predicate
+		and the position in which the item appears in the source file.
 	-->	
+	
 	<xsl:template match="dmn:allowedValues">
+		<xsl:variable name="number"><xsl:number level="any"/></xsl:variable>
 		<xsl:variable name="id">
 			<xsl:choose>
 				<xsl:when test="exists(@id)"><xsl:value-of select="@id"/></xsl:when>
-				<xsl:otherwise><xsl:value-of select="concat(../@id,'_aV')"/></xsl:otherwise>
+				<xsl:otherwise><xsl:value-of select="concat('allowedValues_',$number)"/></xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
 		<dmno:allowedValues>
 			<dmno:UnaryTests rdf:about="{$id}">
-				<xsl:apply-templates select="dmn:text"/>
+				<xsl:apply-templates/>
 			</dmno:UnaryTests>
 		</dmno:allowedValues>
 	</xsl:template>
 	
-	<xsl:template match="dmn:context">
+	<xsl:template match="dmn:authorityRequirement">
+		<xsl:variable name="number"><xsl:number level="any"/></xsl:variable>
 		<xsl:variable name="id">
 			<xsl:choose>
 				<xsl:when test="exists(@id)"><xsl:value-of select="@id"/></xsl:when>
-				<xsl:otherwise><xsl:value-of select="concat(../../@id,'_eL_c')"/></xsl:otherwise>
+				<xsl:otherwise><xsl:value-of select="concat('authorityRequirement_',$number)"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<dmno:authorityRequirement>
+			<dmno:AuthorityRequirement rdf:about="{$id}">
+				<xsl:apply-templates/>
+			</dmno:AuthorityRequirement>
+		</dmno:authorityRequirement>
+	</xsl:template>
+	
+	<xsl:template match="dmn:binding">
+		<xsl:variable name="number"><xsl:number level="any"/></xsl:variable>
+		<xsl:variable name="id">
+			<xsl:choose>
+				<xsl:when test="exists(@id)"><xsl:value-of select="@id"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="concat('binding_',$number)"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<dmno:binding>
+			<dmno:Binding rdf:about="{$id}">
+				<xsl:apply-templates/>
+			</dmno:Binding>
+		</dmno:binding>
+	</xsl:template>
+	
+	<xsl:template match="dmn:businessKnowledgeModel">
+		<xsl:variable name="number"><xsl:number level="any"/></xsl:variable>
+		<xsl:variable name="id">
+			<xsl:choose>
+				<xsl:when test="exists(@id)"><xsl:value-of select="@id"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="concat('businessKnowledgeModel_',$number)"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<dmno:businessKnowledgeModel>
+			<dmno:BusinessKnowledgeModel rdf:about="{$id}">
+				<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
+				<xsl:apply-templates/>
+			</dmno:BusinessKnowledgeModel>
+		</dmno:businessKnowledgeModel>
+	</xsl:template>
+	
+	<xsl:template match="dmn:context">
+		<xsl:variable name="number"><xsl:number level="any"/></xsl:variable>
+		<xsl:variable name="id">
+			<xsl:choose>
+				<xsl:when test="exists(@id)"><xsl:value-of select="@id"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="concat('context_',$number)"/></xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
 		<dmno:context>
 			<dmno:Context rdf:about="{$id}">
-				<xsl:for-each select="dmn:contextEntry">
-					<xsl:variable name="contextEntryNumber"><xsl:number/></xsl:variable>
-					<dmno:contextEntry>
-						<dmno:ContextEntry rdf:about="{$id}_cE_{$contextEntryNumber}">
-							<xsl:apply-templates select="dmn:variable"/>
-							<xsl:apply-templates select="dmn:literalExpression">
-								<xsl:with-param name="parentid"><xsl:value-of select="concat($id,'_cE_',$contextEntryNumber)"/></xsl:with-param>
-							</xsl:apply-templates>
-							<xsl:apply-templates select="dmn:invocation">
-								<xsl:with-param name="parentid"><xsl:value-of select="concat($id,'_cE_',$contextEntryNumber)"/></xsl:with-param>
-							</xsl:apply-templates>
-						</dmno:ContextEntry>
-					</dmno:contextEntry>
-				</xsl:for-each>
+				<xsl:apply-templates/>
 			</dmno:Context>
 		</dmno:context>
 	</xsl:template>
 	
-	<xsl:template match="dmn:decisionTable">
+	<xsl:template match="dmn:contextEntry">
+		<xsl:variable name="number"><xsl:number level="any"/></xsl:variable>
 		<xsl:variable name="id">
 			<xsl:choose>
 				<xsl:when test="exists(@id)"><xsl:value-of select="@id"/></xsl:when>
-				<xsl:otherwise><xsl:value-of select="concat(translate(@outputLabel, ' ',''),'_dT')"/></xsl:otherwise>
+				<xsl:otherwise><xsl:value-of select="concat('contextEntry_',$number)"/></xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
+		<dmno:contextEntry>
+			<dmno:ContextEntry rdf:about="{$id}">
+				<xsl:apply-templates/>
+			</dmno:ContextEntry>
+		</dmno:contextEntry>
+	</xsl:template>
+	
+	<xsl:template match="dmn:decision">
+		<xsl:variable name="number"><xsl:number level="any"/></xsl:variable>
+		<xsl:variable name="id">
+			<xsl:choose>
+				<xsl:when test="exists(@id)"><xsl:value-of select="@id"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="concat('decision_',$number)"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<dmno:decision>
+			<dmno:Decision rdf:about="{$id}">
+				<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
+				<xsl:apply-templates/>
+			</dmno:Decision>
+		</dmno:decision>
+	</xsl:template>
+	
+	<xsl:template match="dmn:defaultOutputEntry">
+		<xsl:variable name="number"><xsl:number level="any"/></xsl:variable>
+		<xsl:variable name="id">
+			<xsl:choose>
+				<xsl:when test="exists(@id)"><xsl:value-of select="@id"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="concat('defaultOutputEntry_',$number)"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<dmno:defaultOutputEntry>
+			<dmno:LiteralExpression rdf:about="{$id}">
+				<xsl:apply-templates/>
+			</dmno:LiteralExpression>
+		</dmno:defaultOutputEntry>
+	</xsl:template>
+	
+	<xsl:template match="dmn:encapsulatedLogic">
+		<xsl:variable name="number"><xsl:number level="any"/></xsl:variable>
+		<xsl:variable name="id">
+			<xsl:choose>
+				<xsl:when test="exists(@id)"><xsl:value-of select="@id"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="concat('encapsulatedLogic_',$number)"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<dmno:encapsulatedLogic>
+			<dmno:FunctionDefinition rdf:about="{$id}">
+				<xsl:apply-templates/>
+			</dmno:FunctionDefinition>
+		</dmno:encapsulatedLogic>
+	</xsl:template>
+	
+	<xsl:template match="dmn:formalParameter">
+		<xsl:variable name="number"><xsl:number level="any"/></xsl:variable>
+		<xsl:variable name="id">
+			<xsl:choose>
+				<xsl:when test="exists(@id)"><xsl:value-of select="@id"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="concat('formalParameter_',$number)"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<dmno:formalParameter>
+			<dmno:InformationItem rdf:about="{$id}">
+				<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
+				<dmno:typeRef rdf:resource="{$feel-prefix}{substring-after(@typeRef,':')}"/>
+			</dmno:InformationItem>
+		</dmno:formalParameter>
+	</xsl:template>
+	
+	<xsl:template match="dmn:informationItem">
+		<xsl:variable name="number"><xsl:number level="any"/></xsl:variable>
+		<xsl:variable name="id">
+			<xsl:choose>
+				<xsl:when test="exists(@id)"><xsl:value-of select="@id"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="concat('informationItem_',$number)"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<dmno:informationItem>
+			<dmno:InformationItem rdf:about="{$id}">
+				<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
+				<xsl:apply-templates/>
+			</dmno:InformationItem>
+		</dmno:informationItem>
+	</xsl:template>
+	
+	<xsl:template match="dmn:inputData">
+		<xsl:variable name="number"><xsl:number level="any"/></xsl:variable>
+		<xsl:variable name="id">
+			<xsl:choose>
+				<xsl:when test="exists(@id)"><xsl:value-of select="@id"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="concat('inputData_',$number)"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<dmno:inputData>
+			<dmno:InputData rdf:about="{$id}">
+				<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
+				<xsl:apply-templates/>
+			</dmno:InputData>
+		</dmno:inputData>
+	</xsl:template>
+	
+	<xsl:template match="dmn:inputExpression">
+		<xsl:variable name="number"><xsl:number level="any"/></xsl:variable>
+		<xsl:variable name="id">
+			<xsl:choose>
+				<xsl:when test="exists(@id)"><xsl:value-of select="@id"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="concat('inputExpression_',$number)"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<dmno:inputExpression>
+			<dmno:LiteralExpression rdf:about="{$id}">
+				<dmno:typeRef rdf:resource="{$feel-prefix}{substring-after(@typeRef,':')}"/>
+				<xsl:apply-templates/>
+			</dmno:LiteralExpression>
+		</dmno:inputExpression>
+	</xsl:template>
+	
+	<xsl:template match="dmn:informationRequirement">
+		<xsl:variable name="number"><xsl:number level="any"/></xsl:variable>
+		<xsl:variable name="id">
+			<xsl:choose>
+				<xsl:when test="exists(@id)"><xsl:value-of select="@id"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="concat('informationRequirement_',$number)"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<dmno:informationRequirement>
+			<dmno:InformationRequirement rdf:about="{$id}">
+				<xsl:apply-templates/>
+			</dmno:InformationRequirement>
+		</dmno:informationRequirement>
+	</xsl:template>
+	
+	<xsl:template match="dmn:invocation">
+		<xsl:variable name="number"><xsl:number level="any"/></xsl:variable>
+		<xsl:variable name="id">
+			<xsl:choose>
+				<xsl:when test="exists(@id)"><xsl:value-of select="@id"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="concat('invocation_',$number)"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<dmno:invocation>
+			<dmno:Invocation rdf:about="{$id}">
+				<xsl:apply-templates/>
+			</dmno:Invocation>
+		</dmno:invocation>
+	</xsl:template>
+	
+	<xsl:template match="dmn:itemComponent">
+		<xsl:variable name="number"><xsl:number level="any"/></xsl:variable>
+		<xsl:variable name="id">
+			<xsl:choose>
+				<xsl:when test="exists(@id)"><xsl:value-of select="@id"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="concat('itemComponent_',$number)"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<dmno:itemComponent>
+			<dmno:ItemDefinition rdf:about="{$id}">
+				<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
+				<dmno:typeRef rdf:resource="{$feel-prefix}{substring-after(dmn:typeRef,':')}"/>
+				<xsl:apply-templates/>
+			</dmno:ItemDefinition>
+		</dmno:itemComponent>
+	</xsl:template>
+		
+	<xsl:template match="dmn:itemDefinition">
+		<xsl:variable name="number"><xsl:number level="any"/></xsl:variable>
+		<xsl:variable name="id">
+			<xsl:choose>
+				<xsl:when test="exists(@id)"><xsl:value-of select="@id"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="concat('itemDefinition_',$number)"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<dmno:itemDefinition>
+			<dmno:ItemDefinition rdf:about="{$id}">
+				<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
+				<xsl:apply-templates/>
+			</dmno:ItemDefinition>
+		</dmno:itemDefinition>
+	</xsl:template>
+	
+	<xsl:template match="dmn:knowledgeRequirement">
+		<xsl:variable name="number"><xsl:number level="any"/></xsl:variable>
+		<xsl:variable name="id">
+			<xsl:choose>
+				<xsl:when test="exists(@id)"><xsl:value-of select="@id"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="concat('knowledgeRequirement_',$number)"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<dmno:knowledgeRequirement>
+			<dmno:KnowledgeRequirement rdf:about="{$id}">
+				<xsl:apply-templates/>
+			</dmno:KnowledgeRequirement>
+		</dmno:knowledgeRequirement>
+	</xsl:template>
+	
+	<xsl:template match="dmn:knowledgeSource">
+		<xsl:variable name="number"><xsl:number level="any"/></xsl:variable>
+		<xsl:variable name="id">
+			<xsl:choose>
+				<xsl:when test="exists(@id)"><xsl:value-of select="@id"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="concat('knowledgeSource_',$number)"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<dmno:knowledgeSource>
+			<dmno:KnowledgeSource rdf:about="{$id}">
+				<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
+				<xsl:if test="exists(@locationURI)"><dmno:locationURI rdf:resource="{@locationURI}"/></xsl:if>
+				<xsl:apply-templates/>
+			</dmno:KnowledgeSource>
+		</dmno:knowledgeSource>
+	</xsl:template>
+	
+	<xsl:template match="dmn:literalExpression">
+		<xsl:variable name="number"><xsl:number level="any"/></xsl:variable>
+		<xsl:variable name="id">
+			<xsl:choose>
+				<xsl:when test="exists(@id)"><xsl:value-of select="@id"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="concat('literalExpression_',$number)"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<dmno:literalExpression>
+			<dmno:LiteralExpression rdf:about="{$id}">
+				<xsl:apply-templates/>
+			</dmno:LiteralExpression>
+		</dmno:literalExpression>
+	</xsl:template>
+	
+	<xsl:template match="dmn:output">
+		<xsl:variable name="number"><xsl:number level="any"/></xsl:variable>
+		<xsl:variable name="id">
+			<xsl:choose>
+				<xsl:when test="exists(@id)"><xsl:value-of select="@id"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="concat('output_',$number)"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<dmno:output>
+			<dmno:OutputClause rdf:about="{$id}">
+				<xsl:apply-templates/>
+			</dmno:OutputClause>
+		</dmno:output>
+	</xsl:template>			
+	
+	<xsl:template match="dmn:parameter">
+		<xsl:variable name="number"><xsl:number level="any"/></xsl:variable>
+		<xsl:variable name="id">
+			<xsl:choose>
+				<xsl:when test="exists(@id)"><xsl:value-of select="@id"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="concat('parameter_',$number)"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<dmno:parameter>
+			<dmno:InformationItem rdf:about="{$id}">
+				<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
+				<xsl:apply-templates/>
+			</dmno:InformationItem>
+		</dmno:parameter>
+	</xsl:template>
+	
+	<xsl:template match="dmn:variable">
+		<xsl:variable name="number"><xsl:number level="any"/></xsl:variable>
+		<xsl:variable name="id">
+			<xsl:choose>
+				<xsl:when test="exists(@id)"><xsl:value-of select="@id"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="concat('variable_',$number)"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<dmno:variable>
+			<dmno:InformationItem rdf:about="{$id}">
+				<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
+				<dmno:typeRef rdf:resource="{$feel-prefix}{substring-after(@typeRef,':')}"/>
+				<xsl:apply-templates/>
+			</dmno:InformationItem>
+		</dmno:variable>
+	</xsl:template>
+
+	<!-- Properties -->
+	<xsl:template match="dmn:description">
+		<dmno:description><xsl:value-of select="."/></dmno:description>
+	</xsl:template>
+	
+	<xsl:template match="dmn:namespace">
+		<dmno:namespace><xsl:value-of select="."/></dmno:namespace>
+	</xsl:template>
+	
+	<xsl:template match="dmn:requiredAuthority">
+		<dmno:requiredAuthority rdf:resource="{substring(@href,2)}"/>
+	</xsl:template>
+	
+	<xsl:template match="dmn:requiredDecision">
+		<dmno:requiredDecision rdf:resource="{substring(@href,2)}"/>
+	</xsl:template>
+	
+	<xsl:template match="dmn:requiredInput">
+		<dmno:requiredInput rdf:resource="{substring(@href,2)}"/>
+	</xsl:template>
+	
+	<xsl:template match="dmn:requiredKnowledge">
+		<dmno:requiredKnowledge rdf:resource="{substring(@href,2)}"/>
+	</xsl:template>
+	
+	<xsl:template match="dmn:text">
+		<dmno:text><xsl:value-of select="."/></dmno:text>
+	</xsl:template>
+
+	<xsl:template match="dmn:type">
+		<dmno:type><xsl:value-of select="."/></dmno:type>
+	</xsl:template>
+	
+	<!--
+		The DecisionTable-template is quite complex.
+		This is necessary because the rows (inputs and output) and columns (inputEntries and outputEntry)
+		need to be counted in order to give them a proper id which can be used for matching them later.
+	-->
+	<xsl:template match="dmn:decisionTable">
+		<xsl:variable name="number"><xsl:number level="any"/></xsl:variable>
+		<xsl:variable name="id">
+			<xsl:choose>
+				<xsl:when test="exists(@id)"><xsl:value-of select="@id"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="concat('decisionTable_',$number)"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>	
 		<dmno:decisionTable>
 			<dmno:DecisionTable rdf:about="{$id}">
 				<rdfs:label><xsl:value-of select="@outputLabel"/></rdfs:label>
@@ -174,15 +474,11 @@
 					<dmno:input>
 						<dmno:InputClause rdf:about="{$id}_input_{$inputNumber}">
 							<rdfs:label><xsl:value-of select="@label"/></rdfs:label>
-							<xsl:apply-templates select="dmn:inputExpression"/>
+							<xsl:apply-templates/>
 						</dmno:InputClause>
 					</dmno:input>
 				</xsl:for-each>
-				<dmno:output>
-					<dmno:OutputClause rdf:about="{$id}_output">
-						<xsl:apply-templates select="dmn:defaultOutputEntry"/>
-					</dmno:OutputClause>
-				</dmno:output>
+				<xsl:apply-templates select="dmn:output"/>
 				<xsl:for-each select="dmn:rule">
 					<xsl:variable name="ruleNumber"><xsl:number/></xsl:variable>
 					<dmno:rule>
@@ -192,7 +488,7 @@
 								<dmno:inputEntry>
 									<dmno:UnaryTests rdf:about="{$id}_rule_{$ruleNumber}_iE_{$inputEntryNumber}">
 										<dmno:relatedInput rdf:resource="{$id}_input_{$inputEntryNumber}"/> <!-- Not part of the DMN specification -->
-										<xsl:apply-templates select="dmn:text"/>
+										<xsl:apply-templates/>
 									</dmno:UnaryTests>
 								</dmno:inputEntry>
 							</xsl:for-each>
@@ -200,114 +496,11 @@
 								<xsl:with-param name="dtid"><xsl:value-of select="$id"/></xsl:with-param>
 								<xsl:with-param name="ruleNumber"><xsl:value-of select="$ruleNumber"/></xsl:with-param>
 							</xsl:apply-templates>
-							<xsl:apply-templates select="dmn:description"/>
 						</dmno:DecisionRule>
 					</dmno:rule>
 				</xsl:for-each>
 			</dmno:DecisionTable>
 		</dmno:decisionTable>
-	</xsl:template>
-	
-	<xsl:template match="dmn:defaultOutputEntry">
-		<xsl:variable name="id">
-			<xsl:choose>
-				<xsl:when test="exists(@id)"><xsl:value-of select="@id"/></xsl:when>
-				<xsl:otherwise><xsl:value-of select="concat(../@id,'_dOE')"/></xsl:otherwise>
-			</xsl:choose>
-		</xsl:variable>
-		<dmno:defaultOutputEntry>
-			<dmno:LiteralExpression rdf:about="{$id}">
-				<xsl:apply-templates select="dmn:text"/>
-			</dmno:LiteralExpression>
-		</dmno:defaultOutputEntry>
-	</xsl:template>
-	
-	<xsl:template match="dmn:encapsulatedLogic">
-		<xsl:variable name="id">
-			<xsl:choose>
-				<xsl:when test="exists(@id)"><xsl:value-of select="@id"/></xsl:when>
-				<xsl:otherwise><xsl:value-of select="concat(../@id,'_eL')"/></xsl:otherwise>
-			</xsl:choose>
-		</xsl:variable>
-		<dmno:encapsulatedLogic>
-			<dmno:FunctionDefinition rdf:about="{$id}">
-				<xsl:apply-templates select="dmn:formalParameter"/>
-				<xsl:apply-templates select="dmn:decisionTable"/>
-				<xsl:apply-templates select="dmn:context"/>
-			</dmno:FunctionDefinition>
-		</dmno:encapsulatedLogic>
-	</xsl:template>
-	
-	<xsl:template match="dmn:formalParameter">
-		<xsl:variable name="id">
-			<xsl:choose>
-				<xsl:when test="exists(@id)"><xsl:value-of select="@id"/></xsl:when>
-				<xsl:otherwise><xsl:value-of select="concat(translate(@name, ' ',''),'_fP')"/></xsl:otherwise>
-			</xsl:choose>
-		</xsl:variable>
-		<dmno:formalParameter>
-			<dmno:InformationItem rdf:about="{$id}">
-				<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
-				<dmno:typeRef rdf:resource="{$feel-prefix}{substring-after(@typeRef,':')}"/>
-			</dmno:InformationItem>
-		</dmno:formalParameter>
-	</xsl:template>
-	
-	<xsl:template match="dmn:inputExpression">
-		<xsl:variable name="id">
-			<xsl:choose>
-				<xsl:when test="exists(@id)"><xsl:value-of select="@id"/></xsl:when>
-				<xsl:otherwise><xsl:value-of select="concat(translate(../@label, ' ',''),'_iE')"/></xsl:otherwise>
-			</xsl:choose>
-		</xsl:variable>
-		<dmno:inputExpression>
-			<dmno:LiteralExpression rdf:about="{$id}">
-				<dmno:typeRef rdf:resource="{$feel-prefix}{substring-after(@typeRef,':')}"/>
-				<xsl:apply-templates select="dmn:text"/>
-			</dmno:LiteralExpression>
-		</dmno:inputExpression>
-	</xsl:template>
-	
-	<xsl:template match="dmn:invocation">
-		<xsl:param name="parentid"/>
-		<dmno:invocation>
-			<dmno:Invocation rdf:about="{$parentid}_invocation">
-				<xsl:apply-templates select="dmn:literalExpression">
-					<xsl:with-param name="parentid"><xsl:value-of select="concat($parentid,'_invocation')"/></xsl:with-param>
-				</xsl:apply-templates>
-				<xsl:for-each select="dmn:binding">
-					<xsl:variable name="bindingNumber"><xsl:number/></xsl:variable>
-					<dmno:binding>
-						<dmno:Binding rdf:about="{$parentid}_invocation_binding_{$bindingNumber}">
-							<xsl:apply-templates select="dmn:parameter"/>
-							<xsl:apply-templates select="dmn:literalExpression">
-								<xsl:with-param name="parentid"><xsl:value-of select="concat($parentid,'_invocation_binding_',$bindingNumber)"/></xsl:with-param>
-							</xsl:apply-templates>
-						</dmno:Binding>
-					</dmno:binding>
-				</xsl:for-each>
-			</dmno:Invocation>
-		</dmno:invocation>
-	</xsl:template>
-	
-	<xsl:template match="dmn:itemComponent">
-		<dmno:itemComponent>
-			<dmno:ItemDefinition rdf:about="{@id}">
-				<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
-				<dmno:typeRef rdf:resource="{$feel-prefix}{substring-after(dmn:typeRef,':')}"/>
-				<xsl:apply-templates select="dmn:allowedValues"/>
-				<xsl:apply-templates select="dmn:itemComponent"/>
-			</dmno:ItemDefinition>
-		</dmno:itemComponent>
-	</xsl:template>
-	
-	<xsl:template match="dmn:literalExpression">
-		<xsl:param name="parentid"/>
-		<dmno:literalExpression>
-			<dmno:LiteralExpression rdf:about="{$parentid}_lE">
-				<xsl:apply-templates select="dmn:text"/>
-			</dmno:LiteralExpression>
-		</dmno:literalExpression>
 	</xsl:template>
 	
 	<xsl:template match="dmn:outputEntry">
@@ -316,69 +509,11 @@
 		<dmno:outputEntry>
 			<dmno:LiteralExpression rdf:about="{$dtid}_rule_{$ruleNumber}_oE">
 				<dmno:relatedOutput rdf:resource="{$dtid}_output"/> <!-- Not part of the DMN specification -->
-				<xsl:apply-templates select="dmn:text"/>
+				<xsl:apply-templates/>
 			</dmno:LiteralExpression>
 		</dmno:outputEntry>
 	</xsl:template>
 	
-	<xsl:template match="dmn:parameter">
-		<xsl:variable name="id">
-			<xsl:choose>
-				<xsl:when test="exists(@id)"><xsl:value-of select="@id"/></xsl:when>
-				<xsl:otherwise><xsl:value-of select="concat(translate(@name, ' ',''),'_p')"/></xsl:otherwise>
-			</xsl:choose>
-		</xsl:variable>
-		<dmno:parameter>
-			<dmno:InformationItem rdf:about="{$id}">
-				<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
-			</dmno:InformationItem>
-		</dmno:parameter>
-	</xsl:template>
-	
-	<xsl:template match="dmn:variable">
-		<xsl:variable name="id">
-			<xsl:choose>
-				<xsl:when test="exists(@id)"><xsl:value-of select="@id"/></xsl:when>
-				<xsl:otherwise><xsl:value-of select="concat(translate(@name, ' ',''),'_v')"/></xsl:otherwise>
-			</xsl:choose>
-		</xsl:variable>
-		<dmno:variable>
-			<dmno:InformationItem rdf:about="{$id}">
-				<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
-				<dmno:typeRef rdf:resource="{$feel-prefix}{substring-after(@typeRef,':')}"/>
-				<xsl:apply-templates select="dmn:description"/>
-			</dmno:InformationItem>
-		</dmno:variable>
-	</xsl:template>
-
-	<!-- Properties -->
-	<xsl:template match="dmn:description">
-		<dmno:description><xsl:value-of select="."/></dmno:description>
-	</xsl:template>
-	
-	<xsl:template match="dmn:informationRequirement|dmn:knowledgeRequirement|dmn:authorityRequirement">
-		<xsl:variable name="name"><xsl:value-of select="local-name()"/></xsl:variable>
-		<xsl:for-each select="*">
-			<xsl:element name="dmno:{$name}">
-				<xsl:attribute name="rdf:resource">urn:uuid:<xsl:value-of select="@href"/></xsl:attribute>
-			</xsl:element>
-		</xsl:for-each>
-	</xsl:template>
-	
-	<xsl:template match="dmn:namespace">
-		<dmno:namespace><xsl:value-of select="."/></dmno:namespace>
-	</xsl:template>
-	
-	<xsl:template match="dmn:owner">
-		<dmno:owner rdf:resource="urn:uuid:{@href}"/>
-	</xsl:template>
-	
-	<xsl:template match="dmn:text">
-		<dmno:text><xsl:value-of select="."/></dmno:text>
-	</xsl:template>
-
-	<xsl:template match="dmn:type">
-		<dmno:type><xsl:value-of select="."/></dmno:type>
-	</xsl:template>
+	<xsl:template match="*"/>
 
 </xsl:stylesheet>
