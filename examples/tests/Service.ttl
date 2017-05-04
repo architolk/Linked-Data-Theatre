@@ -98,3 +98,19 @@ stage:BAGWFSVirtualSparql a elmo:Representation;
 		}
 	''';
 .
+
+stage:IndexService a elmo:Representation;
+	elmo:url-pattern "/query/indexservice";
+	elmo:index "1";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:service "http://localhost:8080/query/ContentAppearance?format=json";
+	elmo:fragment [
+		elmo:name "item";
+		elmo:path "graph[id='http://dbpedia.org/resource/Amersfoort']/id";
+	];
+	elmo:query '''
+		select "@ITEM@" as ?item
+		where {}
+	''';
+.
