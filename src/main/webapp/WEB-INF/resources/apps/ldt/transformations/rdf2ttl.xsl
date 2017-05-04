@@ -2,7 +2,7 @@
 
     NAME     rdf2ttl.xsl
     VERSION  1.17.1-SNAPSHOT
-    DATE     2017-04-26
+    DATE     2017-05-03
 
     Copyright 2012-2017
 
@@ -111,13 +111,17 @@
 	</xsl:choose>
 </xsl:template>
 
+<xsl:template match="*" mode="literalvalue">
+	<xsl:value-of select="replace(.,'\\','\\\\')"/>
+</xsl:template>
+
 <xsl:template match="*" mode="literal">
 	<xsl:choose>
-		<xsl:when test="contains(.,'&#10;') or contains(.,'&quot;')">'''<xsl:value-of select="."/>'''<xsl:apply-templates select="." mode="datatype"/></xsl:when>
-		<xsl:when test="@rdf:datatype='http://www.w3.org/2001/XMLSchema#integer'"><xsl:value-of select="."/></xsl:when>
-		<xsl:when test="@rdf:datatype='http://www.w3.org/2001/XMLSchema#decimal'"><xsl:value-of select="."/></xsl:when>
-		<xsl:when test="@rdf:datatype='http://www.w3.org/2001/XMLSchema#boolean'"><xsl:value-of select="."/></xsl:when>
-		<xsl:otherwise>"<xsl:value-of select="."/>"<xsl:apply-templates select="." mode="datatype"/></xsl:otherwise>
+		<xsl:when test="contains(.,'&#10;') or contains(.,'&quot;')">'''<xsl:apply-templates select="." mode="literalvalue"/>'''<xsl:apply-templates select="." mode="datatype"/></xsl:when>
+		<xsl:when test="@rdf:datatype='http://www.w3.org/2001/XMLSchema#integer'"><xsl:apply-templates select="." mode="literalvalue"/></xsl:when>
+		<xsl:when test="@rdf:datatype='http://www.w3.org/2001/XMLSchema#decimal'"><xsl:apply-templates select="." mode="literalvalue"/></xsl:when>
+		<xsl:when test="@rdf:datatype='http://www.w3.org/2001/XMLSchema#boolean'"><xsl:apply-templates select="." mode="literalvalue"/></xsl:when>
+		<xsl:otherwise>"<xsl:apply-templates select="." mode="literalvalue"/>"<xsl:apply-templates select="." mode="datatype"/></xsl:otherwise>
 	</xsl:choose>
 	<xsl:if test="not(@rdf:datatype!='') and @xml:lang!=''">@<xsl:value-of select="@xml:lang"/></xsl:if>
 </xsl:template>

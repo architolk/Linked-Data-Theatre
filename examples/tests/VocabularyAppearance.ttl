@@ -285,12 +285,13 @@ stage:VocabularyQuery a elmo:Query;
 			?element rdfs:label ?label.
 			?element rdfs:comment ?def.
 			?element rdfs:subClassOf ?super.
-			?shape shacl:scopeClass ?element.
+			?shape shacl:targetClass ?element.
 			?shape shacl:property ?pc.
 			?pc shacl:predicate ?pred.
 			?pc shacl:class ?class.
 			?pc shacl:datatype ?datatype.
 			?pc shacl:in ?collection.
+			?pc shacl:pattern ?pattern.
 		}
 		WHERE {
 			GRAPH <http://localhost:8080/stage> {
@@ -303,12 +304,13 @@ stage:VocabularyQuery a elmo:Query;
 				}
 				OPTIONAL {?element rdfs:subClassOf ?super}
 				OPTIONAL {
-					?shape shacl:scopeClass ?element.
+					?shape shacl:targetClass ?element.
 					?shape shacl:property ?pc.
 					?pc shacl:predicate ?pred.
 					OPTIONAL {?pc shacl:class ?class}
 					OPTIONAL {?pc shacl:datatype ?datatype}
 					OPTIONAL {?pc shacl:in ?collection}
+					OPTIONAL {?pc shacl:pattern ?pattern}
 				}
 				FILTER (?type = owl:Class || ?type = owl:DatatypeProperty || ?type = owl:ObjectProperty || ?type = owl:Ontology)
 			}
