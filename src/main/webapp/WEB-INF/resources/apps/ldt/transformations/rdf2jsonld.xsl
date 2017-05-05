@@ -2,7 +2,7 @@
 
     NAME     rdf2jsonld.xsl
     VERSION  1.17.1-SNAPSHOT
-    DATE     2017-04-27
+    DATE     2017-05-03
 
     Copyright 2012-2017
 
@@ -37,8 +37,8 @@
 	exclude-result-prefixes="xs fn"
 >
 
-<xsl:variable name="dblquote"><xsl:text>"&#10;&#13;</xsl:text></xsl:variable>
-<xsl:variable name="quote">'  </xsl:variable>
+<xsl:variable name="dblquote">"</xsl:variable>
+<xsl:variable name="dblquote-escaped">\\"</xsl:variable>
 
 <xsl:variable name="spaces">. .</xsl:variable>
 
@@ -70,22 +70,27 @@
 	</xsl:for-each-group>
 </xsl:variable>
 
+<xsl:template match="*" mode="literalvalue">
+	<xsl:value-of select="replace(replace(replace(.,'\\','\\\\'),$dblquote,$dblquote-escaped),'[&#13;&#10;|&#13;|&#10;|&#10;&#13;]','\\n')"/>
+</xsl:template>
+
 <xsl:template match="*" mode="constructliteral">
 	<xsl:choose>
 		<xsl:when test="exists(@rdf:resource)">"<xsl:value-of select="@rdf:resource"/>"</xsl:when>
 		<xsl:when test="@rdf:datatype='http://www.w3.org/2001/XMLSchema#integer'"><xsl:value-of select="."/></xsl:when>
 		<xsl:when test="@rdf:datatype='http://www.w3.org/2001/XMLSchema#decimal'"><xsl:value-of select="."/></xsl:when>
 		<xsl:when test="@rdf:datatype='http://www.w3.org/2001/XMLSchema#boolean'"><xsl:value-of select="."/></xsl:when>
-		<xsl:otherwise>"<xsl:value-of select="translate(.,$dblquote,$quote)"/>"</xsl:otherwise>
+		<xsl:otherwise>"<xsl:apply-templates select="." mode="literalvalue"/>"</xsl:otherwise>
 	</xsl:choose>
 </xsl:template>
+
 <xsl:template match="*" mode="selectliteral">
 	<xsl:choose>
 		<xsl:when test="exists(res:uri)">"<xsl:value-of select="res:uri"/>"</xsl:when>
 		<xsl:when test="res:literal/@datatype='http://www.w3.org/2001/XMLSchema#integer'"><xsl:value-of select="."/></xsl:when>
 		<xsl:when test="res:literal/@datatype='http://www.w3.org/2001/XMLSchema#decimal'"><xsl:value-of select="."/></xsl:when>
 		<xsl:when test="res:literal/@datatype='http://www.w3.org/2001/XMLSchema#boolean'"><xsl:value-of select="."/></xsl:when>
-		<xsl:otherwise>"<xsl:value-of select="translate(res:literal,$dblquote,$quote)"/>"</xsl:otherwise>
+		<xsl:otherwise>"<xsl:apply-templates select="res:literal" mode="literalvalue"/>"</xsl:otherwise>
 	</xsl:choose>
 </xsl:template>
 

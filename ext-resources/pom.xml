@@ -342,6 +342,18 @@
 							<outputDirectory>WEB-INF/lib</outputDirectory>
 						</configuration>
 					</execution>
+					<!-- Virtuoso RDF4J Repository library -->
+					<execution>
+						<id>get-virtuoso-rdf4j</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>http://opldownload.s3.amazonaws.com/uda/virtuoso/7.2/rdfproviders/rdf4j/2/virt_rdf4j.jar</url>
+							<unpack>false</unpack>
+							<outputDirectory>WEB-INF/lib</outputDirectory>
+						</configuration>
+					</execution>
 					<!-- END -->
 					<!-- Joint.js dependencies and libraries -->
 					<execution>

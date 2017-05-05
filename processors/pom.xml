@@ -119,6 +119,42 @@
 			<artifactId>jena-arq</artifactId>
 			<version>3.1.1</version>
 		</dependency>
+		<!-- Dependencies RDF4J processor -->
+		<dependency>
+			<groupId>org.eclipse.rdf4j</groupId>
+			<artifactId>rdf4j-repository-sparql</artifactId>
+			<version>2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.rdf4j</groupId>
+			<artifactId>rdf4j-repository-http</artifactId>
+			<version>2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.rdf4j</groupId>
+			<artifactId>rdf4j-queryalgebra-evaluation</artifactId>
+			<version>2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.rdf4j</groupId>
+			<artifactId>rdf4j-rio-jsonld</artifactId>
+			<version>2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.rdf4j</groupId>
+			<artifactId>rdf4j-rio-turtle</artifactId>
+			<version>2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.rdf4j</groupId>
+			<artifactId>rdf4j-rio-rdfxml</artifactId>
+			<version>2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>virtuoso</groupId>
+			<artifactId>rdf4j</artifactId>
+			<version>2.1.4</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

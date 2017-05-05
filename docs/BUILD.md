@@ -45,8 +45,11 @@ The LDT is tested with Tomcat version 7.0.33.
 6.	Visit http://localhost:8080/ to check the default web application included with Tomcat. In case the web application cannot be reached go to the directory where Tomcat is installed and open RUNNING.txt. Possible solutions for not being able to visit the default web application can be found at the end of this document.
 7.	Close tomcat with the command: `shutdown.bat`
 
-### Bootstrap and other javascript libraries
-The LDT uses a couple of javascript libraries. It is not needed to download these libraries: the build process will take care of this. Fetch all libraries by executing the command `mvn package` in the `ext-resources` directory.
+### Java library dependencies, bootstrap and other javascript libraries
+The LDT uses a couple of javascript libraries. It is not needed to download these libraries: the build process will take care of this. Fetch all libraries by:
+
+1.  Go to the `ext-resources` directory.
+2.  Execute the command `mvn package`.
 
 ## Build proces
 The Linked Data Theatre consists of four different components:
@@ -62,6 +65,7 @@ To build the java source code perform the following steps (only ones):
 1.	Go to \license-builder and execute: `mvn clean install`
 2.	Go to \orbeon and execute `mvn clean package`
 3.	Go to \processors and install the orbeon.jar in your local maven repository by executing: `maven-install-orbeon-jar.bat`.
+3.	Go to \processors and install the virt_rdf4j.jar in your local maven repository by executing: `maven-install-virtuoso-jar.bat`.
 4.	Go to \processors and execute `mvn clean install`
 
 ### Virtuoso stored procedures

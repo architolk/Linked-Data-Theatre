@@ -1,8 +1,8 @@
 <!--
 
     NAME     query.xpl
-    VERSION  1.17.0
-    DATE     2017-04-16
+    VERSION  1.17.1-SNAPSHOT
+    DATE     2017-05-04
 
     Copyright 2012-2017
 
@@ -601,6 +601,12 @@
 									</xsl:template>
 									<xsl:template match="/root">
 										<service>
+											<xsl:variable name="url" select="/root/representation/service/url"/>
+											<xsl:variable name="service" select="/root/theatre/service[@url=$url]"/>
+											<xsl:if test="$service/username!='' and $service/password!=''">
+												<username><xsl:value-of select="$service/username"/></username>
+												<password><xsl:value-of select="$service/password"/></password>
+											</xsl:if>
 											<url>
 												<xsl:apply-templates select="/root/context/parameters/parameter[1]" mode="replace">
 													<xsl:with-param name="text" select="/root/representation/service/url"/>
@@ -625,12 +631,17 @@
 									</xsl:template>
 								</xsl:stylesheet>
 							</p:input>
-							<p:input name="data" href="aggregate('root',current(),#context)"/>
+							<p:input name="data" href="aggregate('root',current(),#context,#instance)"/>
 							<p:output name="data" id="servicecall"/>
 						</p:processor>
 						<p:processor name="oxf:httpclient-processor">
 							<p:input name="config" href="#servicecall" transform="oxf:xslt">
 								<config xsl:version="2.0">
+									<xsl:if test="service/username!=''">
+										<auth-method>basic</auth-method>
+										<username><xsl:value-of select="service/username"/></username>
+										<password><xsl:value-of select="service/password"/></password>
+									</xsl:if>
 									<input-type>text</input-type>
 									<output-type>json</output-type>
 									<url><xsl:value-of select="service/url"/></url>

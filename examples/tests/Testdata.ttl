@@ -86,10 +86,11 @@ dbpedia:Utrecht a dbo:City;
 #
 #LOTR testdata
 #
-#<http://localhost:8080/def/lotr#> a owl:Ontology;
-#	rdfs:label "The LOTR Vocabulary";
-#	rdfs:comment "blablabla";
-#.
+<http://localhost:8080/def/lotr#> a owl:Ontology;
+	rdfs:label "The LOTR Vocabulary";
+	rdfs:comment '''This "example" vocabulary is used to demonstrate the vocabulary appearance.
+It is also used as linked data to the regular data in some other vocabularies.''';
+.
 
 foaf:Group rdf:type owl:Class;
 	rdfs:label "Group"
@@ -108,6 +109,7 @@ lotrs:Person_label a shacl:PropertyConstraint;
 	shacl:predicate rdfs:label;
 	shacl:minCount 1;
 	shacl:maxCount 1;
+	shacl:pattern "^[a-zA-Z0-9\\s]$"
 .
 lotrs:Person_member a shacl:PropertyConstraint;
 	shacl:predicate foaf:member;
