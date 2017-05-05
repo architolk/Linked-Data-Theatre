@@ -1,8 +1,8 @@
 <!--
 
     NAME     processors-local.xml
-    VERSION  1.17.0
-    DATE     2017-04-16
+    VERSION  1.17.1-SNAPSHOT
+    DATE     2017-04-05
 
     Copyright 2012-2017
 
@@ -50,5 +50,8 @@
 	</processor>
 	<processor name="oxf:sparql-processor">
 		<class name="nl.architolk.ldt.processors.SparqlProcessor"/>
+	</processor>
+	<processor name="oxf:rdf4j-processor">
+		<class name="nl.architolk.ldt.processors.RDF4JProcessor"/>
 	</processor>
 </processors>

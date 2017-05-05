@@ -1,7 +1,7 @@
 #
 # NAME     build.sh
-# VERSION  1.17.0
-# DATE     2017-04-16
+# VERSION  1.17.1-SNAPSHOT
+# DATE     2017-05-05
 #
 # Copyright 2012-2017
 #
@@ -33,6 +33,7 @@ mvn package
 cd ..
 cd processors
 bash maven-install-orbeon-jar.bat
+bash maven-install-virtuoso-jar.bat
 mvn clean install
 cd ..
 # package ldt
