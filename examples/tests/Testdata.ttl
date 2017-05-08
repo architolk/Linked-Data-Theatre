@@ -112,7 +112,7 @@ lotrs:Person_label a shacl:PropertyConstraint;
 	shacl:pattern "^[a-zA-Z0-9\\s]$"
 .
 lotrs:Person_member a shacl:PropertyConstraint;
-	shacl:predicate foaf:member;
+	shacl:path foaf:member;
 	shacl:class foaf:Group;
 .
 lotrs:Person_founded a shacl:PropertyConstraint;

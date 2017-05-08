@@ -287,7 +287,7 @@ stage:VocabularyQuery a elmo:Query;
 			?element rdfs:subClassOf ?super.
 			?shape shacl:targetClass ?element.
 			?shape shacl:property ?pc.
-			?pc shacl:predicate ?pred.
+			?pc shacl:path ?pred.
 			?pc shacl:class ?class.
 			?pc shacl:datatype ?datatype.
 			?pc shacl:in ?collection.
@@ -306,7 +306,7 @@ stage:VocabularyQuery a elmo:Query;
 				OPTIONAL {
 					?shape shacl:targetClass ?element.
 					?shape shacl:property ?pc.
-					?pc shacl:predicate ?pred.
+					?pc (shacl:path|shacl:predicate) ?pred.
 					OPTIONAL {?pc shacl:class ?class}
 					OPTIONAL {?pc shacl:datatype ?datatype}
 					OPTIONAL {?pc shacl:in ?collection}
