@@ -14,10 +14,16 @@ container:simple a elmo:Container;
 	rdfs:label "Upload some linked data";
 .
 
+container:versioned a elmo:VersionContainer;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:representation elmo:UploadRepresentation;
+	rdfs:label "Upload some linked data";
+.
+
 container:upload a elmo:Container;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:representation elmo:UploadRepresentation;
-	rdfs:label "Upload vocabulary";
+	rdfs:label "Upload (zip, turtle or rdf/xml)";
 .
 
 container:xpl a elmo:Container;
