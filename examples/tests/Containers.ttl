@@ -3,15 +3,15 @@
 @prefix container: <http://localhost:8080/container/>.
 @prefix stage: <http://localhost:8080/stage#>.
 
-container:excel a elmo:Container;
-	elmo:translator elmo:TableExcelTranslator;
-	elmo:contains stage:NavbarSearchAppearance;
-	rdfs:label "Upload Linked Data (Excel fie)";
-.
-
 container:simple a elmo:Container;
 	elmo:contains stage:NavbarSearchAppearance;
 	rdfs:label "Upload some linked data";
+.
+
+container:upload a elmo:Container;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:representation elmo:UploadRepresentation;
+	rdfs:label "Upload (zip, turtle or rdf/xml)";
 .
 
 container:versioned a elmo:VersionContainer;
@@ -20,10 +20,16 @@ container:versioned a elmo:VersionContainer;
 	rdfs:label "Upload some linked data";
 .
 
-container:upload a elmo:Container;
+container:genexcel a elmo:Container;
+	elmo:translator elmo:GenericExcelTranslator;
 	elmo:contains stage:NavbarSearchAppearance;
-	elmo:representation elmo:UploadRepresentation;
-	rdfs:label "Upload (zip, turtle or rdf/xml)";
+	rdfs:label "Upload Linked Data (Excel file in tabular format)";
+.
+
+container:excel a elmo:Container;
+	elmo:translator elmo:TableExcelTranslator;
+	elmo:contains stage:NavbarSearchAppearance;
+	rdfs:label "Upload Linked Data (Excel file with specifications)";
 .
 
 container:xpl a elmo:Container;

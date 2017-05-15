@@ -1,8 +1,8 @@
 <!--
 
     NAME     GenericExcelTranslator.xsl
-    VERSION  1.17.0
-    DATE     2017-04-16
+    VERSION  1.17.1-SNAPSHOT
+    DATE     2017-05-15
 
     Copyright 2012-2017
 
@@ -59,13 +59,13 @@
 				<csvw:TableGroup rdf:about="{$container}/workbook">
 					<xsl:for-each select="sheet">
 						<csvw:table>
-							<csvw:Table rdf:about="{$container}/s{@name}">
+							<csvw:Table rdf:about="{$container}/s{fn:qname(@name,concat('',position()))}">
 								<xsl:variable name="head" select="row[1]"/>
 								<xsl:for-each select="row[position()&gt;1]">
 									<xsl:variable name="pos" select="@id"/>
 									<csvw:row>
 										<csvw:Row rdf:about="{$container}/r{$pos}">
-											<csvw:rownum><xsl:value-of select="$pos"/></csvw:rownum>
+											<csvw:rownum rdf:datatype="http://www.w3.org/2001/XMLSchema#integer"><xsl:value-of select="$pos"/></csvw:rownum>
 											<csvw:describes>
 												<rdf:Description rdf:about="{$container}/r{$pos}s">
 													<xsl:for-each select="column">
