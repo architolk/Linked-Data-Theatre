@@ -20,6 +20,26 @@ container:versioned a elmo:VersionContainer;
 	rdfs:label "Upload some linked data";
 .
 
+# Target graph will be the same as the container
+container:replace a elmo:Container;
+	elmo:contains stage:NavbarSearchAppearance;
+	rdfs:label "Upload some linked data. Will also be used to replace the content of the simple container";
+	elmo:replaces container:simple
+.
+
+# All data from subjects in the container graph will deleted from target graph, target graph receives triples from container
+container:update a elmo:Container;
+	elmo:contains stage:NavbarSearchAppearance;
+	rdfs:label "Upload some linked data. Will also be used to update the content of the simple container";
+	elmo:updates container:simple
+.
+
+# All triples from container are expected in the target graph. Old triples are deleted, new triples are inserted
+container:part a elmo:Container;
+	elmo:contains stage:NavbarSearchAppearance;
+	rdfs:label "Upload some linked data. Will also be used to update the content of the simple container";
+	elmo:partOf container:simple
+.
 container:genexcel a elmo:Container;
 	elmo:translator elmo:GenericExcelTranslator;
 	elmo:contains stage:NavbarSearchAppearance;
