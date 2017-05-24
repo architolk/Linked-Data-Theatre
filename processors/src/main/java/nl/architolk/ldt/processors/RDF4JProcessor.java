@@ -82,7 +82,10 @@ import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
-import java.io.File;
+
+import java.io.InputStreamReader;
+import java.io.FileInputStream;
+import org.mozilla.universalchardet.UniversalDetector;
 
 public class RDF4JProcessor extends SimpleProcessor {
 
@@ -120,7 +123,7 @@ public class RDF4JProcessor extends SimpleProcessor {
 			conn = db.getConnection();
 
 			try {
-				conn.begin(IsolationLevels.NONE);
+				//conn.begin(IsolationLevels.NONE);
 				
 				// Clear target graph, partially (all triples in original container) or completely
 				if (action.equals("replace")) {
@@ -175,13 +178,13 @@ public class RDF4JProcessor extends SimpleProcessor {
 				Iterator<?> elit = filelist.listIterator();
 				while (elit.hasNext()) {
 					Node child = (Node) elit.next();
-					String msg = "file uploaded";
+					String msg = "file uploaded: " + child.valueOf("@name");
 					try {
 						uploadFile(child.valueOf("@name"),child.getText(),cgraph);
 					}
 					catch (Exception e) {
 						// In case of an error, put the errormessage in the result, but don't throw the exception
-						msg = e.toString();
+						msg = "[" + child.valueOf("@name") + "] " + e.toString();
 						errorMsg += e.getMessage() + ". \n";
 					}
 					contentHandler.startElement("", "scene", "scene", new AttributesImpl());
@@ -256,7 +259,7 @@ public class RDF4JProcessor extends SimpleProcessor {
 					contentHandler.characters(msg.toCharArray(),0,msg.length());
 					contentHandler.endElement("", "scene", "scene");
 				}
-				conn.commit();
+				//conn.commit();
 				
 			} finally {
 				conn.close();
@@ -273,17 +276,39 @@ public class RDF4JProcessor extends SimpleProcessor {
 		contentHandler.endDocument();
 	}
 
-	public void uploadFile(String filename, String filePath, String cgraph) throws Exception {
+	private void uploadFile(String filename, String filePath, String cgraph) throws Exception {
 	/*	Possible exceptions are:
 		- IOException: file not found, or error reading file
 		- UnsupportedRDFormatException: format not supported by library (possibly because the jar is missing)
 		- RDFParseException: file possible not correct
 		- RepositoryException: for example, unable to write to the repository
 	*/
-	
+
+		//Detect encoding
+		FileInputStream fis = new FileInputStream(filePath);
+		UniversalDetector detector = new UniversalDetector(null);
+		int nread;
+		byte[] buf = new byte[4096];
+		while ((nread = fis.read(buf)) > 0 && !detector.isDone()) {
+			detector.handleData(buf, 0, nread);
+		}
+		detector.dataEnd();
+		String encoding = detector.getDetectedCharset();
+		if (encoding == null) {
+			encoding = "UTF-8"; // Default encoding
+		}
+		fis.close();
+		
+		//Open stream according to detected encoding
+		FileInputStream fis2 = new FileInputStream(filePath);
+		InputStreamReader isr = new InputStreamReader(fis2,encoding);
+		
 		IRI context = db.getValueFactory().createIRI(cgraph);
 		//Infer parser from filename, or else assume RDF-XML
-		conn.add(new File(filePath),"",Rio.getParserFormatForFileName(filename).orElse(RDFFormat.RDFXML),context);
+		conn.add(isr,"",Rio.getParserFormatForFileName(filename).orElse(RDFFormat.RDFXML),context);
+		
+		isr.close();
+		fis2.close();
 		
 	}
     

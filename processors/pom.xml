@@ -9,6 +9,7 @@
 	<version>1.15.0</version>
 	<name>processors</name>
 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
 		<buildTimestamp>${maven.build.timestamp}</buildTimestamp>
 		<license-maven-plugin.version>2.11</license-maven-plugin.version>
@@ -159,6 +160,11 @@
 			<groupId>virtuoso</groupId>
 			<artifactId>rdf4j</artifactId>
 			<version>2.1.4</version>
+		</dependency>
+		<dependency>
+			<groupId>com.googlecode.juniversalchardet</groupId>
+			<artifactId>juniversalchardet</artifactId>
+			<version>1.0.3</version>
 		</dependency>
 	</dependencies>
 	<build>

@@ -2,7 +2,7 @@
 
     NAME     context.xsl
     VERSION  1.17.1-SNAPSHOT
-    DATE     2017-05-01
+    DATE     2017-05-24
 
     Copyright 2012-2017
 
@@ -227,6 +227,7 @@
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/vnd.openxmlformats-officedocument.wordprocessingml.document')">application/vnd.openxmlformats-officedocument.wordprocessingml.document</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/pdf')">application/pdf</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/vnd.xmi+xml')">application/vnd.xmi+xml</xsl:when>
+					<xsl:when test="request/body/@xsi:type='xs:anyURI'">text/plain</xsl:when> <!-- If upload via commandline, return text/plain -->
 					<xsl:otherwise>text/html</xsl:otherwise> <!-- If all fails: simply html -->
 				</xsl:choose>
 			</format>
@@ -295,8 +296,8 @@
 			</attributes>
 			<xsl:if test="request/body/@xsi:type='xs:anyURI'">
 				<xsl:choose>
-					<xsl:when test="request/method='POST'"><upload-file action='insert'><xsl:value-of select="request/body"/></upload-file></xsl:when>
-					<xsl:when test="request/method='PUT'"><upload-file action='put'><xsl:value-of select="request/body"/></upload-file></xsl:when>
+					<xsl:when test="request/method='POST'"><upload-file action='insert' type="{request/content-type}"><xsl:value-of select="request/body"/></upload-file></xsl:when>
+					<xsl:when test="request/method='PUT'"><upload-file action='put' type="{request/content-type}"><xsl:value-of select="request/body"/></upload-file></xsl:when>
 					<xsl:otherwise/>
 				</xsl:choose>
 			</xsl:if>

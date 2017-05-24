@@ -1,20 +1,7 @@
 @echo off
-echo Uploading elmo vocabulary...
-curl.exe -X PUT -T ../vocabulary/elmo.ttl http://localhost:8890/sparql-graph-crud?graph-uri=http://bp4mc2.org/elmo/def
-type NUL > concat.ttl
 cd tests
-for %%y in (*.ttl) do (
-	echo Processing %%~ny...
-	type %%y >> "../concat.ttl"
-	echo. >> "../concat.ttl"
-)
-echo Deploying site check...
-curl.exe -X PUT -T SiteWelcome.ttl http://localhost:8890/sparql-graph-crud?graph-uri=http://localhost:8080/stagename/substagename/stage
-curl.exe -X PUT -T SiteWelcome.ttl http://localhost:8890/sparql-graph-crud?graph-uri=http://localhost:8888/stagename/substagename/stage
+"C:\Program Files\7-Zip\7z.exe" a ..\tests.zip *.ttl
 cd ..
-echo Deploying tests...
-curl.exe -X PUT -T concat.ttl http://localhost:8890/sparql-graph-crud?graph-uri=http://localhost:8080/stage
-curl.exe -X PUT -T concat.ttl http://localhost:8890/sparql-graph-crud?graph-uri=http://localhost:8888/stage
-del concat.ttl
-echo Done.
+curl.exe -X PUT -H "Content-Type: multipart/x-zip" -T tests.zip http://localhost:8080/backstage/import
+del tests.zip
 pause

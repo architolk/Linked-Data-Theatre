@@ -1,8 +1,8 @@
 <!--
 
     NAME     container.xpl
-    VERSION  1.17.0
-    DATE     2017-04-16
+    VERSION  1.17.1-SNAPSHOT
+    DATE     2017-05-15
 
     Copyright 2012-2017
 
@@ -100,6 +100,7 @@
 	<p:processor name="oxf:request" rdfs:label="retrieve http-request">
 		<p:input name="config">
 			<config stream-type="xs:anyURI">
+				<include>/request/content-type</include>
 				<include>/request/headers/header</include>
 				<include>/request/request-url</include>
 				<include>/request/parameters/parameter</include>
@@ -162,7 +163,6 @@
 		<p:input name="config" href="../transformations/context.xsl"/>
 		<p:output name="data" id="context"/>
 	</p:processor>
-
 
 	<p:choose href="#context" rdfs:label="create container context">
 		<p:when test="matches(context/subject,'backstage/rep$') and context/back-of-stage!=''" rdfs:label="backstage, edit representation">
@@ -368,7 +368,7 @@
 									<xsl:variable name="query7" select="replace($query6,'@DATE@',/root/context/date)"/>
 									<postquery><xsl:value-of select="normalize-space(translate(replace($query7,'@SUBJECT@',/root/context/subject),$returns,$noreturns))"/></postquery>
 									<xsl:choose>
-										<xsl:when test="elmo:representation/@rdf:resource='http://bp4mc2.org/elmo/def#UploadRepresentation'">
+										<xsl:when test="elmo:representation/@rdf:resource='http://bp4mc2.org/elmo/def#UploadRepresentation' and not(rdf:type/@rdf:resource='http://bp4mc2.org/elmo/def#VersionContainer')">
 											<fetchquery>CONSTRUCT {?x?x?x} WHERE {?x?x?x}</fetchquery>
 										</xsl:when>
 										<xsl:otherwise>
@@ -454,8 +454,49 @@
 					</p:processor>
 				</p:when>
 				<!-- Submission of new data, result of this branche = new data is uploaded -->
-				<p:when test="root/context/parameters/parameter[name='container']/value=root/context/subject" rdfs:label="upload via user-interface">
+				<p:when test="exists(root/context/upload-file/@action) or root/context/parameters/parameter[name='container']/value=root/context/subject" rdfs:label="upload via user-interface or REST service">
 					<p:choose href="#context" rdfs:label="create upload filelist">
+						<!-- Upload via REST service, zip -->
+						<p:when test="exists(context/upload-file/@action) and context/upload-file/@type='multipart/x-zip'">
+							<!-- Fetch zipfile -->
+							<p:processor name="oxf:url-generator">
+								<p:input name="config" transform="oxf:xslt" href="#context">
+									<config xsl:version="2.0">
+										<url><xsl:value-of select="context/upload-file"/></url>
+										<content-type>multipart/x-zip</content-type>
+									</config>
+								</p:input>
+								<p:output name="data" id="zip"/>
+							</p:processor>
+							<p:processor name="oxf:unzip">
+								<p:input name="data" href="#zip"/>
+								<p:output name="data" id="filelist"/>
+							</p:processor>
+						</p:when>
+						<!-- Upload via REST service, not a zip -->
+						<p:when test="exists(context/upload-file/@action)">
+							<!-- Put filename in filelist -->
+							<p:processor name="oxf:xslt">
+								<p:input name="config">
+									<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+										<xsl:template match="/">
+											<files>
+												<xsl:variable name="type">
+													<xsl:choose>
+														<xsl:when test="root/context/upload-file/@type='application/xml'">xml</xsl:when>
+														<xsl:when test="root/container/translator!=''">xml</xsl:when> <!-- A translator implies xml -->
+														<xsl:otherwise>ttl</xsl:otherwise> <!-- If all fails, assume turtle -->
+													</xsl:choose>
+												</xsl:variable>
+												<file name="content.{$type}"><xsl:value-of select="root/context/upload-file"/></file>
+											</files>
+										</xsl:template>
+									</xsl:stylesheet>
+								</p:input>
+								<p:input name="data" href="aggregate('root',#context,#containercontext)"/>
+								<p:output name="data" id="filelist"/>
+							</p:processor>
+						</p:when>
 						<!-- Upload file, zip -->
 						<p:when test="ends-with(context/parameters/parameter[name='file']/filename,'.zip') or context/parameters/parameter[name='file']/content-type='multipart/x-zip'" rdfs:label="upload zip file">
 							<!-- Fetch zipfile -->
@@ -736,12 +777,11 @@
 								<xsl:template match="/">
 									<filelist>
 										<firstformat><xsl:value-of select="replace(results/file[1]/@name,'.*\.([^\.]+)$','$1')"/></firstformat>
-										<list>
-											<xsl:for-each select="results/file">
-												<xsl:if test="position()!=1">,</xsl:if>
+										<xsl:for-each select="results/file">
+											<file name="{@name}">
 												<xsl:value-of select="substring-after(.,'file:/')"/>
-											</xsl:for-each>
-										</list>
+											</file>
+										</xsl:for-each>
 									</filelist>
 								</xsl:template>
 							</xsl:stylesheet>
@@ -756,11 +796,26 @@
 					<!-- Check if extension is xml or ttl, return error if not -->
 					<p:choose href="#rdffilelist" rdfs:label="upload to virtuoso, check xml or ttl">
 						<p:when test="filelist/firstformat='xml' or filelist/firstformat='ttl'">
+							<!-- NEW VERSION: Using rdf4j instead of jdbc connection -->
+							<p:processor name="oxf:rdf4j-processor">
+								<p:input name="config" transform="oxf:xslt" href="#containercontext">
+									<config xsl:version="2.0">
+										<action><xsl:value-of select="container/target-graph/@action"/></action>
+										<cgraph><xsl:value-of select="container/version-url"/></cgraph> <!-- Version-url is same as url for normal containers -->
+										<pgraph><xsl:value-of select="container/url"/></pgraph>
+										<tgraph><xsl:value-of select="container/target-graph"/></tgraph>
+										<postquery><xsl:value-of select="container/postquery"/></postquery>
+									</config>
+								</p:input>
+								<p:input name="data" href="#rdffilelist"/>
+								<p:output name="data" id="result"/>
+							</p:processor>
+							<!-- Original version, depends on virtuoso (deprecated) -->
+							<!--
 							<p:processor name="oxf:sql">
 								<p:input name="data" href="aggregate('root',#rdffilelist,#containercontext)"/>
 								<p:input name="config">
 									<sql:config>
-										<!-- <response>Bestand is ingeladen</response> -->
 										<sql:connection>
 											<sql:datasource>virtuoso</sql:datasource>
 											<sql:execute>
@@ -783,6 +838,7 @@
 								</p:input>
 								<p:output name="data" id="result"/>
 							</p:processor>
+							-->
 						</p:when>
 						<p:otherwise>
 							<p:processor name="oxf:identity">
@@ -802,12 +858,65 @@
 </p:processor>
 -->
 					<!-- Cool URI implementation: respond with HTML or with JSON -->
-					<p:choose href="#context" rdfs:label="build userinterface">
+					<p:choose href="#context" rdfs:label="build userinterface / return result">
+						<p:when test="context/format='application/xml'" rdfs:label="xml response">
+							<p:processor name="oxf:xml-serializer">
+								<p:input name="config">
+									<config/>
+								</p:input>
+								<p:input name="data" href="#result"/>
+							</p:processor>
+						</p:when>
+						<p:when test="context/format='text/plain'" rdfs:label="plain text response">
+							<!-- Convert XML result to plain text -->
+							<p:processor name="oxf:text-converter">
+								<p:input name="config">
+									<config>
+										<encoding>utf-8</encoding>
+									</config>
+								</p:input>
+								<p:input name="data" transform="oxf:xslt" href="#result">
+									<result xsl:version="2.0">
+										<xsl:for-each select="response/scene">
+											<xsl:value-of select="."/><xsl:text>
+</xsl:text>
+										</xsl:for-each>
+									</result>
+								</p:input>
+								<p:output name="data" id="converted" />
+							</p:processor>
+							<!-- Serialize -->
+							<p:processor name="oxf:http-serializer">
+								<p:input name="config">
+									<config>
+										<cache-control><use-local-cache>false</use-local-cache></cache-control>
+									</config>
+								</p:input>
+								<p:input name="data" href="#converted"/>
+							</p:processor>
+						</p:when>
 						<p:when test="context/format='application/json'" rdfs:label="json response">
 							<p:processor name="oxf:xslt">
 								<p:input name="config">
 									<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-										<xsl:template match="/">{"response":"<xsl:value-of select="root/response"/>"}</xsl:template>
+										<xsl:template match="/">
+											<xsl:text>{"response":"</xsl:text>
+											<xsl:choose>
+												<xsl:when test="exists(error)"><xsl:value-of select="error"/></xsl:when>
+												<xsl:otherwise>succes</xsl:otherwise>
+											</xsl:choose>
+											<xsl:text>"</xsl:text>
+											<xsl:for-each select="response">
+												<xsl:text> ",scene":[</xsl:text>
+												<xsl:for-each select="scene">
+													<xsl:if test="position()!=1"> ,</xsl:if>
+													<xsl:text>"</xsl:text><xsl:value-of select="."/><xsl:text>"</xsl:text>
+												</xsl:for-each>
+												<xsl:text> ]</xsl:text>
+												<xsl:if test="exists(error)">,"error":"<xsl:value-of select="error"/></xsl:if>
+											</xsl:for-each>
+											<xsl:text>}</xsl:text>
+										</xsl:template>
 									</xsl:stylesheet>
 								</p:input>
 								<p:input name="data" href="aggregate('root',#context,#result)"/>
@@ -837,7 +946,7 @@
 						<p:otherwise rdfs:label="html response">
 							<p:choose href="#result">
 								<!-- Succes, so redirect back to original site -->
-								<p:when test="response='succes'" rdfs:label="succes, redirect back to original site">
+								<p:when test="not(exists(response/error))" rdfs:label="succes, redirect back to original site">
 									<p:processor name="oxf:html-converter">
 										<p:input name="config">
 											<config>
@@ -989,54 +1098,6 @@
 							</p:processor>
 						</p:otherwise>
 					</p:choose>
-				</p:when>
-				<!-- Upload via REST service: separate routine (TODO: should be incorporated!) -->
-				<p:when test="exists(root/context/upload-file/@action)" rdfs:label="upload via REST service">
-					<p:processor name="oxf:sql">
-						<p:input name="data" href="#context"/>
-						<p:input name="config">
-							<sql:config>
-								<sql:connection>
-									<sql:datasource>virtuoso</sql:datasource>
-									<sql:execute>
-										<sql:call>
-											{call ldt.multi_update_container(<sql:param type="xs:string" select="substring-after(context/upload-file,'file:/')"/>,'ttl',<sql:param type="xs:string" select="context/back-of-stage"/>,<sql:param type="xs:string" select="context/back-of-stage"/>,<sql:param type="xs:string" select="context/back-of-stage"/>,<sql:param type="xs:string" select="context/upload-file/@action"/>,'')}
-										</sql:call>
-										<sql:result-set>
-											<response>
-												<sql:row-iterator>
-													<sql:get-column-value type="xs:string" column="message"/>
-												</sql:row-iterator>
-											</response>
-										</sql:result-set>
-										<sql:no-results>
-											<response>No results</response>
-										</sql:no-results>
-									</sql:execute>
-								</sql:connection>
-							</sql:config>
-						</p:input>
-						<p:output name="data" id="result"/>
-					</p:processor>
-					<!-- Convert XML result to plain text -->
-					<p:processor name="oxf:text-converter">
-						<p:input name="config">
-							<config>
-								<encoding>utf-8</encoding>
-							</config>
-						</p:input>
-						<p:input name="data" href="#result" />
-						<p:output name="data" id="converted" />
-					</p:processor>
-					<!-- Serialize -->
-					<p:processor name="oxf:http-serializer">
-						<p:input name="config">
-							<config>
-								<cache-control><use-local-cache>false</use-local-cache></cache-control>
-							</config>
-						</p:input>
-						<p:input name="data" href="#converted"/>
-					</p:processor>
 				</p:when>
 				<!-- Show old data -->
 				<p:otherwise rdfs:label="show container data, no upload">
