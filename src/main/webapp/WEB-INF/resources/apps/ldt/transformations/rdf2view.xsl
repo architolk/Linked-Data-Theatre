@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2view.xsl
-    VERSION  1.17.0
-    DATE     2017-04-16
+    VERSION  1.17.1-SNAPSHOT
+    DATE     2017-05-25
 
     Copyright 2012-2017
 
@@ -190,20 +190,10 @@
 								PREFIX elmo: <http://bp4mc2.org/elmo/def#>
 								CONSTRUCT {
 									?s?p?o.
-									?sc?pc?oc.
-									?scc?pcc?occ.
 								}
 								WHERE { GRAPH <]]><xsl:value-of select="/root/context/representation-graph/@uri"/><![CDATA[>
-								{<]]><xsl:value-of select="@rdf:about"/><![CDATA[> elmo:data ?s.
+								{<]]><xsl:value-of select="@rdf:about"/><![CDATA[> elmo:data+ ?s.
 									?s?p?o.
-									OPTIONAL {
-										?s elmo:data ?sc.
-										?sc ?pc ?oc.
-										OPTIONAL {
-											?sc elmo:data ?scc.
-											?scc ?pcc ?occ.
-										}
-									}
 								}}
 								]]>
 							</query>
