@@ -2,7 +2,7 @@
 
     NAME     properties-local.xml
     VERSION  1.17.1-SNAPSHOT
-    DATE     2017-05-15
+    DATE     2017-05-25
 
     Copyright 2012-2017
 
@@ -34,7 +34,7 @@
 	<!-- Default RDF4J configuration for rdf4j-type stores -->
 	<!--
 	<property as="xs:string" name="oxf.rdf.repository.database" value="rdf4j"/>
-	<property as="xs:string" name="oxf.rdf.repository.connectString" value="http://localhost:7200/repositories/ldt"/>
+	<property as="xs:string" name="oxf.rdf.repository.connectString" value="http://localhost:8877/repositories/SYSTEM"/>
 	-->
 			
 </properties>

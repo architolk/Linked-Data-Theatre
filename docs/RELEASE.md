@@ -56,9 +56,9 @@ JMeter will check every response with a preconfigured MD5 hash. If for some reas
 4. Start the jmeter GUI: `mvn jmeter:gui`. Open the testplan (at `/src/test/jmeter/FunctionalTestPlan.jmx`. Go to the definition of the failed test and fix the MD5 hash, at the MD5Hex assertion page.
 5. Save the testplan and rerun the test.
 
-If you want to have a look at the theatre via a browser, you could start the jetty application as a forked JVM:
+If you want to have a look at the theatre via a browser, you could start the jetty application on its own:
 
-	mvn jetty:run-forked
+	mvn jetty:run
 
 Open a browser and go to `http://localhost:8888` to check the theatre. To end the jetty server, please use `CTRL-C` in the command windows.    
 
