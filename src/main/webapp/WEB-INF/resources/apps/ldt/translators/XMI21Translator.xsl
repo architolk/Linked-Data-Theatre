@@ -1,8 +1,8 @@
 <!--
 
     NAME     XMI21Translator.xsl
-    VERSION  1.17.0
-    DATE     2017-04-16
+    VERSION  1.17.1-SNAPSHOT
+    DATE     2017-05-27
 
     Copyright 2012-2017
 
@@ -269,6 +269,8 @@
 
 <!--Catch all (debugmode) -->
 <xsl:template match="*">
-	<Unexplored name="{local-name(.)}"/>
+	<uml:Unexplored rdf:about="urn:Unexplored">
+		<xsl:element name="uml:{local-name(.)}">Unexplored</xsl:element>
+	</uml:Unexplored>
 </xsl:template>
 </xsl:stylesheet>
