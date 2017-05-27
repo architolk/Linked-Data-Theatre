@@ -184,8 +184,13 @@ public class RDF4JProcessor extends SimpleProcessor {
 					}
 					catch (Exception e) {
 						// In case of an error, put the errormessage in the result, but don't throw the exception
-						msg = "[" + child.valueOf("@name") + "] " + e.toString();
-						errorMsg += e.getMessage() + ". \n";
+						msg = "[" + child.valueOf("@name") + "] " + e.getMessage();
+						errorMsg += e.getMessage();
+						if (e.getCause()!=null) {
+							msg += " (" + e.getCause().getMessage() + ")";
+							errorMsg += " (" + e.getCause().getMessage() + ")";
+						}
+						errorMsg += ". \n";
 					}
 					contentHandler.startElement("", "scene", "scene", new AttributesImpl());
 					contentHandler.characters(msg.toCharArray(),0,msg.length());
