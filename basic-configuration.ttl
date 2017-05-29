@@ -402,6 +402,7 @@ stage:Resource a elmo:Representation;
 	elmo:contains stage:Header;
 	elmo:contains stage:Menu;
 	elmo:contains stage:Resource_content;
+	elmo:contains stage:Resource_graph;
 .
 stage:Resource_content elmo:index "1";
 	elmo:query '''
@@ -420,6 +421,36 @@ stage:Resource_content elmo:index "1";
 				FILTER(isBlank(?o))
 			}
 			FILTER (isIri(?o) || isblank(?o) || lang(?o)="@LANGUAGE@" || lang(?o)="")
+		}
+	''';
+.
+stage:Resource_graph elmo:index "2";
+	elmo:appearance elmo:GraphAppearance;
+	elmo:query '''
+		construct {
+			<@SUBJECT@>?p?o.
+			?o rdfs:label ?o_label.
+			?os ?op <@SUBJECT@>.
+			?os rdfs:label ?os_label.
+		}
+		where {
+			{
+				<@SUBJECT@>?p?o
+				OPTIONAL {
+					?o rdfs:label ?o_label
+				}
+			}
+			UNION
+			{
+				{
+					select distinct ?os ?op <@SUBJECT>
+					where {
+						?os ?op <@SUBJECT@>
+					}
+					limit 100
+				}
+				OPTIONAL {?os rdfs:label ?os_label}
+			}
 		}
 	''';
 .

@@ -11,7 +11,7 @@ stage:ImageAppearance	a	elmo:Representation;
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:appearance elmo:ImageAppearance;
-#	elmo:container <http://demo.localhost/container/update>;
+	elmo:container <http://localhost:8080/container/simple>;
 	elmo:query '''
 		prefix html: <http://www.w3.org/1999/xhtml/vocab#>
 		prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
@@ -24,18 +24,31 @@ stage:ImageAppearance	a	elmo:Representation;
 			<urn:image> html:top "0".
 			<urn:image> html:left "0".
 			?item rdfs:label ?itemlabel.
-			?item geo:geometry ?previousgeo.
-			?current geo:geometry ?currentgeo.
+			?item geo:geometry ?previousgeox.
+			?current geo:geometry ?currentgeox.
 			?item testo:status ?current.
 		}
 		where {
-			?item rdf:type testo:UserStory.
-			?item rdfs:label ?itemlabel.
-			?item testo:status ?current.
-			?current geo:geometry ?currentgeo.
-			?item testo:prevStatus ?previous.
-			?previous geo:geometry ?previousgeo.
-			
+			graph <@STAGE@> {
+				?item rdf:type testo:UserStory.
+				?item rdfs:label ?itemlabel.
+				?item testo:status ?current.
+				?current geo:geometry ?currentgeo.
+				?item testo:prevStatus ?previous.
+				?previous geo:geometry ?previousgeo.
+			}
+			OPTIONAL {
+				graph <http://localhost:8080/container/simple> {
+					?current geo:geometry ?currentedit
+				}
+			}
+			OPTIONAL {
+				graph <http://localhost:8080/container/simple> {
+					?item geo:geometry ?previousedit
+				}
+			}
+			BIND(if(bound(?currentedit),?currentedit,?currentgeo) as ?currentgeox)
+			BIND(if(bound(?previousedit),?previousedit,?previousgeo) as ?previousgeox)
 		}
 	''';
 .

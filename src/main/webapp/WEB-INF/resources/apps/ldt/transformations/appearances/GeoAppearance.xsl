@@ -143,6 +143,10 @@
 					display:none;
 					pointer-events: none;
 				}
+				.sdefault {
+					stroke: #3388ff;
+					fill: #3388ff;
+				}
 			<xsl:for-each select="rdf:Description[html:stylesheet!='' and elmo:applies-to!='' and not(matches(elmo:applies-to,'^http://bp4mc2.org/elmo/def'))]">
 				.s<xsl:value-of select="elmo:applies-to"/> {
 				<xsl:value-of select="html:stylesheet"/>
@@ -214,7 +218,7 @@
 								<xsl:otherwise><xsl:value-of select="key('resource',elmo:style[1]/@rdf:resource)/elmo:name[1]"/></xsl:otherwise>
 							</xsl:choose>
 						</xsl:variable>
-						addWKT("<xsl:value-of select="@rdf:about"/>","<xsl:value-of select="geo:geometry[1]"/>","<xsl:value-of select="rdfs:label[1]"/>","<xsl:value-of select="$resource-uri"/>","s<xsl:value-of select="$styleclass"/>");
+						addWKT("<xsl:value-of select="@rdf:about"/>","<xsl:value-of select="geo:geometry[1]"/>","<xsl:value-of select="rdfs:label[1]"/>","<xsl:value-of select="$resource-uri"/>","s<xsl:value-of select="$styleclass"/><xsl:if test="$styleclass=''">default</xsl:if>");
 					</xsl:for-each>
 
 					<xsl:for-each select="rdf:Description[geo:geometry!='']/(* except (html:link|elmo:style))[exists(@rdf:resource)]">

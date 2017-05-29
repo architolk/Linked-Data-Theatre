@@ -80,12 +80,12 @@
 					<elmo:applies-to>url</elmo:applies-to>
 				</rdf:Description>
 			</xsl:if>
-			<xsl:if test="exists(root/response)">
+			<xsl:if test="exists(root/response/error)">
 				<rdf:Description rdf:nodeID="f2">
 					<rdfs:label>Error</rdfs:label>
 					<elmo:applies-to>error</elmo:applies-to>
 					<elmo:valueDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#String"/>
-					<rdf:value><xsl:value-of select="root/response"/></rdf:value>
+					<rdf:value><xsl:value-of select="root/response/error"/></rdf:value>
 					<html:stylesheet>height:75px; background:red; color:white;</html:stylesheet>
 				</rdf:Description>
 			</xsl:if>

@@ -1,8 +1,9 @@
 @prefix elmo: <http://bp4mc2.org/elmo/def#>.
 @prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix stage: <http://localhost:8080/stage#>.
 
-<showGraphs> a elmo:Representation;
+stage:showGraphs2 a elmo:Representation;
 	elmo:url-pattern "/query/showGraphs2$";
 	elmo:fragment [
 		elmo:applies-to "graph";

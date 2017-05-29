@@ -2,7 +2,7 @@
 
     NAME     config.xml
     VERSION  1.17.1-SNAPSHOT
-    DATE     2017-05-04
+    DATE     2017-05-25
 
     Copyright 2012-2017
 
@@ -73,10 +73,10 @@
 	A user with the backstage-role can look into the stage configuration using the following URL:
 		http://{domain}/backstage/{stage name}
 -->
-<!-- If you use a Sesame backend (like GraphDB), please uncomment the line below as a replacement for the <theatre line. -->
-<!-- This assumes that you have a repository named "ldt" with the configuration of the LDT, and a repository named "data" with all your data -->
+<!-- If you use a RDF4J backend (like GraphDB), please uncomment the line below as a replacement for the <theatre line. -->
+<!-- This assumes that you have a repository named "SYSTEM" with the configuration of the LDT, and the same repository for all your data -->
 <!--
-<theatre env="dev" configuration-endpoint="http://127.0.0.1:7200/repositories/ldt" local-endpoint="http://127.0.0.1:7200/repositories/data" sparql="yes">
+<theatre env="dev" configuration-endpoint="http://127.0.0.1:8877/repositories/SYSTEM" local-endpoint="http://127.0.0.1:8877/repositories/SYSTEM" sparql="yes">
 -->
 <!-- Set env="dev" to env="prod" in a production environment -->
 <theatre env="dev" configuration-endpoint="http://127.0.0.1:8890/sparql" local-endpoint="http://127.0.0.1:8890/sparql" sparql="yes">

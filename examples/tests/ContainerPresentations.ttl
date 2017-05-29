@@ -1,0 +1,27 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+stage:ContainerPresentations a elmo:Representation;
+	elmo:url-pattern "/query/containers$";
+	elmo:index "1";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+    elmo:contains stage:FooterAppearance;
+	elmo:appearance elmo:HtmlAppearance;
+	elmo:data [
+		rdfs:label "Content of containers"@en;
+		rdfs:label "Inhoud van de containers"@nl;
+		elmo:html '''
+			<p><a class="btn btn-default" href="/ldt/query/uploaded-vocabulary">Show uploaded container</a></p>
+			<p><a class="btn btn-default" href="/ldt/query/uploaded-vocabulary">Show uploaded vocabulary</a></p>
+			<p><a class="btn btn-default" href="/ldt/query/uploaded-model">Show uploaded vocabulary model</a></p>
+			<p><a class="btn btn-default" href="/ldt/query/uploaded-vocabulary.yed">Show uploaded vocabulary yEd model</a></p>
+			<p><a class="btn btn-default" href="/ldt/query/uploaded-shapes">Show uploaded shapes</a></p>
+			<p><a class="btn btn-default" href="/ldt/query/uploaded-shapes-model">Show uploaded shapes model</a></p>
+			<p><a class="btn btn-default" href="/ldt/query/uploaded-shapes.yed">Show uploaded shapes yED model</a></p>
+			<p><a class="btn btn-default" href="/ldt/query/archicomponents">Show archi container</a></p>
+		''';
+	]
+.

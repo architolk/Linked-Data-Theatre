@@ -63,6 +63,7 @@ stage:TableAppearance2_table1 a elmo:Part;
 			graph <@STAGE@> {
 				?class rdf:type ?type.
 				?class rdfs:label ?class_label
+				FILTER (lang(?class_label)="@LANGUAGE@" or lang(?class_label)="")
 				FILTER (?type = rdfs:Class
 					||	?type = owl:Class
 				)

@@ -97,9 +97,11 @@ foaf:Group rdf:type owl:Class;
 .
 
 lotro:Person rdf:type owl:Class;
-	rdfs:label "Person";
+	rdfs:label "Person"@en, "Persoon"@nl;
 .
 lotrs:Person a shacl:Shape;
+	rdfs:label "Person shape";
+	shacl:name "PERS";
 	shacl:targetClass lotro:Person;
 	shacl:property lotrs:Person_label;
 	shacl:property lotrs:Person_member;
@@ -112,7 +114,7 @@ lotrs:Person_label a shacl:PropertyConstraint;
 	shacl:pattern "^[a-zA-Z0-9\\s]$"
 .
 lotrs:Person_member a shacl:PropertyConstraint;
-	shacl:predicate foaf:member;
+	shacl:path foaf:member;
 	shacl:class foaf:Group;
 .
 lotrs:Person_founded a shacl:PropertyConstraint;

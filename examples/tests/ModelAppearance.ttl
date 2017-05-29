@@ -16,6 +16,7 @@ stage:ModelAppearance a elmo:Representation;
 			?s ?sp ?so.
 			?pc ?pcp ?pco.
 			?prop rdf:type rdf:Property.
+			?prop rdfs:label ?proplabel.
 		}
 		WHERE {
 			GRAPH <http://localhost:8080/stage> {
@@ -27,6 +28,9 @@ stage:ModelAppearance a elmo:Representation;
 					?s shacl:property ?pc.
 					?pc ?pcp ?pco.
 					?pc shacl:predicate ?prop.
+					OPTIONAL {
+						?prop rdfs:label ?proplabel
+					}
 				}
 			}
 		}

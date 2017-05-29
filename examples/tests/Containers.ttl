@@ -1,15 +1,14 @@
 @prefix elmo: <http://bp4mc2.org/elmo/def#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 @prefix container: <http://localhost:8080/container/>.
+@prefix testcontainer: <http://localhost:8888/container/>.
 @prefix stage: <http://localhost:8080/stage#>.
 
-container:excel a elmo:Container;
-	elmo:translator elmo:TableExcelTranslator;
-	elmo:contains stage:NavbarSearchAppearance;
-	rdfs:label "Upload Linked Data (Excel fie)";
-.
-
 container:simple a elmo:Container;
+	elmo:contains stage:NavbarSearchAppearance;
+	rdfs:label "Upload some linked data";
+.
+testcontainer:simple a elmo:Container;
 	elmo:contains stage:NavbarSearchAppearance;
 	rdfs:label "Upload some linked data";
 .
@@ -17,7 +16,45 @@ container:simple a elmo:Container;
 container:upload a elmo:Container;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:representation elmo:UploadRepresentation;
-	rdfs:label "Upload vocabulary";
+	rdfs:label "Upload (zip, turtle or rdf/xml)";
+.
+
+container:versioned a elmo:VersionContainer;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:representation elmo:UploadRepresentation;
+	rdfs:label "Upload some linked data";
+.
+
+# Target graph will be the same as the container
+container:replace a elmo:Container;
+	elmo:contains stage:NavbarSearchAppearance;
+	rdfs:label "Upload some linked data. Will also be used to replace the content of the simple container";
+	elmo:replaces container:simple
+.
+
+# All data from subjects in the container graph will deleted from target graph, target graph receives triples from container
+container:update a elmo:Container;
+	elmo:contains stage:NavbarSearchAppearance;
+	rdfs:label "Upload some linked data. Will also be used to update the content of the simple container";
+	elmo:updates container:simple
+.
+
+# All triples from container are expected in the target graph. Old triples are deleted, new triples are inserted
+container:part a elmo:Container;
+	elmo:contains stage:NavbarSearchAppearance;
+	rdfs:label "Upload some linked data. Will also be used to update the content of the simple container";
+	elmo:partOf container:simple
+.
+container:genexcel a elmo:Container;
+	elmo:translator elmo:GenericExcelTranslator;
+	elmo:contains stage:NavbarSearchAppearance;
+	rdfs:label "Upload Linked Data (Excel file in tabular format)";
+.
+
+container:excel a elmo:Container;
+	elmo:translator elmo:TableExcelTranslator;
+	elmo:contains stage:NavbarSearchAppearance;
+	rdfs:label "Upload Linked Data (Excel file with specifications)";
 .
 
 container:xpl a elmo:Container;

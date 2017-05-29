@@ -1,14 +1,56 @@
 <?xml version="1.0"?>
 <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_3.dtd">
 <Configure id="Server" class="org.eclipse.jetty.server.Server">
-  <Call name="addConnector">
-    <Arg>
-      <New id="httpConnector" class="org.eclipse.jetty.server.ServerConnector">
-        <Arg name="server"><Ref refid="Server" /></Arg>
-        <Set name="host"><Property name="jetty.http.host" deprecated="jetty.host" /></Set>
-        <Set name="port"><Property name="jetty.http.port" deprecated="jetty.port" default="8888" /></Set>
-        <Set name="idleTimeout"><Property name="jetty.http.idleTimeout" deprecated="http.timeout" default="30000"/></Set>
-      </New>
-    </Arg>
-  </Call>
+	<!-- Default connector -->
+	<Call name="addConnector">
+		<Arg>
+			<New id="httpConnector" class="org.eclipse.jetty.server.ServerConnector">
+				<Arg name="server"><Ref refid="Server" /></Arg>
+				<Set name="host"><Property name="jetty.http.host" deprecated="jetty.host" /></Set>
+				<Set name="port">8888</Set>
+				<Set name="idleTimeout"><Property name="jetty.http.idleTimeout" deprecated="http.timeout" default="30000"/></Set>
+				<Set name="name">ldt</Set>
+			</New>
+		</Arg>
+	</Call>
+	<!-- Connector for rdf4j server -->
+	<Call name="addConnector">
+		<Arg>
+			<New id="httpConnector2" class="org.eclipse.jetty.server.ServerConnector">
+				<Arg name="server"><Ref refid="Server" /></Arg>
+				<Set name="host"><Property name="jetty.http.host" deprecated="jetty.host" /></Set>
+				<Set name="port">8877</Set>
+				<Set name="idleTimeout"><Property name="jetty.http.idleTimeout" deprecated="http.timeout" default="30000"/></Set>
+				<Set name="name">rdf4j</Set>
+			</New>
+		</Arg>
+	</Call>
+
+	<!-- Set context for rdf4j server -->
+	<New id="context-rdf4j" class="org.eclipse.jetty.maven.plugin.JettyWebAppContext">
+		<Set name="contextPath">/</Set>
+		<Set name="war">rdf4j\rdf4j-server</Set>
+		<Set name="virtualHosts">
+			<Array type="java.lang.String">
+				<Item>@rdf4j</Item>
+			</Array>
+		</Set>
+	</New>
+
+	<!-- Register handlers: default and context-rdf4j -->
+	<Set name="handler">
+		<New class="org.eclipse.jetty.server.handler.ContextHandlerCollection">
+			<Set name="handlers">
+				<Array type="org.eclipse.jetty.server.Handler">
+					<Item>
+						<Ref refid="context-rdf4j" />
+					</Item>
+					<Item>
+						<New class="org.eclipse.jetty.server.handler.DefaultHandler" />
+					</Item>
+				</Array>
+			</Set>
+		</New>
+	</Set>
+ 
 </Configure>

@@ -6,6 +6,7 @@
 	<name>ldt</name>
 	<packaging>war</packaging>
 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
 		<buildTimestamp>${maven.build.timestamp}</buildTimestamp>
 		<license-maven-plugin.version>2.11</license-maven-plugin.version>
@@ -156,11 +157,17 @@
 			<plugin>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
-				<version>9.2.10.v20150310</version>
+				<version>9.4.5.v20170502</version>
 				<configuration>
+					<systemProperties>
+						<systemProperty>
+							<name>org.eclipse.rdf4j.appdata.basedir</name>
+							<value>${project.build.directory}/rdf4jdata</value>
+						</systemProperty>
+					</systemProperties>
 					<classesDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</classesDirectory>
 					<webAppSourceDirectory>${project.build.directory}/${project.build.finalName}</webAppSourceDirectory>
-					<jettyXml>${basedir}/src/test/jetty/jetty.xml</jettyXml>
+					<jettyXml>${project.basedir}/src/test/jetty/jetty.xml</jettyXml>
 					<stopPort>8889</stopPort>
 					<stopKey>STOP</stopKey>
 					<stopWait>10</stopWait>
@@ -181,6 +188,37 @@
 						</goals>
 					</execution>
 				</executions>
+				<!--
+				<configuration>
+					<jettyXml>src/test/jetty/jetty.xml</jettyXml>
+					<systemProperties>
+						<systemProperty>
+							<name>jetty.webapp.ldt</name>
+							<value>${project.build.directory}/${project.build.finalName}.war</value>
+						</systemProperty>
+						<systemProperty>
+							<name>jetty.webapp.rdf4j</name>
+							<value>${project.basedir}/rdf4j/rdf4j-server.war</value>
+						</systemProperty>
+					</systemProperties>
+				</configuration>
+				<executions>
+					<execution>
+						<id>start-jetty</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>start</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>stop-jetty</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>stop</goal>
+						</goals>
+					</execution>
+				</executions>
+				-->
 			</plugin>
 			<plugin>
 				<groupId>com.lazerycode.jmeter</groupId>

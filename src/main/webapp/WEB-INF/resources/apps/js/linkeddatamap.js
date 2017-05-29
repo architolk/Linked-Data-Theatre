@@ -1,7 +1,7 @@
 /*
  * NAME     linkeddatamap.js
- * VERSION  1.17.0
- * DATE     2017-04-16
+ * VERSION  1.17.1-SNAPSHOT
+ * DATE     2017-05-15
  *
  * Copyright 2012-2017
  *
@@ -164,6 +164,7 @@ function parse(_) {
         return {
             type: 'Point',
 			radius: circleQuotient*parseFloat(c[1]),
+			originalradius: c[1],
             coordinates: c[0]
         };
 	}
@@ -302,6 +303,10 @@ function circleMoveStart(e) {
 		d3.select(movedItem.edge._path)
 			.attr("marker-end","none");
 	}
+	if (movedItem.redge!=undefined) {
+		d3.select(movedItem.redge._path)
+			.attr("marker-end","none");
+	}
 	map.on('mousemove',circleMove);
 	map.on('mouseup',circleMoveEnd);
 }
@@ -333,20 +338,33 @@ function circleMove(e) {
 		movedItem.label.setLatLng(movedItem._latlng);
 	}
 	setChangeColors();
-	//Onderstaande is nog niet echt heel netjes, nog verbeteren
+	//Refactoring needed for stuff below
+	//Change start position of edge (start is moving)
 	if (movedItem.edge!=undefined) {
 		var latlngs = Array();
 		latlngs.push(e.latlng);
 		latlngs.push(movedItem.edge.getLatLngs()[1]);
 		movedItem.edge.setLatLngs(latlngs);
 	}
+	//Change end position of edge (end is moving)
+	if (movedItem.redge!=undefined) {
+		var latlngs = Array();
+		latlngs.push(movedItem.redge.getLatLngs()[0]);
+		latlngs.push(e.latlng);
+		movedItem.redge.setLatLngs(latlngs);
+	}
 }
 function circleMoveEnd(e) {
 	map.removeEventListener('mousemove');
+	//Redisplay the arrowheads after zoom
+	//We might use this in the future to resize the arrowheads according to the zoomlevel!
 	if (movedItem.edge!=undefined) {
-		//Redisplay the arrowheads after zoom
-		//We might use this in the future to resize the arrowheads according to the zoomlevel!
 		d3.select(movedItem.edge._path)
+			.attr("marker-end","url(#ArrowHead)")
+		;
+	}
+	if (movedItem.redge!=undefined) {
+		d3.select(movedItem.redge._path)
 			.attr("marker-end","url(#ArrowHead)")
 		;
 	}
@@ -378,6 +396,11 @@ function removeArrowheads(e){
 					.attr("marker-end","none")
 				;
 			}
+			if (layer.redge!=undefined) {
+				d3.select(layer.redge._path)
+					.attr("marker-end","none")
+				;
+			}
 		}
 	}
 }
@@ -387,10 +410,15 @@ function resizeCircle(e) {
 		var layer = listOfGeoObjects[i].getLayers()[0];
 		if (layer instanceof L.CircleMarker) {
 			layer.setStyle({radius: res[0]*layer.feature.geometry.radius/res[map.getZoom()]});
+			//Redisplay the arrowheads after zoom
+			//We might use this in the future to resize the arrowheads according to the zoomlevel!
 			if (layer.edge!=undefined) {
-				//Redisplay the arrowheads after zoom
-				//We might use this in the future to resize the arrowheads according to the zoomlevel!
 				d3.select(layer.edge._path)
+					.attr("marker-end","url(#ArrowHead)")
+				;
+			}
+			if (layer.redge!=undefined) {
+				d3.select(layer.redge._path)
 					.attr("marker-end","url(#ArrowHead)")
 				;
 			}
@@ -459,7 +487,8 @@ function addEdge(subject,predicate,object) {
 				.attr("marker-end","url(#ArrowHead)")
 				.attr("stroke","#606060")
 			;
-			sSub.getLayers()[0].edge = polyline;
+			sSub.getLayers()[0].edge = polyline;  //Edge outward
+			sObj.getLayers()[0].redge = polyline; //Edge inward
 		}
 	}
 
@@ -468,7 +497,7 @@ function addEdge(subject,predicate,object) {
 function updateMap() {
 	updateTTL = "@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>. ";
 	for(i = 0; i < listOfMarkers.length; ++i) {
-		updateTTL += "<" + listOfMarkers[i].feature.geometry.url + '> geo:geometry "CIRCLE(' + listOfMarkers[i].getLatLng().lng + ' ' + listOfMarkers[i].getLatLng().lat + ',2)". ';
+		updateTTL += "<" + listOfMarkers[i].feature.geometry.url + '> geo:geometry "CIRCLE(' + listOfMarkers[i].getLatLng().lng + ' ' + listOfMarkers[i].getLatLng().lat + ',' + listOfMarkers[i].feature.geometry.originalradius + ')". ';
 	}
 	for(i = 0; i < listOfGeoObjects.length; ++i) {
 		layer = listOfGeoObjects[i].getLayers()[0];
