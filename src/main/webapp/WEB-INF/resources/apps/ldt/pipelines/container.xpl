@@ -350,6 +350,7 @@
 										<xsl:when test="elmo:updates/@rdf:resource!=''"><target-graph action="update"><xsl:value-of select="elmo:updates/@rdf:resource"/></target-graph></xsl:when>
 										<xsl:when test="elmo:partOf/@rdf:resource!=''"><target-graph action="part"><xsl:value-of select="elmo:partOf/@rdf:resource"/></target-graph></xsl:when>
 										<xsl:when test="elmo:replaces/@rdf:resource!=''"><target-graph action="replace"><xsl:value-of select="elmo:replaces/@rdf:resource"/></target-graph></xsl:when>
+										<xsl:when test="/root/context/upload-file/@action='insert'"><target-graph action="insert"/></xsl:when>
 										<xsl:otherwise/>
 									</xsl:choose>
 									<representation><xsl:value-of select="elmo:representation/@rdf:resource"/></representation>
