@@ -320,6 +320,7 @@
 						</configuration>
 					</execution>
 					<!-- Virtuoso JDBC dependencies and libraries -->
+					<!--
 					<execution>
 						<id>get-virtuoso-jdbc3</id>
 						<goals>
@@ -331,6 +332,7 @@
 							<outputDirectory>WEB-INF/lib</outputDirectory>
 						</configuration>
 					</execution>
+					-->
 					<execution>
 						<id>get-virtuoso-jdbc4</id>
 						<goals>
