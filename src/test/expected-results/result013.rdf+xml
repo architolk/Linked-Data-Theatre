@@ -19,7 +19,7 @@
     <ns2:population rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">153773</ns2:population>
     <ns2:populationAsOf rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2016-04-01</ns2:populationAsOf>
     <ns4:capitalCity rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns4:capitalCity>
-    <ns4:districtNames rdf:nodeID="b360423"/>
+    <ns4:districtNames rdf:nodeID="b387984"/>
   </rdf:Description>
   <rdf:Description rdf:about="http://localhost:8080/def/test#capitalCity">
     <rdfs:label xml:lang="en">capital city</rdfs:label>
@@ -32,71 +32,71 @@
     <ns2:isPartOf rdf:resource="http://dbpedia.org/resource/Utrecht_(province)"/>
     <ns4:capitalCity rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns4:capitalCity>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b360423">
+  <rdf:Description rdf:nodeID="b387984">
     <rdf:first>stadskern</rdf:first>
-    <rdf:rest rdf:nodeID="b360424"/>
+    <rdf:rest rdf:nodeID="b387985"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b360424">
+  <rdf:Description rdf:nodeID="b387985">
     <rdf:first>soesterkwartier</rdf:first>
-    <rdf:rest rdf:nodeID="b360425"/>
+    <rdf:rest rdf:nodeID="b387986"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b360425">
+  <rdf:Description rdf:nodeID="b387986">
     <rdf:first>koppel</rdf:first>
-    <rdf:rest rdf:nodeID="b360426"/>
+    <rdf:rest rdf:nodeID="b387987"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b360426">
+  <rdf:Description rdf:nodeID="b387987">
     <rdf:first>kruiskamp</rdf:first>
-    <rdf:rest rdf:nodeID="b360427"/>
+    <rdf:rest rdf:nodeID="b387988"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b360427">
+  <rdf:Description rdf:nodeID="b387988">
     <rdf:first>schothorst</rdf:first>
-    <rdf:rest rdf:nodeID="b360428"/>
+    <rdf:rest rdf:nodeID="b387989"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b360428">
+  <rdf:Description rdf:nodeID="b387989">
     <rdf:first>liendert</rdf:first>
-    <rdf:rest rdf:nodeID="b360429"/>
+    <rdf:rest rdf:nodeID="b387990"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b360429">
+  <rdf:Description rdf:nodeID="b387990">
     <rdf:first>rustenburg</rdf:first>
-    <rdf:rest rdf:nodeID="b360430"/>
+    <rdf:rest rdf:nodeID="b387991"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b360430">
+  <rdf:Description rdf:nodeID="b387991">
     <rdf:first>schuilenburg</rdf:first>
-    <rdf:rest rdf:nodeID="b360431"/>
+    <rdf:rest rdf:nodeID="b387992"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b360431">
+  <rdf:Description rdf:nodeID="b387992">
     <rdf:first>randenbroek</rdf:first>
-    <rdf:rest rdf:nodeID="b360432"/>
+    <rdf:rest rdf:nodeID="b387993"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b360432">
+  <rdf:Description rdf:nodeID="b387993">
     <rdf:first>dorrestein</rdf:first>
-    <rdf:rest rdf:nodeID="b360433"/>
+    <rdf:rest rdf:nodeID="b387994"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b360433">
+  <rdf:Description rdf:nodeID="b387994">
     <rdf:first>leusderkwartier</rdf:first>
-    <rdf:rest rdf:nodeID="b360434"/>
+    <rdf:rest rdf:nodeID="b387995"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b360434">
+  <rdf:Description rdf:nodeID="b387995">
     <rdf:first>bergkwartier</rdf:first>
-    <rdf:rest rdf:nodeID="b360435"/>
+    <rdf:rest rdf:nodeID="b387996"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b360435">
+  <rdf:Description rdf:nodeID="b387996">
     <rdf:first>zielhorst</rdf:first>
-    <rdf:rest rdf:nodeID="b360436"/>
+    <rdf:rest rdf:nodeID="b387997"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b360436">
+  <rdf:Description rdf:nodeID="b387997">
     <rdf:first>kattenbroek</rdf:first>
-    <rdf:rest rdf:nodeID="b360437"/>
+    <rdf:rest rdf:nodeID="b387998"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b360437">
+  <rdf:Description rdf:nodeID="b387998">
     <rdf:first>nieuwland</rdf:first>
-    <rdf:rest rdf:nodeID="b360438"/>
+    <rdf:rest rdf:nodeID="b387999"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b360438">
+  <rdf:Description rdf:nodeID="b387999">
     <rdf:first>vathorst</rdf:first>
-    <rdf:rest rdf:nodeID="b360439"/>
+    <rdf:rest rdf:nodeID="b388000"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b360439">
+  <rdf:Description rdf:nodeID="b388000">
     <rdf:first>vermeerkwartier</rdf:first>
     <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
   </rdf:Description>

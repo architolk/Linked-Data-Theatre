@@ -2,7 +2,7 @@
 
     NAME     query.xpl
     VERSION  1.17.1-SNAPSHOT
-    DATE     2017-05-04
+    DATE     2017-06-07
 
     Copyright 2012-2017
 
@@ -141,7 +141,7 @@
 									UNION
 									{
 										GRAPH <]]><xsl:value-of select="context/representation-graph/@uri"/><![CDATA[> {
-											?rep elmo:applies-to <]]><xsl:value-of select="context/subject"/><![CDATA[>
+											?rep elmo:applies-to <]]><xsl:value-of select="context/idsubject"/><![CDATA[>
 										}
 									}
 									UNION
@@ -152,7 +152,7 @@
 											FILTER isBlank(?profile)
 										}
 										{
-											<]]><xsl:value-of select="context/subject"/><![CDATA[> ?predicate ?bobject
+											<]]><xsl:value-of select="context/idsubject"/><![CDATA[> ?predicate ?bobject
 										}
 										FILTER (str(?object)=str(?bobject))
 									}]]></xsl:if><![CDATA[
@@ -704,7 +704,8 @@
 									<xsl:variable name="query6" select="replace($query5,'@TIMESTAMP@',/root/context/timestamp)"/>
 									<xsl:variable name="query7" select="replace($query6,'@DATE@',/root/context/date)"/>
 									<xsl:variable name="query8" select="replace($query7,'@DOCSUBJECT@',/root/context/docsubject)"/>
-									<query><xsl:value-of select="replace($query8,'@SUBJECT@',/root/context/subject)"/></query>
+									<xsl:variable name="query9" select="replace($query8,'@IDSUBJECT@',/root/context/idsubject)"/>
+									<query><xsl:value-of select="replace($query9,'@SUBJECT@',/root/context/subject)"/></query>
 									<default-graph-uri />
 									<error type=""/>
 								</parameters>

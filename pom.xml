@@ -76,6 +76,7 @@
 						<exclude>ext-resources/**</exclude>
 						<exclude>license-builder/**</exclude>
 						<exclude>orbeon/**</exclude>
+						<exclude>rdf4j/**</exclude>
 						<exclude>processors/**</exclude>
 						<exclude>LICENSE</exclude>
 						<exclude>**/*.md</exclude>
@@ -254,7 +255,7 @@
 					<checkResult>
 						<errors>
 							<!-- The analyzer finds a 406 an error, and at this moment 23,5% of all tests are 406s -->
-							<threshold>24</threshold>
+							<threshold>19</threshold>
 							<tolerance>2</tolerance>
 						</errors>
 					</checkResult>

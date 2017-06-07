@@ -2,7 +2,7 @@
 
     NAME     context.xsl
     VERSION  1.17.1-SNAPSHOT
-    DATE     2017-05-24
+    DATE     2017-06-07
 
     Copyright 2012-2017
 
@@ -237,7 +237,7 @@
 					<xsl:otherwise><xsl:value-of select="$url"/></xsl:otherwise>
 				</xsl:choose>
 			</docsubject>
-			<subject>
+			<xsl:variable name="subject">
 				<xsl:choose>
 					<!-- For security reasons, subject of a container should ALWAYS be the same as the request-url -->
 					<xsl:when test="exists(/croot)"><xsl:value-of select="$url"/></xsl:when>
@@ -266,7 +266,20 @@
 					<!-- Dereferenceable URI, other situations (such as def-URI's) -->
 					<xsl:otherwise><xsl:value-of select="$url"/></xsl:otherwise>
 				</xsl:choose>
-			</subject>
+			</xsl:variable>
+			<subject><xsl:value-of select="$subject"/></subject>
+			<idsubject>
+				<xsl:choose>
+					<xsl:when test="exists(/croot)"><xsl:value-of select="$subject"/></xsl:when>
+					<xsl:when test="theatre/subject!=''"><xsl:value-of select="$subject"/></xsl:when>
+					<xsl:when test="substring-before($url,'/doc/')!='' and theatre/date!=''">
+						<xsl:variable name="domain" select="substring-before($url,'/doc/')"/>
+						<xsl:variable name="term" select="substring-after($url,concat('/doc/',theatre/date,'/'))"/>
+						<xsl:value-of select="$domain"/>/id/<xsl:value-of select="$term"/>
+					</xsl:when>
+					<xsl:otherwise><xsl:value-of select="$subject"/></xsl:otherwise>
+				</xsl:choose>
+			</idsubject>
 			<parameters>
 				<xsl:for-each select="request/parameters/parameter[name!='subject' and name!='format' and name!='representation' and name!='date']">
 					<xsl:choose>
