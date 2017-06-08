@@ -198,6 +198,8 @@
 						 dmn:organizationUnit|
 						 dmn:performanceIndicator|
 						 dmn:relation|
+						 dmn:textAnnotation|
+						 dmn:association|
 						 dmn:businessKnowledgeModel">
 		<xsl:call-template name="process" />
 	</xsl:template>
@@ -318,7 +320,9 @@
 				<xsl:apply-templates select="dmn:input">
 					<xsl:with-param name="dtid"><xsl:value-of select="$id"/></xsl:with-param>
 				</xsl:apply-templates>
-				<xsl:apply-templates select="dmn:output"/>
+				<xsl:apply-templates select="dmn:output">
+					<xsl:with-param name="dtid"><xsl:value-of select="$id"/></xsl:with-param>
+				</xsl:apply-templates>
 				<xsl:for-each select="dmn:rule">
 					<dmno:rule>
 						<rdf:Description>
@@ -479,9 +483,28 @@
 	</xsl:template>
 	
 	<xsl:template match="dmn:output">
-		<xsl:call-template name="process">
-			<xsl:with-param name="class">OutputClause</xsl:with-param>			
-		</xsl:call-template>
+		<xsl:param name="dtid"/>
+		<xsl:variable name="outputNumber"><xsl:number/></xsl:variable>
+		<dmno:output>
+			<!-- Here we generate our own ids, because we need to reference them later in the rules -->
+			<dmno:OutputClause rdf:about="{$dtid}_output_{$outputNumber}">
+				<xsl:choose>
+					<xsl:when test="exists(@name)">
+						<rdfs:label><xsl:value-of select="@name" /></rdfs:label>
+					</xsl:when>
+					<xsl:when test="exists(../@outputLabel)">
+						<rdfs:label><xsl:value-of select="../@outputLabel" /></rdfs:label>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:call-template name="print-name">
+							<xsl:with-param name="property">output</xsl:with-param>
+						</xsl:call-template>
+					</xsl:otherwise>
+				</xsl:choose>
+				
+				<xsl:apply-templates/>
+			</dmno:OutputClause>
+		</dmno:output>
 	</xsl:template>			
 	
 	<xsl:template match="dmn:outputDecision">
@@ -499,13 +522,14 @@
 	<!-- Part of a decision table; it therefore follows a different pattern (see comment at the decisionTable property) -->
 	<xsl:template match="dmn:outputEntry">
 		<xsl:param name="dtid"/>
+		<xsl:variable name="outputEntryNumber"><xsl:number/></xsl:variable>
 		<dmno:outputEntry>			
 			<dmno:LiteralExpression>				
 				<xsl:call-template name="print-id" />
 				<xsl:call-template name="print-name">
 					<xsl:with-param name="property">outputEntry</xsl:with-param>
 				</xsl:call-template>
-				<dmno:relatedOutput rdf:resource="{$dtid}_output"/> <!-- Not part of the DMN specification -->
+				<dmno:relatedOutput rdf:resource="{$dtid}_output_{$outputEntryNumber}"/> <!-- Not part of the DMN specification -->
 				<xsl:apply-templates/>
 			</dmno:LiteralExpression>
 		</dmno:outputEntry>
