@@ -19,6 +19,7 @@ stage:ElmoVocabulary	a	elmo:Representation;
 		}
 	'''
 .
+
 stage:ElmoVocabularyYed a elmo:Representation;
 	elmo:url-pattern	"/query/elmo-model.yed$";
 	elmo:appearance elmo:VocabularyAppearance;
@@ -59,3 +60,45 @@ stage:ElmoVocabularyQuery a elmo:Query;
 		}
 	'''
 .
+
+stage:Elmo2VocabularyYed a elmo:Representation;
+	elmo:url-pattern	"/query/elmo2-model.yed$";
+	elmo:appearance elmo:VocabularyAppearance;
+	elmo:query stage:Elmo2VocabularyQuery;
+.	
+stage:Elmo2VocabularyModel a elmo:Representation;
+	elmo:url-pattern "/query/elmo2-model$";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:ModelAppearance;
+	elmo:query stage:Elmo2VocabularyQuery;
+.
+stage:Elmo2VocabularyQuery a elmo:Query;
+	elmo:query '''
+		prefix sh: <http://www.w3.org/ns/shacl#>
+		CONSTRUCT {
+			?shape rdf:type sh:NodeShape.
+			?shape sh:name ?shapename.
+			?shape sh:targetClass ?class.
+			?class rdf:type owl:Class.
+			?class rdfs:subClassOf ?pclass.
+			?shape sh:property ?property.
+			?property ?pp ?po
+		}
+		WHERE {
+			GRAPH <http://bp4mc2.org/elmo2/def> {
+				{
+					?shape rdf:type sh:NodeShape.
+					?shape sh:name ?shapename.
+					?shape sh:targetClass ?class.
+					OPTIONAL {?class rdfs:subClassOf ?pclass}
+					OPTIONAL {
+						?shape sh:property ?property.
+						?property ?pp ?po
+					}
+				}
+			}
+		}
+	'''
+.
+

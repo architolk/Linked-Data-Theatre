@@ -47,23 +47,23 @@
 
 # ======
 #
-# REPRESENTATION
+# PART
 #
 # ======
-elmo:Representation a owl:Class;
-	rdfs:label   "Representation"@en;
-	rdfs:label   "Representatie"@nl;
-	rdfs:comment "The class of representations of a resource"@en;
-	rdfs:comment "De klasse van representaties van een resource"@nl;
+elmo:Part a owl:Class;
+	rdfs:label "Part"@en;
+	rdfs:label "Onderdeel"@nl;
+	rdfs:comment "The class of UI parts, as a part of a Representation";
+	rdfs:comment "De klasse van UI onderdelen, als onderdeel van een Representatie";
 .
-elmoshape:Representation a sh:NodeShape;
-	sh:targetClass elmo:Representation;
-	sh:name "elmo:Representation";
+elmoshape:Part a sh:NodeShape;
+	sh:targetClass elmo:Part;
+	sh:name "elmo:Part";
 	sh:property [
 		sh:path elmo:fragment;
 		sh:name "elmo:fragment";
 		sh:nodeKind sh:IRI;
-		sh:class elmo:Fragment;
+		sh:class elmo:RepresentationFragment;
 	];
 	sh:property [
 		sh:path elmo:query;
@@ -79,31 +79,10 @@ elmoshape:Representation a sh:NodeShape;
 		sh:maxCount 1;
 	];
 	sh:property [
-		sh:path elmo:url-pattern;
-		sh:name "elmo:url-pattern";
-		sh:nodeKind sh:Literal;
-	];
-	sh:property [
-		sh:path elmo:uri-pattern;
-		sh:name "elmo:uri-pattern";
-		sh:nodeKind sh:Literal;
-	];
-	sh:property [
-		sh:path elmo:applies-to;
-		sh:name "elmo:applies-to";
-		sh:nodeKind sh:BlankNode;
-	];
-	sh:property [
 		sh:path elmo:index;
 		sh:name "elmo:index";
 		sh:nodeKind sh:Literal;
 		sh:maxCount 1;
-	];
-	sh:property [
-		sh:path elmo:contains;
-		sh:name "elmo:contains";
-		sh:nodeKind sh:IRI;
-		sh:class elmo:Part;
 	];
 	sh:property [
 		sh:path elmo:data;
@@ -118,13 +97,6 @@ elmoshape:Representation a sh:NodeShape;
 		sh:path elmo:endpoint;
 		sh:name "elmo:endpoint";
 		sh:nodeKind sh:IRI;
-	];
-	sh:property [
-		sh:path elmo:queryForm;
-		sh:name "elmo:queryForm";
-		sh:nodeKind sh:IRI;
-		sh:maxCount 1;
-		sh:class elmo:Form;
 	];
 	sh:property [
 		sh:path elmo:layer;
@@ -147,14 +119,80 @@ elmoshape:Representation a sh:NodeShape;
 
 # ======
 #
+# REPRESENTATION
+#
+# ======
+elmo:Representation a owl:Class;
+	rdfs:subClassOf elmo:Part;
+	rdfs:label   "Representation"@en;
+	rdfs:label   "Representatie"@nl;
+	rdfs:comment "The class of representations of a resource"@en;
+	rdfs:comment "De klasse van representaties van een resource"@nl;
+.
+elmoshape:Representation a sh:NodeShape;
+	sh:targetClass elmo:Representation;
+	sh:name "elmo:Representation";
+	sh:property [
+		sh:path elmo:url-pattern;
+		sh:name "elmo:url-pattern";
+		sh:nodeKind sh:Literal;
+	];
+	sh:property [
+		sh:path elmo:uri-pattern;
+		sh:name "elmo:uri-pattern";
+		sh:nodeKind sh:Literal;
+	];
+	sh:property [
+		sh:path elmo:applies-to;
+		sh:name "elmo:applies-to";
+		sh:nodeKind sh:BlankNode;
+	];
+	sh:property [
+		sh:path elmo:contains;
+		sh:name "elmo:contains";
+		sh:nodeKind sh:IRI;
+		sh:class elmo:Part;
+	];
+	sh:property [
+		sh:path elmo:queryForm;
+		sh:name "elmo:queryForm";
+		sh:nodeKind sh:IRI;
+		sh:maxCount 1;
+		sh:class elmo:Form;
+	];
+.
+
+# ======
+#
 # FRAGMENT
 #
 # ======
 elmo:Fragment a owl:Class;
 	rdfs:label   "Fragment"@en;
 	rdfs:label   "Fragment"@nl;
+	rdfs:comment "The class of fragments"@en;
+	rdfs:comment "De klasse van fragmenten"@nl;
+.
+elmo:RepresentationFragment a owl:Class;
+	rdfs:subClassOf elmo:Fragment;
+	rdfs:label   "Fragment"@en;
+	rdfs:label   "Fragment"@nl;
 	rdfs:comment "The class of fragments of a representation"@en;
 	rdfs:comment "De klasse van fragmenten van een representatie"@nl;
+.
+elmo:FormFragment a owl:Class;
+	rdfs:subClassOf elmo:Fragment;
+	rdfs:label   "Fragment"@en;
+	rdfs:label   "Fragment"@nl;
+	rdfs:comment "The class of fragments of a form"@en;
+	rdfs:comment "De klasse van fragmenten van een formulier"@nl;
+.
+elmo:YedFragment a owl:Class;
+	rdfs:subClassOf elmo:RepresentationFragment;
+	rdfs:label   "Fragment"@en;
+	rdfs:label   "Fragment"@nl;
+	rdfs:comment "The class of fragments of a yED representation"@en;
+	rdfs:comment "De klasse van fragmenten van een yED representatie"@nl;
 .
 elmoshape:Fragment a sh:NodeShape;
 	sh:targetClass elmo:Fragment;
@@ -166,12 +204,6 @@ elmoshape:Fragment a sh:NodeShape;
 		sh:datatype xs:string;
 	];
 	sh:property [
-		sh:path elmo:appearance;
-		sh:name "elmo:appearance";
-		sh:nodeKind sh:IRI;
-		sh:class elmo:Appearance;
-	];
-	sh:property [
 		sh:path elmo:applies-to;
 		sh:name "elmo:applies-to";
 		sh:nodeKind sh:Literal;
@@ -180,6 +212,16 @@ elmoshape:Fragment a sh:NodeShape;
 		sh:path elmo:index;
 		sh:name "elmo:index";
 		sh:nodeKind sh:Literal;
+	];
+.
+elmoshape:RepresentationFragment a sh:NodeShape;
+	sh:targetClass elmo:RepresentationFragment;
+	sh:name "elmo:RepresentationFragment";
+	sh:property [
+		sh:path elmo:appearance;
+		sh:name "elmo:appearance";
+		sh:nodeKind sh:IRI;
+		sh:class elmo:Appearance;
 	];
 	sh:property [
 		sh:path elmo:glossary;
@@ -198,6 +240,14 @@ elmoshape:Fragment a sh:NodeShape;
 		sh:nodeKind sh:IRI;
 	];
 	sh:property [
+		sh:path rdf:value;
+		sh:name "rdf:value";
+	];
+.
+elmoshape:FormFragment a sh:NodeShape;
+	sh:targetClass elmo:FormFragment;
+	sh:name "elmo:FormFragment";
+	sh:property [
 		sh:path elmo:constraint;
 		sh:name "elmo:constraint";
 		sh:nodeKind sh:IRI;
@@ -215,10 +265,10 @@ elmoshape:Fragment a sh:NodeShape;
 		sh:path elmo:valuesFrom;
 		sh:name "elmo:valuesFrom";
 	];
-	sh:property [
-		sh:path rdf:value;
-		sh:name "rdf:value";
-	];
+.
+elmoshape:YedFragment a sh:NodeShape;
+	sh:targetClass elmo:YedFragment;
+	sh:name "elmo:YedFragment";
 	sh:property [
 		sh:path yed:backgroundColor;
 		sh:name "yed:backgroundColor";
@@ -259,10 +309,55 @@ elmo:Container a owl:Class;
 .
 elmoshape:Container a sh:NodeShape;
 	sh:targetClass elmo:Container;
+	sh:name "elmo:Container";
 	sh:property [
-		sh:path elmo:translator;
+		sh:path rdfs:label;
+		sh:name "rdfs:label";
 		sh:nodeKind sh:IRI;
 		sh:class elmo:Translator;
+	];
+	sh:property [
+		sh:path elmo:representation;
+		sh:name "elmo:representation";
+		sh:nodeKind sh:IRI;
+	];
+	sh:property [
+		sh:path elmo:contains;
+		sh:name "elmo:contains";
+		sh:nodeKind sh:IRI;
+		sh:class elmo:Part;
+	];
+	sh:property [
+		sh:path elmo:translator;
+		sh:name "elmo:translator";
+		sh:nodeKind sh:IRI;
+		sh:class elmo:Translator;
+	];
+	sh:property [
+		sh:path elmo:replaces;
+		sh:name "elmo:replaces";
+		sh:nodeKind sh:IRI;
+	];
+	sh:property [
+		sh:path elmo:updates;
+		sh:name "elmo:updates";
+		sh:nodeKind sh:IRI;
+	];
+	sh:property [
+		sh:path elmo:partOf;
+		sh:name "elmo:partOf";
+		sh:nodeKind sh:IRI;
+	];
+	sh:property [
+		sh:path elmo:query;
+		sh:name "elmo:query";
+		sh:nodeKind sh:Literal;
+	];
+	sh:property [
+		sh:path elmo:query;
+		sh:name "elmo:query";
+		sh:nodeKind sh:IRI;
+		sh:class elmo:Query;
 	];
 .
 
@@ -287,22 +382,6 @@ elmoshape:Query a sh:NodeShape;
 		sh:maxCount 1;
 	];
 .
-# ======
-#
-# PART
-#
-# ======
-elmo:Part a owl:Class;
-	rdfs:subClassOf elmo:Representation;
-	rdfs:label "Part"@en;
-	rdfs:label "Onderdeel"@nl;
-	rdfs:comment "The class of UI parts, as a part of a Representation";
-	rdfs:comment "De klasse van UI onderdelen, als onderdeel van een Representatie";
-.
-elmoshape:Part a sh:NodeShape;
-	sh:targetClass elmo:Part;
-	sh:name "elmo:Part";
-.
 
 # ======
 #
@@ -318,6 +397,12 @@ elmo:Form			a	owl:Class;
 elmoshape:Form a sh:NodeShape;
 	sh:targetClass elmo:Form;
 	sh:name "elmo:Form";
+	sh:property [
+		sh:path elmo:fragment;
+		sh:class elmo:FormFragment;
+		sh:name "elmo:fragment";
+		sh:nodeKind sh:Iri;
+	];
 .
 
 # ======

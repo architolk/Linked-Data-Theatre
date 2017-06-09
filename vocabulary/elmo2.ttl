@@ -1,0 +1,123 @@
+#
+# NAME     elmo2.ttl
+# VERSION  1.17.0
+# DATE     2017-04-16
+#
+# Copyright 2012-2017
+#
+# This file is part of the Linked Data Theatre.
+#
+# The Linked Data Theatre is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# The Linked Data Theatre is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with the Linked Data Theatre.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+#
+# This is version 2 of the elmo specification.
+#
+
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix void: <http://rdfs.org/ns/void#>.
+@prefix sh: <http://www.w3.org/ns/shacl#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix xs: <http://www.w3.org/2001/XMLSchema#>.
+
+@prefix elmo: <http://bp4mc2.org/def/elmo2#>.
+@prefix elmoshape: <http://bp4mc2.org/def/elmo2/>.
+
+elmo:InformationProduct a owl:Class;
+	rdfs:label "Information product"@en;
+	rdfs:label "Informatieproduct"@nl;
+.
+elmoshape:InformationProduct a sh:NodeShape;
+	sh:name "elmo:InformationProduct";
+	sh:targetClass elmo:InformationProduct;
+	sh:property [
+		sh:path elmo:contains;
+		sh:name "elmo:contains";
+		sh:class elmo:InformationProduct;
+	];
+	sh:property [
+		sh:path elmo:query;
+		sh:name "elmo:query";
+	];
+	sh:property [
+		sh:path elmo:endpoint;
+		sh:name "elmo:endpoint";
+	];
+	sh:property [
+		sh:path elmo:adapter;
+		sh:name "elmo:adapter";
+	];
+.
+
+elmo:Representation a owl:Class;
+	rdfs:label "Representation"@en;
+	rdfs:label "Representatie"@nl;
+	rdfs:subClassOf elmo:Part;
+.
+
+elmoshape:Representation a sh:NodeShape;
+	sh:name "elmo:Representation";
+	sh:targetClass elmo:Representation;
+	sh:property [
+		sh:path elmo:url-pattern;
+		sh:name "elmo:url-pattern";
+	];
+	sh:property [
+		sh:path elmo:uri-pattern;
+		sh:name "elmo:uri-pattern";
+	];
+	sh:property [
+		sh:path elmo:applies-to;
+		sh:name "elmo:applies-to";
+	];
+	sh:property [
+		#Vraag is even of deze nodig is: de contains loopt ook al langs de lijn van de InformationProduct
+		sh:path elmo:contains;
+		sh:name "elmo:contains";
+		sh:class elmo:Part;
+	];
+.
+
+elmo:Part a owl:Class;
+	rdfs:label "Part"@en;
+	rdfs:label "Onderdeel"@n;
+.
+elmoshape:Part a sh:NodeShape;
+	sh:name "elmo:Part";
+	sh:targetClass elmo:Part;
+	sh:property [
+		sh:path elmo:product;
+		sh:name "elmo:product";
+		sh:class elmo:InformationProduct;
+	];
+	sh:property [
+		sh:path elmo:fragment;
+		sh:name "elmo:fragment";
+		sh:class elmo:Fragment;
+	];
+	sh:property [
+		sh:path elmo:index;
+		sh:name "elmo:index";
+	];
+	sh:property [
+		sh:path elmo:appearance;
+		sh:name "elmo:appearance";
+		sh:class elmo:Appearance;
+	];
+	sh:property [
+		sh:path elmo:data;
+		sh:name "elmo:data";
+	];
+.
