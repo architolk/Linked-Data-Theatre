@@ -1,8 +1,8 @@
 <!--
 
     NAME     ModelTemplates.xsl
-    VERSION  1.17.0
-    DATE     2017-04-16
+    VERSION  1.17.1-SNAPSHOT
+    DATE     2017-06-09
 
     Copyright 2012-2017
 
@@ -254,7 +254,7 @@
 		<!-- Create shapes for all classes that do not have a node shape, but are defined in this ontology -->
 		<xsl:for-each select="$all-classes/class">
 			<xsl:variable name="class" select="@uri"/>
-			<xsl:if test="not(exists($all-node-shapes[@class-uri=$class]))">
+			<xsl:if test="not(exists($all-node-shapes/shape[@class-uri=$class]))">
 				<shape uri="{$class}" class-uri="{$class}"/>
 			</xsl:if>
 		</xsl:for-each>
