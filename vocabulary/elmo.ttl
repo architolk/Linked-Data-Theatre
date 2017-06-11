@@ -88,32 +88,33 @@ elmoshape:Part a sh:NodeShape;
 		sh:path elmo:data;
 		sh:name "elmo:data";
 		sh:nodeKind sh:BlankNode;
-	];
-	sh:property [
-		sh:path elmo:format;
-		sh:name "elmo:format";
+		sh:maxCount 1;
 	];
 	sh:property [
 		sh:path elmo:endpoint;
 		sh:name "elmo:endpoint";
 		sh:nodeKind sh:IRI;
+		sh:maxCount 1;
 	];
 	sh:property [
 		sh:path elmo:layer;
 		sh:name "elmo:layer";
 		sh:nodeKind sh:IRI;
 		sh:class elmo:Layer;
+		sh:maxCount 1;
 	];
 	sh:property [
 		sh:path elmo:appearance;
 		sh:name "elmo:appearance";
 		sh:nodeKind sh:IRI;
 		sh:class elmo:Appearance;
+		sh:maxCount 1;
 	];
 	sh:property [
 		sh:path xhtml:stylesheet;
 		sh:name "xhtml:stylesheet";
 		sh:nodeKind sh:Literal;
+		sh:maxCount 1;
 	];
 .
 
