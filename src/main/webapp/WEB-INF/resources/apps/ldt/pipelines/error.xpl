@@ -46,6 +46,7 @@
 				<include>/request/parameters/parameter</include>
 				<include>/request/remote-user</include>
 				<include>/request/request-path</include>
+				<include>/request/body/@*</include>
 			</config>
 		</p:input>
 		<p:output name="data" id="request"/>
@@ -74,42 +75,73 @@
 		<p:output name="data" id="exception"/>
 	</p:processor>
 
-	<!-- Transform error message to HTML -->
-	<p:processor name="oxf:identity">
-		<p:input name="data">
-			<parameters>
-				<error-nr>500</error-nr>
-				<error>Oeps.. er ging iets mis.</error>
-			</parameters>
-		</p:input>
-		<p:output name="data" id="errortext"/>
-	</p:processor>
-	<p:processor name="oxf:xslt">
-		<p:input name="data" href="aggregate('results',#context,#errortext,#exception)"/>
-		<p:input name="config" href="../transformations/error2html.xsl"/>
-		<p:output name="data" id="html"/>
-	</p:processor>
+	<p:choose href="#context">
+		<p:when test="context/format='text/html'">
+			<!-- In case of html: show nice error message -->
+			<!-- Transform error message to HTML -->
+			<p:processor name="oxf:identity">
+				<p:input name="data">
+					<parameters>
+						<error-nr>500</error-nr>
+						<error>Oeps.. er ging iets mis.</error>
+					</parameters>
+				</p:input>
+				<p:output name="data" id="errortext"/>
+			</p:processor>
+			<p:processor name="oxf:xslt">
+				<p:input name="data" href="aggregate('results',#context,#errortext,#exception)"/>
+				<p:input name="config" href="../transformations/error2html.xsl"/>
+				<p:output name="data" id="html"/>
+			</p:processor>
 
-	<p:processor name="oxf:html-converter">
-		<p:input name="config">
-			<config>
-				<encoding>utf-8</encoding>
-				<version>5.0</version>
-			</config>
-		</p:input>
-		<p:input name="data" href="#html"/>
-		<p:output name="data" id="converted" />
-	</p:processor>
+			<p:processor name="oxf:html-converter">
+				<p:input name="config">
+					<config>
+						<encoding>utf-8</encoding>
+						<version>5.0</version>
+					</config>
+				</p:input>
+				<p:input name="data" href="#html"/>
+				<p:output name="data" id="converted" />
+			</p:processor>
 
-	<!-- Serialize -->
-	<p:processor name="oxf:http-serializer">
-		<p:input name="config">
-			<config>
-				<cache-control><use-local-cache>false</use-local-cache></cache-control>
-				<status-code>500</status-code>
-			</config>
-		</p:input>
-		<p:input name="data" href="#converted"/>
-	</p:processor>
+			<!-- Serialize -->
+			<p:processor name="oxf:http-serializer">
+				<p:input name="config">
+					<config>
+						<cache-control><use-local-cache>false</use-local-cache></cache-control>
+						<status-code>500</status-code>
+					</config>
+				</p:input>
+				<p:input name="data" href="#converted"/>
+			</p:processor>
+		</p:when>
+		<p:otherwise>
+			<!-- Otherwise, just return plain xml -->
+			<p:processor name="oxf:xml-converter">
+				<p:input name="config">
+					<config>
+						<content-type>application/xml</content-type>
+						<encoding>utf-8</encoding>
+						<version>1.0</version>
+					</config>
+				</p:input>
+				<p:input name="data" href="#exception"/>
+				<p:output name="data" id="converted" />
+			</p:processor>
+
+			<!-- Serialize -->
+			<p:processor name="oxf:http-serializer">
+				<p:input name="config">
+					<config>
+						<cache-control><use-local-cache>false</use-local-cache></cache-control>
+						<status-code>500</status-code>
+					</config>
+				</p:input>
+				<p:input name="data" href="#converted"/>
+			</p:processor>
+		</p:otherwise>
+	</p:choose>
+	
 
 </p:config>

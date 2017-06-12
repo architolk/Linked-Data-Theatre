@@ -1,7 +1,7 @@
 #
 # NAME     elmo.ttl
-# VERSION  1.17.0
-# DATE     2017-04-16
+# VERSION  1.17.1-SNAPSHOT
+# DATE     2017-05-08
 #
 # Copyright 2012-2017
 #
@@ -25,20 +25,18 @@
 @prefix owl: <http://www.w3.org/2002/07/owl#>.
 @prefix void: <http://rdfs.org/ns/void#>.
 @prefix sh: <http://www.w3.org/ns/shacl#>.
-@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix xhtml: <http://www.w3.org/1999/xhtml/vocab#>.
 @prefix xs: <http://www.w3.org/2001/XMLSchema#>.
 
 @prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix elmoshape: <http://bp4mc2.org/elmo/def/>.
 @prefix yed: <http://bp4mc2.org/yed/def#>.
-@prefix morph: <http://bp4mc2.org/morph/def#>.
 
-#Prefixes for shapes
-@prefix RepresentationShape: <http://bp4mc2.org/elmo/def/shape/Representation#>.
-@prefix FragmentShape: <http://bp4mc2.org/elmo/def/shape/Fragment#>.
-@prefix DatabaseShape: <http://bp4mc2.org/morph/def/shape/Database#>.
-@prefix ContainerShape: <http://bp4mc2.org/elmo/def/shape/Container#>.
-
-### Vocabulary and dataset ###
+# ======
+#
+# Vocabulary and dataset
+#
+# ======
 <http://bp4mc2.org/elmo/def#> a	owl:Ontology;
 	rdfs:label					"The ELMO vocabulary";
 	rdfs:comment				"The vocabulary to configure the Linked Data Theatre. ELMO stands for Extendible Lightweight Model Ontology.";
@@ -47,168 +45,400 @@
 	rdfs:label					"The dataset containing the ELMO vocabulary";
 .
 
-### Shapes ###
-# Representation #
-<http://bp4mc2.org/elmo/def/shape/Representation#> a	sh:Shape;
-	sh:scopeClass	elmo:Representation;
-	sh:property		RepresentationShape:fragment;
-	sh:property		RepresentationShape:query;
-	sh:property		RepresentationShape:url-pattern;
-	sh:property		RepresentationShape:uri-pattern;
-	sh:property		RepresentationShape:index;
-	sh:property		RepresentationShape:contains;
-	sh:property		RepresentationShape:applies-to;
-	sh:property		RepresentationShape:data;
-	sh:property		RepresentationShape:format;
-	sh:property		RepresentationShape:endpoint;
-	sh:property		RepresentationShape:queryForm;
-	sh:property		RepresentationShape:layer;
-	sh:property		RepresentationShape:appearance;
-	sh:property		RepresentationShape:stylesheet;
+# ======
+#
+# PART
+#
+# ======
+elmo:Part a owl:Class;
+	rdfs:label "Part"@en;
+	rdfs:label "Onderdeel"@nl;
+	rdfs:comment "The class of UI parts, as a part of a Representation";
+	rdfs:comment "De klasse van UI onderdelen, als onderdeel van een Representatie";
 .
-RepresentationShape:query	a		sh:PropertyConstraint;
-	sh:predicate	elmo:query;
-	sh:nodeKind		sh:Literal;
-.
-RepresentationShape:url-pattern	a	sh:PropertyConstraint;
-	sh:predicate	elmo:url-pattern;
-	sh:nodeKind		sh:Literal;
-.
-RepresentationShape:uri-pattern	a	sh:PropertyConstraint;
-	sh:predicate	elmo:uri-pattern;
-	sh:nodeKind		sh:Literal;
-.
-RepresentationShape:index	a	sh:PropertyConstraint;
-	sh:predicate	elmo:index;
-	sh:nodeKind		sh:Literal;
-.
-RepresentationShape:contains	a	sh:PropertyConstraint;
-	sh:predicate	elmo:contains;
-	sh:nodeKind		sh:IRI;
-	sh:class		elmo:Part;
-	sh:valueShape	<http://bp4mc2.org/elmo/def/shape/Part#>
-.
-RepresentationShape:fragment	a	sh:PropertyConstraint;
-	sh:predicate	elmo:fragment;
-	sh:nodeKind		sh:IRI;
-	sh:class		elmo:Fragment;
-	sh:valueShape	<http://bp4mc2.org/elmo/def/shape/Fragment#>
-.
-RepresentationShape:stylesheet	a	sh:PropertyConstraint;
-	sh:predicate	html:stylesheet;
-	sh:nodeKind		sh:Literal;
-.
-RepresentationShape:applies-to	a	sh:PropertyConstraint;
-	sh:predicate	elmo:applies-to;
-	sh:nodeKind		sh:BlankNode;
-.
-RepresentationShape:data	a	sh:PropertyConstraint;
-	sh:predicate	elmo:data;
-	sh:nodeKind		sh:BlankNode;
-.
-RepresentationShape:endpoint	a	sh:PropertyConstraint;
-	sh:predicate	elmo:endpoint;
-	sh:nodeKind		sh:IRI;
-.
-RepresentationShape:queryForm	a	sh:PropertyConstraint;
-	sh:predicate	elmo:queryForm;
-	sh:nodeKind		sh:IRI;
-	sh:valueClass	elmo:Form;
-	sh:valueShape	<http://bp4mc2.org/elmo/def/shape/Form#>
-.
-
-# Fragment #
-<http://bp4mc2.org/elmo/def/shape/Fragment#> a	sh:Shape;
-	sh:scopeClass	elmo:Fragment;
-	sh:property		FragmentShape:label;
-	sh:property		FragmentShape:appearance;
-	sh:property		FragmentShape:applies-to;
-	sh:property		FragmentShape:index;
-	sh:property		FragmentShape:glossary;
-	sh:property		FragmentShape:stylesheet;
-	sh:property		FragmentShape:link;
-	sh:property		FragmentShape:constraint;
-	sh:property		FragmentShape:valueDatatype;
-	sh:property		FragmentShape:valueFormat;
-	sh:property		FragmentShape:valuesFrom;
-	sh:property		FragmentShape:name;
-	sh:property		FragmentShape:backgroundColor;
-	sh:property		FragmentShape:value;
-	sh:property		FragmentShape:edge;
-	sh:property		FragmentShape:line;
-	sh:property		FragmentShape:sourceArrow;
-	sh:property		FragmentShape:targetArrow;
-.
-FragmentShape:label	a			sh:PropertyConstraint;
-	sh:predicate	rdfs:label;
-	sh:nodeKind		sh:Literal;
-	sh:datatype		xs:string;
-.
-FragmentShape:glossary	a		sh:PropertyConstraint;
-	sh:predicate	html:glossary;
-	sh:nodeKind		sh:Literal;
-.
-FragmentShape:stylesheet	a	sh:PropertyConstraint;
-	sh:predicate	html:stylesheet;
-	sh:nodeKind		sh:Literal;
-.
-FragmentShape:link	a			sh:PropertyConstraint;
-	sh:predicate	html:link;
-	sh:nodeKind		sh:Literal;
-.
-FragmentShape:backgroundColor	a	sh:PropertyConstraint;
-	sh:predicate	yed:backgroundColor;
-	sh:nodeKind		sh:Literal;
+elmoshape:Part a sh:NodeShape;
+	sh:targetClass elmo:Part;
+	sh:name "elmo:Part";
+	sh:property [
+		sh:path elmo:fragment;
+		sh:name "elmo:fragment";
+		sh:nodeKind sh:IRI;
+		sh:class elmo:RepresentationFragment;
+	];
+	sh:property [
+		sh:path elmo:query;
+		sh:name "elmo:query";
+		sh:nodeKind sh:Literal;
+		sh:maxCount 1;
+	];
+	sh:property [
+		sh:path elmo:query;
+		sh:name "elmo:query";
+		sh:nodeKind sh:IRI;
+		sh:class elmo:Query;
+		sh:maxCount 1;
+	];
+	sh:property [
+		sh:path elmo:index;
+		sh:name "elmo:index";
+		sh:nodeKind sh:Literal;
+		sh:maxCount 1;
+	];
+	sh:property [
+		sh:path elmo:data;
+		sh:name "elmo:data";
+		sh:nodeKind sh:BlankNode;
+		sh:maxCount 1;
+	];
+	sh:property [
+		sh:path elmo:endpoint;
+		sh:name "elmo:endpoint";
+		sh:nodeKind sh:IRI;
+		sh:maxCount 1;
+	];
+	sh:property [
+		sh:path elmo:layer;
+		sh:name "elmo:layer";
+		sh:nodeKind sh:IRI;
+		sh:class elmo:Layer;
+		sh:maxCount 1;
+	];
+	sh:property [
+		sh:path elmo:appearance;
+		sh:name "elmo:appearance";
+		sh:nodeKind sh:IRI;
+		sh:class elmo:Appearance;
+		sh:maxCount 1;
+	];
+	sh:property [
+		sh:path xhtml:stylesheet;
+		sh:name "xhtml:stylesheet";
+		sh:nodeKind sh:Literal;
+		sh:maxCount 1;
+	];
 .
 
-# Container #
-<http://bp4mc2.org/elmo/def/shape/Container#> a sh:Shape;
-	sh:scopeClass	elmo:Container;
-	sh:property		ContainerShape:translator;
+# ======
+#
+# REPRESENTATION
+#
+# ======
+elmo:Representation a owl:Class;
+	rdfs:subClassOf elmo:Part;
+	rdfs:label   "Representation"@en;
+	rdfs:label   "Representatie"@nl;
+	rdfs:comment "The class of representations of a resource"@en;
+	rdfs:comment "De klasse van representaties van een resource"@nl;
 .
-ContainerShape:translator	a sh:PropertyConstraint;
-	sh:predicate	elmo:translator;
-	sh:nodeKind		sh:IRI;
-	sh:class		elmo:Translator;
+elmoshape:Representation a sh:NodeShape;
+	sh:targetClass elmo:Representation;
+	sh:name "elmo:Representation";
+	sh:property [
+		sh:path elmo:url-pattern;
+		sh:name "elmo:url-pattern";
+		sh:nodeKind sh:Literal;
+	];
+	sh:property [
+		sh:path elmo:uri-pattern;
+		sh:name "elmo:uri-pattern";
+		sh:nodeKind sh:Literal;
+	];
+	sh:property [
+		sh:path elmo:applies-to;
+		sh:name "elmo:applies-to";
+		sh:nodeKind sh:BlankNode;
+	];
+	sh:property [
+		sh:path elmo:contains;
+		sh:name "elmo:contains";
+		sh:nodeKind sh:IRI;
+		sh:class elmo:Part;
+	];
+	sh:property [
+		sh:path elmo:queryForm;
+		sh:name "elmo:queryForm";
+		sh:nodeKind sh:IRI;
+		sh:maxCount 1;
+		sh:class elmo:Form;
+	];
 .
 
-### Classes ###
-elmo:Representation	a	owl:Class;
-	rdfs:label 			"Representation"@en;
-	rdfs:label			"Representatie"@nl;
-	rdfs:comment		"The class of representations of a resource"@en;
-	rdfs:comment		"De klasse van representaties van een resource"@nl;
+# ======
+#
+# FRAGMENT
+#
+# ======
+elmo:Fragment a owl:Class;
+	rdfs:label   "Fragment"@en;
+	rdfs:label   "Fragment"@nl;
+	rdfs:comment "The class of fragments"@en;
+	rdfs:comment "De klasse van fragmenten"@nl;
 .
+elmo:RepresentationFragment a owl:Class;
+	rdfs:subClassOf elmo:Fragment;
+	rdfs:label   "Fragment"@en;
+	rdfs:label   "Fragment"@nl;
+	rdfs:comment "The class of fragments of a representation"@en;
+	rdfs:comment "De klasse van fragmenten van een representatie"@nl;
+.
+elmo:FormFragment a owl:Class;
+	rdfs:subClassOf elmo:Fragment;
+	rdfs:label   "Fragment"@en;
+	rdfs:label   "Fragment"@nl;
+	rdfs:comment "The class of fragments of a form"@en;
+	rdfs:comment "De klasse van fragmenten van een formulier"@nl;
+.
+elmo:YedFragment a owl:Class;
+	rdfs:subClassOf elmo:RepresentationFragment;
+	rdfs:label   "Fragment"@en;
+	rdfs:label   "Fragment"@nl;
+	rdfs:comment "The class of fragments of a yED representation"@en;
+	rdfs:comment "De klasse van fragmenten van een yED representatie"@nl;
+.
+elmoshape:Fragment a sh:NodeShape;
+	sh:targetClass elmo:Fragment;
+	sh:name "elmo:Fragment";
+	sh:property [
+		sh:path rdfs:label;
+		sh:name "rdfs:label";
+		sh:nodeKind sh:Literal;
+		sh:datatype xs:string;
+	];
+	sh:property [
+		sh:path elmo:applies-to;
+		sh:name "elmo:applies-to";
+		sh:nodeKind sh:Literal;
+	];
+	sh:property [
+		sh:path elmo:index;
+		sh:name "elmo:index";
+		sh:nodeKind sh:Literal;
+	];
+.
+elmoshape:RepresentationFragment a sh:NodeShape;
+	sh:targetClass elmo:RepresentationFragment;
+	sh:name "elmo:RepresentationFragment";
+	sh:property [
+		sh:path elmo:appearance;
+		sh:name "elmo:appearance";
+		sh:nodeKind sh:IRI;
+		sh:class elmo:Appearance;
+	];
+	sh:property [
+		sh:path elmo:glossary;
+		sh:name "elmo:glossary";
+		sh:nodeKind sh:IRI;
+		sh:class elmo:Part;
+	];
+	sh:property [
+		sh:path xhtml:stylesheet;
+		sh:name "xhtml:stylesheet";
+		sh:nodeKind sh:Literal;
+	];
+	sh:property [
+		sh:path xhtml:link;
+		sh:name "xhtml:link";
+		sh:nodeKind sh:IRI;
+	];
+	sh:property [
+		sh:path rdf:value;
+		sh:name "rdf:value";
+	];
+.
+elmoshape:FormFragment a sh:NodeShape;
+	sh:targetClass elmo:FormFragment;
+	sh:name "elmo:FormFragment";
+	sh:property [
+		sh:path elmo:constraint;
+		sh:name "elmo:constraint";
+		sh:nodeKind sh:IRI;
+		sh:class elmo:Constraint;
+	];
+	sh:property [
+		sh:path elmo:valueDatatype;
+		sh:name "elmo:valueDatatype";
+	];
+	sh:property [
+		sh:path elmo:valueFormat;
+		sh:name "elmo:valueFormat";
+	];
+	sh:property [
+		sh:path elmo:valuesFrom;
+		sh:name "elmo:valuesFrom";
+	];
+.
+elmoshape:YedFragment a sh:NodeShape;
+	sh:targetClass elmo:YedFragment;
+	sh:name "elmo:YedFragment";
+	sh:property [
+		sh:path yed:backgroundColor;
+		sh:name "yed:backgroundColor";
+		sh:nodeKind sh:Literal;
+	];
+	sh:property [
+		sh:path yed:edge;
+		sh:name "yed:edge";
+		sh:nodeKind sh:Literal;
+	];
+	sh:property [
+		sh:path yed:line;
+		sh:name "yed:line";
+		sh:nodeKind sh:Literal;
+	];
+	sh:property [
+		sh:path yed:sourceArrow;
+		sh:name "yed:sourceArrow";
+		sh:nodeKind sh:Literal;
+	];
+	sh:property [
+		sh:path yed:targetArrow;
+		sh:name "yed:targetArrow";
+		sh:nodeKind sh:Literal;
+	];
+.
+
+# ======
+#
+# CONTAINER
+#
+# ======
+elmo:Container a owl:Class;
+	rdfs:label   "Container"@en;
+	rdfs:label   "Container"@nl;
+	rdfs:comment "The regular container. Updates to this container will be inserted into the graph with the same URI as the container";
+	rdfs:comment "De normale container. Toevoegingen aan deze container worden toegevoegd aan de graaf met dezelfde URI als de container";
+.
+elmoshape:Container a sh:NodeShape;
+	sh:targetClass elmo:Container;
+	sh:name "elmo:Container";
+	sh:property [
+		sh:path rdfs:label;
+		sh:name "rdfs:label";
+		sh:nodeKind sh:IRI;
+		sh:class elmo:Translator;
+	];
+	sh:property [
+		sh:path elmo:representation;
+		sh:name "elmo:representation";
+		sh:nodeKind sh:IRI;
+	];
+	sh:property [
+		sh:path elmo:contains;
+		sh:name "elmo:contains";
+		sh:nodeKind sh:IRI;
+		sh:class elmo:Part;
+	];
+	sh:property [
+		sh:path elmo:translator;
+		sh:name "elmo:translator";
+		sh:nodeKind sh:IRI;
+		sh:class elmo:Translator;
+	];
+	sh:property [
+		sh:path elmo:replaces;
+		sh:name "elmo:replaces";
+		sh:nodeKind sh:IRI;
+	];
+	sh:property [
+		sh:path elmo:updates;
+		sh:name "elmo:updates";
+		sh:nodeKind sh:IRI;
+	];
+	sh:property [
+		sh:path elmo:partOf;
+		sh:name "elmo:partOf";
+		sh:nodeKind sh:IRI;
+	];
+	sh:property [
+		sh:path elmo:query;
+		sh:name "elmo:query";
+		sh:nodeKind sh:Literal;
+	];
+	sh:property [
+		sh:path elmo:query;
+		sh:name "elmo:query";
+		sh:nodeKind sh:IRI;
+		sh:class elmo:Query;
+	];
+.
+
+# ======
+#
+# QUERY
+#
+# ======
+elmo:Query a owl:Class;
+	rdfs:label   "Query"@en;
+	rdfs:label   "Query"@nl;
+	rdfs:comment "defines the SPARQL query that corresponds with the particular representation"@en;
+	rdfs:comment "definieert de SPARQL query die overeen komt met de betreffende representatie"@nl;
+.
+elmoshape:Query a sh:NodeShape;
+	sh:targetClass elmo:Query;
+	sh:name "elmo:Query";
+	sh:property [
+		sh:path elmo:query;
+		sh:name "elmo:query";
+		sh:nodeKind sh:Literal;
+		sh:maxCount 1;
+	];
+.
+
+# ======
+#
+# FORM
+#
+# ======
 elmo:Form			a	owl:Class;
 	rdfs:label			"Form"@en;
 	rdfs:label			"Formulier"@nl;
 	rdfs:comment		"The class of UI forms, from which a user can enter some URL parameters"@en;
 	rdfs:comment		"De klasse van UI formulieren, van waaruit een gebruiker bepaalde URL parameters kan invoeren"@nl;
 .
-elmo:Fragment		a	owl:Class;
-	rdfs:label			"Fragment"@en;
-	rdfs:label			"Fragment"@nl;
-	rdfs:comment		"The class of fragments of a representation"@en;
-	rdfs:comment		"De klasse van fragmenten van een representatie"@nl;
+elmoshape:Form a sh:NodeShape;
+	sh:targetClass elmo:Form;
+	sh:name "elmo:Form";
+	sh:property [
+		sh:path elmo:fragment;
+		sh:class elmo:FormFragment;
+		sh:name "elmo:fragment";
+		sh:nodeKind sh:Iri;
+	];
 .
-elmo:Appearance		a	owl:Class;
-	rdfs:label			"Appearance"@en;
-	rdfs:label			"Verschijning"@nl;
-	rdfs:comment		"The generic appearance class. Implementations should use a subclass of this appearance."@en;
-	rdfs:comment		"De generieke verschijningsklasse. Implementaties behoren een subklasse van deze verschijning te gebruiken."@nl;
-.
+
+# ======
+#
+# LAYER
+#
+# ======
 elmo:Layer			a	owl:Class;
 	rdfs:label			"Layer"@en;
 	rdfs:label			"Laag"@nl;
 	rdfs:comment		"The class of layers. A representation is located at a specific layer"@en;
 	rdfs:comment		"De klasse van lagen. Een verschijning bevindt zich op een specifieke laag"@nl;
 .
-elmo:Container		a	owl:Class;
-	rdfs:label			"Container"@en;
-	rdfs:label			"Container"@nl;
-	rdfs:comment		"The regular container. Updates to this container will be inserted into the graph with the same URI as the container";
-	rdfs:comment		"De normale container. Toevoegingen aan deze container worden toegevoegd aan de graaf met dezelfde URI als de container";
+elmoshape:Layer a sh:NodeShape;
+	sh:targetClass elmo:Layer;
+	sh:name "elmo:Layer";
 .
+
+# ======
+#
+# APPEARANCE
+#
+# ======
+elmo:Appearance		a	owl:Class;
+	rdfs:label			"Appearance"@en;
+	rdfs:label			"Verschijning"@nl;
+	rdfs:comment		"The generic appearance class. Implementations should use a subclass of this appearance."@en;
+	rdfs:comment		"De generieke verschijningsklasse. Implementaties behoren een subklasse van deze verschijning te gebruiken."@nl;
+.
+elmoshape:Appearance a sh:NodeShape;
+	sh:targetClass elmo:Appearance;
+	sh:name "elmo:Appearance";
+.
+
+### Classes ###
 elmo:VersionContainer	a	owl:Class;
 	rdfs:label			"Versioned container"@en;
 	rdfs:label			"Geversioneerde container"@nl;

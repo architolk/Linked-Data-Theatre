@@ -41,6 +41,7 @@
  * <pgraph>{uri}</pgraph>: The parent graph to receive version information, if not equal to the container graph
  * <tgraph>{uri}</tgraph>: Optional, some target graph that (also) receives the data
  * <postquery>{sparql}</postquery>: Optional, some sparql query that should be performed after uploading the data
+ * <uriprefix>{uri}</uriprefix>: Optional, the uri prefix that is used for relative uri's
  *
  * The output will be an XML node containing the term "succes" or an error message
  *
@@ -113,6 +114,7 @@ public class RDF4JProcessor extends SimpleProcessor {
 		String tgraph = configNode.valueOf("tgraph"); // The target graph
 		String pgraph = configNode.valueOf("pgraph"); // The parent graph, for version information
 		String postQuery = configNode.valueOf("postquery"); // Some post query, optional
+		String uriPrefix = configNode.valueOf("uriprefix"); // The uri prefix for relative uri's
 		
 		String errorMsg = "";
 		
@@ -180,7 +182,7 @@ public class RDF4JProcessor extends SimpleProcessor {
 					Node child = (Node) elit.next();
 					String msg = "file uploaded: " + child.valueOf("@name");
 					try {
-						uploadFile(child.valueOf("@name"),child.getText(),cgraph);
+						uploadFile(child.valueOf("@name"),child.getText(),cgraph,uriPrefix);
 					}
 					catch (Exception e) {
 						// In case of an error, put the errormessage in the result, but don't throw the exception
@@ -281,7 +283,7 @@ public class RDF4JProcessor extends SimpleProcessor {
 		contentHandler.endDocument();
 	}
 
-	private void uploadFile(String filename, String filePath, String cgraph) throws Exception {
+	private void uploadFile(String filename, String filePath, String cgraph, String uriPrefix) throws Exception {
 	/*	Possible exceptions are:
 		- IOException: file not found, or error reading file
 		- UnsupportedRDFormatException: format not supported by library (possibly because the jar is missing)
@@ -310,7 +312,7 @@ public class RDF4JProcessor extends SimpleProcessor {
 		
 		IRI context = db.getValueFactory().createIRI(cgraph);
 		//Infer parser from filename, or else assume RDF-XML
-		conn.add(isr,"",Rio.getParserFormatForFileName(filename).orElse(RDFFormat.RDFXML),context);
+		conn.add(isr,uriPrefix,Rio.getParserFormatForFileName(filename).orElse(RDFFormat.RDFXML),context);
 		
 		isr.close();
 		fis2.close();

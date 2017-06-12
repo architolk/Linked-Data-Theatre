@@ -11,136 +11,94 @@ stage:ElmoVocabulary	a	elmo:Representation;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:appearance elmo:VocabularyAppearance;
 	elmo:query '''
-		prefix dcterms: <http://purl.org/dc/terms/>
-		prefix shacl: <http://www.w3.org/ns/shacl#>
-		CONSTRUCT {
-			?element rdf:type ?type.
-			?element rdfs:label ?label.
-			?element rdfs:comment ?def.
-			?element rdfs:subClassOf ?super.
-			?shape shacl:scopeClass ?element.
-			?shape shacl:property ?pc.
-			?pc shacl:predicate ?pred.
-			?pc shacl:class ?class.
-			?pc shacl:datatype ?datatype.
-			?pc shacl:in ?collection.
-		}
+		CONSTRUCT {?s?p?o}
 		WHERE {
 			GRAPH <http://bp4mc2.org/elmo/def> {
-				?element rdf:type ?type.
-				OPTIONAL {?element rdfs:label ?label}
-				OPTIONAL {
-					?element rdfs:comment ?def
-					filter (lang(?def)="" || lang(?def)="@LANGUAGE@")
-				}
-				OPTIONAL {
-					?element dcterms:subject ?begrip.
-					?begrip skos:definition ?def.
-				}
-				OPTIONAL {?element rdfs:subClassOf ?super}
-				OPTIONAL {
-					?shape shacl:scopeClass ?element.
-					?shape shacl:property ?pc.
-					?pc shacl:predicate ?pred.
-					OPTIONAL {?pc shacl:class ?class}
-					OPTIONAL {?pc shacl:datatype ?datatype}
-					OPTIONAL {?pc shacl:in ?collection}
-				}
-				FILTER (?type = owl:Class || ?type = owl:DatatypeProperty || ?type = owl:ObjectProperty || ?type = owl:Ontology)
+				?s?p?o
 			}
 		}
 	'''
 .
 
 stage:ElmoVocabularyYed a elmo:Representation;
-	elmo:url-pattern "/query/elmo.yed$";
-	elmo:layer elmo:TopLayer;
-	elmo:fragment [
-		elmo:applies-to rdfs:subClassOf;
-		rdfs:label "";
-		yed:sourceArrow "none";
-		yed:targetArrow "white_delta";
-	];
-	elmo:fragment [
-		elmo:applies-to "class";
-		yed:nodeType "com.yworks.entityRelationship.big_entity"
-	];
-	elmo:fragment [
-		elmo:applies-to "col";
-		yed:nodeType "com.yworks.entityRelationship.small_entity"
-	];
+	elmo:url-pattern	"/query/elmo-model.yed$";
+	elmo:appearance elmo:VocabularyAppearance;
+	elmo:query stage:ElmoVocabularyQuery;
+.	
+stage:ElmoVocabularyModel	a	elmo:Representation;
+	elmo:url-pattern	"/query/elmo-model$";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:ModelAppearance;
+	elmo:query stage:ElmoVocabularyQuery;
+.
+stage:ElmoVocabularyQuery a elmo:Query;
 	elmo:query '''
-		prefix shacl: <http://www.w3.org/ns/shacl#>
+		prefix sh: <http://www.w3.org/ns/shacl#>
 		CONSTRUCT {
-			?element rdfs:label ?label.
-			?element rdfs:comment ?attribs.
-			?element rdfs:subClassOf ?super.
-			?element ?pc ?class.
-			?element rdf:type owl:Class.
-			?element elmo:style "class".
-			?pc rdfs:label ?plabel.
-			?element ?pc ?col.
-			?col rdf:type skos:Collection.
-			?col rdfs:label ?collabel.
-			?col rdfs:comment ?values.
-			?col elmo:style "col".
+			?shape rdf:type sh:NodeShape.
+			?shape sh:name ?shapename.
+			?shape sh:targetClass ?class.
+			?class rdf:type owl:Class.
+			?class rdfs:subClassOf ?pclass.
+			?shape sh:property ?property.
+			?property ?pp ?po
 		}
 		WHERE {
 			GRAPH <http://bp4mc2.org/elmo/def> {
 				{
-					?element rdf:type owl:Class.
-					?element rdfs:label ?label
-					FILTER (lang(?label)="@LANGUAGE@" || lang(?label)="")
-					OPTIONAL {?element rdfs:subClassOf ?super}
+					?shape rdf:type sh:NodeShape.
+					?shape sh:name ?shapename.
+					?shape sh:targetClass ?class.
+					OPTIONAL {?class rdfs:subClassOf ?pclass}
 					OPTIONAL {
-						select ?element ?pc ?class (concat(strafter(str(?pred),"#")," [",if(bound(?minc),?minc,"0"),",",if(bound(?maxc),?maxc,"n"),"]") as ?plabel)
-						where {
-							?shape shacl:scopeClass ?element.
-							?shape shacl:property ?pc.
-							?pc shacl:predicate ?pred.
-							?pc shacl:class ?class.
-							?class rdf:type owl:Class.
-							OPTIONAL {?pc shacl:minCount ?minc}
-							OPTIONAL {?pc shacl:maxCount ?maxc}
-							FILTER NOT EXISTS {?pc shacl:in ?col}
-						}
+						?shape sh:property ?property.
+						?property ?pp ?po
 					}
-					OPTIONAL {
-						select ?element (group_concat(concat(strafter(str(?pred),"#")," (",strafter(str(?datatype),"#"),") [",if(bound(?minc),?minc,"0"),",",?maxc,"]");separator="\\n") as ?attribs)
-						where {
-							?shape shacl:scopeClass ?element.
-							?shape shacl:property ?pc.
-							?pc shacl:predicate ?pred.
-							OPTIONAL {?pc shacl:datatype ?datatype}
-							OPTIONAL {?pc shacl:minCount ?minc}
-							OPTIONAL {?pc shacl:maxCount ?maxc}
-							FILTER NOT EXISTS {
-								?pc shacl:class ?class.
-								?class rdf:type owl:Class.
-							}
-						}
-						group by ?element
-					}
-				}
-				UNION
-				{
-					select ?element ?pc ?col (concat(strafter(str(?pred),"#")," [",if(bound(?minc),?minc,"0"),",",if(bound(?maxc),?maxc,"n"),"]") as ?plabel) (strafter(str(?class),"#") as ?collabel)
-							(group_concat(?value;separator="\\n") as ?values)
-					where {
-						?shape shacl:scopeClass ?element.
-						?shape shacl:property ?pc.
-						?pc shacl:predicate ?pred.
-						?pc shacl:class ?class.
-						?pc shacl:in ?col.
-						OPTIONAL {?pc shacl:minCount ?minc}
-						OPTIONAL {?pc shacl:maxCount ?maxc}
-						OPTIONAL {
-							?col skos:member/rdfs:label ?value.
-						}
-					}
-					group by ?element ?pc ?pred ?class ?col ?minc ?maxc
 				}
 			}
 		}
-	''';
+	'''
 .
+
+stage:Elmo2VocabularyYed a elmo:Representation;
+	elmo:url-pattern	"/query/elmo2-model.yed$";
+	elmo:appearance elmo:VocabularyAppearance;
+	elmo:query stage:Elmo2VocabularyQuery;
+.	
+stage:Elmo2VocabularyModel a elmo:Representation;
+	elmo:url-pattern "/query/elmo2-model$";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:ModelAppearance;
+	elmo:query stage:Elmo2VocabularyQuery;
+.
+stage:Elmo2VocabularyQuery a elmo:Query;
+	elmo:query '''
+		prefix sh: <http://www.w3.org/ns/shacl#>
+		CONSTRUCT {
+			?shape rdf:type sh:NodeShape.
+			?shape sh:name ?shapename.
+			?shape sh:targetClass ?class.
+			?class rdf:type owl:Class.
+			?class rdfs:subClassOf ?pclass.
+			?shape sh:property ?property.
+			?property ?pp ?po
+		}
+		WHERE {
+			GRAPH <http://bp4mc2.org/elmo2/def> {
+				{
+					?shape rdf:type sh:NodeShape.
+					?shape sh:name ?shapename.
+					?shape sh:targetClass ?class.
+					OPTIONAL {?class rdfs:subClassOf ?pclass}
+					OPTIONAL {
+						?shape sh:property ?property.
+						?property ?pp ?po
+					}
+				}
+			}
+		}
+	'''
+.
+

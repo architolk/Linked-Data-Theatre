@@ -50,6 +50,8 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:data [elmo:index "09"; rdfs:label "Form appearance DBPedia data"; html:link "query/FormAppearanceDbPedia"];
 			elmo:data [elmo:index "10"; rdfs:label "Parameters"; html:link "/ldt/id/parameters"];
 			elmo:data [elmo:index "11"; rdfs:label "Ajax form"; html:link "/query/FormAppearanceAjax"];
+			elmo:data [elmo:index "12"; rdfs:label "Dereferenced URI"; html:link "/id/character/Gandalf"];
+			elmo:data [elmo:index "13"; rdfs:label "Dereferenced timed URI"; html:link "/id/2017/01/21/character/Gandalf"];
 		];
 		elmo:data [
 			elmo:index "3";
@@ -100,7 +102,9 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:index "7";
 			rdfs:label "LDT";
 			elmo:data [elmo:index "1"; rdfs:label "Vocabulary"; html:link "query/elmo"];
-			elmo:data [elmo:index "2"; rdfs:label "Vocabulary (model)"; html:link "query/elmo.yed"];
+			elmo:data [elmo:index "2"; rdfs:label "Vocabulary (model)"; html:link "query/elmo-model"];
+			elmo:data [elmo:index "2"; rdfs:label "Vocabulary (model download)"; html:link "query/elmo-model.yed"];
+			elmo:data [elmo:index "2"; rdfs:label "Vocabulary 2.0 (model download)"; html:link "query/elmo2-model.yed"];
 			elmo:data [elmo:index "3"; rdfs:label "Upload XPLs"; html:link "container/xpl"];
 			elmo:data [elmo:index "4"; rdfs:label "XPL Documentation"; html:link "query/xpl/treeview"]
 		];
