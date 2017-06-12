@@ -475,6 +475,7 @@
 	Main entry
 -->
 <xsl:template match="rdf:RDF" mode="present">
+
 	<xsl:choose>
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance'"/> <!-- Hidden, dus niet tonen -->
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#HeaderAppearance'"/> <!-- Al gedaan -->
@@ -532,6 +533,9 @@
 		</xsl:when>
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#MarkdownAppearance'">		
 			<xsl:apply-templates select="." mode="MarkdownAppearance"/>		
+		</xsl:when>		
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#LogicAppearance'">		
+			<xsl:apply-templates select="." mode="LogicAppearance"/>		
 		</xsl:when>
 		<xsl:otherwise>
 			<!-- No, or an unknown appearance, use the data to select a suitable appearance -->
@@ -1020,5 +1024,7 @@
 <xsl:include href="appearances/ModelTemplates.xsl"/>
 <xsl:include href="appearances/ModelAppearance.xsl"/>
 <xsl:include href="appearances/VocabularyAppearance.xsl"/>
+
+<xsl:include href="appearances/dmn/LogicAppearance.xsl"/>
 
 </xsl:stylesheet>
