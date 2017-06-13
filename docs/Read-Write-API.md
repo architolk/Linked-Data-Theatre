@@ -17,12 +17,17 @@ The Read-Write Linked Data API is a proposal to create an API specification that
 
 ## Linked Data concept
 - `GET {URI}` returns useful information about a resource that is described by the information-resource identified by {URI}.
+- `GET {URI}#{fragment}` returns useful information contained in the information-resource identified by {URI}. At least information about the resource identified by {URI}#{fragment} should be present.
 - `GET {URI}` returns a 303 to the information resource that describes a non-information resource identified by {URI}.
-- `GET /resource?subject={URI}` returns the CBD of the resource identified by {URI}.
 
 A best practice with regard to "userful information about a resource" is the [Concise Bounded Description (CBD)](http://www.w3.org/Submission/CBD) of a resource.
 
-A key concept is the distinction between a non-information resource and an information-resource. Non-information resources (real-life things or abstract concepts) cannot be returned via the http protocol. Non-information resources are associated with one or more information resources that describe the non-information resource. 
+A key concept is the distinction between a non-information resource and an information-resource. Non-information resources (real-life things or abstract concepts) cannot be returned via the http protocol. Non-information resources are associated with one or more information resources that describe the non-information resource.
+
+The Linked Data concept doesn't really give directions how to access a resource that cannot be dereferenced (such as URN's). A best practice for these situations might be:
+
+- `GET /resource?subject={URI}` returns the CBD of the resource identified by {URI}.
+
 
 ## SPARQL Graph Update
 - `GET {URI}` returns the set of triples contained in a named graph identified by {URI}.
