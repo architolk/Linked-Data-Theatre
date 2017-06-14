@@ -2,7 +2,7 @@
 
     NAME     container.xpl
     VERSION  1.17.1-SNAPSHOT
-    DATE     2017-05-15
+    DATE     2017-06-14
 
     Copyright 2012-2017
 
@@ -176,6 +176,7 @@
 								<label>Backstage of &lt;<xsl:value-of select="context/back-of-stage"/>></label>
 								<url><xsl:value-of select="substring-before(context/subject,'/rep')"/></url>
 								<stage><xsl:value-of select="context/back-of-stage"/></stage>
+								<response><xsl:value-of select="context/parameters/parameter[name='RESPONSE']/value"/></response>
 								<user-role/>
 								<translator/>
 								<version-url><xsl:value-of select="substring-before(context/subject,'/rep')"/></version-url>
@@ -236,6 +237,7 @@
 								<label>Backstage of &lt;<xsl:value-of select="context/back-of-stage"/>></label>
 								<url><xsl:value-of select="context/back-of-stage"/></url>
 								<user-role/>
+								<response><xsl:value-of select="context/parameters/parameter[name='RESPONSE']/value"/></response>
 								<translator/>
 								<version-url><xsl:value-of select="context/back-of-stage"/></version-url>
 								<representation>http://bp4mc2.org/elmo/def#UploadRepresentation</representation>
@@ -341,6 +343,7 @@
 									<label><xsl:value-of select="rdfs:label"/></label>
 									<url><xsl:value-of select="@rdf:about"/></url>
 									<user-role><xsl:value-of select="elmo:user-role"/></user-role>
+									<response><xsl:value-of select="/root/context/parameters/parameter[name='RESPONSE']/value"/></response>
 									<translator><xsl:value-of select="elmo:translator/@rdf:resource"/></translator>
 									<version-url>
 										<xsl:value-of select="@rdf:about"/>
@@ -790,9 +793,6 @@
 						<p:input name="data" href="#rdffile"/>
 						<p:output name="data" id="rdffilelist"/>
 					</p:processor>
-					<!-- Upload of file: via Virtuoso stored procedure -->
-					<!-- Please change authorization in virtuoso.ini: -->
-					<!--         DirsAllowed			= ., ../vad, ../../Tomcat/temp -->
 
 					<!-- Check if extension is xml or ttl, return error if not -->
 					<p:choose href="#rdffilelist" rdfs:label="upload to virtuoso, check xml or ttl">
@@ -805,41 +805,62 @@
 										<cgraph><xsl:value-of select="container/version-url"/></cgraph> <!-- Version-url is same as url for normal containers -->
 										<pgraph><xsl:value-of select="container/url"/></pgraph>
 										<tgraph><xsl:value-of select="container/target-graph"/></tgraph>
-										<postquery><xsl:value-of select="container/postquery"/></postquery>
+										<!--<postquery><xsl:value-of select="container/postquery"/></postquery>-->
 									</config>
 								</p:input>
 								<p:input name="data" href="#rdffilelist"/>
-								<p:output name="data" id="result"/>
+								<p:output name="data" id="uploadresult"/>
 							</p:processor>
-							<!-- Original version, depends on virtuoso (deprecated) -->
-							<!--
-							<p:processor name="oxf:sql">
-								<p:input name="data" href="aggregate('root',#rdffilelist,#containercontext)"/>
-								<p:input name="config">
-									<sql:config>
-										<sql:connection>
-											<sql:datasource>virtuoso</sql:datasource>
-											<sql:execute>
-												<sql:call>
-													{call ldt.multi_update_container(<sql:param type="xs:string" select="root/filelist/list"/>,<sql:param type="xs:string" select="root/filelist/firstformat"/>,<sql:param type="xs:string" select="root/container/url"/>,<sql:param type="xs:string" select="root/container/version-url"/>,<sql:param type="xs:string" select="root/container/target-graph"/>,<sql:param type="xs:string" select="root/container/target-graph/@action"/>,<sql:param type="xs:string" select="root/container/postquery"/>)}
-												</sql:call>
-												<sql:result-set>
-													<response>
-														<sql:row-iterator>
-															<sql:get-column-value type="xs:string" column="message"/>
-														</sql:row-iterator>
-													</response>
-												</sql:result-set>
-												<sql:no-results>
-													<response>No results</response>
-												</sql:no-results>
-											</sql:execute>
-										</sql:connection>
-									</sql:config>
-								</p:input>
-								<p:output name="data" id="result"/>
-							</p:processor>
-							-->
+							<p:choose href="#containercontext">
+								<p:when test="container/postquery!=''">
+									<!-- Execute postquery, if any -->
+									<p:processor name="oxf:xforms-submission">
+										<p:input name="submission" transform="oxf:xslt" href="#context">
+											<xforms:submission method="get" xsl:version="2.0" action="{context/local-endpoint}">
+												<xforms:header>
+													<xforms:name>Accept</xforms:name>
+													<xforms:value>application/sparql-results+xml</xforms:value>
+												</xforms:header>
+												<xforms:setvalue ev:event="xforms-submit-error" ref="error" value="event('response-body')"/>
+												<xforms:setvalue ev:event="xforms-submit-error" ref="error/@type" value="event('error-type')"/>
+											</xforms:submission>
+										</p:input>
+										<p:input name="request" transform="oxf:xslt" href="#containercontext">
+											<parameters xsl:version="2.0">
+												<query><xsl:value-of select="container/postquery"/></query>
+												<default-graph-uri/>
+												<error type=""/>
+											</parameters>
+										</p:input>
+										<p:output name="response" id="sparql"/>
+									</p:processor>
+									<!-- Combine -->
+									<p:processor name="oxf:identity">
+										<p:input name="data" transform="oxf:xslt" href="aggregate('root',#uploadresult,#sparql)">
+											<response xsl:version="2.0">
+												<xsl:copy-of select="root/response/scene"/>
+												<xsl:for-each select="root/sparql:sparql/sparql:results/sparql:result">
+													<scene><xsl:value-of select="sparql:binding/sparql:literal"/></scene>
+												</xsl:for-each>
+												<xsl:if test="exists(root/response/error) or exists(root/parameters/error)">
+													<error>
+														<xsl:value-of select="root/response/error"/>
+														<xsl:value-of select="root/parameters/error"/>
+													</error>
+												</xsl:if>
+											</response>
+										</p:input>
+										<p:output name="data" id="result"/>
+									</p:processor>
+								</p:when>
+								<p:otherwise>
+									<!-- Otherwise, repeat result -->
+									<p:processor name="oxf:identity">
+										<p:input name="data" href="#uploadresult"/>
+										<p:output name="data" id="result"/>
+									</p:processor>
+								</p:otherwise>
+							</p:choose>
 						</p:when>
 						<p:otherwise>
 							<p:processor name="oxf:identity">
@@ -855,7 +876,7 @@
 	<p:input name="config">
 		<config/>
 	</p:input>
-	<p:input name="data" href="#context"/>
+	<p:input name="data" href="#result"/>
 </p:processor>
 -->
 					<!-- Cool URI implementation: respond with HTML or with JSON -->
@@ -965,7 +986,7 @@
 														<xsl:otherwise><xsl:value-of select="context/subject"/></xsl:otherwise>
 													</xsl:choose>
 												</xsl:variable>
-												<meta http-equiv="refresh" content="0;URL={$returnURL}" />
+												<meta http-equiv="refresh" content="0;URL={$returnURL}?RESPONSE=succes" />
 												<body><p>Succes</p></body>
 											</html>
 										</p:input>

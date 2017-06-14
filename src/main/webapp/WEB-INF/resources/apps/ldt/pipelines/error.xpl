@@ -1,8 +1,8 @@
 <!--
 
     NAME     error.xpl
-    VERSION  1.17.0
-    DATE     2017-04-16
+    VERSION  1.17.1-SNAPSHOT
+    DATE     2017-06-14
 
     Copyright 2012-2017
 
@@ -32,7 +32,8 @@
           xmlns:oxf="http://www.orbeon.com/oxf/processors"
 		  xmlns:ev="http://www.w3.org/2001/xml-events"
           xmlns:xs="http://www.w3.org/2001/XMLSchema"
-		  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+		  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+		  xmlns:xsi="www.w3.org/2001/XMLSchema-instance">
 
 	<!-- Configuration> -->
 	<p:param type="input" name="instance"/>
@@ -46,11 +47,32 @@
 				<include>/request/parameters/parameter</include>
 				<include>/request/remote-user</include>
 				<include>/request/request-path</include>
-				<include>/request/body/@*</include>
 			</config>
 		</p:input>
 		<p:output name="data" id="request"/>
 	</p:processor>
+
+	<!-- /request/body can only be obtained when no parameters are serialized within the body! -->
+	<p:choose href="#request">
+		<p:when test="not(exists(/request/parameters))">
+			<p:processor name="oxf:request">
+				<p:input name="config">
+					<config stream-type="xs:anyURI">
+						<include>/request/body</include>
+					</config>
+				</p:input>
+				<p:output name="data" id="requestbody"/>
+			</p:processor>
+		</p:when>
+		<p:otherwise>
+			<p:processor name="oxf:identity">
+				<p:input name="data">
+					<request />
+				</p:input>
+				<p:output name="data" id="requestbody"/>
+			</p:processor>
+		</p:otherwise>
+	</p:choose>
 
 	<!-- Config won't be part of the configuration, so explicit loading -->
 	<p:processor name="oxf:url-generator">
@@ -65,7 +87,7 @@
 	
 	<!-- Convert defaults to context -->
 	<p:processor name="oxf:unsafe-xslt">
-		<p:input name="data" href="aggregate('root',#request,#defaults)"/>
+		<p:input name="data" href="aggregate('root',#request,#requestbody,#defaults)"/>
 		<p:input name="config" href="../transformations/context.xsl"/>
 		<p:output name="data" id="context"/>
 	</p:processor>

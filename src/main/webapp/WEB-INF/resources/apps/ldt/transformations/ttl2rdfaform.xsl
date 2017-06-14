@@ -1,8 +1,8 @@
 <!--
 
     NAME     ttl2rdfaform.xsl
-    VERSION  1.17.0
-    DATE     2017-04-16
+    VERSION  1.17.1-SNAPSHOT
+    DATE     2017-06-14
 
     Copyright 2012-2017
 
@@ -67,6 +67,14 @@
 				<elmo:appearance rdf:resource="http://bp4mc2.org/elmo/def#HiddenAppearance"/>
 				<rdf:value><xsl:value-of select="root/context/subject"/></rdf:value>
 			</rdf:Description>
+			<xsl:if test="root/container/response='succes'">
+				<rdf:Description rdf:nodeID="f0a">
+					<rdfs:label>Result</rdfs:label>
+					<elmo:applies-to>result</elmo:applies-to>
+					<elmo:appearance rdf:resource="http://bp4mc2.org/elmo/def#ReadOnly"/>
+					<rdf:value>Upload succesful</rdf:value>
+				</rdf:Description>
+			</xsl:if>
 			<xsl:if test="root/container/representation!='http://bp4mc2.org/elmo/def#DownloadRepresentation'">
 				<rdf:Description rdf:nodeID="f1">
 					<rdfs:label>Upload</rdfs:label>
@@ -84,9 +92,8 @@
 				<rdf:Description rdf:nodeID="f2">
 					<rdfs:label>Error</rdfs:label>
 					<elmo:applies-to>error</elmo:applies-to>
-					<elmo:valueDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#String"/>
 					<rdf:value><xsl:value-of select="root/response/error"/></rdf:value>
-					<html:stylesheet>height:75px; background:red; color:white;</html:stylesheet>
+					<elmo:appearance rdf:resource="http://bp4mc2.org/elmo/def#Message"/>
 				</rdf:Description>
 			</xsl:if>
 			<xsl:if test="root/container/representation!='http://bp4mc2.org/elmo/def#UploadRepresentation' and root/container/representation!='http://bp4mc2.org/elmo/def#DownloadRepresentation'">
