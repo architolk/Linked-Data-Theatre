@@ -255,7 +255,7 @@
 					<checkResult>
 						<errors>
 							<!-- The analyzer finds a 406 an error, and at this moment 23,5% of all tests are 406s -->
-							<threshold>19</threshold>
+							<threshold>26</threshold>
 							<tolerance>2</tolerance>
 						</errors>
 					</checkResult>

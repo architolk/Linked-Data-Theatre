@@ -138,8 +138,7 @@
 				<p:input name="data" href="#converted"/>
 			</p:processor>
 		</p:when>
-		<p:otherwise>
-			<!-- Otherwise, just return plain xml -->
+		<p:when test="context/format='application/xml'">
 			<p:processor name="oxf:xml-converter">
 				<p:input name="config">
 					<config>
@@ -151,7 +150,64 @@
 				<p:input name="data" href="#exception"/>
 				<p:output name="data" id="converted" />
 			</p:processor>
-
+			<!-- Serialize -->
+			<p:processor name="oxf:http-serializer">
+				<p:input name="config">
+					<config>
+						<cache-control><use-local-cache>false</use-local-cache></cache-control>
+						<status-code>500</status-code>
+					</config>
+				</p:input>
+				<p:input name="data" href="#converted"/>
+			</p:processor>
+		</p:when>
+		<p:when test="context/format='application/json'">
+			<p:processor name="oxf:text-converter">
+				<p:input name="config">
+					<config>
+						<encoding>utf-8</encoding>
+					</config>
+				</p:input>
+				<p:input name="data" transform="oxf:xslt" href="#exception">
+					<result xsl:version="2.0">
+						<xsl:text>{"exceptions:[
+</xsl:text>
+						<xsl:for-each select="exceptions/exception"><xsl:if test="position()!=1">,
+</xsl:if>"<xsl:value-of select="message"/>"</xsl:for-each>
+						<xsl:text>]}</xsl:text>
+					</result>
+				</p:input>
+				<p:output name="data" id="converted" />
+			</p:processor>
+			<!-- Serialize -->
+			<p:processor name="oxf:http-serializer">
+				<p:input name="config">
+					<config>
+						<cache-control><use-local-cache>false</use-local-cache></cache-control>
+						<status-code>500</status-code>
+					</config>
+				</p:input>
+				<p:input name="data" href="#converted"/>
+			</p:processor>
+		</p:when>
+		<p:otherwise>
+			<!-- Otherwise, just return plain text -->
+			<p:processor name="oxf:text-converter">
+				<p:input name="config">
+					<config>
+						<encoding>utf-8</encoding>
+					</config>
+				</p:input>
+				<p:input name="data" transform="oxf:xslt" href="#exception">
+					<result xsl:version="2.0">
+						<xsl:for-each select="exceptions/exception">
+							<xsl:value-of select="message"/><xsl:text>
+</xsl:text>
+						</xsl:for-each>
+					</result>
+				</p:input>
+				<p:output name="data" id="converted" />
+			</p:processor>
 			<!-- Serialize -->
 			<p:processor name="oxf:http-serializer">
 				<p:input name="config">
