@@ -2,7 +2,7 @@
 
     NAME     container.xpl
     VERSION  1.17.1-SNAPSHOT
-    DATE     2017-06-14
+    DATE     2017-06-16
 
     Copyright 2012-2017
 
@@ -216,6 +216,7 @@
 										<xsl:otherwise>CONSTRUCT {?x?x?x} WHERE {?x?x?x}</xsl:otherwise>
 									</xsl:choose>
 								</fetchquery>
+								<assertions/>
 								<contains>
 									<representation uri="http://bp4mc2.org/elmo/def#BackstageMenu"/>
 								</contains>
@@ -243,6 +244,7 @@
 								<representation>http://bp4mc2.org/elmo/def#UploadRepresentation</representation>
 								<postquery/>
 								<fetchquery>CONSTRUCT {?x?x?x} WHERE {?x?x?x}</fetchquery>
+								<assertions/>
 								<contains>
 									<representation uri="http://bp4mc2.org/elmo/def#BackstageMenu"/>
 								</contains>
@@ -276,12 +278,18 @@
 								<]]><xsl:value-of select="context/subject"/><![CDATA[> rdf:type ?type.
 								<]]><xsl:value-of select="context/subject"/><![CDATA[> ?p ?s.
 								<]]><xsl:value-of select="context/subject"/><![CDATA[> elmo:query ?query.
+								<]]><xsl:value-of select="context/subject"/><![CDATA[> elmo:assertion ?assertion.
+								?assertion ?assertionp ?assertiono
 							}
 							WHERE {
 								GRAPH <]]><xsl:value-of select="context/representation-graph/@uri"/><![CDATA[> {
 									<]]><xsl:value-of select="context/subject"/><![CDATA[> rdf:type ?type.
 									<]]><xsl:value-of select="context/subject"/><![CDATA[> ?p ?s.
 									OPTIONAL { <]]><xsl:value-of select="context/subject"/><![CDATA[> elmo:query/elmo:query ?query }.
+									OPTIONAL {
+										<]]><xsl:value-of select="context/subject"/><![CDATA[> elmo:assertion ?assertion.
+										?assertion ?assertionp ?assertiono
+									}
 									FILTER (?type = elmo:Container or ?type = elmo:VersionContainer)
 								}
 							}
@@ -390,6 +398,19 @@
 											</fetchquery>
 										</xsl:otherwise>
 									</xsl:choose>
+									<assertions>
+										<xsl:for-each select="elmo:assertion">
+											<xsl:variable name="assertion" select="@rdf:nodeID"/>
+											<xsl:for-each select="../../rdf:Description[@rdf:nodeID=$assertion]/(elmo:assert|elmo:assert-not)">
+												<xsl:variable name="label"><xsl:value-of select="../rdfs:label"/></xsl:variable>
+												<xsl:variable name="nlabel">
+													<xsl:value-of select="$label"/>
+													<xsl:if test="$label=''">Assertion failed</xsl:if>
+												</xsl:variable>
+												<assert label="{$nlabel}" expected="{local-name()='assert'}"><xsl:value-of select="."/></assert>
+											</xsl:for-each>
+										</xsl:for-each>
+									</assertions>
 									<contains>
 										<xsl:for-each select="elmo:contains">
 											<representation uri="{@rdf:resource}"/>
@@ -405,14 +426,7 @@
 			</p:processor>
 		</p:otherwise>
 	</p:choose>
-<!--
-<p:processor name="oxf:xml-serializer">
-	<p:input name="config">
-		<config/>
-	</p:input>
-	<p:input name="data" href="#containercontext"/>
-</p:processor>
--->
+
 	<p:choose href="#containercontext">
 		<!-- Container should exist in configuration, or return 404 -->
 		<p:when test="exists(container/url)" rdfs:label="container-configuration found">
@@ -811,8 +825,50 @@
 								<p:input name="data" href="#rdffilelist"/>
 								<p:output name="data" id="uploadresult"/>
 							</p:processor>
-							<p:choose href="#containercontext">
-								<p:when test="container/postquery!=''">
+							<!-- Check assertions (uploadresult as part of assertions, otherwise parallisation errors might occur) -->
+							<p:for-each href="#containercontext" select="/container/assertions/assert" root="results" id="aresults">
+								<!-- Execute assertion-check -->
+								<p:processor name="oxf:xforms-submission">
+									<p:input name="submission" transform="oxf:xslt" href="aggregate('root',#uploadresult,#context)">
+										<xforms:submission method="get" xsl:version="2.0" action="{root/context/local-endpoint}">
+											<xforms:header>
+												<xforms:name>Accept</xforms:name>
+												<xforms:value>application/sparql-results+xml</xforms:value>
+											</xforms:header>
+											<xforms:setvalue ev:event="xforms-submit-error" ref="error" value="event('response-body')"/>
+											<xforms:setvalue ev:event="xforms-submit-error" ref="error/@type" value="event('error-type')"/>
+										</xforms:submission>
+									</p:input>
+									<p:input name="request" transform="oxf:xslt" href="current()">
+										<parameters xsl:version="2.0">
+											<query><xsl:value-of select="assert"/></query>
+											<default-graph-uri/>
+											<error type=""/>
+										</parameters>
+									</p:input>
+									<p:output name="response" ref="aresults"/>
+								</p:processor>
+							</p:for-each>
+							<!-- Analyse results -->
+							<p:processor name="oxf:identity">
+								<p:input name="data" transform="oxf:xslt" href="aggregate('root',#containercontext,#aresults)">
+									<assertions xsl:version="2.0">
+										<xsl:for-each select="root/container/assertions/assert">
+											<xsl:variable name="expected" select="@expected"/>
+											<xsl:variable name="position" select="position()"/>
+											<xsl:choose>
+												<xsl:when test="/root/results/sparql:sparql[$position]/sparql:boolean!=$expected">
+													<assertion-failed><xsl:value-of select="@label"/></assertion-failed>
+												</xsl:when>
+												<xsl:otherwise/>
+											</xsl:choose>
+										</xsl:for-each>
+									</assertions>
+								</p:input>
+								<p:output name="data" id="assertions"/>
+							</p:processor>
+							<p:choose href="aggregate('root',#assertions,#containercontext)">
+								<p:when test="not(exists(root/assertions/assertion-failed)) and root/container/postquery!=''">
 									<!-- Execute postquery, if any -->
 									<p:processor name="oxf:xforms-submission">
 										<p:input name="submission" transform="oxf:xslt" href="#context">
@@ -854,9 +910,25 @@
 									</p:processor>
 								</p:when>
 								<p:otherwise>
-									<!-- Otherwise, repeat result -->
+									<!-- Otherwise, combine with assertions -->
 									<p:processor name="oxf:identity">
-										<p:input name="data" href="#uploadresult"/>
+										<p:input name="data" transform="oxf:xslt" href="aggregate('root',#uploadresult,#assertions)">
+											<response xsl:version="2.0">
+												<xsl:copy-of select="root/response/scene"/>
+												<xsl:for-each select="root/assertions/assertion-failed">
+													<scene><xsl:value-of select="."/></scene>
+												</xsl:for-each>
+												<xsl:if test="exists(root/response/error) or exists(root/assertions/assertion-failed)">
+													<error>
+														<xsl:value-of select="root/response/error"/>
+														<xsl:for-each select="root/assertions/assertion-failed">
+															<xsl:value-of select="."/><xsl:text>
+</xsl:text>
+														</xsl:for-each>
+													</error>
+												</xsl:if>
+											</response>
+										</p:input>
 										<p:output name="data" id="result"/>
 									</p:processor>
 								</p:otherwise>

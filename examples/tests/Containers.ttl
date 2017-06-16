@@ -97,7 +97,29 @@ container:query a elmo:Container;
 
 container:defquery a elmo:Container;
 	elmo:contains stage:NavbarSearchAppearance;
-	rdfs:label "Upload with predefined post query";
+	rdfs:label "Upload with predefined post query and assertions";
+	elmo:assertion [
+		rdfs:label "A void:triples statement should not occur in the uploaded data";
+		elmo:assert-not '''
+			prefix container: <http://localhost:8080/container/>
+			ASK {
+				graph container:defquery {
+					container:defquery void:triples ?count
+				}
+			}
+		'''
+	];
+	elmo:assertion [
+		rdfs:label "The uploaded data should not be empty";
+		elmo:assert '''
+			prefix container: <http://localhost:8080/container/>
+			ASK {
+				graph container:defquery {
+					?s?p?o
+				}
+			}
+		'''
+	];
 	elmo:query stage:ContainerQuery;
 .
 
