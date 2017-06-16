@@ -2,7 +2,7 @@
 
     NAME     query.xpl
     VERSION  1.17.1-SNAPSHOT
-    DATE     2017-06-07
+    DATE     2017-06-16
 
     Copyright 2012-2017
 
@@ -135,7 +135,7 @@
 									{
 										GRAPH <]]><xsl:value-of select="context/representation-graph/@uri"/><![CDATA[> {
 											?rep elmo:uri-pattern ?pattern.
-											FILTER regex("]]><xsl:value-of select="context/subject"/><![CDATA[",?pattern)
+											FILTER regex("]]><xsl:value-of select="context/idsubject"/><![CDATA[",?pattern)
 										}
 									}]]><xsl:if test="context/subject!='' and not(contains(context/subject,' '))"><![CDATA[
 									UNION

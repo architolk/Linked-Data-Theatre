@@ -5,6 +5,7 @@
 
 stage:GraphAppearanceParameters	a	elmo:Representation;
 	elmo:url-pattern	"/query/GraphAppearanceParameters$";
+	elmo:uri-pattern "^http://localhost:8080/id/testen/graph$";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:contains stage:GraphAppearanceParameters_tab;
@@ -23,10 +24,18 @@ stage:GraphAppearanceParameters_content elmo:index "2";
 	elmo:appearance elmo:GraphAppearance;
 	elmo:query '''
 		construct {
-			<http://localhost:8080/id/test> rdfs:label "Test".
-			<http://localhost:8080/id/test> <http://localhost:8080#para> <http://localhost:8080/id/para>.
+			<http://localhost:8080/id/testen/graph> rdfs:label "Test".
+			<http://localhost:8080/id/testen/graph> <http://localhost:8080#para> <http://localhost:8080/id/para>.
+			<http://localhost:8080/id/testen/graph> <http://localhost:8080#idsubject> <http://localhost:8080/id/idsubject>.
+			<http://localhost:8080/id/testen/graph> <http://localhost:8080#subject> <http://localhost:8080/id/subject>.
+			<http://localhost:8080/id/testen/graph> <http://localhost:8080#date> <http://localhost:8080/id/date>.
+			<http://localhost:8080/id/testen/graph> <http://localhost:8080#timestamp> <http://localhost:8080/id/timestamp>.
 			<http://localhost:8080#para> rdfs:label "PARA".
 			<http://localhost:8080/id/para> rdfs:label "@PARA@".
+			<http://localhost:8080/id/idsubject> rdfs:label "@IDSUBJECT@".
+			<http://localhost:8080/id/subject> rdfs:label "@SUBJECT@".
+			<http://localhost:8080/id/date> rdfs:label "@DATE@ ".
+			<http://localhost:8080/id/timestamp> rdfs:label "@TIMESTAMP@".
 		}
 		where {}
 	''';

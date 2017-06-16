@@ -2,7 +2,7 @@
 
     NAME     context.xsl
     VERSION  1.17.1-SNAPSHOT
-    DATE     2017-06-07
+    DATE     2017-06-16
 
     Copyright 2012-2017
 
@@ -271,6 +271,14 @@
 			<idsubject>
 				<xsl:choose>
 					<xsl:when test="exists(/croot)"><xsl:value-of select="$subject"/></xsl:when>
+					<xsl:when test="theatre/subject!='' and theatre/format='d3json' and theatre/date!=''">
+						<xsl:variable name="domain" select="substring-before($subject,'/id/')"/>
+						<xsl:variable name="term" select="substring-after($subject,concat('/id/',theatre/date,'/'))"/>
+						<xsl:choose>
+							<xsl:when test="$term!=''"><xsl:value-of select="$domain"/>/id/<xsl:value-of select="$term"/></xsl:when>
+							<xsl:otherwise><xsl:value-of select="$subject"/></xsl:otherwise>
+						</xsl:choose>
+					</xsl:when>
 					<xsl:when test="theatre/subject!=''"><xsl:value-of select="$subject"/></xsl:when>
 					<xsl:when test="substring-before($url,'/doc/')!='' and theatre/date!=''">
 						<xsl:variable name="domain" select="substring-before($url,'/doc/')"/>
