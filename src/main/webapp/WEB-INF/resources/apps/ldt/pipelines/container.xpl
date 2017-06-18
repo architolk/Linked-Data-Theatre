@@ -502,6 +502,7 @@
 												<xsl:variable name="type">
 													<xsl:choose>
 														<xsl:when test="root/context/upload-file/@type='application/xml'">xml</xsl:when>
+														<xsl:when test="root/context/upload-file/@type='application/ld+json'">jsonld</xsl:when>
 														<xsl:when test="root/container/translator!=''">xml</xsl:when> <!-- A translator implies xml -->
 														<xsl:otherwise>ttl</xsl:otherwise> <!-- If all fails, assume turtle -->
 													</xsl:choose>
@@ -810,7 +811,7 @@
 
 					<!-- Check if extension is xml or ttl, return error if not -->
 					<p:choose href="#rdffilelist" rdfs:label="upload to virtuoso, check xml or ttl">
-						<p:when test="filelist/firstformat='xml' or filelist/firstformat='ttl'">
+						<p:when test="filelist/firstformat='xml' or filelist/firstformat='ttl' or filelist/firstformat='jsonld'">
 							<!-- NEW VERSION: Using rdf4j instead of jdbc connection -->
 							<p:processor name="oxf:rdf4j-processor">
 								<p:input name="config" transform="oxf:xslt" href="#containercontext">
@@ -937,7 +938,9 @@
 						<p:otherwise>
 							<p:processor name="oxf:identity">
 								<p:input name="data">
-									<response>Unknown format (use xml or ttl)</response>
+									<response>
+										<error>Unknown format (use xml, ttl or jsonld)</error>
+									</response>
 								</p:input>
 								<p:output name="data" id="result"/>
 							</p:processor>
