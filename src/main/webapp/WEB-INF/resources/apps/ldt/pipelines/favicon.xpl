@@ -1,8 +1,8 @@
 <!--
 
     NAME     favicon.xpl
-    VERSION  1.17.0
-    DATE     2017-04-16
+    VERSION  1.18.0
+    DATE     2017-06-18
 
     Copyright 2012-2017
 

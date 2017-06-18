@@ -1,1 +1,1 @@
-{"response":"error" ",scene":["Container <http://localhost:8888/container/wrongcontainer> cleared" ,"[content.ttl] " ],"error":". \nVirtuoso 37000 Error SP030: SPARQL compiler, line 1: syntax error at '<' before 'urn:test'\n\nSPARQL query:\ndefine sql:big-data-const 0 clear graph <urn:test"}
+{"response":"error" ",scene":["Container <http://localhost:8888/container/defquery> cleared" ,"file uploaded: content.ttl" ,"A void:triples statement should not occur in the uploaded data" ],"error":"A void:triples statement should not occur in the uploaded data\n"}

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:ns2="http://dbpedia.org/ontology/"
+         xmlns:dbpprop="http://dbpedia.org/property/"
+         xmlns:ns4="http://localhost:8080/def/test#">
+  <rdf:Description rdf:about="http://dbpedia.org/resource/Amsterdam">
+    <rdf:type rdf:resource="http://dbpedia.org/ontology/City"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Amsterdam</rdfs:label>
+    <ns4:capitalCity rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns4:capitalCity>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://dbpedia.org/resource/Amersfoort">
+    <rdf:type rdf:resource="http://dbpedia.org/ontology/City"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Amersfoort</rdfs:label>
+    <ns2:isPartOf rdf:resource="http://dbpedia.org/resource/Utrecht_(province)"/>
+    <dbpprop:east rdf:resource="http://dbpedia.org/resource/Amsterdam"/>
+    <ns2:abstract xml:lang="nl">Amersfoort is een stad en gemeente in het oosten van de Nederlandse provincie Utrecht. Het is in bevolkingsaantal de tweede stad van de provincie Utrecht en de veertiende van Nederland. Amersfoort is een groeistad en vervult economisch een regiofunctie met een sterk gegroeid bedrijfsleven, heeft een van de grootste spoorwegknooppunten van Nederland en is een belangrijke garnizoensstad. De binnenstad bezit een middeleeuws karakter met grachten</ns2:abstract>
+    <ns2:altitude rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">2.9</ns2:altitude>
+    <ns2:population rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">153773</ns2:population>
+    <ns2:populationAsOf rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2016-04-01</ns2:populationAsOf>
+    <ns4:capitalCity rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns4:capitalCity>
+    <ns4:districtNames rdf:nodeID="b451103"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://localhost:8080/def/test#capitalCity">
+    <rdfs:label xml:lang="en">capital city</rdfs:label>
+    <rdfs:label xml:lang="nl">hoofdstad</rdfs:label>
+    <rdfs:comment xml:lang="nl">De hoofdstad van een land</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://dbpedia.org/resource/Utrecht">
+    <rdf:type rdf:resource="http://dbpedia.org/ontology/City"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Utrecht</rdfs:label>
+    <ns2:isPartOf rdf:resource="http://dbpedia.org/resource/Utrecht_(province)"/>
+    <ns4:capitalCity rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns4:capitalCity>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="b451103">
+    <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">stadskern</rdf:first>
+    <rdf:rest rdf:nodeID="b451104"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="b451104">
+    <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">soesterkwartier</rdf:first>
+    <rdf:rest rdf:nodeID="b451105"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="b451105">
+    <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">koppel</rdf:first>
+    <rdf:rest rdf:nodeID="b451106"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="b451106">
+    <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">kruiskamp</rdf:first>
+    <rdf:rest rdf:nodeID="b451107"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="b451107">
+    <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">schothorst</rdf:first>
+    <rdf:rest rdf:nodeID="b451108"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="b451108">
+    <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">liendert</rdf:first>
+    <rdf:rest rdf:nodeID="b451109"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="b451109">
+    <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">rustenburg</rdf:first>
+    <rdf:rest rdf:nodeID="b451110"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="b451110">
+    <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">schuilenburg</rdf:first>
+    <rdf:rest rdf:nodeID="b451111"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="b451111">
+    <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">randenbroek</rdf:first>
+    <rdf:rest rdf:nodeID="b451112"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="b451112">
+    <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">dorrestein</rdf:first>
+    <rdf:rest rdf:nodeID="b451113"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="b451113">
+    <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">leusderkwartier</rdf:first>
+    <rdf:rest rdf:nodeID="b451114"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="b451114">
+    <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bergkwartier</rdf:first>
+    <rdf:rest rdf:nodeID="b451115"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="b451115">
+    <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">zielhorst</rdf:first>
+    <rdf:rest rdf:nodeID="b451116"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="b451116">
+    <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">kattenbroek</rdf:first>
+    <rdf:rest rdf:nodeID="b451117"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="b451117">
+    <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">nieuwland</rdf:first>
+    <rdf:rest rdf:nodeID="b451118"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="b451118">
+    <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">vathorst</rdf:first>
+    <rdf:rest rdf:nodeID="b451119"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="b451119">
+    <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">vermeerkwartier</rdf:first>
+    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </rdf:Description>
+</rdf:RDF>

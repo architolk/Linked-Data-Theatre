@@ -38,9 +38,9 @@ You're now ready to create the war:
 	mvn clean package
 
 ## 5. Test the package
-**NB: you should have a working triplestore with the test-configuration in place, or the test will fail.**
+**NB: you should have a working triplestore in place, or the test will fail.**
 
-If you have a working triplestore, but not sure whether your configuration is up to date, please go to `\examples` and execute `deploy-tests.bat` (windows) or `deploy-tests.sh` (linux).
+As part of the test, the named graph `http://localhost:8888/stage` will be deployed with the test configuration.
 
 Please test the package for possible regression:
 

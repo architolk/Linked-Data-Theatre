@@ -70,7 +70,7 @@
     <uri>http://dbpedia.org/resource/Amersfoort</uri>
    </binding>
    <binding name="s_label">
-    <literal>Amersfoort</literal>
+    <literal datatype="http://www.w3.org/2001/XMLSchema#string">Amersfoort</literal>
    </binding>
    <binding name="type">
     <uri>http://dbpedia.org/ontology/City</uri>
@@ -84,7 +84,7 @@
     <uri>http://dbpedia.org/resource/Amersfoort</uri>
    </binding>
    <binding name="s_label">
-    <literal>Amersfoort</literal>
+    <literal datatype="http://www.w3.org/2001/XMLSchema#string">Amersfoort</literal>
    </binding>
    <binding name="type">
     <uri>http://dbpedia.org/ontology/City</uri>
@@ -98,7 +98,7 @@
     <uri>http://dbpedia.org/resource/Amersfoort</uri>
    </binding>
    <binding name="s_label">
-    <literal>Amersfoort</literal>
+    <literal datatype="http://www.w3.org/2001/XMLSchema#string">Amersfoort</literal>
    </binding>
    <binding name="type">
     <uri>http://dbpedia.org/ontology/City</uri>
@@ -112,7 +112,7 @@
     <uri>http://dbpedia.org/resource/Amersfoort</uri>
    </binding>
    <binding name="s_label">
-    <literal>Amersfoort</literal>
+    <literal datatype="http://www.w3.org/2001/XMLSchema#string">Amersfoort</literal>
    </binding>
    <binding name="type">
     <uri>http://dbpedia.org/ontology/City</uri>
@@ -126,7 +126,7 @@
     <uri>http://dbpedia.org/resource/Amsterdam</uri>
    </binding>
    <binding name="s_label">
-    <literal>Amsterdam</literal>
+    <literal datatype="http://www.w3.org/2001/XMLSchema#string">Amsterdam</literal>
    </binding>
    <binding name="type">
     <uri>http://dbpedia.org/ontology/City</uri>
@@ -148,7 +148,7 @@
     <uri>http://dbpedia.org/resource/Amsterdam</uri>
    </binding>
    <binding name="s_label">
-    <literal>Amsterdam</literal>
+    <literal datatype="http://www.w3.org/2001/XMLSchema#string">Amsterdam</literal>
    </binding>
    <binding name="type">
     <uri>http://dbpedia.org/ontology/City</uri>
@@ -160,17 +160,6 @@
    </binding>
    <binding name="s_label">
     <literal datatype="http://www.w3.org/2001/XMLSchema#string">Amsterdam</literal>
-   </binding>
-   <binding name="type">
-    <uri>http://dbpedia.org/ontology/City</uri>
-   </binding>
-  </result>
-  <result>
-   <binding name="s">
-    <uri>http://dbpedia.org/resource/Utrecht</uri>
-   </binding>
-   <binding name="s_label">
-    <literal>Utrecht</literal>
    </binding>
    <binding name="type">
     <uri>http://dbpedia.org/ontology/City</uri>
@@ -192,7 +181,18 @@
     <uri>http://dbpedia.org/resource/Utrecht</uri>
    </binding>
    <binding name="s_label">
-    <literal>Utrecht</literal>
+    <literal datatype="http://www.w3.org/2001/XMLSchema#string">Utrecht</literal>
+   </binding>
+   <binding name="type">
+    <uri>http://dbpedia.org/ontology/City</uri>
+   </binding>
+  </result>
+  <result>
+   <binding name="s">
+    <uri>http://dbpedia.org/resource/Utrecht</uri>
+   </binding>
+   <binding name="s_label">
+    <literal datatype="http://www.w3.org/2001/XMLSchema#string">Utrecht</literal>
    </binding>
    <binding name="type">
     <uri>http://dbpedia.org/ontology/City</uri>

@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2view.xsl
-    VERSION  1.17.1-SNAPSHOT
-    DATE     2017-05-25
+    VERSION  1.18.0
+    DATE     2017-06-18
 
     Copyright 2012-2017
 
