@@ -1,8 +1,8 @@
 <!--
 
     NAME     sparql2rdfaform.xsl
-    VERSION  1.17.0
-    DATE     2017-04-16
+    VERSION  1.18.0
+    DATE     2017-06-18
 
     Copyright 2012-2017
 
@@ -145,9 +145,8 @@
 				<rdf:Description rdf:nodeID="error">
 					<xsl:copy-of select="root/representation/rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#FormAppearance']/rdf:Description[@rdf:nodeID='error']/*"/>
 					<elmo:applies-to>error</elmo:applies-to>
-					<elmo:valueDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#String"/>
 					<rdf:value><xsl:value-of select="root/parameters/error"/></rdf:value>
-					<html:stylesheet>height:75px; background:red; color:white;</html:stylesheet>
+					<elmo:appearance rdf:resource="http://bp4mc2.org/elmo/def#Message"/>
 				</rdf:Description>
 			</xsl:if>
 			<xsl:if test="exists(root/queries/rdf:RDF/rdf:Description)">

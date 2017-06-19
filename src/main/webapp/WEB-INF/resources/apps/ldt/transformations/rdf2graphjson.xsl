@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2graphjson.xsl
-    VERSION  1.17.0
-    DATE     2017-04-16
+    VERSION  1.18.0
+    DATE     2017-06-18
 
     Copyright 2012-2017
 
@@ -44,6 +44,12 @@
 <xsl:template match="/root">
 	<xsl:text>{</xsl:text>
 	<xsl:apply-templates select="key('resource',context/subject)[1]"/>
+	<xsl:if test="context/subject!=context/idsubject and not(exists(key('resource',context/subject)))">
+		<xsl:apply-templates select="key('resource',context/idsubject)[1]"/>
+	</xsl:if>
+	<xsl:if test="not(exists(key('resource',context/idsubject)))">
+		<xsl:apply-templates select="/root/results/rdf:RDF[1]/rdf:Description[@rdf:about!=''][1]"/>
+	</xsl:if>
 	<xsl:text>}</xsl:text>
 </xsl:template>
 

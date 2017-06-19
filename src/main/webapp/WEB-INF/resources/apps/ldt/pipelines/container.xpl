@@ -1,8 +1,8 @@
 <!--
 
     NAME     container.xpl
-    VERSION  1.17.1-SNAPSHOT
-    DATE     2017-05-15
+    VERSION  1.18.0
+    DATE     2017-06-18
 
     Copyright 2012-2017
 
@@ -176,6 +176,7 @@
 								<label>Backstage of &lt;<xsl:value-of select="context/back-of-stage"/>></label>
 								<url><xsl:value-of select="substring-before(context/subject,'/rep')"/></url>
 								<stage><xsl:value-of select="context/back-of-stage"/></stage>
+								<response><xsl:value-of select="context/parameters/parameter[name='RESPONSE']/value"/></response>
 								<user-role/>
 								<translator/>
 								<version-url><xsl:value-of select="substring-before(context/subject,'/rep')"/></version-url>
@@ -215,6 +216,7 @@
 										<xsl:otherwise>CONSTRUCT {?x?x?x} WHERE {?x?x?x}</xsl:otherwise>
 									</xsl:choose>
 								</fetchquery>
+								<assertions/>
 								<contains>
 									<representation uri="http://bp4mc2.org/elmo/def#BackstageMenu"/>
 								</contains>
@@ -236,11 +238,13 @@
 								<label>Backstage of &lt;<xsl:value-of select="context/back-of-stage"/>></label>
 								<url><xsl:value-of select="context/back-of-stage"/></url>
 								<user-role/>
+								<response><xsl:value-of select="context/parameters/parameter[name='RESPONSE']/value"/></response>
 								<translator/>
 								<version-url><xsl:value-of select="context/back-of-stage"/></version-url>
 								<representation>http://bp4mc2.org/elmo/def#UploadRepresentation</representation>
 								<postquery/>
 								<fetchquery>CONSTRUCT {?x?x?x} WHERE {?x?x?x}</fetchquery>
+								<assertions/>
 								<contains>
 									<representation uri="http://bp4mc2.org/elmo/def#BackstageMenu"/>
 								</contains>
@@ -274,12 +278,18 @@
 								<]]><xsl:value-of select="context/subject"/><![CDATA[> rdf:type ?type.
 								<]]><xsl:value-of select="context/subject"/><![CDATA[> ?p ?s.
 								<]]><xsl:value-of select="context/subject"/><![CDATA[> elmo:query ?query.
+								<]]><xsl:value-of select="context/subject"/><![CDATA[> elmo:assertion ?assertion.
+								?assertion ?assertionp ?assertiono
 							}
 							WHERE {
 								GRAPH <]]><xsl:value-of select="context/representation-graph/@uri"/><![CDATA[> {
 									<]]><xsl:value-of select="context/subject"/><![CDATA[> rdf:type ?type.
 									<]]><xsl:value-of select="context/subject"/><![CDATA[> ?p ?s.
 									OPTIONAL { <]]><xsl:value-of select="context/subject"/><![CDATA[> elmo:query/elmo:query ?query }.
+									OPTIONAL {
+										<]]><xsl:value-of select="context/subject"/><![CDATA[> elmo:assertion ?assertion.
+										?assertion ?assertionp ?assertiono
+									}
 									FILTER (?type = elmo:Container or ?type = elmo:VersionContainer)
 								}
 							}
@@ -341,6 +351,7 @@
 									<label><xsl:value-of select="rdfs:label"/></label>
 									<url><xsl:value-of select="@rdf:about"/></url>
 									<user-role><xsl:value-of select="elmo:user-role"/></user-role>
+									<response><xsl:value-of select="/root/context/parameters/parameter[name='RESPONSE']/value"/></response>
 									<translator><xsl:value-of select="elmo:translator/@rdf:resource"/></translator>
 									<version-url>
 										<xsl:value-of select="@rdf:about"/>
@@ -387,6 +398,19 @@
 											</fetchquery>
 										</xsl:otherwise>
 									</xsl:choose>
+									<assertions>
+										<xsl:for-each select="elmo:assertion">
+											<xsl:variable name="assertion" select="@rdf:nodeID"/>
+											<xsl:for-each select="../../rdf:Description[@rdf:nodeID=$assertion]/(elmo:assert|elmo:assert-not)">
+												<xsl:variable name="label"><xsl:value-of select="../rdfs:label"/></xsl:variable>
+												<xsl:variable name="nlabel">
+													<xsl:value-of select="$label"/>
+													<xsl:if test="$label=''">Assertion failed</xsl:if>
+												</xsl:variable>
+												<assert label="{$nlabel}" expected="{local-name()='assert'}"><xsl:value-of select="."/></assert>
+											</xsl:for-each>
+										</xsl:for-each>
+									</assertions>
 									<contains>
 										<xsl:for-each select="elmo:contains">
 											<representation uri="{@rdf:resource}"/>
@@ -402,14 +426,7 @@
 			</p:processor>
 		</p:otherwise>
 	</p:choose>
-<!--
-<p:processor name="oxf:xml-serializer">
-	<p:input name="config">
-		<config/>
-	</p:input>
-	<p:input name="data" href="#containercontext"/>
-</p:processor>
--->
+
 	<p:choose href="#containercontext">
 		<!-- Container should exist in configuration, or return 404 -->
 		<p:when test="exists(container/url)" rdfs:label="container-configuration found">
@@ -485,6 +502,7 @@
 												<xsl:variable name="type">
 													<xsl:choose>
 														<xsl:when test="root/context/upload-file/@type='application/xml'">xml</xsl:when>
+														<xsl:when test="root/context/upload-file/@type='application/ld+json'">jsonld</xsl:when>
 														<xsl:when test="root/container/translator!=''">xml</xsl:when> <!-- A translator implies xml -->
 														<xsl:otherwise>ttl</xsl:otherwise> <!-- If all fails, assume turtle -->
 													</xsl:choose>
@@ -790,13 +808,10 @@
 						<p:input name="data" href="#rdffile"/>
 						<p:output name="data" id="rdffilelist"/>
 					</p:processor>
-					<!-- Upload of file: via Virtuoso stored procedure -->
-					<!-- Please change authorization in virtuoso.ini: -->
-					<!--         DirsAllowed			= ., ../vad, ../../Tomcat/temp -->
 
 					<!-- Check if extension is xml or ttl, return error if not -->
 					<p:choose href="#rdffilelist" rdfs:label="upload to virtuoso, check xml or ttl">
-						<p:when test="filelist/firstformat='xml' or filelist/firstformat='ttl'">
+						<p:when test="filelist/firstformat='xml' or filelist/firstformat='ttl' or filelist/firstformat='jsonld'">
 							<!-- NEW VERSION: Using rdf4j instead of jdbc connection -->
 							<p:processor name="oxf:rdf4j-processor">
 								<p:input name="config" transform="oxf:xslt" href="#containercontext">
@@ -805,46 +820,127 @@
 										<cgraph><xsl:value-of select="container/version-url"/></cgraph> <!-- Version-url is same as url for normal containers -->
 										<pgraph><xsl:value-of select="container/url"/></pgraph>
 										<tgraph><xsl:value-of select="container/target-graph"/></tgraph>
-										<postquery><xsl:value-of select="container/postquery"/></postquery>
+										<!--<postquery><xsl:value-of select="container/postquery"/></postquery>-->
 									</config>
 								</p:input>
 								<p:input name="data" href="#rdffilelist"/>
-								<p:output name="data" id="result"/>
+								<p:output name="data" id="uploadresult"/>
 							</p:processor>
-							<!-- Original version, depends on virtuoso (deprecated) -->
-							<!--
-							<p:processor name="oxf:sql">
-								<p:input name="data" href="aggregate('root',#rdffilelist,#containercontext)"/>
-								<p:input name="config">
-									<sql:config>
-										<sql:connection>
-											<sql:datasource>virtuoso</sql:datasource>
-											<sql:execute>
-												<sql:call>
-													{call ldt.multi_update_container(<sql:param type="xs:string" select="root/filelist/list"/>,<sql:param type="xs:string" select="root/filelist/firstformat"/>,<sql:param type="xs:string" select="root/container/url"/>,<sql:param type="xs:string" select="root/container/version-url"/>,<sql:param type="xs:string" select="root/container/target-graph"/>,<sql:param type="xs:string" select="root/container/target-graph/@action"/>,<sql:param type="xs:string" select="root/container/postquery"/>)}
-												</sql:call>
-												<sql:result-set>
-													<response>
-														<sql:row-iterator>
-															<sql:get-column-value type="xs:string" column="message"/>
-														</sql:row-iterator>
-													</response>
-												</sql:result-set>
-												<sql:no-results>
-													<response>No results</response>
-												</sql:no-results>
-											</sql:execute>
-										</sql:connection>
-									</sql:config>
+							<!-- Check assertions (uploadresult as part of assertions, otherwise parallisation errors might occur) -->
+							<p:for-each href="#containercontext" select="/container/assertions/assert" root="results" id="aresults">
+								<!-- Execute assertion-check -->
+								<p:processor name="oxf:xforms-submission">
+									<p:input name="submission" transform="oxf:xslt" href="aggregate('root',#uploadresult,#context)">
+										<xforms:submission method="get" xsl:version="2.0" action="{root/context/local-endpoint}">
+											<xforms:header>
+												<xforms:name>Accept</xforms:name>
+												<xforms:value>application/sparql-results+xml</xforms:value>
+											</xforms:header>
+											<xforms:setvalue ev:event="xforms-submit-error" ref="error" value="event('response-body')"/>
+											<xforms:setvalue ev:event="xforms-submit-error" ref="error/@type" value="event('error-type')"/>
+										</xforms:submission>
+									</p:input>
+									<p:input name="request" transform="oxf:xslt" href="current()">
+										<parameters xsl:version="2.0">
+											<query><xsl:value-of select="assert"/></query>
+											<default-graph-uri/>
+											<error type=""/>
+										</parameters>
+									</p:input>
+									<p:output name="response" ref="aresults"/>
+								</p:processor>
+							</p:for-each>
+							<!-- Analyse results -->
+							<p:processor name="oxf:identity">
+								<p:input name="data" transform="oxf:xslt" href="aggregate('root',#containercontext,#aresults)">
+									<assertions xsl:version="2.0">
+										<xsl:for-each select="root/container/assertions/assert">
+											<xsl:variable name="expected" select="@expected"/>
+											<xsl:variable name="position" select="position()"/>
+											<xsl:choose>
+												<xsl:when test="/root/results/sparql:sparql[$position]/sparql:boolean!=$expected">
+													<assertion-failed><xsl:value-of select="@label"/></assertion-failed>
+												</xsl:when>
+												<xsl:otherwise/>
+											</xsl:choose>
+										</xsl:for-each>
+									</assertions>
 								</p:input>
-								<p:output name="data" id="result"/>
+								<p:output name="data" id="assertions"/>
 							</p:processor>
-							-->
+							<p:choose href="aggregate('root',#assertions,#containercontext)">
+								<p:when test="not(exists(root/assertions/assertion-failed)) and root/container/postquery!=''">
+									<!-- Execute postquery, if any -->
+									<p:processor name="oxf:xforms-submission">
+										<p:input name="submission" transform="oxf:xslt" href="#context">
+											<xforms:submission method="get" xsl:version="2.0" action="{context/local-endpoint}">
+												<xforms:header>
+													<xforms:name>Accept</xforms:name>
+													<xforms:value>application/sparql-results+xml</xforms:value>
+												</xforms:header>
+												<xforms:setvalue ev:event="xforms-submit-error" ref="error" value="event('response-body')"/>
+												<xforms:setvalue ev:event="xforms-submit-error" ref="error/@type" value="event('error-type')"/>
+											</xforms:submission>
+										</p:input>
+										<p:input name="request" transform="oxf:xslt" href="#containercontext">
+											<parameters xsl:version="2.0">
+												<query><xsl:value-of select="container/postquery"/></query>
+												<default-graph-uri/>
+												<error type=""/>
+											</parameters>
+										</p:input>
+										<p:output name="response" id="sparql"/>
+									</p:processor>
+									<!-- Combine -->
+									<p:processor name="oxf:identity">
+										<p:input name="data" transform="oxf:xslt" href="aggregate('root',#uploadresult,#sparql)">
+											<response xsl:version="2.0">
+												<xsl:copy-of select="root/response/scene"/>
+												<xsl:for-each select="root/sparql:sparql/sparql:results/sparql:result">
+													<scene><xsl:value-of select="sparql:binding/sparql:literal"/></scene>
+												</xsl:for-each>
+												<xsl:if test="exists(root/response/error) or exists(root/parameters/error)">
+													<error>
+														<xsl:value-of select="root/response/error"/>
+														<xsl:value-of select="root/parameters/error"/>
+													</error>
+												</xsl:if>
+											</response>
+										</p:input>
+										<p:output name="data" id="result"/>
+									</p:processor>
+								</p:when>
+								<p:otherwise>
+									<!-- Otherwise, combine with assertions -->
+									<p:processor name="oxf:identity">
+										<p:input name="data" transform="oxf:xslt" href="aggregate('root',#uploadresult,#assertions)">
+											<response xsl:version="2.0">
+												<xsl:copy-of select="root/response/scene"/>
+												<xsl:for-each select="root/assertions/assertion-failed">
+													<scene><xsl:value-of select="."/></scene>
+												</xsl:for-each>
+												<xsl:if test="exists(root/response/error) or exists(root/assertions/assertion-failed)">
+													<error>
+														<xsl:value-of select="root/response/error"/>
+														<xsl:for-each select="root/assertions/assertion-failed">
+															<xsl:value-of select="."/><xsl:text>
+</xsl:text>
+														</xsl:for-each>
+													</error>
+												</xsl:if>
+											</response>
+										</p:input>
+										<p:output name="data" id="result"/>
+									</p:processor>
+								</p:otherwise>
+							</p:choose>
 						</p:when>
 						<p:otherwise>
 							<p:processor name="oxf:identity">
 								<p:input name="data">
-									<response>Unknown format (use xml or ttl)</response>
+									<response>
+										<error>Unknown format (use xml, ttl or jsonld)</error>
+									</response>
 								</p:input>
 								<p:output name="data" id="result"/>
 							</p:processor>
@@ -855,15 +951,23 @@
 	<p:input name="config">
 		<config/>
 	</p:input>
-	<p:input name="data" href="#context"/>
+	<p:input name="data" href="#result"/>
 </p:processor>
 -->
 					<!-- Cool URI implementation: respond with HTML or with JSON -->
 					<p:choose href="#context" rdfs:label="build userinterface / return result">
 						<p:when test="context/format='application/xml'" rdfs:label="xml response">
 							<p:processor name="oxf:xml-serializer">
-								<p:input name="config">
-									<config/>
+								<p:input name="config" transform="oxf:xslt" href="#result">
+									<config xsl:version="2.0">
+										<cache-control><use-local-cache>false</use-local-cache></cache-control>
+										<status-code>
+											<xsl:choose>
+												<xsl:when test="exists(response/error)">409</xsl:when>
+												<xsl:otherwise>200</xsl:otherwise>
+											</xsl:choose>
+										</status-code>
+									</config>
 								</p:input>
 								<p:input name="data" href="#result"/>
 							</p:processor>
@@ -882,15 +986,22 @@
 											<xsl:value-of select="."/><xsl:text>
 </xsl:text>
 										</xsl:for-each>
+										<xsl:value-of select="response/error"/>
 									</result>
 								</p:input>
 								<p:output name="data" id="converted" />
 							</p:processor>
 							<!-- Serialize -->
 							<p:processor name="oxf:http-serializer">
-								<p:input name="config">
-									<config>
+								<p:input name="config" transform="oxf:xslt" href="#result">
+									<config xsl:version="2.0">
 										<cache-control><use-local-cache>false</use-local-cache></cache-control>
+										<status-code>
+											<xsl:choose>
+												<xsl:when test="exists(response/error)">409</xsl:when>
+												<xsl:otherwise>200</xsl:otherwise>
+											</xsl:choose>
+										</status-code>
 									</config>
 								</p:input>
 								<p:input name="data" href="#converted"/>
@@ -903,7 +1014,7 @@
 										<xsl:template match="/">
 											<xsl:text>{"response":"</xsl:text>
 											<xsl:choose>
-												<xsl:when test="exists(error)"><xsl:value-of select="error"/></xsl:when>
+												<xsl:when test="exists(response/error)">error</xsl:when>
 												<xsl:otherwise>succes</xsl:otherwise>
 											</xsl:choose>
 											<xsl:text>"</xsl:text>
@@ -914,13 +1025,13 @@
 													<xsl:text>"</xsl:text><xsl:value-of select="."/><xsl:text>"</xsl:text>
 												</xsl:for-each>
 												<xsl:text> ]</xsl:text>
-												<xsl:if test="exists(error)">,"error":"<xsl:value-of select="error"/></xsl:if>
+												<xsl:if test="exists(error)">,"error":"<xsl:value-of select="replace(error,'\n','\\n')"/>"</xsl:if>
 											</xsl:for-each>
 											<xsl:text>}</xsl:text>
 										</xsl:template>
 									</xsl:stylesheet>
 								</p:input>
-								<p:input name="data" href="aggregate('root',#context,#result)"/>
+								<p:input name="data" href="#result"/>
 								<p:output name="data" id="textres"/>
 							</p:processor>
 							<p:processor name="oxf:text-converter">
@@ -935,10 +1046,15 @@
 							</p:processor>
 							<!-- Serialize -->
 							<p:processor name="oxf:http-serializer">
-								<p:input name="config">
-									<config>
+								<p:input name="config" transform="oxf:xslt" href="#result">
+									<config xsl:version="2.0">
 										<cache-control><use-local-cache>false</use-local-cache></cache-control>
-										<status-code>200</status-code>
+										<status-code>
+											<xsl:choose>
+												<xsl:when test="exists(response/error)">409</xsl:when>
+												<xsl:otherwise>200</xsl:otherwise>
+											</xsl:choose>
+										</status-code>
 									</config>
 								</p:input>
 								<p:input name="data" href="#htmlres"/>
@@ -965,7 +1081,7 @@
 														<xsl:otherwise><xsl:value-of select="context/subject"/></xsl:otherwise>
 													</xsl:choose>
 												</xsl:variable>
-												<meta http-equiv="refresh" content="0;URL={$returnURL}" />
+												<meta http-equiv="refresh" content="0;URL={$returnURL}?RESPONSE=succes" />
 												<body><p>Succes</p></body>
 											</html>
 										</p:input>
@@ -1123,116 +1239,194 @@
 						<p:output name="response" id="sparql"/>
 					</p:processor>
 
-					<!-- Convert result to turtle -->
-					<p:processor name="oxf:xslt" rdfs:label="create data from container content">
-						<p:input name="data" href="aggregate('xmlresult',#sparql,#containercontext)"/>
-						<p:input name="config" href="../transformations/rdf2ttl.xsl"/>
-						<p:output name="data" id="ttl"/>
-					</p:processor>
-
-					<!-- If the container contains some representations, we should also get those representations! -->
-					<!-- TODO: A better solution should be the integration of container.xpl and query.xpl, this needs refactoring -->
-					<p:choose href="#containercontext" rdfs:label="look for representations">
-						<p:when test="substring-after(container/contains/representation[1]/@uri,'http://bp4mc2.org/elmo/def#')!=''">
-							<!-- Special case: representation is a file (LDT backstage) -->
-							<p:processor name="oxf:url-generator">
-								<p:input name="config" transform="oxf:xslt" href="#containercontext">
-									<config xsl:version="2.0">
-										<url>../representations/<xsl:value-of select="substring-after(container/contains/representation[1]/@uri,'http://bp4mc2.org/elmo/def#')"/>.xml</url>
-										<content-type>application/xml</content-type>
+					<p:choose href="#context">
+					
+						<p:when test="context/format='application/json'">
+							<!-- Transform -->
+							<p:processor name="oxf:xslt">
+								<p:input name="data" href="aggregate('results',#sparql)"/>
+								<p:input name="config" href="../transformations/rdf2jsonld.xsl"/>
+								<p:output name="data" id="jsonld"/>
+							</p:processor>
+							<!-- Convert XML result to plain text -->
+							<p:processor name="oxf:text-converter">
+								<p:input name="config">
+									<config>
+										<encoding>utf-8</encoding>
+										<content-type>application/ld+json</content-type>
 									</config>
 								</p:input>
-								<p:output name="data" id="representations"/>
+								<p:input name="data" href="#jsonld" />
+								<p:output name="data" id="converted" />
+							</p:processor>
+							<!-- Serialize -->
+							<p:processor name="oxf:http-serializer">
+								<p:input name="config" href="#instance" transform="oxf:xslt">
+									<config xsl:version="2.0">
+										<cache-control><use-local-cache>false</use-local-cache></cache-control>
+										<xsl:if test="not(theatre/@cors='no')">
+											<header>
+												<name>Access-Control-Allow-Origin</name>
+												<value>*</value>
+											</header>
+										</xsl:if>
+									</config>
+								</p:input>
+								<p:input name="data" href="#converted"/>
 							</p:processor>
 						</p:when>
-						<p:when test="exists(container/contains/representation)">
-							<p:processor name="oxf:xforms-submission">
-								<p:input name="submission" transform="oxf:xslt" href="#context">
-									<xforms:submission method="get" xsl:version="2.0" action="{context/configuration-endpoint}">
-										<xforms:header>
-											<xforms:name>Accept</xforms:name>
-											<xforms:value>application/rdf+xml</xforms:value>
-										</xforms:header>
-										<xforms:setvalue ev:event="xforms-submit-error" ref="error" value="event('response-body')"/>
-										<xforms:setvalue ev:event="xforms-submit-error" ref="error/@type" value="event('error-type')"/>
-									</xforms:submission>
+						<p:when test="context/format='application/xml'">
+							<p:processor name="oxf:xml-serializer">
+								<p:input name="config">
+									<config>
+										<encoding>utf-8</encoding>
+										<content-type>application/rdf+xml</content-type>
+									</config>
 								</p:input>
-								<p:input name="request" transform="oxf:xslt" href="aggregate('root',#context,#containercontext)">
-									<parameters xsl:version="2.0">
-										<query>
-										<![CDATA[
-											PREFIX elmo: <http://bp4mc2.org/elmo/def#>
-											CONSTRUCT {
-												?rep ?p ?o.
-												?data ?dp ?do.
-												?do ?dop ?doo.
-												?doo ?doop ?dooo.
-											}
-											WHERE {
-												GRAPH <]]><xsl:value-of select="root/context/representation-graph/@uri"/><![CDATA[> {
-													<]]><xsl:value-of select="root/container/url"/><![CDATA[> elmo:contains ?rep.
-													?rep ?p ?o.
-													?rep elmo:data ?data.
-													?data ?dp ?do.
-													OPTIONAL {
-														?do ?dop ?doo.
-														OPTIONAL {
-															?doo ?doop ?dooo
-														}
-													}
-												}
-											}
-										]]>
-										</query>
-										<default-graph-uri/>
-										<error type=""/>
-									</parameters>
+								<p:input name="data" href="#sparql#xpointer(rdf:RDF[1])"/>
+							</p:processor>
+						</p:when>
+						<p:when test="context/format='text/turtle'">
+							<p:processor name="oxf:xslt">
+								<p:input name="data" href="aggregate('results',#sparql)"/>
+								<p:input name="config" href="../transformations/rdf2ttl.xsl"/>
+								<p:output name="data" id="ttl"/>
+							</p:processor>
+							<!-- Convert XML result to plain text -->
+							<p:processor name="oxf:text-converter">
+								<p:input name="config">
+									<config>
+										<encoding>utf-8</encoding>
+										<content-type>text/turtle</content-type>
+									</config>
 								</p:input>
-								<p:output name="response" id="representations"/>
+								<p:input name="data" href="#ttl" />
+								<p:output name="data" id="converted" />
+							</p:processor>
+							<!-- Serialize -->
+							<p:processor name="oxf:http-serializer">
+								<p:input name="config">
+									<config>
+										<cache-control><use-local-cache>false</use-local-cache></cache-control>
+									</config>
+								</p:input>
+								<p:input name="data" href="#converted"/>
 							</p:processor>
 						</p:when>
 						<p:otherwise>
-							<p:processor name="oxf:identity">
-								<p:input name="data">
-									<representations />
+					
+							<!-- Convert result to turtle -->
+							<p:processor name="oxf:xslt" rdfs:label="create data from container content">
+								<p:input name="data" href="aggregate('xmlresult',#sparql,#containercontext)"/>
+								<p:input name="config" href="../transformations/rdf2ttl.xsl"/>
+								<p:output name="data" id="ttl"/>
+							</p:processor>
+
+							<!-- If the container contains some representations, we should also get those representations! -->
+							<!-- TODO: A better solution should be the integration of container.xpl and query.xpl, this needs refactoring -->
+							<p:choose href="#containercontext" rdfs:label="look for representations">
+								<p:when test="substring-after(container/contains/representation[1]/@uri,'http://bp4mc2.org/elmo/def#')!=''">
+									<!-- Special case: representation is a file (LDT backstage) -->
+									<p:processor name="oxf:url-generator">
+										<p:input name="config" transform="oxf:xslt" href="#containercontext">
+											<config xsl:version="2.0">
+												<url>../representations/<xsl:value-of select="substring-after(container/contains/representation[1]/@uri,'http://bp4mc2.org/elmo/def#')"/>.xml</url>
+												<content-type>application/xml</content-type>
+											</config>
+										</p:input>
+										<p:output name="data" id="representations"/>
+									</p:processor>
+								</p:when>
+								<p:when test="exists(container/contains/representation)">
+									<p:processor name="oxf:xforms-submission">
+										<p:input name="submission" transform="oxf:xslt" href="#context">
+											<xforms:submission method="get" xsl:version="2.0" action="{context/configuration-endpoint}">
+												<xforms:header>
+													<xforms:name>Accept</xforms:name>
+													<xforms:value>application/rdf+xml</xforms:value>
+												</xforms:header>
+												<xforms:setvalue ev:event="xforms-submit-error" ref="error" value="event('response-body')"/>
+												<xforms:setvalue ev:event="xforms-submit-error" ref="error/@type" value="event('error-type')"/>
+											</xforms:submission>
+										</p:input>
+										<p:input name="request" transform="oxf:xslt" href="aggregate('root',#context,#containercontext)">
+											<parameters xsl:version="2.0">
+												<query>
+												<![CDATA[
+													PREFIX elmo: <http://bp4mc2.org/elmo/def#>
+													CONSTRUCT {
+														?rep ?p ?o.
+														?data ?dp ?do.
+														?do ?dop ?doo.
+														?doo ?doop ?dooo.
+													}
+													WHERE {
+														GRAPH <]]><xsl:value-of select="root/context/representation-graph/@uri"/><![CDATA[> {
+															<]]><xsl:value-of select="root/container/url"/><![CDATA[> elmo:contains ?rep.
+															?rep ?p ?o.
+															?rep elmo:data ?data.
+															?data ?dp ?do.
+															OPTIONAL {
+																?do ?dop ?doo.
+																OPTIONAL {
+																	?doo ?doop ?dooo
+																}
+															}
+														}
+													}
+												]]>
+												</query>
+												<default-graph-uri/>
+												<error type=""/>
+											</parameters>
+										</p:input>
+										<p:output name="response" id="representations"/>
+									</p:processor>
+								</p:when>
+								<p:otherwise>
+									<p:processor name="oxf:identity">
+										<p:input name="data">
+											<representations />
+										</p:input>
+										<p:output name="data" id="representations"/>
+									</p:processor>
+								</p:otherwise>
+							</p:choose>
+
+							<!-- Convert turtle to rdfa -->
+							<p:processor name="oxf:xslt" rdfs:label="convert data to rdfa">
+								<p:input name="data" href="aggregate('root',#context,#ttl,aggregate('sparql',#sparql),#containercontext,#representations)"/>
+								<p:input name="config" href="../transformations/ttl2rdfaform.xsl"/>
+								<p:output name="data" id="rdfa"/>
+							</p:processor>
+							<!-- Transform rdfa to html -->
+							<p:processor name="oxf:unsafe-xslt" rdfs:label="convert rdfa to html">
+								<p:input name="data" href="#rdfa"/>
+								<p:input name="config" href="../transformations/rdf2html.xsl"/>
+								<p:output name="data" id="html"/>
+							</p:processor>
+							<!-- Convert XML result to HTML -->
+							<p:processor name="oxf:html-converter">
+								<p:input name="config">
+									<config>
+										<encoding>utf-8</encoding>
+										<version>5.0</version>
+									</config>
 								</p:input>
-								<p:output name="data" id="representations"/>
+								<p:input name="data" href="#html" />
+								<p:output name="data" id="htmlres" />
+							</p:processor>
+							<!-- Serialize -->
+							<p:processor name="oxf:http-serializer">
+								<p:input name="config">
+									<config>
+										<cache-control><use-local-cache>false</use-local-cache></cache-control>
+									</config>
+								</p:input>
+								<p:input name="data" href="#htmlres"/>
 							</p:processor>
 						</p:otherwise>
 					</p:choose>
-
-					<!-- Convert turtle to rdfa -->
-					<p:processor name="oxf:xslt" rdfs:label="convert data to rdfa">
-						<p:input name="data" href="aggregate('root',#context,#ttl,aggregate('sparql',#sparql),#containercontext,#representations)"/>
-						<p:input name="config" href="../transformations/ttl2rdfaform.xsl"/>
-						<p:output name="data" id="rdfa"/>
-					</p:processor>
-					<!-- Transform rdfa to html -->
-					<p:processor name="oxf:unsafe-xslt" rdfs:label="convert rdfa to html">
-						<p:input name="data" href="#rdfa"/>
-						<p:input name="config" href="../transformations/rdf2html.xsl"/>
-						<p:output name="data" id="html"/>
-					</p:processor>
-					<!-- Convert XML result to HTML -->
-					<p:processor name="oxf:html-converter">
-						<p:input name="config">
-							<config>
-								<encoding>utf-8</encoding>
-								<version>5.0</version>
-							</config>
-						</p:input>
-						<p:input name="data" href="#html" />
-						<p:output name="data" id="htmlres" />
-					</p:processor>
-					<!-- Serialize -->
-					<p:processor name="oxf:http-serializer">
-						<p:input name="config">
-							<config>
-								<cache-control><use-local-cache>false</use-local-cache></cache-control>
-							</config>
-						</p:input>
-						<p:input name="data" href="#htmlres"/>
-					</p:processor>
 				</p:otherwise>
 			</p:choose>
 		</p:when>

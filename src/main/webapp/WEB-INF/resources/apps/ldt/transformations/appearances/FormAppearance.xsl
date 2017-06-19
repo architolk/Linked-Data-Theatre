@@ -1,8 +1,8 @@
 <!--
 
     NAME     FormAppearance.xsl
-    VERSION  1.17.0
-    DATE     2017-04-16
+    VERSION  1.18.0
+    DATE     2017-06-18
 
     Copyright 2012-2017
 
@@ -144,6 +144,12 @@
 								</xsl:when>
 								<xsl:when test="elmo:appearance/@rdf:resource='http://bp4mc2.org/elmo/def#HiddenAppearance'">
 									<input type="hidden" id="{elmo:applies-to}" name="{elmo:applies-to}" value="{rdf:value}"/>
+								</xsl:when>
+								<xsl:when test="elmo:appearance/@rdf:resource='http://bp4mc2.org/elmo/def#ReadOnly'">
+									<span class="btn btn-default"><xsl:value-of select="rdf:value"/></span>
+								</xsl:when>
+								<xsl:when test="elmo:appearance/@rdf:resource='http://bp4mc2.org/elmo/def#Message'">
+									<div class="alert alert-danger"><xsl:value-of select="rdf:value"/></div>
 								</xsl:when>
 								<xsl:when test="elmo:valueDatatype/@rdf:resource='http://purl.org/dc/dcmitype/Dataset'">
 									<input type="file" class="form-control" id="{elmo:applies-to}" name="{elmo:applies-to}"/>

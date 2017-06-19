@@ -55,6 +55,12 @@ stage:FormAppearance-form a elmo:Form;
 		elmo:valuesFrom stage:FormAppearance-species;
 		elmo:index "1";
 	];
+#	elmo:fragment [
+#		elmo:applies-to "verborgen";
+#		rdf:value "ingevuld";
+#		elmo:appearance elmo:HiddenAppearance;
+#		elmo:constraint elmo:MandatoryConstraint;
+#	];
 	elmo:fragment [
 		elmo:applies-to "name";
 		rdfs:label "Naam"@nl;

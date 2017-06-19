@@ -1,8 +1,8 @@
 <!--
 
     NAME     GraphAppearance.xsl
-    VERSION  1.17.0
-    DATE     2017-04-16
+    VERSION  1.18.0
+    DATE     2017-06-18
 
     Copyright 2012-2017
 
@@ -85,7 +85,7 @@
 	<xsl:variable name="jsonParams"><xsl:for-each select="/results/context/parameters/parameter"><xsl:value-of select="name"/>=<xsl:value-of select="encode-for-uri(value)"/>&amp;</xsl:for-each></xsl:variable>
 	<script type="text/javascript">
 		var jsonApiSubject = "<xsl:value-of select="/results/context/subject"/>";
-		var jsonApiCall = "<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource.d3json?representation=<xsl:value-of select="encode-for-uri(@elmo:query)"/>&amp;<xsl:value-of select="$jsonParams"/>subject=";
+		var jsonApiCall = "<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource.d3json?representation=<xsl:value-of select="encode-for-uri(@elmo:query)"/>&amp;date=<xsl:value-of select="/results/context/date"/>&amp;<xsl:value-of select="$jsonParams"/>subject=";
 		var uriEndpoint = "<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource?<xsl:value-of select="$jsonParams"/>subject=";
 	</script>
 	<script src="{$staticroot}/js/d3graphs-inner.min.js" type="text/javascript"/>

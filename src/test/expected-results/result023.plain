@@ -1,0 +1,1 @@
+{"response":"error" ",scene":["Container <http://localhost:8888/container/defquery> cleared" ,"file uploaded: content.ttl" ,"A void:triples statement should not occur in the uploaded data" ],"error":"A void:triples statement should not occur in the uploaded data\n"}

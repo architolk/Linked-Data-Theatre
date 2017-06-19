@@ -18,7 +18,7 @@ You can download Virtuoso from this location: [http://virtuoso.openlinksw.com/da
 Prebuild versions are available, you can also try to build virtuoso yourself.
 
 #### 1.1 Update stored procedures
-(This step is only necessary if you use Virtuoso as a backend. Note that some functionality (mainly backstage and containers) is not available if you use different backend).
+(This step is only necessary if you use Virtuoso as a backend.
 
 Execute `\stored-procs\install.bat`, located in your git repository. If you have only downloaded the war from the release, follow these steps:
 
@@ -38,8 +38,8 @@ Stop your Tomcat service. Delete all files in the \webapps\ROOT directory and un
 #### 3.1 Using an existing Tomcat installation
 If you want to use an existing tomcat installation, just unpack the war in the \webapps\ldt directory. Make sure you change the configuration file (section 4.1).
 
-### 4. Change the configuration file
-All system configurations are stored in `\webapps\ROOT\WEB-INF\resources\apps\ldt\config.xml`. The default configuration works OK for development purposes: installation on your localhost with a virtuoso endpoint on the same machine. Change it if you have a different configuration. (See the wiki for more information).
+### 4. Change the syste configurations
+Most system configurations are stored in `\webapps\ROOT\WEB-INF\resources\apps\ldt\config.xml`. The default configuration works OK for development purposes: installation on your localhost with a virtuoso endpoint on the same machine. Change it if you have a different configuration. (See the wiki for more information).
 
 #### 4.1 In case of an existing Tomcat installation.
 If you have performed step 3.1, please add a `docroot` statement to the configuration file:
@@ -59,7 +59,20 @@ You should change the domain of your site to the correct port number:
 
 Do **NOT** add the protocol ("http://") to the domainname.
 
-#### 4.3 In case of using a different endpoint than Virtuoso
+#### 4.3 In case you changed the defaults for the Virtuoso endpoint
+The standard operation of the Linked Data Theatre uses the default settings of a Virtuoso endpoint. In case you have changed these setting (for example the password of the dba user), you should make some changes to the configuration file located at `WEB-INF/resources/config/properties-local.xml`
+
+Please update the following settings to your situation:
+
+	<property as="xs:string" name="oxf.rdf.repository.database" value="virtuoso"/>
+	<property as="xs:string" name="oxf.rdf.repository.connectString" value="jdbc:virtuoso://localhost:1111/log_enable=0"/>
+	<property as="xs:string" name="oxf.rdf.repository.username" value="dba"/>
+	<property as="xs:string" name="oxf.rdf.repository.password" value="dba"/>
+
+
+#### 4.4 In case of using a different endpoint than Virtuoso
+
+##### 4.4.1 config.xml
 The config file assumes that you have a SPARQL endpoint available at `http://127.0.0.1:8890/sparql`. Some triplestores use a different port, or use a different path to the SPARQL endpoint. Please change your config accordingly.
 
 Sesame triplestores (like GraphDB) support multiple repositories per triplestore, so you should specifiy the respository you are using, and you should configure these repositories in your triplestore. For example, your `config.xml` for GraphDB might start with:
@@ -67,6 +80,14 @@ Sesame triplestores (like GraphDB) support multiple repositories per triplestore
 	<theatre env="dev" configuration-endpoint="http://127.0.0.1:7200/repositories/ldt" local-endpoint="http://127.0.0.1:7200/repositories/data" sparql="yes">
 
 This assumes that you have a repository named "ldt" for your LDT configuration, and a repository named "data" for your Linked Data.
+
+##### 4.4.2 properties-local.xml
+If you want to use the functionality of containers and productions, and you use another triplestore than Virtuoso, you should change the settings of `WEB-INF/resources/config/properties-local.xml`. First comment-out (or remove) all the setting relevant for Virtuoso. Next, remove the comments for the RDF4J-type stores, and change the config to your situation:
+
+	<property as="xs:string" name="oxf.rdf.repository.database" value="rdf4j"/>
+	<property as="xs:string" name="oxf.rdf.repository.connectString" value="http://127.0.0.1:7200/repositories/data"/>
+  
+In this particular configuration, all updates will be performed against a repository named "data".
 
 ### 5. Test your version of the Linked Data Theatre
 Go to `http://localhost/info` and check if the Linked Data Theatre runs correctly. You should receive something that looks like this:

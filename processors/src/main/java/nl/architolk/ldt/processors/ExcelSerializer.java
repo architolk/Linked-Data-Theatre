@@ -1,7 +1,7 @@
 /**
  * NAME     ExcelSerializer.java
- * VERSION  1.15.0
- * DATE     2017-01-27
+ * VERSION  1.18.0
+ * DATE     2017-06-18
  *
  * Copyright 2012-2017
  *
