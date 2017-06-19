@@ -694,8 +694,11 @@
 					<xsl:when test="namespace-uri()=''">
 						<xsl:element name="dmno:{local-name()}"><xsl:value-of select="."/></xsl:element>
 					</xsl:when>
+					<xsl:when test="substring(namespace-uri(),-1)='/' or substring(namespace-uri(),-1)='#'">		
+ 						<xsl:element name="{local-name()}" namespace="{namespace-uri()}"><xsl:value-of select="."/></xsl:element>		
+ 					</xsl:when>
 					<xsl:otherwise>
-						<xsl:element name="{local-name()}" namespace="{namespace-uri()}"><xsl:value-of select="."/></xsl:element>
+						<xsl:element name="{local-name()}" namespace="{concat(namespace-uri(),'/')}"><xsl:value-of select="."/></xsl:element>
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:otherwise>
