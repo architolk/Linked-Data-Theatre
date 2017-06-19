@@ -1,8 +1,8 @@
 <!--
 
     NAME     DMNPlusTranslator.xsl
-    VERSION  1.18.1-SNAPSHOT
-    DATE     2017-06-19
+    VERSION  1.18.0
+    DATE     2017-06-18
 
     Copyright 2012-2017
 
