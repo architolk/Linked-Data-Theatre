@@ -42,7 +42,7 @@
 		</dmno:Definitions>
 	</xsl:template>
 		
-	<xsl:template match="uitv:vraag|uitv:bijlage|uitv:uitvoeringsregels|uitv:uitvoeringsregel|uitv:uitvoeringsregelRef">
+	<xsl:template match="uitv:bijlage|uitv:conversieregelRef|uitv:normRef|uitv:optie|uitv:opties|uitv:uitvoeringsregels|uitv:uitvoeringsregel|uitv:uitvoeringsregelRef|uitv:vraag">
 		<xsl:call-template name="process">
 			<xsl:with-param name="namespace" select="'dmno'" />
 			<xsl:with-param name="namespaceUri" select="'http://data.digitaalstelselomgevingswet.nl/v0.6/Uitvoeringsregels#'" />
@@ -55,10 +55,6 @@
 			<xsl:with-param name="namespaceUri" select="'http://data.digitaalstelselomgevingswet.nl/v0.6/Content#'" />
 		</xsl:call-template>
 	</xsl:template>	
-	
-	<xsl:template match="uitv:conversieregelRef">
-		<uitv:conversieregelRef href="#{.}" xmlns:uitv="http://data.digitaalstelselomgevingswet.nl/v0.6/Uitvoeringsregels" />
-	</xsl:template> 
 	
 	<xsl:template match="uitv:vraagType|uitv:vraagTekst|uitv:bijlageType|uitv:eis">
 		<xsl:element name="uitv:{local-name(.)}" namespace="http://data.digitaalstelselomgevingswet.nl/v0.6/Uitvoeringsregels"><xsl:value-of select="."/></xsl:element>
