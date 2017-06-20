@@ -23,9 +23,11 @@ stage:SelectFormatsQuery a elmo:Query;
 		prefix dbo: <http://dbpedia.org/ontology/>
 		select ?s ?s_label (dbo:City as ?type) ?s_count
 		where {
-			?s rdf:type dbo:City.
-			?s rdfs:label ?s_label.
-			OPTIONAL {?s dbo:population ?s_count}
+			graph <http://localhost:8080/stage> {
+				?s rdf:type dbo:City.
+				?s rdfs:label ?s_label.
+				OPTIONAL {?s dbo:population ?s_count}
+			}
 		}
 	''';
 .
