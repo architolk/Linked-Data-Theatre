@@ -1,8 +1,8 @@
 <!--
 
     NAME     context.xsl
-    VERSION  1.18.0
-    DATE     2017-06-18
+    VERSION  1.18.1-SNAPSHOT
+    DATE     2017-06-20
 
     Copyright 2012-2017
 
@@ -228,6 +228,7 @@
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/pdf')">application/pdf</xsl:when>
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'application/vnd.xmi+xml')">application/vnd.xmi+xml</xsl:when>
 					<xsl:when test="request/body/@xsi:type='xs:anyURI'">text/plain</xsl:when> <!-- If upload via commandline, return text/plain -->
+					<xsl:when test="contains(request/request-url,'/api/')">application/json</xsl:when> <!-- In case of an API, return json -->
 					<xsl:otherwise>text/html</xsl:otherwise> <!-- If all fails: simply html -->
 				</xsl:choose>
 			</format>

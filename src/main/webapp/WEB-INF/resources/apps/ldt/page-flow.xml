@@ -1,8 +1,8 @@
 <!--
 
     NAME     page-flow.xml
-    VERSION  1.18.0
-    DATE     2017-06-18
+    VERSION  1.18.1-SNAPSHOT
+    DATE     2017-06-20
 
     Copyright 2012-2017
 
@@ -87,7 +87,6 @@
 	<!-- query -->
 	<page path="(((?!query).)*)/query/([^\.]*)\.([^ ]*)" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
 		<setvalue ref="theatre/subdomain" matcher-group="1"/>
-		<!-- <setvalue ref="submission/query" matcher-group="3"/> -->
 		<setvalue ref="theatre/format" matcher-group="4"/>
 		<setvalue ref="theatre/subject" parameter="subject"/>
 		<setvalue ref="theatre/representation" parameter="representation"/>
@@ -95,7 +94,22 @@
 	</page>
 	<page path="(((?!query).)*)/query/([^ ]*)" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
 		<setvalue ref="theatre/subdomain" matcher-group="1"/>
-		<!-- <setvalue ref="submission/query" matcher-group="3"/> -->
+		<setvalue ref="theatre/format" parameter="format"/>
+		<setvalue ref="theatre/subject" parameter="subject"/>
+		<setvalue ref="theatre/representation" parameter="representation"/>
+		<setvalue ref="theatre/date" parameter="date"/>
+	</page>
+
+	<!-- api (same functionality as query) -->
+	<page path="(((?!api).)*)/api/([^\.]*)\.([^ ]*)" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
+		<setvalue ref="theatre/format" matcher-group="4"/>
+		<setvalue ref="theatre/subject" parameter="subject"/>
+		<setvalue ref="theatre/representation" parameter="representation"/>
+		<setvalue ref="theatre/date" parameter="date"/>
+	</page>
+	<page path="(((?!api).)*)/api/([^ ]*)" model="pipelines/query.xpl" default-submission="config.xml" public-methods="#all">
+		<setvalue ref="theatre/subdomain" matcher-group="1"/>
 		<setvalue ref="theatre/format" parameter="format"/>
 		<setvalue ref="theatre/subject" parameter="subject"/>
 		<setvalue ref="theatre/representation" parameter="representation"/>

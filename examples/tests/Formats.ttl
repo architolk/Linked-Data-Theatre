@@ -8,6 +8,7 @@
 
 stage:SelectFormats a elmo:Representation;
 	elmo:url-pattern "/query/SelectFormats";
+	elmo:url-pattern "/api/SelectFormats";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:contains stage:Formats_tab;
@@ -88,6 +89,7 @@ stage:SelectFormats_content a elmo:Representation;
 
 stage:ConstructFormats a elmo:Representation;
 	elmo:url-pattern "/query/ConstructFormats";
+	elmo:url-pattern "/api/ConstructFormats";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:contains stage:Formats_tab;
