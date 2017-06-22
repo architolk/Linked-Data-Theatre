@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.18.1-SNAPSHOT
-    DATE     2017-06-21
+    DATE     2017-06-22
 
     Copyright 2012-2017
 
@@ -942,6 +942,8 @@
 	<xsl:param name="search"/>
 	
 	<nav class="navbar navbar-default">
+		<xsl:variable name="rootid"><xsl:apply-templates select="rdf:Description[1]" mode="findroot"/></xsl:variable>
+		<xsl:variable name="root" select="key('nav-bnode',$rootid)"/>
 		<div class="container">
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -950,8 +952,6 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</button>
-				<xsl:variable name="rootid"><xsl:apply-templates select="rdf:Description[1]" mode="findroot"/></xsl:variable>
-				<xsl:variable name="root" select="key('nav-bnode',$rootid)"/>
 				<xsl:if test="exists($root/rdfs:label)">
 					<xsl:variable name="label"><xsl:call-template name="normalize-language"><xsl:with-param name="text" select="$root/rdfs:label"/></xsl:call-template></xsl:variable>
 					<xsl:variable name="link">
@@ -965,7 +965,7 @@
 			</div>
 			<div id="navbar" class="collapse navbar-collapse">
 				<ul class="nav navbar-nav">
-					<xsl:for-each select="rdf:Description[1]/elmo:data"><xsl:sort select="key('nav-bnode',@rdf:nodeID)/elmo:index"/>
+					<xsl:for-each select="$root/elmo:data"><xsl:sort select="key('nav-bnode',@rdf:nodeID)/elmo:index"/>
 						<xsl:apply-templates select="key('nav-bnode',@rdf:nodeID)" mode="nav"/>
 					</xsl:for-each>
 				</ul>
