@@ -21,13 +21,21 @@ stage:MarkdownAppearance_data a elmo:Part;
 		rdfs:label "Markdown as stand alone part";
 		elmo:md '''#Test
 Dit is een **test** van *markdown*.
-Kijken of `code` ook werkt:
+Deze tekst wordt er achter geplaatst (ondanks regelovergang)
+
+En deze tekst komt op een nieuwe regel. Kijken of `code` ook werkt:
 
 	Dit gaat dus anders
 	En dit ook
 	
 ##Nummers
 En nummers:
+
+1. Eén
+2. Twee
+3. Drie
+
+Dotjes:
 
 - dot 1
 - dot 2
@@ -38,7 +46,7 @@ En nummers:
 stage:MarkdownAppearance_select a elmo:Part;
 	elmo:index "2";
 	elmo:appearance elmo:MarkdownAppearance;
-	elmo:query "select distinct ?md where {<http://elmo.localhost/markdowntest> skos:definition ?md}"
+	elmo:query "select distinct ?md where {graph <@STAGE@> {<http://localhost:8080/id/test/markdowntest> skos:definition ?md}}"
 .
 
 stage:MarkdownAppearance_content a elmo:Part;
@@ -47,7 +55,7 @@ stage:MarkdownAppearance_content a elmo:Part;
 		elmo:applies-to skos:definition;
 		elmo:appearance elmo:MarkdownAppearance;
 	];
-	elmo:query "construct {?s?p?o} where {?s?p?o filter (?s = <http://localhost:8080/id/test/markdowntest>)}"
+	elmo:query "construct {?s?p?o} where {graph <@STAGE@> {?s?p?o filter (?s = <http://localhost:8080/id/test/markdowntest>)}}"
 .
 stage:MarkdownAppearance_table a elmo:Part;
 	elmo:index "4";
@@ -55,20 +63,28 @@ stage:MarkdownAppearance_table a elmo:Part;
 		elmo:applies-to "definition";
 		elmo:appearance elmo:MarkdownAppearance;
 	];
-	elmo:query "select distinct ?begrip ?label ?definition where {?begrip rdfs:label ?label.?begrip skos:definition ?definition.filter (?begrip = <http://elmo.localhost/markdowntest>)}"
+	elmo:query "select distinct ?begrip ?label ?definition where {graph <@STAGE@> {?begrip rdfs:label ?label.?begrip skos:definition ?definition.filter (?begrip = <http://localhost:8080/id/test/markdowntest>)}}"
 .
 
 <http://localhost:8080/id/test/markdowntest> rdf:type skos:Concept;
 	rdfs:label "Testbegrip";
 	skos:definition '''#Test
 Dit is een **test** van *markdown*.
-Kijken of `code` ook werkt:
+Deze tekst wordt er achter geplaatst (ondanks regelovergang)
+
+En deze tekst komt op een nieuwe regel. Kijken of `code` ook werkt:
 
 	Dit gaat dus anders
 	En dit ook
 	
 ##Nummers
 En nummers:
+
+1. Eén
+2. Twee
+3. Drie
+
+Dotjes:
 
 - dot 1
 - dot 2
