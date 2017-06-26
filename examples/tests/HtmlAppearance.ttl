@@ -14,7 +14,7 @@ stage:HtmlAppearance a elmo:Representation;
 		rdfs:label "HtmlAppearance (en)"@en;
 		rdfs:label "HtmlAppearance (nl)"@nl;
 		elmo:html '''
-			<p>Test environment (default)</p>
+			<p>Test environment & demo (default)</p>
 		''';
 	]
 .
