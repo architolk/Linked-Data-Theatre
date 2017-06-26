@@ -25,9 +25,9 @@
 <!--
     DESCRIPTION
 	HtmlAppearance, add-on of rdf2html.xsl
-	
+
 	A Html appearance assumes that the linked data contains literals as html. It will present the html within these literals.
-	
+
 -->
 <xsl:stylesheet version="2.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -40,6 +40,37 @@
 
 <xsl:output method="xml" indent="yes"/>
 
+<xsl:template name="string-replace-all">
+	<xsl:param name="text" />
+	<xsl:param name="replace" />
+	<xsl:param name="by" />
+	<xsl:choose>
+		<xsl:when test="contains($text, $replace)">
+			<xsl:if test="not(contains(substring(substring-after($text, $replace),1,4),'amp;'))">
+				<xsl:value-of select="substring-before($text,$replace)" />
+				<xsl:value-of select="$by" />
+				<xsl:call-template name="string-replace-all">
+					<xsl:with-param name="text" select="substring-after($text,$replace)" />
+					<xsl:with-param name="replace" select="$replace" />
+					<xsl:with-param name="by" select="$by" />
+				</xsl:call-template>
+			</xsl:if>
+			<xsl:if test="contains(substring(substring-after($text, $replace),1,4),'amp;')">
+				<xsl:value-of select="substring-before($text,'&amp;amp;')" />
+				<xsl:value-of select="$by" />
+					<xsl:call-template name="string-replace-all">
+						<xsl:with-param name="text" select="substring-after($text,'&amp;amp;')" />
+						<xsl:with-param name="replace" select="$replace" />
+						<xsl:with-param name="by" select="$by" />
+					</xsl:call-template>
+			</xsl:if>
+		</xsl:when>
+		<xsl:otherwise>
+			<xsl:value-of select="$text" />
+		</xsl:otherwise>
+	</xsl:choose>
+</xsl:template>
+
 <xsl:template match="rdf:RDF" mode="HtmlAppearance">
 	<div class="panel panel-primary">
 		<div class="panel-heading">
@@ -51,7 +82,18 @@
 		<div class="panel-body htmlapp">
 			<!-- HTML as part of a construct query -->
 			<xsl:if test="exists(rdf:Description/elmo:html)">
-				<xsl:variable name="html">&lt;div><xsl:call-template name="normalize-language"><xsl:with-param name="text" select="rdf:Description/elmo:html"/></xsl:call-template>&lt;/div></xsl:variable>
+				<xsl:variable name="validHTML">
+					<xsl:call-template name="string-replace-all">
+			      <xsl:with-param name="text" select="rdf:Description/elmo:html" />
+			      <xsl:with-param name="replace" select="'&amp;'" />
+			      <xsl:with-param name="by" select="'&amp;amp;'" />
+			    </xsl:call-template>
+				</xsl:variable>
+				<xsl:variable name="html">&lt;div>
+					<xsl:call-template name="normalize-language">
+						<xsl:with-param name="text" select="$validHTML"/>
+					</xsl:call-template>&lt;/div>
+				</xsl:variable>
 				<xsl:copy-of select="saxon:parse($html)" xmlns:saxon="http://saxon.sf.net/"/>
 			</xsl:if>
 			<!-- HTML as part of a select query -->
