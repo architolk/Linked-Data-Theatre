@@ -39,6 +39,9 @@
 	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 	xmlns:dmn="http://www.omg.org/spec/DMN/20151101/dmn.xsd"
 	xmlns:dmno="http://www.omg.org/spec/DMN/20151101/dmn#"
+	xmlns:uitv="http://data.digitaalstelselomgevingswet.nl/v0.6/Uitvoeringsregels#"
+	xmlns:bedr="http://data.digitaalstelselomgevingswet.nl/v0.6/Bedrijfsregels#" 
+	xmlns:content="http://data.digitaalstelselomgevingswet.nl/v0.6/Content#"
 >
 
 	<!--
@@ -57,7 +60,12 @@
 		<xsl:param name="namespaceUri" select="'http://www.omg.org/spec/DMN/20151101/dmn#'" />		
 		
 		<xsl:variable name="propertyWithNs" select="concat($namespace, ':', $property)" />
-		<xsl:variable name="classWithNs" select="concat($namespaceUri, $class)" />
+		<xsl:variable name="classWithNs">
+			<xsl:call-template name="namespaceCheck">
+				<xsl:with-param name="namespace"><xsl:value-of select="$namespaceUri"/></xsl:with-param>
+			</xsl:call-template>
+			<xsl:value-of select="$class"/>
+		</xsl:variable>
 		
 		<xsl:element name="{$propertyWithNs}">
 			<xsl:choose>
@@ -685,22 +693,17 @@
 	
 	<!-- Attributes -->
 	<xsl:template match="@*">
+		<xsl:variable name="namespace">
+			<xsl:call-template name="namespaceCheck">
+				<xsl:with-param name="namespace"><xsl:value-of select="namespace-uri()"/></xsl:with-param>
+			</xsl:call-template>
+		</xsl:variable>
 		<xsl:choose>
 			<!-- Name and id aren't processed here because they are processed by the print-id and print-name templates -->
 			<xsl:when test="local-name()='name'"/>
 			<xsl:when test="local-name()='id'"/>
 			<xsl:otherwise>
-				<xsl:choose>
-					<xsl:when test="namespace-uri()=''">
-						<xsl:element name="dmno:{local-name()}"><xsl:value-of select="."/></xsl:element>
-					</xsl:when>
-					<xsl:when test="substring(namespace-uri(),-1)='/' or substring(namespace-uri(),-1)='#'">		
- 						<xsl:element name="{local-name()}" namespace="{namespace-uri()}"><xsl:value-of select="."/></xsl:element>		
- 					</xsl:when>
-					<xsl:otherwise>
-						<xsl:element name="{local-name()}" namespace="{concat(namespace-uri(),'/')}"><xsl:value-of select="."/></xsl:element>
-					</xsl:otherwise>
-				</xsl:choose>
+				<xsl:element name="{local-name()}" namespace="{$namespace}"><xsl:value-of select="."/></xsl:element>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
@@ -709,6 +712,21 @@
 	<xsl:template name="camelcase">
 	  <xsl:param name="text"/>
 	  <xsl:value-of select="concat(upper-case(substring($text,1,1)),substring($text,2))" />
+	</xsl:template>
+	
+	<xsl:template name="namespaceCheck">
+		<xsl:param name="namespace"/>
+		<xsl:choose>
+			<xsl:when test="$namespace=''">
+				<xsl:value-of select="'http://www.omg.org/spec/DMN/20151101/dmn#'"/>
+			</xsl:when>
+			<xsl:when test="substring( $namespace, string-length( $namespace ), 1 )='/' or substring( $namespace, string-length( $namespace ), 1 )='#'">		
+				<xsl:value-of select="$namespace"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="concat($namespace,'#')"/>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 	
 	<!-- Unmatched templates -->
