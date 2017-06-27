@@ -1,8 +1,8 @@
 <!--
 
     NAME     container.xpl
-    VERSION  1.18.0
-    DATE     2017-06-18
+    VERSION  1.18.1-SNAPSHOT
+    DATE     2017-06-27
 
     Copyright 2012-2017
 
@@ -279,7 +279,9 @@
 								<]]><xsl:value-of select="context/subject"/><![CDATA[> ?p ?s.
 								<]]><xsl:value-of select="context/subject"/><![CDATA[> elmo:query ?query.
 								<]]><xsl:value-of select="context/subject"/><![CDATA[> elmo:assertion ?assertion.
-								?assertion ?assertionp ?assertiono
+								?assertion ?assertionp ?assertiono.
+								<]]><xsl:value-of select="context/subject"/><![CDATA[> elmo:fragment ?fragment.
+								?fragment ?fragmentp ?fragmento
 							}
 							WHERE {
 								GRAPH <]]><xsl:value-of select="context/representation-graph/@uri"/><![CDATA[> {
@@ -289,6 +291,10 @@
 									OPTIONAL {
 										<]]><xsl:value-of select="context/subject"/><![CDATA[> elmo:assertion ?assertion.
 										?assertion ?assertionp ?assertiono
+									}
+									OPTIONAL {
+										<]]><xsl:value-of select="context/subject"/><![CDATA[> elmo:fragment ?fragment.
+										?fragment ?fragmentp ?fragmento
 									}
 									FILTER (?type = elmo:Container or ?type = elmo:VersionContainer)
 								}
@@ -411,6 +417,16 @@
 											</xsl:for-each>
 										</xsl:for-each>
 									</assertions>
+									<fragments>
+										<xsl:for-each select="elmo:fragment">
+											<xsl:variable name="fragment" select="@rdf:nodeID"/>
+											<xsl:for-each select="../../rdf:Description[@rdf:nodeID=$fragment]">
+												<fragment id="{elmo:applies-to}">
+													<xsl:copy-of select="* except elmo:applies-to"/>
+												</fragment>
+											</xsl:for-each>
+										</xsl:for-each>
+									</fragments>
 									<contains>
 										<xsl:for-each select="elmo:contains">
 											<representation uri="{@rdf:resource}"/>
@@ -870,6 +886,12 @@
 							</p:processor>
 							<p:choose href="aggregate('root',#assertions,#containercontext)">
 								<p:when test="not(exists(root/assertions/assertion-failed)) and root/container/postquery!=''">
+									<!-- Parse parameters -->
+									<p:processor name="oxf:xslt">
+										<p:input name="config" href="../transformations/param2query.xsl"/>
+										<p:input name="data" href="aggregate('root',#containercontext,#context,#context#xpointer(context/parameters))"/>
+										<p:output name="data" id="query"/>
+									</p:processor>
 									<!-- Execute postquery, if any -->
 									<p:processor name="oxf:xforms-submission">
 										<p:input name="submission" transform="oxf:xslt" href="#context">
@@ -882,13 +904,7 @@
 												<xforms:setvalue ev:event="xforms-submit-error" ref="error/@type" value="event('error-type')"/>
 											</xforms:submission>
 										</p:input>
-										<p:input name="request" transform="oxf:xslt" href="#containercontext">
-											<parameters xsl:version="2.0">
-												<query><xsl:value-of select="container/postquery"/></query>
-												<default-graph-uri/>
-												<error type=""/>
-											</parameters>
-										</p:input>
+										<p:input name="request" href="#query"/>
 										<p:output name="response" id="sparql"/>
 									</p:processor>
 									<!-- Combine -->
@@ -1220,7 +1236,7 @@
 				<p:otherwise rdfs:label="show container data, no upload">
 					<p:processor name="oxf:xforms-submission" rdfs:label="fetch container content from triplestore">
 						<p:input name="submission" transform="oxf:xslt" href="#context">
-							<xforms:submission method="get" xsl:version="2.0" action="{context/configuration-endpoint}">
+							<xforms:submission method="get" xsl:version="2.0" action="{context/local-endpoint}">
 								<xforms:header>
 									<xforms:name>Accept</xforms:name>
 									<xforms:value>application/rdf+xml</xforms:value>

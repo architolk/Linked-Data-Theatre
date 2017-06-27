@@ -76,19 +76,53 @@ container:archi a elmo:Container;
 	rdfs:label "Upload Archi";
 .
 
+stage:ContainerDropdown a elmo:Representation;
+	elmo:appearance elmo:HiddenAppearance;
+	elmo:data <http://creativecommons.org/licenses/by/4.0>;
+	elmo:data <http://creativecommons.org/licenses/by-sa/4.0>;
+	elmo:data <http://creativecommons.org/licenses/by-nd/4.0>;
+	elmo:data <http://creativecommons.org/licenses/by-nc/4.0>;
+	elmo:data <http://creativecommons.org/licenses/by-nc-sa/4.0>;
+	elmo:data <http://creativecommons.org/licenses/by-nc-nd/4.0>;
+.
+<http://creativecommons.org/licenses/by/4.0> rdfs:label "CC BY".
+<http://creativecommons.org/licenses/by-sa/4.0> rdfs:label "CC BY SA".
+<http://creativecommons.org/licenses/by-nd/4.0> rdfs:label "CC BY ND".
+<http://creativecommons.org/licenses/by-nc/4.0> rdfs:label "CC BY NC".
+<http://creativecommons.org/licenses/by-nc-sa/4.0> rdfs:label "CC BY NC SA".
+<http://creativecommons.org/licenses/by-nc-nd/4.0> rdfs:label "CC BY NC ND".
+
 container:query a elmo:Container;
 	elmo:contains stage:NavbarSearchAppearance;
+	elmo:contains stage:ContainerDropdown;
 	rdfs:label "Upload with post query and param";
 	elmo:fragment [
 		elmo:applies-to "title";
 		rdfs:label "Titel"@nl;
 		rdfs:label "Title"@en;
 	];
+	elmo:fragment [
+		elmo:applies-to "rights";
+		rdfs:label "License"@en;
+		rdfs:label "Licentie"@nl;
+		elmo:valuesFrom stage:ContainerDropdown;
+	];
 	elmo:query '''
 		prefix container: <http://localhost:8080/container/>
+		delete from container:query {
+			container:query void:triples ?count.
+			container:query rdfs:label ?label
+		}
+		where {
+			graph container:query {
+				container:query void:triples ?count.
+				container:query rdfs:label ?label
+			}
+		}
 		insert into container:query {
-			container:query void:triples ?count
-			container:query rdfs:label "@TITLE@"
+			container:query void:triples ?count.
+			container:query rdfs:label "@TITLE@"^^xsd:string.
+			container:query <http://purl.org/dc/terms/rights> <@RIGHTS@>
 		}
 		where {
 			select (count(*) as ?count)

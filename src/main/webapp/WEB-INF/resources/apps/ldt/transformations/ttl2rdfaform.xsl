@@ -1,8 +1,8 @@
 <!--
 
     NAME     ttl2rdfaform.xsl
-    VERSION  1.18.0
-    DATE     2017-06-18
+    VERSION  1.18.1-SNAPSHOT
+    DATE     2017-06-27
 
     Copyright 2012-2017
 
@@ -38,6 +38,7 @@
 >
 
 <xsl:key name="bnode" match="/root/rdf:RDF/rdf:Description" use="@rdf:nodeID"/>
+<xsl:key name="node" match="/root/rdf:RDF/rdf:Description" use="@rdf:about"/>
 
 <xsl:template match="rdf:Description" mode="data">
 	<xsl:copy-of select="."/>
@@ -46,16 +47,19 @@
 
 <xsl:template match="/">
 	<results>
+		<xsl:copy-of select="root/context"/>
+		<!--
 		<context docroot="{root/context/@docroot}" staticroot="{root/context/@staticroot}">
-			<language>nl</language>
 			<xsl:copy-of select="root/context/*"/>
 		</context>
+		-->
 		<xsl:for-each select="root/rdf:RDF/rdf:Description[exists(elmo:appearance)]">
-			<rdf:RDF elmo:appearance="{elmo:appearance/@rdf:resource}">
+			<rdf:RDF elmo:appearance="{elmo:appearance/@rdf:resource}" elmo:query="{@rdf:about}" elmo:index="{position()}">
 				<xsl:apply-templates select="key('bnode',elmo:data/@rdf:nodeID)" mode="data"/>
+				<xsl:apply-templates select="key('node',elmo:data/@rdf:resource)" mode="data"/>
 			</rdf:RDF>
 		</xsl:for-each>
-		<rdf:RDF elmo:appearance="http://bp4mc2.org/elmo/def#FormAppearance">
+		<rdf:RDF elmo:appearance="http://bp4mc2.org/elmo/def#FormAppearance" elmo:index="0">
 			<rdf:Description rdf:nodeID="form">
 				<rdfs:label>
 					<xsl:value-of select="root/container/label"/>
@@ -68,7 +72,7 @@
 				<rdf:value><xsl:value-of select="root/context/subject"/></rdf:value>
 			</rdf:Description>
 			<xsl:if test="root/container/response='succes'">
-				<rdf:Description rdf:nodeID="f0a">
+				<rdf:Description rdf:nodeID="f1">
 					<rdfs:label>Result</rdfs:label>
 					<elmo:applies-to>result</elmo:applies-to>
 					<elmo:appearance rdf:resource="http://bp4mc2.org/elmo/def#ReadOnly"/>
@@ -76,28 +80,35 @@
 				</rdf:Description>
 			</xsl:if>
 			<xsl:if test="root/container/representation!='http://bp4mc2.org/elmo/def#DownloadRepresentation'">
-				<rdf:Description rdf:nodeID="f1">
+				<rdf:Description rdf:nodeID="f2">
 					<rdfs:label>Upload</rdfs:label>
 					<elmo:applies-to>file</elmo:applies-to>
 					<elmo:valueDatatype rdf:resource="http://purl.org/dc/dcmitype/Dataset"/>
 				</rdf:Description>
 			</xsl:if>
 			<xsl:if test="root/container/representation='http://bp4mc2.org/elmo/def#DownloadRepresentation'">
-				<rdf:Description rdf:nodeID="f1a">
+				<rdf:Description rdf:nodeID="f3">
 					<rdfs:label>URL</rdfs:label>
 					<elmo:applies-to>url</elmo:applies-to>
 				</rdf:Description>
 			</xsl:if>
 			<xsl:if test="exists(root/response/error)">
-				<rdf:Description rdf:nodeID="f2">
+				<rdf:Description rdf:nodeID="f4">
 					<rdfs:label>Error</rdfs:label>
 					<elmo:applies-to>error</elmo:applies-to>
 					<rdf:value><xsl:value-of select="root/response/error"/></rdf:value>
 					<elmo:appearance rdf:resource="http://bp4mc2.org/elmo/def#Message"/>
 				</rdf:Description>
 			</xsl:if>
+			<xsl:for-each select="root/container/fragments/fragment">
+				<xsl:variable name="param" select="@id"/>
+				<rdf:Description rdf:nodeID="f5-{$param}">
+					<elmo:applies-to><xsl:value-of select="$param"/></elmo:applies-to>
+					<xsl:copy-of select="*"/>
+				</rdf:Description>
+			</xsl:for-each>
 			<xsl:if test="root/container/representation!='http://bp4mc2.org/elmo/def#UploadRepresentation' and root/container/representation!='http://bp4mc2.org/elmo/def#DownloadRepresentation'">
-				<rdf:Description rdf:nodeID="f3">
+				<rdf:Description rdf:nodeID="f6">
 					<rdfs:label>Content</rdfs:label>
 					<elmo:applies-to>content</elmo:applies-to>
 					<elmo:valueDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#String"/>
@@ -105,7 +116,7 @@
 					<rdf:value><xsl:value-of select="root/turtle"/></rdf:value>
 				</rdf:Description>
 			</xsl:if>
-			<rdf:Description rdf:nodeID="f4">
+			<rdf:Description rdf:nodeID="f7">
 				<xsl:choose>
 					<xsl:when test="root/container/representation='http://bp4mc2.org/elmo/def#UploadRepresentation'">
 						<rdfs:label>Upload</rdfs:label>
