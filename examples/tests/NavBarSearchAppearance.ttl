@@ -104,10 +104,10 @@ stage:NavbarSearchAppearance a elmo:Part;
 			rdfs:label "LDT";
 			elmo:data [elmo:index "1"; rdfs:label "Vocabulary"; html:link "query/elmo"];
 			elmo:data [elmo:index "2"; rdfs:label "Vocabulary (model)"; html:link "query/elmo-model"];
-			elmo:data [elmo:index "2"; rdfs:label "Vocabulary (model download)"; html:link "query/elmo-model.yed"];
-			elmo:data [elmo:index "2"; rdfs:label "Vocabulary 2.0 (model download)"; html:link "query/elmo2-model.yed"];
-			elmo:data [elmo:index "3"; rdfs:label "Upload XPLs"; html:link "container/xpl"];
-			elmo:data [elmo:index "4"; rdfs:label "XPL Documentation"; html:link "query/xpl/treeview"]
+			elmo:data [elmo:index "3"; rdfs:label "Vocabulary (model download)"; html:link "query/elmo-model.yed"];
+			elmo:data [elmo:index "4"; rdfs:label "Vocabulary 2.0 (model download)"; html:link "query/elmo2-model.yed"];
+			elmo:data [elmo:index "5"; rdfs:label "Upload XPLs"; html:link "container/xpl"];
+			elmo:data [elmo:index "6"; rdfs:label "XPL Documentation"; html:link "query/xpl/treeview"]
 		];
 	];
 .

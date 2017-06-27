@@ -798,7 +798,7 @@
 										<firstformat><xsl:value-of select="replace(results/file[1]/@name,'.*\.([^\.]+)$','$1')"/></firstformat>
 										<xsl:for-each select="results/file">
 											<file name="{@name}">
-												<xsl:value-of select="substring-after(.,'file:/')"/>
+												<xsl:value-of select="substring-after(.,'file:')"/>
 											</file>
 										</xsl:for-each>
 									</filelist>

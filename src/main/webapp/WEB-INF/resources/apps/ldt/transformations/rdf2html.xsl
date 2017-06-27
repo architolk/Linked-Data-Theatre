@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2html.xsl
-    VERSION  1.18.0
-    DATE     2017-06-18
+    VERSION  1.18.1-SNAPSHOT
+    DATE     2017-06-22
 
     Copyright 2012-2017
 
@@ -58,7 +58,8 @@
 
 <xsl:key name="rdf" match="results/rdf:RDF" use="@elmo:query"/>
 <xsl:key name="resource" match="results/rdf:RDF/rdf:Description" use="@rdf:about"/>
-<xsl:key name="nav-bnode" match="results/rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarSearchAppearance']/rdf:Description" use="@rdf:nodeID"/>
+<xsl:key name="nav-bnode" match="results/rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarSearchAppearance' or @elmo:appearance='http://bp4mc2.org/elmo/def#NavbarAppearance']/rdf:Description" use="@rdf:nodeID"/>
+<xsl:key name="nav-data" match="results/rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarSearchAppearance' or @elmo:appearance='http://bp4mc2.org/elmo/def#NavbarAppearance']/rdf:Description" use="elmo:data/@rdf:nodeID"/>
 
 <xsl:key name="nested" match="results/rdf:RDF/rdf:Description/*[@elmo:appearance='http://bp4mc2.org/elmo/def#NestedAppearance']/rdf:Description" use="@rdf:about"/>
 
@@ -475,7 +476,6 @@
 	Main entry
 -->
 <xsl:template match="rdf:RDF" mode="present">
-
 	<xsl:choose>
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance'"/> <!-- Hidden, dus niet tonen -->
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#HeaderAppearance'"/> <!-- Al gedaan -->
@@ -533,9 +533,6 @@
 		</xsl:when>
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#MarkdownAppearance'">		
 			<xsl:apply-templates select="." mode="MarkdownAppearance"/>		
-		</xsl:when>		
-		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#LogicAppearance'">		
-			<xsl:apply-templates select="." mode="LogicAppearance"/>		
 		</xsl:when>
 		<xsl:otherwise>
 			<!-- No, or an unknown appearance, use the data to select a suitable appearance -->
@@ -554,8 +551,8 @@
 					<!-- First header appearances -->
 					<!-- More than one navbar leads to non-defined behaviour -->
 					<xsl:apply-templates select="rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#HeaderAppearance']" mode="HeaderAppearance"/>
-					<xsl:apply-templates select="rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarAppearance']" mode="NavbarAppearance"/>
-					<xsl:apply-templates select="rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarSearchAppearance']" mode="NavbarSearchAppearance"/>
+					<xsl:apply-templates select="rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarAppearance']" mode="NavbarSearchAppearance"><xsl:with-param name="search">false</xsl:with-param></xsl:apply-templates>
+					<xsl:apply-templates select="rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarSearchAppearance']" mode="NavbarSearchAppearance"><xsl:with-param name="search">true</xsl:with-param></xsl:apply-templates>
 					<!-- Real content -->
 					<div class="content">
 						<div class="container">
@@ -884,38 +881,6 @@
 	</xsl:choose>
 </xsl:template>
 
-<xsl:template match="rdf:RDF" mode="NavbarAppearance">
-	<nav class="navbar navbar-default">
-		<div class="container">
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-					<span class="sr-only">Toggle navigation</span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</button>
-				<xsl:if test="exists(rdf:Description/dcterms:title)">
-					<xsl:variable name="root" select="rdf:Description/dcterms:title[1]/.."/>
-					<xsl:variable name="link">
-						<xsl:choose>
-							<xsl:when test="exists($root/html:link)"><xsl:value-of select="$root/html:link"/></xsl:when>
-							<xsl:otherwise><xsl:value-of select="$docroot"/></xsl:otherwise>
-						</xsl:choose>
-					</xsl:variable>
-					<a class="navbar-brand" href="{$link}"><xsl:value-of select="rdf:Description/dcterms:title[1]"/></a>
-				</xsl:if>
-			</div>
-			<div id="navbar" class="collapse navbar-collapse">
-				<ul class="nav navbar-nav">
-					<xsl:for-each select="rdf:Description[exists(rdfs:label)]"><xsl:sort select="elmo:index"/>
-						<xsl:apply-templates select="." mode="nav"/>
-					</xsl:for-each>
-				</ul>
-			</div>
-		</div>
-	</nav>
-</xsl:template>
-
 <xsl:template match="rdf:Description" mode="nav">
 	<xsl:if test="exists(rdfs:label)">
 		<xsl:variable name="label"><xsl:call-template name="normalize-language"><xsl:with-param name="text" select="rdfs:label"/></xsl:call-template></xsl:variable>
@@ -964,8 +929,21 @@
 	</xsl:if>
 </xsl:template>
 
+<!-- Find root. Warning: no checks for cycles! -->
+<xsl:template match="rdf:Description" mode="findroot">
+	<xsl:variable name="parent" select="key('nav-data',@rdf:nodeID)"/>
+	<xsl:choose>
+		<xsl:when test="exists($parent)"><xsl:apply-templates select="$parent" mode="findroot"/></xsl:when>
+		<xsl:otherwise><xsl:value-of select="@rdf:nodeID"/></xsl:otherwise>
+	</xsl:choose>
+</xsl:template>
+
 <xsl:template match="rdf:RDF" mode="NavbarSearchAppearance">
+	<xsl:param name="search"/>
+	
 	<nav class="navbar navbar-default">
+		<xsl:variable name="rootid"><xsl:apply-templates select="rdf:Description[1]" mode="findroot"/></xsl:variable>
+		<xsl:variable name="root" select="key('nav-bnode',$rootid)"/>
 		<div class="container">
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -974,7 +952,6 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</button>
-				<xsl:variable name="root" select="rdf:Description[1]"/>
 				<xsl:if test="exists($root/rdfs:label)">
 					<xsl:variable name="label"><xsl:call-template name="normalize-language"><xsl:with-param name="text" select="$root/rdfs:label"/></xsl:call-template></xsl:variable>
 					<xsl:variable name="link">
@@ -988,20 +965,22 @@
 			</div>
 			<div id="navbar" class="collapse navbar-collapse">
 				<ul class="nav navbar-nav">
-					<xsl:for-each select="rdf:Description[1]/elmo:data"><xsl:sort select="key('nav-bnode',@rdf:nodeID)/elmo:index"/>
+					<xsl:for-each select="$root/elmo:data"><xsl:sort select="key('nav-bnode',@rdf:nodeID)/elmo:index"/>
 						<xsl:apply-templates select="key('nav-bnode',@rdf:nodeID)" mode="nav"/>
 					</xsl:for-each>
 				</ul>
-				<form class="navbar-form navbar-right" method="get" action="{$docroot}{$subdomain}/query/search">
-					<div class="input-group">
-						<input class="form-control" type="text" placeholder="Search" name="term"/>
-						<span class="input-group-btn">
-							<button class="btn btn-primary" type="submit">
-								<span class="glyphicon glyphicon-search"/>
-							</button>
-						</span>
-					</div>
-				</form>
+				<xsl:if test="$search='true'">
+					<form class="navbar-form navbar-right" method="get" action="{$docroot}{$subdomain}/query/search">
+						<div class="input-group">
+							<input class="form-control" type="text" placeholder="Search" name="term"/>
+							<span class="input-group-btn">
+								<button class="btn btn-primary" type="submit">
+									<span class="glyphicon glyphicon-search"/>
+								</button>
+							</span>
+						</div>
+					</form>
+				</xsl:if>
 			</div>
 		</div>
 	</nav>
@@ -1024,7 +1003,5 @@
 <xsl:include href="appearances/ModelTemplates.xsl"/>
 <xsl:include href="appearances/ModelAppearance.xsl"/>
 <xsl:include href="appearances/VocabularyAppearance.xsl"/>
-
-<xsl:include href="appearances/dmn/LogicAppearance.xsl"/>
 
 </xsl:stylesheet>

@@ -8,6 +8,7 @@
 
 stage:SelectFormats a elmo:Representation;
 	elmo:url-pattern "/query/SelectFormats";
+	elmo:url-pattern "/api/SelectFormats";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:contains stage:Formats_tab;
@@ -23,9 +24,11 @@ stage:SelectFormatsQuery a elmo:Query;
 		prefix dbo: <http://dbpedia.org/ontology/>
 		select ?s ?s_label (dbo:City as ?type) ?s_count
 		where {
-			?s rdf:type dbo:City.
-			?s rdfs:label ?s_label.
-			OPTIONAL {?s dbo:population ?s_count}
+			graph <http://localhost:8080/stage> {
+				?s rdf:type dbo:City.
+				?s rdfs:label ?s_label.
+				OPTIONAL {?s dbo:population ?s_count}
+			}
 		}
 	''';
 .
@@ -86,6 +89,7 @@ stage:SelectFormats_content a elmo:Representation;
 
 stage:ConstructFormats a elmo:Representation;
 	elmo:url-pattern "/query/ConstructFormats";
+	elmo:url-pattern "/api/ConstructFormats";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:contains stage:Formats_tab;
