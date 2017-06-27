@@ -1,5 +1,5 @@
 # Read-write Linked Data API
-With regard to API's three standards have emerged:
+With regard to Linked Data API's three standards have emerged:
 
 - [Linked data concept itself](http://www.w3.org/DesignIssues/LinkedData.html)
 - [SPARQL Graph Update](http://www.w3.org/TR/sparql11-http-rdf-update)
@@ -14,6 +14,15 @@ The Linked Data Platform gives directions what to do when to GET, POST, PUT, HEA
 As stated in the specification of the Linked Data Platform, the two standards can be used together, but some precautions must be made. The two standards differ conceptually: a named graph versus a resource.
 
 The Read-Write Linked Data API is a proposal to create an API specification that combines the three standards.
+
+### RESTful web API's
+Formally, an _API_ is an Application Programmers Interface (something that you program against), a _web API_ is an Application Programmers Interface that can be accessed using the http protocol and a _RESTful web API_ is an Application Programmers Interface that can be accessed using the http protocol and adhers to the [Representational State Transfer (REST) constraints](http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm), as defined by Roy Fielding. From this formal definition, the Read-Write Linked Data API is - for the most part - a RESTful web API.
+
+However, in reality, the term "REST API" is often used for any request that can be made via http and returns some kind of json result. So in reality, the Read-Write Linked Data API is also a RESTful web API, because the API will return json-ld, which formally is a json format.
+
+There's a catch however: despite the huge effort by the authors of the json-ld recommendation, most json-API users would prefer a more "closed model" version of the returned data, with nesting when applicable. They would like an [Open API Specification](https://www.openapis.org) which describes the way the returned data would look, which would probably *not* be json-ld, but plain json that conforms to a certain, API specific, scheme.
+
+The Linked Data API should also support these kind of API's. A mapping between the fields defined in an Open API specification and the linked data should be provided to translate a json-ld document to the requested json document.   
 
 ## Linked Data concept
 - `GET {URI}` returns useful information about a resource that is described by the information-resource identified by {URI}.
@@ -159,10 +168,10 @@ Query resources only respond to `GET` requests. A query resource resembles a par
 - `GET` to a query resource results in a set of triples or a sparql result set. A 200 Ok response is given when the correct mime-type can be returned. A 406 reponse is given when the accept request header doesn't fit the typical response (sparql results sets cannot be converted to a turtle response and visa versa).
 - `POST`, `PUT` and `DELETE` result in 405 Method not allowed error.
 
-3.2. Production resources
+###3.2. Production resources
 
 Production resources are like container resources, but without the intention to upload data. Only changes to the triplestore are performed. Production resources resemble one or more SPARQL Update queries.
 
-- `GET` to a production resource will return meta-information about the production resource, and a link how to perform the actual production (a `POST`-call).
-- `POST` to a production resource will execute the production.
+- `GET` to a production resource will return a 200 Ok response with meta-information about the production resource, and a link how to perform the actual production (a `POST`-call).
+- `POST` to a production resource will execute the production. A 200 Ok response is given when the execution has been succesful. The response body will contain information about the execution. In case of an error, a 409 Conflict response is given. 
 - `PUT` and `DELETE` result in 405 Method not allowed error.
