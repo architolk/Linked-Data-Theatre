@@ -229,7 +229,7 @@
           </ResponseAssertion>
           <hashTree/>
           <MD5HexAssertion guiclass="MD5HexAssertionGUI" testclass="MD5HexAssertion" testname="MD5Hex Assertion" enabled="true">
-            <stringProp name="MD5HexAssertion.size">19f6f23c46732349d59677b77288b3ad</stringProp>
+            <stringProp name="MD5HexAssertion.size">cbc3e5fd983df5c70fe62b2aea34863d</stringProp>
           </MD5HexAssertion>
           <hashTree/>
         </hashTree>
@@ -1111,7 +1111,7 @@ container:defquery void:triples 1.&#xd;
           </ResponseAssertion>
           <hashTree/>
           <MD5HexAssertion guiclass="MD5HexAssertionGUI" testclass="MD5HexAssertion" testname="MD5Hex Assertion" enabled="true">
-            <stringProp name="MD5HexAssertion.size">b677d2906d6c07a093fe251a37c821c5</stringProp>
+            <stringProp name="MD5HexAssertion.size">e993cca9e7686c5b08f65784a5206e83</stringProp>
           </MD5HexAssertion>
           <hashTree/>
         </hashTree>
