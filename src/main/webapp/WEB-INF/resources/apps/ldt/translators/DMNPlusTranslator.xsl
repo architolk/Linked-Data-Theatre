@@ -29,6 +29,7 @@
 	xmlns:dmn="http://www.omg.org/spec/DMN/20151101/dmn.xsd"
 	xmlns:dmno="http://www.omg.org/spec/DMN/20151101/dmn#"
 	xmlns:uitv="http://data.digitaalstelselomgevingswet.nl/v0.6/Uitvoeringsregels"
+	xmlns:bedr="http://data.digitaalstelselomgevingswet.nl/v0.6/Bedrijfsregels" 
 	xmlns:content="http://data.digitaalstelselomgevingswet.nl/v0.6/Content"
 	xmlns:xhtml="http://www.w3.org/1999/xhtml"	
 > 
@@ -42,22 +43,47 @@
 		</dmno:Definitions>
 	</xsl:template>
 		
-	<xsl:template match="uitv:bijlage|uitv:conversieregelRef|uitv:normRef|uitv:optie|uitv:opties|uitv:uitvoeringsregels|uitv:uitvoeringsregel|uitv:uitvoeringsregelRef|uitv:vraag">
+	<xsl:template match="uitv:bijlage|
+						uitv:conversieregelRef|
+						uitv:optie|
+						uitv:opties|
+						uitv:uitvoeringsregels|
+						uitv:uitvoeringsregel|
+						uitv:uitvoeringsregelRef|
+						uitv:vasteWaarde|
+						uitv:vraag">
 		<xsl:call-template name="process">
-			<xsl:with-param name="namespace" select="'dmno'" />
+			<xsl:with-param name="namespace" select="'uitv'" />
 			<xsl:with-param name="namespaceUri" select="'http://data.digitaalstelselomgevingswet.nl/v0.6/Uitvoeringsregels#'" />
 		</xsl:call-template>
 	</xsl:template>
 	
+	<xsl:template match="bedr:functioneleStructuurRef">
+		<xsl:call-template name="process">
+			<xsl:with-param name="namespace" select="'bedr'" />
+			<xsl:with-param name="namespaceUri" select="'http://data.digitaalstelselomgevingswet.nl/v0.6/Bedrijfsregels#'" />
+		</xsl:call-template>
+	</xsl:template>							
+	
 	<xsl:template match="content:content|content:html|content:htmlblok">
 		<xsl:call-template name="process">
-			<xsl:with-param name="namespace" select="'dmno'" />
+			<xsl:with-param name="namespace" select="'uitv'" />
 			<xsl:with-param name="namespaceUri" select="'http://data.digitaalstelselomgevingswet.nl/v0.6/Content#'" />
 		</xsl:call-template>
 	</xsl:template>	
 	
-	<xsl:template match="uitv:vraagType|uitv:vraagTekst|uitv:bijlageType|uitv:eis">
-		<xsl:element name="uitv:{local-name(.)}" namespace="http://data.digitaalstelselomgevingswet.nl/v0.6/Uitvoeringsregels"><xsl:value-of select="."/></xsl:element>
+	<xsl:template match="uitv:bijlageType|
+						uitv:eis|
+						uitv:optieText|
+						uitv:optieType|
+						uitv:sequenceId|
+						uitv:tekstVoorbehoud|
+						uitv:typeVraag|
+						uitv:vraagType|
+						uitv:vraagTekst|
+						uitv:waarde|
+						uitv:waardeVraag">
+		<xsl:element name="uitv:{local-name(.)}" namespace="http://data.digitaalstelselomgevingswet.nl/v0.6/Uitvoeringsregels#"><xsl:value-of select="."/></xsl:element>
 	</xsl:template>
 	
 	<xsl:template match="xhtml:p|xhtml:div">
