@@ -78,11 +78,17 @@ container:archi a elmo:Container;
 
 container:query a elmo:Container;
 	elmo:contains stage:NavbarSearchAppearance;
-	rdfs:label "Upload with post query";
+	rdfs:label "Upload with post query and param";
+	elmo:fragment [
+		elmo:applies-to "title";
+		rdfs:label "Titel"@nl;
+		rdfs:label "Title"@en;
+	];
 	elmo:query '''
 		prefix container: <http://localhost:8080/container/>
 		insert into container:query {
 			container:query void:triples ?count
+			container:query rdfs:label "@TITLE@"
 		}
 		where {
 			select (count(*) as ?count)
