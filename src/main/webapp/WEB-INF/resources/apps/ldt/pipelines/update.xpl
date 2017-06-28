@@ -2,7 +2,7 @@
 
     NAME     update.xpl
     VERSION  1.18.1-SNAPSHOT
-    DATE     2017-06-27
+    DATE     2017-06-28
 
     Copyright 2012-2017
 
@@ -153,7 +153,7 @@
 				<!-- Create sparql update request -->
 				<!-- TODO: Refactor: borrowed from query.xpl -->
 				<p:processor name="oxf:xslt">
-					<p:input name="config" href="../transformations/param2query.xsl">
+					<p:input name="config" href="../transformations/param2query.xsl"/>
 					<p:input name="data" href="aggregate('root',current(),#context,#context#xpointer(context/parameters))"/>
 					<p:output name="data" id="query"/>
 				</p:processor>
