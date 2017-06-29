@@ -7,7 +7,6 @@ file uploaded: ContainerPresentations.ttl
 file uploaded: Containers.ttl
 file uploaded: ContentAppearance.ttl
 file uploaded: DefaultResource.ttl
-file uploaded: DummyProduction.ttl
 file uploaded: ElmoVocabulary.ttl
 file uploaded: FederatedQuery.ttl
 file uploaded: FooterAppearance.ttl
@@ -31,6 +30,7 @@ file uploaded: MarkdownAppearance.ttl
 file uploaded: ModelAppearance.ttl
 file uploaded: NavBarSearchAppearance.ttl
 file uploaded: Parameters.ttl
+file uploaded: Production.ttl
 file uploaded: Service-duo.ttl
 file uploaded: Service.ttl
 file uploaded: Sesame-Formats.ttl

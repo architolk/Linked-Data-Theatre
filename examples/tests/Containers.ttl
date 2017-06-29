@@ -9,7 +9,6 @@ container:simple a elmo:Container;
 	rdfs:label "Upload some linked data";
 .
 testcontainer:simple a elmo:Container;
-	elmo:contains stage:NavbarSearchAppearance;
 	rdfs:label "Upload some linked data";
 .
 
@@ -137,6 +136,11 @@ container:query a elmo:Container;
 
 container:defquery a elmo:Container;
 	elmo:contains stage:NavbarSearchAppearance;
+	elmo:fragment [
+		elmo:applies-to "title";
+		rdfs:label "Title"@en;
+		rdfs:label "Titel"@nl;
+	];
 	rdfs:label "Upload with predefined post query and assertions";
 	elmo:assertion [
 		rdfs:label "A void:triples statement should not occur in the uploaded data";
@@ -150,12 +154,13 @@ container:defquery a elmo:Container;
 		'''
 	];
 	elmo:assertion [
-		rdfs:label "The uploaded data should not be empty";
+		rdfs:label "The rdfs:label of the container should be equal to the title";
 		elmo:assert '''
 			prefix container: <http://localhost:8080/container/>
 			ASK {
-				graph container:defquery {
-					?s?p?o
+				graph  container:defquery {
+					container:defquery rdfs:label ?label.
+					FILTER regex(?label,"^@TITLE@$","i")
 				}
 			}
 		'''
@@ -163,12 +168,16 @@ container:defquery a elmo:Container;
 	elmo:query stage:ContainerQuery;
 .
 testcontainer:defquery a elmo:Container;
-	elmo:contains stage:NavbarSearchAppearance;
+	elmo:fragment [
+		elmo:applies-to "title";
+		rdfs:label "Title"@en;
+		rdfs:label "Titel"@nl;
+	];
 	rdfs:label "Upload with predefined post query and assertions";
 	elmo:assertion [
 		rdfs:label "A void:triples statement should not occur in the uploaded data";
 		elmo:assert-not '''
-			prefix container: <http://localhost:8080/container/>
+			prefix container: <http://localhost:8888/container/>
 			ASK {
 				graph container:defquery {
 					container:defquery void:triples ?count
@@ -177,12 +186,13 @@ testcontainer:defquery a elmo:Container;
 		'''
 	];
 	elmo:assertion [
-		rdfs:label "The uploaded data should not be empty";
+		rdfs:label "The rdfs:label of the container should be equal to the title";
 		elmo:assert '''
-			prefix container: <http://localhost:8080/container/>
+			prefix container: <http://localhost:8888/container/>
 			ASK {
-				graph container:defquery {
-					?s?p?o
+				graph  container:defquery {
+					container:defquery rdfs:label ?label.
+					FILTER regex(?label,"^@TITLE@$","i")
 				}
 			}
 		'''
@@ -192,14 +202,13 @@ testcontainer:defquery a elmo:Container;
 
 stage:ContainerQuery a elmo:Query;
 	elmo:query '''
-		prefix container: <http://localhost:8080/container/>
-		insert into container:defquery {
-			container:defquery void:triples ?count
+		insert into <@SUBJECT@> {
+			<@SUBJECT@> void:triples ?count
 		}
 		where {
 			select (count(*) as ?count)
 			where {
-				graph container:defquery {
+				graph <@SUBJECT@> {
 					?s?p?o
 				}
 			}

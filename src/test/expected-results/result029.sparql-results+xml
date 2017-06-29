@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sparql xmlns="http://www.w3.org/2005/sparql-results#"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.w3.org/2001/sw/DataAccess/rf1/result2.xsd">
+ <head>
+  <variable name="subject"/>
+  <variable name="predicate"/>
+  <variable name="object"/>
+ </head>
+ <results distinct="false" ordered="true">
+  <result>
+   <binding name="subject">
+    <uri>urn:test</uri>
+   </binding>
+   <binding name="predicate">
+    <uri>http://www.w3.org/2000/01/rdf-schema#label</uri>
+   </binding>
+   <binding name="object">
+    <literal>my title</literal>
+   </binding>
+  </result>
+ </results>
+</sparql>

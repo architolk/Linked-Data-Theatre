@@ -844,6 +844,12 @@
 							</p:processor>
 							<!-- Check assertions (uploadresult as part of assertions, otherwise parallisation errors might occur) -->
 							<p:for-each href="#containercontext" select="/container/assertions/assert" root="results" id="aresults">
+								<!-- Parse parameters for assertions-->
+								<p:processor name="oxf:xslt">
+									<p:input name="config" href="../transformations/param2query.xsl"/>
+									<p:input name="data" href="aggregate('root',current(),#context,#context#xpointer(context/parameters))"/>
+									<p:output name="data" id="query"/>
+								</p:processor>
 								<!-- Execute assertion-check -->
 								<p:processor name="oxf:xforms-submission">
 									<p:input name="submission" transform="oxf:xslt" href="aggregate('root',#uploadresult,#context)">
@@ -856,13 +862,7 @@
 											<xforms:setvalue ev:event="xforms-submit-error" ref="error/@type" value="event('error-type')"/>
 										</xforms:submission>
 									</p:input>
-									<p:input name="request" transform="oxf:xslt" href="current()">
-										<parameters xsl:version="2.0">
-											<query><xsl:value-of select="assert"/></query>
-											<default-graph-uri/>
-											<error type=""/>
-										</parameters>
-									</p:input>
+									<p:input name="request" href="#query"/>
 									<p:output name="response" ref="aresults"/>
 								</p:processor>
 							</p:for-each>

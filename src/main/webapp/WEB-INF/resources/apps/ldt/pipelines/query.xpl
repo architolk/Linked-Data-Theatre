@@ -1,8 +1,8 @@
 <!--
 
     NAME     query.xpl
-    VERSION  1.18.0
-    DATE     2017-06-18
+    VERSION  1.18.1-SNAPSHOT
+    DATE     2017-06-29
 
     Copyright 2012-2017
 
@@ -38,6 +38,7 @@
 		  xmlns:html="http://www.w3.org/1999/xhtml/vocab#"
 		  xmlns:res="http://www.w3.org/2005/sparql-results#"
           xmlns:sql="http://orbeon.org/oxf/xml/sql"
+		  xmlns:sparql="http://www.w3.org/2005/sparql-results#"
           xmlns:xs="http://www.w3.org/2001/XMLSchema"
 		  xmlns:elmo="http://bp4mc2.org/elmo/def#"
 >
@@ -777,7 +778,7 @@
 		<!-- Check if a representation could be found, return 404 if no representation is available -->
 		<!-- Also return 404 if a representation could be found, a subject is expected and the resultset for the representation is empty -->
 		<!-- If an explicit representation is available or the 'query' format is used, never return a 404 -->
-		<p:when test="root/context/representation='' and root/context/format!='application/x.elmo.query' and (not(exists(root/results/rdf:RDF)) or (root/context/subject!='' and not(exists(root/results/rdf:RDF[1]/*))))">
+		<p:when test="root/context/representation='' and root/context/format!='application/x.elmo.query' and (not(exists(root/results/rdf:RDF) or exists(root/results/sparql:sparql)) or (root/context/subject!='' and not(exists(root/results/rdf:RDF[1]/*))))">
 			<p:processor name="oxf:identity">
 				<p:input name="data">
 					<parameters>

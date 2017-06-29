@@ -25,6 +25,8 @@
 <!--
     DESCRIPTION
     Templating: replaces @..@ in the query with the values of parameters from the URL (context)
+
+	This stylesheet is used by query.xpl, container.xpl (for postquery and assertions) and production.xpl
 	
 -->
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -43,8 +45,9 @@
 				<xsl:value-of select="replace($query,concat('@',upper-case(name),'@'),$value)"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:value-of select="replace(/root/(scene|representation)/query,concat('@',upper-case(name),'@'),$value)"/>
-				<xsl:value-of select="replace(/root/container/postquery,concat('@',upper-case(name),'@'),$value)"/>
+				<xsl:value-of select="replace(/root/(scene|representation)/query,concat('@',upper-case(name),'@'),$value)"/> <!-- In case of query or production -->
+				<xsl:value-of select="replace(/root/container/postquery,concat('@',upper-case(name),'@'),$value)"/> <!-- In case of container post-query -->
+				<xsl:value-of select="replace(/root/assert,concat('@',upper-case(name),'@'),$value)"/> <!-- In case of assertion -->
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
@@ -53,8 +56,9 @@
 			<xsl:variable name="query1">
 				<xsl:apply-templates select="/root/parameters/parameter[1]" mode="replace"/>
 				<xsl:if test="not(exists(/root/parameters/parameter))">
-					<xsl:value-of select="/root/(scene|representation)/query"/>
-					<xsl:value-of select="/root/container/postquery"/>
+					<xsl:value-of select="/root/(scene|representation)/query"/> <!-- In case of query or production -->
+					<xsl:value-of select="/root/container/postquery"/> <!-- In case of container post-query -->
+					<xsl:value-of select="/root/assert"/> <!-- In case of assertion -->
 				</xsl:if>
 			</xsl:variable>
 			<xsl:variable name="query2" select="replace($query1,'@LANGUAGE@',/root/context/language)"/>
