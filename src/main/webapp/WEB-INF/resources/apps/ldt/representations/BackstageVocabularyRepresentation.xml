@@ -91,10 +91,11 @@
 				<urn:menu-item1> rdfs:label "Goto stage".
 				<urn:menu-item1> html:link ?stage.
 				<urn:menu-item1> elmo:index "1".
-				<urn:menu> dcterms:title ?stagename.
+				<urn:menu> rdfs:label ?stagename.
 				<urn:menu> elmo:data <urn:menu-item1>.
 				<urn:menu> elmo:data <urn:menu-item2>.
 				<urn:menu> elmo:data <urn:menu-item3>.
+				<urn:menu> elmo:data <urn:menu-item4>.
 				<urn:menu> html:link "../backstage".
 			}
 			where {

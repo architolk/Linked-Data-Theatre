@@ -58,8 +58,8 @@
 
 <xsl:key name="rdf" match="results/rdf:RDF" use="@elmo:query"/>
 <xsl:key name="resource" match="results/rdf:RDF/rdf:Description" use="@rdf:about"/>
-<xsl:key name="nav-bnode" match="results/rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarSearchAppearance' or @elmo:appearance='http://bp4mc2.org/elmo/def#NavbarAppearance']/rdf:Description" use="@rdf:nodeID"/>
-<xsl:key name="nav-data" match="results/rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarSearchAppearance' or @elmo:appearance='http://bp4mc2.org/elmo/def#NavbarAppearance']/rdf:Description" use="elmo:data/@rdf:nodeID"/>
+<xsl:key name="nav-bnode" match="results/rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarSearchAppearance' or @elmo:appearance='http://bp4mc2.org/elmo/def#NavbarAppearance']/rdf:Description" use="@rdf:nodeID|@rdf:about"/>
+<xsl:key name="nav-data" match="results/rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarSearchAppearance' or @elmo:appearance='http://bp4mc2.org/elmo/def#NavbarAppearance']/rdf:Description" use="elmo:data/@rdf:nodeID|elmo:data/@rdf:resource"/>
 
 <xsl:key name="nested" match="results/rdf:RDF/rdf:Description/*[@elmo:appearance='http://bp4mc2.org/elmo/def#NestedAppearance']/rdf:Description" use="@rdf:about"/>
 
@@ -931,10 +931,10 @@
 
 <!-- Find root. Warning: no checks for cycles! -->
 <xsl:template match="rdf:Description" mode="findroot">
-	<xsl:variable name="parent" select="key('nav-data',@rdf:nodeID)"/>
+	<xsl:variable name="parent" select="key('nav-data',concat(@rdf:nodeID,@rdf:about))"/>
 	<xsl:choose>
 		<xsl:when test="exists($parent)"><xsl:apply-templates select="$parent" mode="findroot"/></xsl:when>
-		<xsl:otherwise><xsl:value-of select="@rdf:nodeID"/></xsl:otherwise>
+		<xsl:otherwise><xsl:value-of select="@rdf:nodeID"/><xsl:value-of select="@rdf:about"/></xsl:otherwise>
 	</xsl:choose>
 </xsl:template>
 
@@ -965,8 +965,8 @@
 			</div>
 			<div id="navbar" class="collapse navbar-collapse">
 				<ul class="nav navbar-nav">
-					<xsl:for-each select="$root/elmo:data"><xsl:sort select="key('nav-bnode',@rdf:nodeID)/elmo:index"/>
-						<xsl:apply-templates select="key('nav-bnode',@rdf:nodeID)" mode="nav"/>
+					<xsl:for-each select="$root/elmo:data"><xsl:sort select="key('nav-bnode',concat(@rdf:nodeID,@rdf:resource))/elmo:index"/>
+						<xsl:apply-templates select="key('nav-bnode',concat(@rdf:nodeID,@rdf:resource))" mode="nav"/>
 					</xsl:for-each>
 				</ul>
 				<xsl:if test="$search='true'">

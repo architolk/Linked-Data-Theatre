@@ -45,15 +45,8 @@
 		<elmo:data rdf:nodeID="menu"/>
 	</rdf:Description>
 	<rdf:Description rdf:nodeID="menu">
-		<dcterms:title>Backstage</dcterms:title>
+		<rdfs:label>Backstage</rdfs:label>
 		<elmo:data rdf:nodeID="menu-item1"/>
 		<xhtml:link>../backstage</xhtml:link>
 	</rdf:Description>
-	<!--
-	<rdf:Description rdf:nodeID="menu-item1">
-		<rdfs:label>goto </rdfs:label>
-		<elmo:index>1</elmo:index>
-		<xhtml:link>../backstage</xhtml:link>
-	</rdf:Description>
-	-->
 </rdf:RDF>

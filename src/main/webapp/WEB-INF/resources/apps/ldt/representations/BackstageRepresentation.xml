@@ -96,7 +96,7 @@
 		<elmo:query>
 			<![CDATA[
 			prefix elmo: <http://bp4mc2.org/elmo/def#>
-			select ?rep ?urlpattern ?object
+			select ?type ?rep ?urlpattern ?object
 			where {
 				graph <@STAGE@> {
 					{
@@ -106,6 +106,7 @@
 							?rep elmo:applies-to ?pattern.
 							?pattern rdf:type ?object.
 						}
+						BIND (elmo:Query as ?type)
 					}
 					UNION
 					{
@@ -114,7 +115,9 @@
 						FILTER (?type = elmo:Container || ?type = elmo:VersionContainer || ?type = elmo:Production)
 					}
 				}
+				BIND (if(?type=elmo:Query,"1",if(?type=elmo:Production,"2",if(?type=elmo:Container,"3","4"))) as ?order)
 			}
+			order by ?order ?rep
 			]]>
 		</elmo:query>
 		</rdf:Description>
@@ -144,11 +147,15 @@
 				<urn:menu-item1> rdfs:label "Goto stage".
 				<urn:menu-item1> html:link ?stage.
 				<urn:menu-item1> elmo:index "1".
-				<urn:menu> dcterms:title ?stagename.
+				<urn:menu> rdfs:label ?stagename.
 				<urn:menu> html:link "#".
 				<urn:menu> elmo:data <urn:menu-item1>.
 				<urn:menu> elmo:data <urn:menu-item2>.
 				<urn:menu> elmo:data <urn:menu-item3>.
+				<urn:menu> elmo:data <urn:menu-item4>.
+				<urn:menu> elmo:data <urn:menu-item5>.
+				<urn:menu> elmo:data <urn:menu-item6>.
+				<urn:menu> elmo:data <urn:menu-item7>.
 			}
 			where {
 				select	(strbefore("@SUBJECT@","/backstage") as ?stage)
