@@ -77,7 +77,8 @@ stage:FormAppearance-form a elmo:Form;
 	];
 	elmo:fragment [
 		elmo:appearance elmo:SubmitAppearance;
-		rdfs:label "Search"@nl;
+		rdfs:label "Zoeken"@nl;
+		rdfs:label "Search"@en;
 		elmo:index "4";
 	];
 .

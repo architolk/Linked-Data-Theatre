@@ -57,7 +57,8 @@ testo:capitalCity a rdf:Property;
 dbpedia:Amersfoort a dbo:City;
 	rdfs:label "Amersfoort";
 	dbo:isPartOf <http://dbpedia.org/resource/Utrecht_(province)>;
-	dbo:abstract "Amersfoort is een stad en gemeente in het oosten van de Nederlandse provincie Utrecht. Het is in bevolkingsaantal de tweede stad van de provincie Utrecht en de veertiende van Nederland. Amersfoort is een groeistad en vervult economisch een regiofunctie met een sterk gegroeid bedrijfsleven, heeft een van de grootste spoorwegknooppunten van Nederland en is een belangrijke garnizoensstad. De binnenstad bezit een middeleeuws karakter met grachten"@nl;
+	dbo:abstract '''Amersfoort is een stad en gemeente in het oosten van de Nederlandse provincie Utrecht.
+Het is in bevolkingsaantal de tweede stad van de provincie Utrecht en de veertiende van Nederland. Amersfoort is een groeistad en vervult economisch een regiofunctie met een sterk gegroeid bedrijfsleven, heeft een van de grootste spoorwegknooppunten van Nederland en is een belangrijke garnizoensstad. De binnenstad bezit een middeleeuws karakter met grachten'''@nl;
 	dbp:east dbpedia:Amsterdam;
 	dbo:population 153773;
 	dbo:populationAsOf "2016-04-01"^^xsd:date;

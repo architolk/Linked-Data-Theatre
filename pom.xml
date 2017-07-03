@@ -256,7 +256,7 @@
 					<checkResult>
 						<errors>
 							<!-- The analyzer finds a 40x an error, and at this moment 20.6% of all tests are 40x -->
-							<threshold>19.35</threshold>
+							<threshold>18.75</threshold>
 							<tolerance>1</tolerance>
 						</errors>
 					</checkResult>
