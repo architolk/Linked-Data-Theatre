@@ -22,7 +22,7 @@ However, in reality, the term "REST API" is often used for any request that can 
 
 There's a catch however: despite the huge effort by the authors of the json-ld recommendation, most json-API users would prefer a more "closed model" version of the returned data, with nesting when applicable. They would like an [Open API Specification](https://www.openapis.org) which describes the way the returned data would look, which would probably *not* be json-ld, but plain json that conforms to a certain, API specific, scheme.
 
-The Linked Data API should also support these kind of API's. A mapping between the fields defined in an Open API specification and the linked data should be provided to translate a json-ld document to the requested json document.   
+The Linked Data API should also support these kind of API's. A mapping between the fields defined in an Open API specification and the linked data should be provided to translate a json-ld document to the requested json document.
 
 ## Linked Data concept
 - `GET {URI}` returns useful information about a resource that is described by the information-resource identified by {URI}.
@@ -70,6 +70,21 @@ The Linked Data Platform defines three different types of containers. Some extra
 - Basis container: no extra triples are created;
 - Direct container: an extra membership triple is created between the subject of the container (might be a non-information resource) and the newly created container;
 - Indirect container: an extra membership triple is created between the subject of the container (might be a non-information resource) and a member related resource (might be a non-information resource, different from the original member URI).
+
+## strict RESTful API's
+
+- `GET /{collection}/{id}` returns the content of an information resource identified by {id}, within the collection identified by {collection}.
+- `GET /{collection}?id={id}` returns the content of an information resource identified by {id}, within the collection identified by {collection}.
+- `GET /{collection}?{name}={value}` returns a list of information resources (and sometimes also the content) that corresponds a the filter. {name} should be some property, and {value} the value to be filtered. For example: `GET /addresses?zipcode=1234`. The list might be paged.
+- `POST /{collection}` adds a new information resource to the collection.
+
+Strict RESTful API's are very similar to the API provided by a Linked Data Platform. The most obvious distinction is the ommission of real URI's, and the introduction of collections and identifiers. However, most Linked Data URI's conform to a URI template that is quite similar to the way strict RESTful API's are organized. The most visible difference is the use of a plural form for the collection in case of an API, and the use of a singular form for the collection in case of an Linked Data URI. Another difference is the distinction between information resources and non-information resources
+
+| API/LD | URI | Remark |
+|--------|-----|--------|
+| API | `https://example.org/api/buildings/12345` ||
+| Linked Data | `https://example.org/doc/building/12345` |Information about the building|
+| Linked Data | `http://example.org/id/building/12345` |The building itself|   
 
 ## Proposal for the read-write API
 
