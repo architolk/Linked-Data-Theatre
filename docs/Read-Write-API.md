@@ -41,6 +41,25 @@ A key concept is the distinction between a non-information resource and an infor
 
 The car on the left cannot be returned via the http protocol: it's not information, it's a real-life thing. According to the Linked Data concept, it is a non-information resource, and can be identified by a URI. The turtle document on the right can be returned via the http protocol: it's an information-resource. This particular information resource is a description of the real-life car on the left.
 
+The URI on the right refers to the information about the car, but might also refer to information about this information itself (metadata), for example: the date at which the information was registered. Because this information is of a specific point in time, the URI for this information would probably also contain a timestamp:
+
+	@prefix schema: <http://schema.org/>.
+	@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+	@prefix wdrs: <http://www.w3.org/2007/05/powder-s#>.
+	@prefix prov: <http://www.w3.org/ns/prov#>.
+	@prefix dct: <http://purl.org/dc/terms/>.
+	<http://example.org/id/car/somecar> a schema:Car;
+		rdfs:label "some car";
+		schema:color "red";
+		wdrs:describedby <http://example.org/doc/20120403133523/car/somecar>
+	. 
+	<http://example.org/doc/20170403133523/car/somecar> a prov:Entity;
+		prov:generatedAtTime "2017-04-03T13:35:23Z"^^xsd:dateTime;
+		dct:isVersionOf <http://example.org/doc/car/somecar>
+	.
+	
+With this example, versioning is introduced. This might also raise the question: "which information is refered to when using a non-versioned URI?". The best practice is to return the most recent version. This means that the response above might be the response for both the URIs `http://example.org/doc/car/somecar` and `http://example.org/doc/20170403133523/car/somecar`.
+
 ## SPARQL Graph Update
 - `GET {URI}` returns the set of triples contained in a named graph identified by {URI}.
 - `GET /{access-point}?graph={URI}` returns the set of triples contained in a named graph identified by {URI}. The access-point can be any URL.
@@ -112,9 +131,11 @@ The table below gives an overview of all resource types
 | 4  | Query resources                       | SPARQL queries | `/{query}`                     | GET,POST-form       | 200 Ok |
 | 5  | Production resources                  | SPARQL updates | `/{production}`                | GET,POST-form,POST  | 200 Ok |
 
+A complete [spreadsheet version](Read-Write-API.xlsx) is also available.
+
 As the type of resource cannot be determined by the URI, some server-side configuration is necessary to make the distinction. The use of `id` and `doc` for types 1A and 2A is recommended, but could be something completely different, as long as the URI for the non-information resource differs from the URI for the information resource.
 
-The semantics of GET,POST,PUT and DELETE are properly defined in the http standard, but some ambiguedity exists with regard to POST. Because the number of characters for a URI is limited, very large URI-parameters may also be transmitted as part of the body in a POST request (called a POST-form). In such a case, the content-type of the http requestbody should be `application/x-www-form-urlencoded` or `multipart/form-data`.
+The semantics of GET,POST,PUT and DELETE are properly defined in the http standard, but some ambiguity exists with regard to POST. Because the number of characters for a URI is limited, very large URI-parameters may also be transmitted as part of the body in a POST request (called a POST-form). In such a case, the content-type of the http requestbody should be `application/x-www-form-urlencoded` or `multipart/form-data`.
 
 | Method    | Impact           |
 | ----------|------------------|
