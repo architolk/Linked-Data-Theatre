@@ -94,7 +94,7 @@ For this proposal, we would like to make the distinction between some different 
 
 1. Non-information resources: resources that cannot be retrieved by a web server. The URI's for these resources are used as references.
 2. REST-style information resources: resources that conform to a REST-style of interaction. These resources conform to the [Linked Data Platform](http://www.w3.org/TR/ldp) recommendation.
-3. Graph protocol information resources: resources that correspond to a named graph. These resources conform to the [SPARQL Graph Update](http://www.w3.org/TR/sparql11-http-rdf-update) recommendation.
+3. Multiple subject information resources: resources that correspond to a named graph. These resources conform to the [SPARQL Graph Update](http://www.w3.org/TR/sparql11-http-rdf-update) recommendation.
 4. Query Non-REST information resources: resources that correspond to particular SPARQL queries.
 5. Update Non-REST services: resources that envoke a particular SPARUL update query.
 
@@ -113,6 +113,18 @@ The table below gives an overview of all resource types
 | 5  | Production resources                  | SPARQL updates | `/{production}`                | GET,POST-form,POST  | 200 Ok |
 
 As the type of resource cannot be determined by the URI, some server-side configuration is necessary to make the distinction. The use of `id` and `doc` for types 1A and 2A is recommended, but could be something completely different, as long as the URI for the non-information resource differs from the URI for the information resource.
+
+The semantics of GET,POST,PUT and DELETE are properly defined in the http standard, but some ambiguedity exists with regard to POST. Because the number of characters for a URI is limited, very large URI-parameters may also be transmitted as part of the body in a POST request (called a POST-form). In such a case, the content-type of the http requestbody should be `application/x-www-form-urlencoded` or `multipart/form-data`.
+
+| Method    | Impact           |
+| ----------|------------------|
+| GET       | Safe (read only) |
+| POST-form | Safe in case of a read action, Non-idempotent in case of a write action |
+| PUT       | Idempotent (multiple requests should result in the same state) |
+| POST      | Non-idempotent (multiple request may result in different states, like the creation of a new resource) |
+| DELETE    | Idempotent (multiple request should result in the same state - the resource is gone) |
+
+A POST-form request is considered the equivalent of a GET operation for all resources, except for a production resource. A GET to a production resource will result in a HTML form (`content-type=text/html`) or a specification of the service. A POST to a production resource will always result in the execution of the production.
 
 ### Extra functionality
 
@@ -186,7 +198,7 @@ Query resources only respond to `GET` requests. A query resource resembles a par
 
 ### 5 Non-REST Production resources
 
-Production resources are like container resources, but without the intention to upload data. Only changes to the triplestore are performed. Production resources resemble one or more SPARQL Update queries.
+Production resources are resources that trigger the manipulation of data. The request may contain some content, but this not necessary. Production resources resemble one or more SPARQL Update queries.
 
 - `GET` to a production resource will return a 200 Ok response with meta-information about the production resource, and a link how to perform the actual production (a `POST`-call).
 - `POST` to a production resource will execute the production. A 200 Ok response is given when the execution has been succesful. The response body will contain information about the execution. In case of an error, a 409 Conflict response is given. 
