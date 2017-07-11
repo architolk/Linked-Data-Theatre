@@ -80,11 +80,11 @@ The Linked Data Platform defines three different types of containers. Some extra
 
 Strict RESTful API's are very similar to the API provided by a Linked Data Platform. The most obvious distinction is the ommission of real URI's, and the introduction of collections and identifiers. However, most Linked Data URI's conform to a URI template that is quite similar to the way strict RESTful API's are organized. The most visible difference is the use of a plural form for the collection in case of an API, and the use of a singular form for the collection in case of an Linked Data URI. Another difference is the distinction between information resources and non-information resources
 
-| API/LD | URI | Remark |
-|--------|-----|--------|
-| API | `https://example.org/api/buildings/12345` ||
-| Linked Data | `https://example.org/doc/building/12345` |Information about the building|
-| Linked Data | `http://example.org/id/building/12345` |The building itself|   
+| API/LD      | URI                                       | Remark                       |
+|-------------|-------------------------------------------|------------------------------|
+| API         | `https://example.org/api/buildings/12345` |                              |
+| Linked Data | `https://example.org/doc/building/12345`  |Information about the building|
+| Linked Data | `http://example.org/id/building/12345`    |The building itself           |
 
 ## Proposal for the read-write API
 
@@ -92,18 +92,27 @@ Strict RESTful API's are very similar to the API provided by a Linked Data Platf
 
 For this proposal, we would like to make the distinction between some different categories of resources:
 
-1. Non-information resources.
-2. Information resources
-  1. Basic information resources
-     1. Single subject information resources
-     2. Multiple subject information resources
-  2. Container information resources
-  3. Collection information resources
-3. Non-REST resources
-  1. Query resources
-  2. Production resources
+1. Non-information resources: resources that cannot be retrieved by a web server. The URI's for these resources are used as references.
+2. REST-style information resources: resources that conform to a REST-style of interaction. These resources conform to the [Linked Data Platform](http://www.w3.org/TR/ldp) recommendation.
+3. Graph protocol information resources: resources that correspond to a named graph. These resources conform to the [SPARQL Graph Update](http://www.w3.org/TR/sparql11-http-rdf-update) recommendation.
+4. Query Non-REST information resources: resources that correspond to particular SPARQL queries.
+5. Update Non-REST services: resources that envoke a particular SPARUL update query.
 
 The proposal focusses on GET, POST, PUT and DELETE operations and should be compliant to the three standards mentioned at the beginning of this document.
+
+The table below gives an overview of all resource types
+
+| Id | Type                                  | Goal           | Typical URI template           | Allowed methods     | Response (happy flow)                          |
+|----|---------------------------------------|----------------|--------------------------------|---------------------|------------------------------------------------|
+| 1A | Non-information resource, 303-style   | Reference      | `/id/{collection}/{reference}` | GET                 | 303 See other: `/doc/{collection}/{reference}` |
+| 1B | Non-information resource, #-style     | Reference      | `/{document}#{reference}`      | -                   | See: `/{document}` (type-3) |
+| 2A | Single subject information resource   | LDP/REST       | `/{collection}/{reference}     | GET,POST,PUT,DELETE | 200 Ok |
+| 2B | Collection information resource       | LDP/REST       | `/{collection}                 | GET,POST,PUT,DELETE | 200 Ok, 201 Created |
+| 3  | Multiple subject information resource | Graph protocol | `/{document}`                  | GET,POST,PUT,DELETE | 200 Ok |
+| 4  | Query resources                       | SPARQL queries | `/{query}`                     | GET,POST-form       | 200 Ok |
+| 5  | Production resources                  | SPARQL updates | `/{production}`                | GET,POST-form,POST  | 200 Ok |
+
+As the type of resource cannot be determined by the URI, some server-side configuration is necessary to make the distinction. The use of `id` and `doc` for types 1A and 2A is recommended, but could be something completely different, as long as the URI for the non-information resource differs from the URI for the information resource.
 
 ### Extra functionality
 
@@ -112,7 +121,9 @@ Some extra functionality is proposed, on top of the standards. It should be poss
 1. Assertions: validations should be possible agains PUT, POST and DELETE operations. If an assertion fails, a 409 Conflict http error should be returned;
 2. Post-operations: it should be possible to perform some SPARQL update queries after the data is added.
 3. Translations: not only RDF serializations should be possible to PUT or POST, but also other known formats. A specific translator per format should exist to translate the data to RDF.
-4. Versioning and metadata: it should be possible that data is inserted according to a know versioning-pattern.
+4. Content negotiation to non-RDF serializations should be possible for GET operations. A specific transformation per format should exist to translate the data to a non-RDF serialization.
+5. Versioning and metadata: it should be possible that data is inserted according to a know versioning-pattern.
+6. Parameters: it should be possible to send extra parameters whenever data is uploaded (as part of a POST form or as URI-parameters).
 
 ### 1. Non-information resources
 Non-information resources should be identified using a `id`-URI or a `#`-URI.
@@ -129,40 +140,23 @@ A `#`-URI is any URI with a fragment path, like:
 - `GET` to a `#`-URI results in the retrieval (200 OK) of the corresponding information resource, identified by the URI without `#{fragment}`. 
 - `POST`, `PUT` and `DELETE` result in 405 Method not allowed error.
 
-### 2.1 Basis information resources
-Basis information resources should be [Linked Data Platform Resources](http://www.w3.org/TR/ldp/#ldpr), and as such operate als RESTful API's.
+### 2. LDP / RESTful API style resources
+These resource should be [Linked Data Platform Resources](http://www.w3.org/TR/ldp/#ldpr), and as such operate als RESTful API's.
 
 Two categories of basis information resources are proposed:
 
 1. Information resources that describe a single (non-)information resource
-2. Information resources that describe multiple (non-)information resources.
+2. Information resources that describe a collection of (non-)information resources.
 
-The first category corresponds with a `doc`-URI that is the description of a `id`-URI. The second category correponds with a `#`-URI that is the description of all the resources that only differ in the fragment-part.
-
-#### 2.1.1 Single subject information resources
+#### 2A Single subject information resources
+Single subject information resource are sometimes called `doc`-URI's because the best practice for minting these URI's is the use of a `doc` part.
 
 - `GET` to a `doc`-URI results in the set of triples that are identified by this URI. This should be the CBD of the corresponding `id`-URI and the CBD of the `doc`-URI. Informatively: *the data and the metadata*.
 - `PUT` to a `doc`-URI results in the replacement of the set of triples that are identified by this URI.
 - `POST` to a `doc`-URI results in the merging of the set of triples that are identified by this URI.
 - `DELETE` to a `doc`-URI results in the removal of the set of triples that are identified by this URI. 
 
-#### 2.1.2 Multiple subject information resources
-
-- `GET` to a `#`-URI results in the set of triples that are identified by the URI without the fragment part. This should be all the triples in the named graph that is identified by the same URI (without the fragment).
-- `PUT` to a `#`-URI results in the replacement of the set of triples that are identified by the URI without the fragment part.
-- `POST` to a `#`-URI results in the merging of the set of triples that are identified by the URI without the fragment part.
-- `DELETE` to a `#`-URI results in the removal of the set of triples that are identified by the URI without the fragment part.
-
-### 2.2 Container information resources
-
-Remark: the term "container" is not the same as the term "LDP-container". Container-URI's are REST API's that comply to the SPARQL Graph Update protocol. LDP-containers are support, but are called "collections", as described in section 2.3.
-
-- `GET` to a container-URI results in the set of triples that are identified by this URI. This should be all the triples in the named graph that is identified by the same URI.
-- `PUT` to a container-URI results in the replacement of the set of triples that are identified by this URI.
-- `POST` to a container-URI results in the merging of the set of triples that are identified by this URI .
-- `DELETE` to a container-URI results in the removal of the set of triples that are identified by this URI.
-
-### 2.3 Collection information resources
+### 2B Collection information resources
 
 Collections resemble LDP-containers. From a collection, it is possible to create new resources. Typical collections have URI's that conform to the following pattern:
 
@@ -173,17 +167,24 @@ Collections resemble LDP-containers. From a collection, it is possible to create
 - `POST` to a collection-URI should create a new resource, based on the data in the body. The `POST` operation on a collection resembles the `PUT` operation on a single subject information resource, but will mint a URI's for the information resource and the non-information resources (`doc` versus `id` URI's). An 201 Created response code should be given, with the newly minted URI in the "location" field.
 - `DELETE` to a collection-URi should delete the whole collection.
 
-## 3 Non-REST resources
-Non-REST resources are resources that are not RESTful, but might return complex information products or some complex update on the triplestore.
+The first category corresponds with a `doc`-URI that is the description of a `id`-URI. The second category correponds with a `#`-URI that is the description of all the resources that only differ in the fragment-part.
 
-### 3.1 Query resources
+### 3 Multiple subject information resources
+Multiple subject information resources resemble named graphs and conform to the SPARQL Graph update protocol. Because a link to a `#`-URI will result in the retrieval of the URI-part before the `#`, all `#`-URI's result in the retrieval of a multiple subject information resource.
+
+- `GET` to a container-URI results in the set of triples that are identified by this URI. This should be all the triples in the named graph that is identified by the same URI.
+- `PUT` to a container-URI results in the replacement of the set of triples that are identified by this URI.
+- `POST` to a container-URI results in the merging of the set of triples that are identified by this URI .
+- `DELETE` to a container-URI results in the removal of the set of triples that are identified by this URI.
+
+### 4 Non-REST Query resources
 
 Query resources only respond to `GET` requests. A query resource resembles a particular SPARQL query that doesn't return a typical CBD, but might contain triples from multiple named graphs, or even a sparql-result-set.
 
 - `GET` to a query resource results in a set of triples or a sparql result set. A 200 Ok response is given when the correct mime-type can be returned. A 406 reponse is given when the accept request header doesn't fit the typical response (sparql results sets cannot be converted to a turtle response and visa versa).
 - `POST`, `PUT` and `DELETE` result in 405 Method not allowed error.
 
-###3.2. Production resources
+### 5 Non-REST Production resources
 
 Production resources are like container resources, but without the intention to upload data. Only changes to the triplestore are performed. Production resources resemble one or more SPARQL Update queries.
 
