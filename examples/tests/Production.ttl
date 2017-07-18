@@ -1,4 +1,5 @@
 @prefix updatestage: <http://localhost:8080/update/>.
+@prefix testupdatestage: <http://localhost:8888/update/>.
 @prefix ldtupdatestage: <http://localhost:8080/ldt/update/>.
 @prefix stage: <http://localhost:8080/stage#>.
 @prefix elmo: <http://bp4mc2.org/elmo/def#>.
@@ -14,14 +15,6 @@ updatestage:DummyProduction a elmo:Production;
 	elmo:contains stage:DummyProduction_scene1;
 	elmo:contains stage:DummyProduction_scene2;
 .
-stage:DummyProduction_text a elmo:Part;
-	elmo:appearance elmo:MarkdownAppearance;
-	elmo:data [
-		elmo:md '''This dummy production creates a new graph `<http://localhost:8080/id/dataset/dummy>` with exactly one triple `<urntest> rdfs:label "testvalue"`. The label will be according to the value entered below.'''@en;
-		elmo:md '''Deze dummy productie creeert een nieuwe graph `<http://localhost:8080/id/dataset/dummy>` met precies een triple `<urntest> rdfs:label "testwaarde"`. Het label zal gelijk zijn aan de waarde die hieronder wordt opgegeven.'''@nl;
-	];
-.
-
 #Production for installations at /ldt
 ldtupdatestage:DummyProduction a elmo:Production;
 	elmo:contains stage:HeaderAppearance;
@@ -29,6 +22,23 @@ ldtupdatestage:DummyProduction a elmo:Production;
 	elmo:queryForm stage:DummyProduction_form;
 	elmo:contains stage:DummyProduction_scene1;
 	elmo:contains stage:DummyProduction_scene2;
+.
+#Production for test installations
+testupdatestage:DummyProduction a elmo:Production;
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:contains stage:DummyProduction_text;
+	elmo:queryForm stage:DummyProduction_form;
+	elmo:contains stage:DummyProduction_scene1;
+	elmo:contains stage:DummyProduction_scene2;
+.
+
+stage:DummyProduction_text a elmo:Part;
+	elmo:appearance elmo:MarkdownAppearance;
+	elmo:data [
+		elmo:md '''This dummy production creates a new graph `<http://localhost:8080/id/dataset/dummy>` with exactly one triple `<urntest> rdfs:label "testvalue"`. The label will be according to the value entered below.'''@en;
+		elmo:md '''Deze dummy productie creeert een nieuwe graph `<http://localhost:8080/id/dataset/dummy>` met precies een triple `<urntest> rdfs:label "testwaarde"`. Het label zal gelijk zijn aan de waarde die hieronder wordt opgegeven.'''@nl;
+	];
 .
 
 updatestage:ClearGraph a elmo:Production;
@@ -63,10 +73,8 @@ stage:DummyProduction_yesno a elmo:Part;
 	elmo:appearance elmo:HiddenAppearance;
 	elmo:query '''
 		construct {
-			<http://pdok-ld-gck.so.kadaster.nl/geostandaarden> rdfs:label "pdok-ld-gck.so.kadaster.nl/geostandaarden".
-			<http://pdok-ld-gck.in.kadaster.nl/geostandaarden> rdfs:label "pdok-ld-gck.in.kadaster.nl/geostandaarden".
-			<http://pdok-ld-gck.cs.kadaster.nl/geostandaarden> rdfs:label "pdok-ld-gck.cs.kadaster.nl/geostandaarden".
-			<http://definities.geostandaarden.nl> rdfs:label "definities.geostandaarden.nl".
+			<urn:yes> rdfs:label "yes".
+			<urn:no> rdfs:label "no".
 		}
 		where {}
 	''';
@@ -84,10 +92,11 @@ stage:DummyProduction_scene2 a elmo:Scene;
 .
 
 stage:ShowDummyGraph a elmo:Representation;
-	elmo:url-pattern "/query/ShowDummyGraph$";
+	elmo:url-pattern "/query/ShowDummyGraph";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:appearance elmo:TableAppearance;
+	elmo:index "1";
 	elmo:query '''
 		select ?subject ?predicate ?object
 		where {

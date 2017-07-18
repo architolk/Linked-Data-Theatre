@@ -43,7 +43,7 @@
   <attributes>
    <attribute>
     <name>org.orbeon.lifecycle.request-id</name>
-    <value>68</value>
+    <value>5</value>
    </attribute>
   </attributes>
   <method>GET</method>

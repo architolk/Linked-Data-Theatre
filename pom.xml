@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>nl.architolk.ldt</groupId>
 	<artifactId>ldt</artifactId>
-	<version>1.18.1-SNAPSHOT</version>
+	<version>1.18.1</version>
 	<name>ldt</name>
 	<packaging>war</packaging>
 	<properties>
@@ -255,9 +255,9 @@
 					<targetDirectory>${project.build.directory}/reports</targetDirectory>
 					<checkResult>
 						<errors>
-							<!-- The analyzer finds a 40x an error, and at this moment 24% of all tests are 40x -->
-							<threshold>24</threshold>
-							<tolerance>2</tolerance>
+							<!-- The analyzer finds a 40x an error, and at this moment 20.6% of all tests are 40x -->
+							<threshold>18.75</threshold>
+							<tolerance>1</tolerance>
 						</errors>
 					</checkResult>
 				</configuration>

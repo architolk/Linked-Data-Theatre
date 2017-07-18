@@ -1,0 +1,1 @@
+@prefix container: <http://localhost:8080/container/>. @prefix void: <http://rdfs.org/ns/void#>. container:defquery rdfs:label "mytitle". 

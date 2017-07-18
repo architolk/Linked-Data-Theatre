@@ -1,8 +1,8 @@
 <!--
 
     NAME     query.xpl
-    VERSION  1.18.0
-    DATE     2017-06-18
+    VERSION  1.18.1
+    DATE     2017-07-03
 
     Copyright 2012-2017
 
@@ -38,6 +38,7 @@
 		  xmlns:html="http://www.w3.org/1999/xhtml/vocab#"
 		  xmlns:res="http://www.w3.org/2005/sparql-results#"
           xmlns:sql="http://orbeon.org/oxf/xml/sql"
+		  xmlns:sparql="http://www.w3.org/2005/sparql-results#"
           xmlns:xs="http://www.w3.org/2001/XMLSchema"
 		  xmlns:elmo="http://bp4mc2.org/elmo/def#"
 >
@@ -670,48 +671,7 @@
 				</p:choose>
 				<!-- Create sparql request -->
 				<p:processor name="oxf:xslt">
-					<p:input name="config">
-						<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-							<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="no"/>
-							<xsl:template match="parameter" mode="replace">
-								<!-- Escape characters that could be used for SPARQL insertion -->
-								<!-- The solution is quite harsh: all ', ", <, > and \ are deleted -->
-								<!-- A better solution could be to know if a parameter is a literal or a URI -->
-								<xsl:variable name="problems">("|'|&lt;|&gt;|\\|\$)</xsl:variable>
-								<xsl:variable name="value">
-									<xsl:value-of select="replace(value[1],$problems,'')"/>
-								</xsl:variable>
-								<xsl:choose>
-									<xsl:when test="exists(following-sibling::*[1])">
-										<xsl:variable name="query"><xsl:apply-templates select="following-sibling::*[1]" mode="replace"/></xsl:variable>
-										<xsl:value-of select="replace($query,concat('@',upper-case(name),'@'),$value)"/>
-									</xsl:when>
-									<xsl:otherwise>
-										<xsl:value-of select="replace(/root/representation/query,concat('@',upper-case(name),'@'),$value)"/>
-									</xsl:otherwise>
-								</xsl:choose>
-							</xsl:template>
-							<xsl:template match="/root">
-								<parameters>
-									<xsl:variable name="query1">
-										<xsl:apply-templates select="/root/parameters/parameter[1]" mode="replace"/>
-										<xsl:if test="not(exists(/root/parameters/parameter))"><xsl:value-of select="/root/representation/query"/></xsl:if>
-									</xsl:variable>
-									<xsl:variable name="query2" select="replace($query1,'@LANGUAGE@',/root/context/language)"/>
-									<xsl:variable name="query3" select="replace($query2,'@USER@',/root/context/user)"/>
-									<xsl:variable name="query4" select="replace($query3,'@CURRENTMOMENT@',string(current-dateTime()))"/>
-									<xsl:variable name="query5" select="replace($query4,'@STAGE@',/root/context/back-of-stage)"/>
-									<xsl:variable name="query6" select="replace($query5,'@TIMESTAMP@',/root/context/timestamp)"/>
-									<xsl:variable name="query7" select="replace($query6,'@DATE@',/root/context/date)"/>
-									<xsl:variable name="query8" select="replace($query7,'@DOCSUBJECT@',/root/context/docsubject)"/>
-									<xsl:variable name="query9" select="replace($query8,'@IDSUBJECT@',/root/context/idsubject)"/>
-									<query><xsl:value-of select="replace($query9,'@SUBJECT@',/root/context/subject)"/></query>
-									<default-graph-uri />
-									<error type=""/>
-								</parameters>
-							</xsl:template>
-						</xsl:stylesheet>
-					</p:input>
+					<p:input name="config" href="../transformations/param2query.xsl"/>
 					<p:input name="data" href="aggregate('root',current(),#context,#sparqlinput)"/>
 					<p:output name="data" id="query"/>
 				</p:processor>
@@ -818,7 +778,7 @@
 		<!-- Check if a representation could be found, return 404 if no representation is available -->
 		<!-- Also return 404 if a representation could be found, a subject is expected and the resultset for the representation is empty -->
 		<!-- If an explicit representation is available or the 'query' format is used, never return a 404 -->
-		<p:when test="root/context/representation='' and root/context/format!='application/x.elmo.query' and (not(exists(root/results/rdf:RDF)) or (root/context/subject!='' and not(exists(root/results/rdf:RDF[1]/*))))">
+		<p:when test="root/context/representation='' and root/context/format!='application/x.elmo.query' and (not(exists(root/results/rdf:RDF) or exists(root/results/sparql:sparql)) or (root/context/subject!='' and not(exists(root/results/rdf:RDF[1]/*))))">
 			<p:processor name="oxf:identity">
 				<p:input name="data">
 					<parameters>

@@ -1,8 +1,8 @@
 <!--
 
     NAME     FormAppearance.xsl
-    VERSION  1.18.0
-    DATE     2017-06-18
+    VERSION  1.18.1
+    DATE     2017-07-03
 
     Copyright 2012-2017
 
@@ -175,9 +175,10 @@
 				</xsl:for-each>
 				<xsl:for-each select="rdf:Description[elmo:appearance/@rdf:resource='http://bp4mc2.org/elmo/def#SubmitAppearance']">
 					<div class="form-group">
+						<xsl:variable name="blabel"><xsl:call-template name="normalize-language"><xsl:with-param name="text" select="rdfs:label"/></xsl:call-template></xsl:variable>
 						<label for="btn{position()}" class="control-label col-sm-2"/>
 						<div class="col-sm-10">
-							<button id="btn{position()}" type="submit" class="btn btn-primary pull-right"><xsl:value-of select="rdfs:label"/></button>
+							<button id="btn{position()}" type="submit" class="btn btn-primary pull-right"><xsl:value-of select="$blabel"/></button>
 						</div>
 					</div>
 				</xsl:for-each>
