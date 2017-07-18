@@ -1,8 +1,8 @@
 <!--
 
     NAME     ModelTemplates.xsl
-    VERSION  1.18.0
-    DATE     2017-06-18
+    VERSION  1.18.2-SNAPSHOT
+    DATE     2017-07-18
 
     Copyright 2012-2017
 
@@ -107,7 +107,15 @@
 		<xsl:for-each-group select="rdf:Description[exists(sh:scopeClass|sh:targetClass|sh:property|rdf:type[@rdf:resource='http://www.w3.org/ns/shacl#NodeShape'])]" group-by="@rdf:about"> <!-- TODO: Remove deprecated sh:scopeClass -->
 			<xsl:variable name="class"><xsl:value-of select="current-group()/(sh:scopeClass|sh:targetClass)[1]/@rdf:resource"/></xsl:variable> <!-- TODO: Remove deprecated sh:scopeClass -->
 			<shape name="{sh:name[1]}" uri="{@rdf:about}">
-				<xsl:if test="$class!=''"><xsl:attribute name="class-uri"><xsl:value-of select="$class"/></xsl:attribute></xsl:if>
+				<xsl:if test="$class!=''">
+					<xsl:attribute name="class-uri"><xsl:value-of select="$class"/></xsl:attribute>
+				</xsl:if>
+				<xsl:attribute name="empty">
+					<xsl:choose>
+						<xsl:when test="exists(current-group()/sh:property)">false</xsl:when>
+						<xsl:otherwise>true</xsl:otherwise>
+					</xsl:choose>
+				</xsl:attribute>
 				<xsl:for-each select="current-group()/rdfs:label">
 					<label>
 						<xsl:if test="@xml:lang!=''"><xsl:attribute name="xml:lang"><xsl:value-of select="@xml:lang"/></xsl:attribute></xsl:if>
@@ -162,7 +170,17 @@
 							<xsl:copy-of select="$predicate/label"/>
 							<!-- Refshapes are all shapes that have the particular refclass as target. @refnode contains a particular explicitly definied shape. Typically, this is one of the refshapes -->
 							<xsl:for-each select="../../rdf:Description[(sh:scopeClass|sh:targetClass)/@rdf:resource=$refclass]"> <!-- TODO: Remove deprecated sh:scopeClass -->
-								<refshape uri="{@rdf:about}"/>
+								<xsl:variable name="empty">
+									<xsl:choose>
+										<xsl:when test="exists(sh:property)">false</xsl:when>
+										<xsl:otherwise>true</xsl:otherwise>
+									</xsl:choose>
+								</xsl:variable>
+								<refshape uri="{@rdf:about}" empty="{$empty}">
+									<xsl:if test="not(exists(sh:property))">
+										<xsl:attribute name="shapename"><xsl:value-of select="sh:name"/></xsl:attribute>
+									</xsl:if>
+								</refshape>
 							</xsl:for-each>
 						</property>
 					</xsl:if>
@@ -222,7 +240,7 @@
 	</xsl:variable>
 
 	<xsl:for-each-group select="rdf:Description[rdf:type/@rdf:resource='http://www.w3.org/2002/07/owl#Ontology']" group-by="@rdf:about">
-		<xsl:variable name="ontology-prefix" select="replace(@rdf:about,'(#|/)[0-9A-Za-z-_~]*$','$1')"/>
+		<xsl:variable name="ontology-prefix" select="replace(@rdf:about,'(/[0-9A-Za-z-_~]*)(#|/)$','$1')"/>
 		<xsl:variable name="prefix">
 			<xsl:choose>
 				<xsl:when test="$ontology-prefix!=''"><xsl:value-of select="$ontology-prefix"/></xsl:when>
@@ -255,7 +273,7 @@
 		<xsl:for-each select="$all-classes/class">
 			<xsl:variable name="class" select="@uri"/>
 			<xsl:if test="not(exists($all-node-shapes/shape[@class-uri=$class]))">
-				<shape uri="{$class}" class-uri="{$class}"/>
+				<shape uri="{$class}" class-uri="{$class}" empty='true'/>
 			</xsl:if>
 		</xsl:for-each>
 	</nodeShapes>

@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2yed.xsl
-    VERSION  1.18.0
-    DATE     2017-06-18
+    VERSION  1.18.2-SNAPSHOT
+    DATE     2017-07-18
 
     Copyright 2012-2017
 
@@ -67,6 +67,7 @@
 	</xsl:variable>
 	<xsl:value-of select="$label"/>
 	<xsl:if test="@datatype!=''"><xsl:text> (</xsl:text><xsl:value-of select="replace(@datatype,'^.*(#|/)([^(#|/)]+)$','$2')"/><xsl:text>)</xsl:text></xsl:if>
+	<xsl:if test="refshape/@shapename!=''"> &#x2192; <xsl:value-of select="refshape/@shapename"/></xsl:if>
 	<xsl:text> [</xsl:text><xsl:value-of select="@mincount"/><xsl:text>,</xsl:text><xsl:value-of select="@maxcount"/><xsl:text>]</xsl:text>
 </xsl:template>
 
@@ -77,7 +78,7 @@
 <xsl:copy-of select="$vocabulary"/>
 -->
 	<!-- Nodes -->
-	<xsl:for-each select="$vocabulary/nodeShapes/shape[@class-uri!='']">
+	<xsl:for-each select="$vocabulary/nodeShapes/shape[@class-uri!='' and @empty!='true']">
 		<xsl:variable name="slabel"><xsl:value-of select="replace(@class-uri,'^.*(#|/)([^(#|/)]+)$','$2')"/></xsl:variable>
 		<xsl:variable name="label">
 			<xsl:value-of select="@name"/>
@@ -89,14 +90,14 @@
 		<node id="{@uri}">
 			<data key="d6">
 				<y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
-					<y:Geometry height="{40+13*count(property[not(exists(refshape))])}" width="200.0" x="0.5" y="0"/>
+					<y:Geometry height="{40+13*count(property[not(exists(refshape[@empty='false']))])}" width="200.0" x="0.5" y="0"/>
 					<y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
 					<y:BorderStyle color="#000000" type="line" width="1.0"/>
 					<y:NodeLabel alignment="center" autoSizePolicy="node_width" configuration="CroppingLabel" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" modelName="internal" modelPosition="t" textColor="#000000" visible="true" hasBackgroundColor="false">
 						<xsl:value-of select="$label"/>
 					</y:NodeLabel>
 					<y:NodeLabel alignment="left" autoSizePolicy="node_width" configuration="CroppingLabel" fontFamily="Dialog" fontSize="10" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" modelName="custom" textColor="#000000" visible="true">
-						<xsl:for-each select="property[not(exists(refshape))]">
+						<xsl:for-each select="property[not(exists(refshape[@empty='false']))]">
 							<xsl:if test="position()!=1"><xsl:text>
 </xsl:text></xsl:if><xsl:apply-templates select="." mode="property-placement"/>
 						</xsl:for-each>
@@ -116,33 +117,37 @@
 	</xsl:for-each>
 	<!-- Edges for URI nodes -->
 	<xsl:for-each select="$vocabulary/nodeShapes/shape[@class-uri!='']/property/refshape">
-		<edge source="{../../@uri}" target="{@uri}">
-			<data key="d10">
-				<y:PolyLineEdge>
-					<y:LineStyle color="#000000" type="line" width="1.0"/>
-					<y:Arrows source="none" target="standard"/>
-					<y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true">
-						<xsl:apply-templates select=".." mode="property-placement"/>
-						<y:LabelModel>
-							<y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
-						</y:LabelModel>
-						<y:ModelParameter>
-							<y:SmartEdgeLabelModelParameter angle="0.0" distance="30.0" distanceToCenter="true" position="center" ratio="0.5" segment="0"/>
-						</y:ModelParameter>
-						<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
-					</y:EdgeLabel>
-					<y:BendStyle smoothed="false"/>
-				</y:PolyLineEdge>
-			</data>
-		</edge>
+		<xsl:variable name="refuri" select="@uri"/>
+		<xsl:variable name="refshape" select="$vocabulary/nodeShapes/shape[@uri=$refuri]"/>
+		<xsl:if test="$refshape/@class-uri!='' and $refshape/@empty!='true'">
+			<edge source="{../../@uri}" target="{@uri}">
+				<data key="d10">
+					<y:PolyLineEdge>
+						<y:LineStyle color="#000000" type="line" width="1.0"/>
+						<y:Arrows source="none" target="standard"/>
+						<y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true">
+							<xsl:apply-templates select=".." mode="property-placement"/>
+							<y:LabelModel>
+								<y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
+							</y:LabelModel>
+							<y:ModelParameter>
+								<y:SmartEdgeLabelModelParameter angle="0.0" distance="30.0" distanceToCenter="true" position="center" ratio="0.5" segment="0"/>
+							</y:ModelParameter>
+							<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
+						</y:EdgeLabel>
+						<y:BendStyle smoothed="false"/>
+					</y:PolyLineEdge>
+				</data>
+			</edge>
+		</xsl:if>
 	</xsl:for-each>
 	<!-- Subclasses -->
-	<xsl:for-each select="$vocabulary/nodeShapes/shape[@class-uri!='']">
+	<xsl:for-each select="$vocabulary/nodeShapes/shape[@class-uri!='' and @empty!='true']">
 		<xsl:variable name="source" select="@uri"/>
 		<xsl:variable name="class" select="@class-uri"/>
 		<xsl:for-each select="$vocabulary/classes/class[@uri=$class]/super">
 			<xsl:variable name="super" select="@uri"/>
-			<xsl:for-each select="$vocabulary/nodeShapes/shape[@class-uri=$super]">
+			<xsl:for-each select="$vocabulary/nodeShapes/shape[@class-uri=$super and @empty!='true']">
 				<edge source="{$source}" target="{@uri}">
 					<data key="d10">
 						<y:PolyLineEdge>

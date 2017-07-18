@@ -1,8 +1,8 @@
 <!--
 
     NAME     VocabularyAppearance.xsl
-    VERSION  1.18.0
-    DATE     2017-06-18
+    VERSION  1.18.2-SNAPSHOT
+    DATE     2017-07-18
 
     Copyright 2012-2017
 
@@ -78,16 +78,17 @@
 </xsl:function>
 
 <xsl:template match="@rdf:resource|@rdf:about|@uri|@predicate" mode="link">
-	<xsl:param name="prefix">~</xsl:param>
+	<xsl:param name="owneditems"/>
 	<xsl:param name="label"/>
 
-	<xsl:variable name="name"><xsl:value-of select="replace(.,'^.*(#|/)([^(#|/)]+)$','$2')"/></xsl:variable>
+	<xsl:variable name="uri" select="."/>
+	<xsl:variable name="name"><xsl:value-of select="replace($uri,'^.*(#|/)([^(#|/)]+)$','$2')"/></xsl:variable>
 	<xsl:variable name="label">
 		<xsl:value-of select="$label"/>
 		<xsl:if test="not($label!='')"><xsl:value-of select="$name"/></xsl:if>
 	</xsl:variable>
 	<xsl:choose>
-		<xsl:when test="starts-with(.,$prefix)">
+		<xsl:when test="starts-with($uri,$owneditems/prefix) or exists($owneditems/item[.=$uri])">
 			<a href="#{$name}"><xsl:value-of select="$label"/></a>
 		</xsl:when>
 		<xsl:otherwise>
@@ -101,7 +102,7 @@
 </xsl:template>
 
 <xsl:template match="class" mode="class-header2">
-	<xsl:param name="prefix"/>
+	<xsl:param name="owneditems"/> <!-- TODO: Waarom is deze parameter nodig? -->
 	
 	<xsl:variable name="name" select="replace(@uri,'^.*(#|/)([^(#|/)]+)$','$2')"/>
 	<xsl:variable name="resource-uri"><xsl:call-template name="resource-uri"><xsl:with-param name="uri" select="@uri"/></xsl:call-template></xsl:variable>
@@ -110,7 +111,7 @@
 </xsl:template>
 
 <xsl:template match="class" mode="class-table2">
-	<xsl:param name="prefix"/>
+	<xsl:param name="owneditems"/>
 
 	<tr>
 		<td><xsl:value-of select="ldt:label('URI:')"/></td>
@@ -123,7 +124,7 @@
 				<xsl:for-each select="super"><xsl:sort select="@uri"/>
 					<xsl:if test="position()!=1">, </xsl:if>
 					<xsl:apply-templates select="@uri" mode="link">
-						<xsl:with-param name="prefix" select="$prefix"/>
+						<xsl:with-param name="owneditems" select="$owneditems"/>
 						<xsl:with-param name="label" select="@label"/>
 					</xsl:apply-templates>
 				</xsl:for-each>
@@ -136,7 +137,7 @@
 			<td>
 				<xsl:for-each select="sub"><xsl:sort select="@uri"/>
 					<xsl:if test="position()!=1">, </xsl:if>
-					<xsl:apply-templates select="@uri" mode="link"><xsl:with-param name="prefix" select="$prefix"/></xsl:apply-templates>
+					<xsl:apply-templates select="@uri" mode="link"><xsl:with-param name="owneditems" select="$owneditems"/></xsl:apply-templates>
 				</xsl:for-each>
 			</td>
 		</tr>
@@ -148,7 +149,7 @@
 				<xsl:for-each select="seeAlso"><xsl:sort select="@uri"/>
 					<xsl:if test="position()!=1">, </xsl:if>
 					<xsl:apply-templates select="@uri" mode="link">
-						<xsl:with-param name="prefix" select="$prefix"/>
+						<xsl:with-param name="owneditems" select="$owneditems"/>
 						<xsl:with-param name="label" select="@label"/>
 					</xsl:apply-templates>
 				</xsl:for-each>
@@ -160,7 +161,7 @@
 <xsl:template match="class" mode="makeClassTree2">
 	<!-- To avoid cycles, a resource can be present only ones -->
 	<xsl:param name="done"/>
-	<xsl:param name="prefix"/>
+	<xsl:param name="owneditems"/>
 	<xsl:variable name="uri" select="@uri"/>
 	<xsl:variable name="new">
 		<xsl:for-each select="sub">
@@ -172,7 +173,7 @@
 	</xsl:variable>
 	<li>
 		<xsl:if test="exists($new/uri)"><xsl:attribute name="class">has-child tree-collapsed</xsl:attribute></xsl:if>
-		<p><xsl:apply-templates select="@uri" mode="link"><xsl:with-param name="prefix" select="$prefix"/></xsl:apply-templates></p>
+		<p><xsl:apply-templates select="@uri" mode="link"><xsl:with-param name="owneditems" select="$owneditems"/></xsl:apply-templates></p>
 		<xsl:if test="exists($new/uri)">
 			<a class="" href="#" onclick="toggleNode(this);return false;"><i class="fa fa-plus-square"></i></a>
 			<ul class="hide"> <!-- Default: collapsed tree -->
@@ -184,7 +185,7 @@
 								<xsl:copy-of select="$done"/>
 								<xsl:copy-of select="$new"/>
 							</xsl:with-param>
-							<xsl:with-param name="prefix" select="$prefix"/>
+							<xsl:with-param name="owneditems" select="$owneditems"/>
 						</xsl:apply-templates>
 					</xsl:if>
 				</xsl:for-each>
@@ -195,7 +196,7 @@
 <xsl:template match="property" mode="makeClassTree2">
 	<!-- To avoid cycles, a resource can be present only ones -->
 	<xsl:param name="done"/>
-	<xsl:param name="prefix"/>
+	<xsl:param name="owneditems"/>
 	<xsl:variable name="uri" select="@uri"/>
 	<xsl:variable name="new">
 		<xsl:for-each select="sub">
@@ -207,7 +208,7 @@
 	</xsl:variable>
 	<li>
 		<xsl:if test="exists($new/uri)"><xsl:attribute name="class">has-child tree-collapsed</xsl:attribute></xsl:if>
-		<p><xsl:apply-templates select="@uri" mode="link"><xsl:with-param name="prefix" select="$prefix"/></xsl:apply-templates></p>
+		<p><xsl:apply-templates select="@uri" mode="link"><xsl:with-param name="owneditems" select="$owneditems"/></xsl:apply-templates></p>
 		<xsl:if test="exists($new/uri)">
 			<a class="" href="#" onclick="toggleNode(this);return false;"><i class="fa fa-plus-square"></i></a>
 			<ul class="hide"> <!-- Default: collapsed tree -->
@@ -219,7 +220,7 @@
 								<xsl:copy-of select="$done"/>
 								<xsl:copy-of select="$new"/>
 							</xsl:with-param>
-							<xsl:with-param name="prefix" select="$prefix"/>
+							<xsl:with-param name="owneditems" select="$owneditems"/>
 						</xsl:apply-templates>
 					</xsl:if>
 				</xsl:for-each>
@@ -232,7 +233,22 @@
 	<!-- Parse RDF graph and put result in vocabulary variable -->
 	<xsl:variable name="vocabulary"><xsl:apply-templates select="." mode="VocabularyVariable"/></xsl:variable>
 	<!-- Expect one ontology -->
-	<xsl:variable name="prefix"><xsl:value-of select="$vocabulary/ontology[1]/@prefix"/></xsl:variable>
+	<xsl:variable name="onto-prefix"><xsl:value-of select="$vocabulary/ontology[1]/@prefix"/></xsl:variable>
+	<!-- All classes that have non-empty shapes are part of the deal as well -->
+	<xsl:variable name="owneditems">
+		<prefix>
+			<xsl:choose>
+				<xsl:when test="$onto-prefix!=''"><xsl:value-of select="$onto-prefix"/></xsl:when>
+				<xsl:otherwise>~</xsl:otherwise>
+			</xsl:choose>
+		</prefix>
+		<xsl:for-each-group select="$vocabulary/nodeShapes/shape[@class-uri!='' and @empty='false']" group-by="@class-uri">
+			<item><xsl:value-of select="@class-uri"/></item>
+		</xsl:for-each-group>
+		<xsl:for-each-group select="$vocabulary/nodeShapes/shape/property" group-by="@uri">
+			<item><xsl:value-of select="@uri"/></item>
+		</xsl:for-each-group>
+	</xsl:variable>
 <!--
 <xsl:copy-of select="$vocabulary"/>
 -->
@@ -316,7 +332,7 @@
 							<xsl:for-each select="$vocabulary/classes/class[not(exists(super))]"><xsl:sort select="@uri"/>
 								<xsl:apply-templates select="." mode="makeClassTree2">
 									<xsl:with-param name="done" select="$done"/>
-									<xsl:with-param name="prefix" select="$prefix"/>
+									<xsl:with-param name="owneditems" select="$owneditems"/>
 								</xsl:apply-templates>
 							</xsl:for-each>
 						</ul>
@@ -334,7 +350,7 @@
 							<xsl:for-each select="$vocabulary/properties/property[not(exists(super))]"><xsl:sort select="@uri"/>
 								<xsl:apply-templates select="." mode="makeClassTree2">
 									<xsl:with-param name="done" select="$done"/>
-									<xsl:with-param name="prefix" select="$prefix"/>
+									<xsl:with-param name="owneditems" select="$owneditems"/>
 								</xsl:apply-templates>
 							</xsl:for-each>
 						</ul>
@@ -350,12 +366,12 @@
 		<div class="panel-body">
 			<xsl:for-each select="$vocabulary/classes/class[not(exists(@ref))]"><xsl:sort select="@uri"/>
 				<xsl:apply-templates select="." mode="class-header2">
-					<xsl:with-param name="prefix" select="$prefix"/>
+					<xsl:with-param name="owneditems" select="$owneditems"/>
 				</xsl:apply-templates>
 				<table class="basic-text-table">
 					<tbody>
 						<xsl:apply-templates select="." mode="class-table2">
-							<xsl:with-param name="prefix" select="$prefix"/>
+							<xsl:with-param name="owneditems" select="$owneditems"/>
 						</xsl:apply-templates>
 						<xsl:variable name="shape" select="shape/@uri"/>
 						<xsl:if test="$shape!=''">
@@ -364,7 +380,7 @@
 								<td>
 									<xsl:for-each select="$vocabulary/nodeShapes/shape[@uri=$shape]/property"><xsl:sort select="@uri"/>
 										<xsl:if test="position()!=1">, </xsl:if>
-										<xsl:apply-templates select="@uri" mode="link"><xsl:with-param name="prefix" select="$prefix"/></xsl:apply-templates>
+										<xsl:apply-templates select="@uri" mode="link"><xsl:with-param name="owneditems" select="$owneditems"/></xsl:apply-templates>
 									</xsl:for-each>
 								</td>
 							</tr>
@@ -377,7 +393,7 @@
 										<xsl:variable name="shape" select="@uri"/>
 										<xsl:for-each select="$vocabulary/nodeShapes/shape[@uri=$shape]/property"><xsl:sort select="@uri"/>
 											<xsl:if test="position()!=1">, </xsl:if>
-											<xsl:apply-templates select="@uri" mode="link"><xsl:with-param name="prefix" select="$prefix"/></xsl:apply-templates>
+											<xsl:apply-templates select="@uri" mode="link"><xsl:with-param name="owneditems" select="$owneditems"/></xsl:apply-templates>
 										</xsl:for-each>
 									</xsl:for-each>
 								</td>
@@ -389,7 +405,7 @@
 								<td>
 									<xsl:for-each-group select="refproperty" group-by="@predicate"><xsl:sort select="@predicate"/>
 										<xsl:if test="position()!=1">, </xsl:if>
-										<xsl:apply-templates select="@predicate" mode="link"><xsl:with-param name="prefix" select="$prefix"/></xsl:apply-templates>
+										<xsl:apply-templates select="@predicate" mode="link"><xsl:with-param name="owneditems" select="$owneditems"/></xsl:apply-templates>
 									</xsl:for-each-group>
 								</td>
 							</tr>
@@ -422,7 +438,7 @@
 							<td>
 								<xsl:for-each select="scope-class"><xsl:sort select="@uri"/>
 									<xsl:if test="position()!=1">, </xsl:if>
-									<xsl:apply-templates select="@uri" mode="link"><xsl:with-param name="prefix" select="$prefix"/></xsl:apply-templates>
+									<xsl:apply-templates select="@uri" mode="link"><xsl:with-param name="owneditems" select="$owneditems"/></xsl:apply-templates>
 								</xsl:for-each>
 							</td>
 						</tr>
@@ -433,7 +449,7 @@
 									<xsl:for-each select="super"><xsl:sort select="@uri"/>
 										<xsl:if test="position()!=1">, </xsl:if>
 										<xsl:apply-templates select="@uri" mode="link">
-											<xsl:with-param name="prefix" select="$prefix"/>
+											<xsl:with-param name="owneditems" select="$owneditems"/>
 											<xsl:with-param name="label" select="@label"/>
 										</xsl:apply-templates>
 									</xsl:for-each>
@@ -446,7 +462,7 @@
 								<td>
 									<xsl:for-each select="ref-class"><xsl:sort select="@uri"/>
 										<xsl:if test="position()!=1">, </xsl:if>
-										<xsl:apply-templates select="@uri" mode="link"><xsl:with-param name="prefix" select="$prefix"/></xsl:apply-templates>
+										<xsl:apply-templates select="@uri" mode="link"><xsl:with-param name="owneditems" select="$owneditems"/></xsl:apply-templates>
 									</xsl:for-each>
 								</td>
 							</tr>
@@ -457,7 +473,7 @@
 								<td>
 									<xsl:for-each select="datatype">
 										<xsl:if test="position()!=1">, </xsl:if>
-										<xsl:apply-templates select="@uri" mode="link"><xsl:with-param name="prefix" select="$prefix"/></xsl:apply-templates>
+										<xsl:apply-templates select="@uri" mode="link"><xsl:with-param name="owneditems" select="$owneditems"/></xsl:apply-templates>
 									</xsl:for-each>
 								</td>
 							</tr>
@@ -468,7 +484,7 @@
 								<td>
 									<xsl:for-each select="domain">
 										<xsl:if test="position()!=1">, </xsl:if>
-										<xsl:apply-templates select="@uri" mode="link"><xsl:with-param name="prefix" select="$prefix"/></xsl:apply-templates>
+										<xsl:apply-templates select="@uri" mode="link"><xsl:with-param name="owneditems" select="$owneditems"/></xsl:apply-templates>
 									</xsl:for-each>
 								</td>
 							</tr>
