@@ -111,6 +111,18 @@
 			searchChild(tree[0].children[0].children, subject);
 		}
 
+		function searchChild(children, subject) {
+			jQuery.each(children, function(index, item) {
+			if(decodeURIComponent(item.href) == subject &amp;&amp; item.localName == 'a' ) {
+				item.className="active";
+				openParentNode(item);
+			}
+				if(item.children.length != 0) {
+					searchChild(item.children, subject);
+				}
+			});
+		}
+
 		function toggleNode(node) {
 			if (node.parentElement.children[2].className!='') {
 				node.children[0].className='fa fa-minus-square';
