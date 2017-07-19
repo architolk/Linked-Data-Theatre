@@ -107,6 +107,10 @@
 			initTree($(".nav-tree"), url);
 		});
 
+		function initTree(tree, subject) {
+			searchChild(tree[0].children[0].children, subject);
+		}
+
 		function toggleNode(node) {
 			if (node.parentElement.children[2].className!='') {
 				node.children[0].className='fa fa-minus-square';
