@@ -102,6 +102,11 @@
 		</ul>
 	</div>
 	<script>
+		$(document).ready(function() {
+			var url = decodeURIComponent(window.location.href);
+			initTree($(".nav-tree"), url);
+		});
+
 		function toggleNode(node) {
 			if (node.parentElement.children[2].className!='') {
 				node.children[0].className='fa fa-minus-square';
