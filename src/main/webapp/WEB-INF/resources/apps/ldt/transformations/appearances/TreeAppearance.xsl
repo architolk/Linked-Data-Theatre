@@ -123,6 +123,18 @@
 			});
 		}
 
+		function openParentNode(node) {
+				if(node.parentElement != null) {
+					if(node.parentElement.localName == 'li') {
+						node.parentElement.className='has-child';
+					} else if(node.parentElement.localName == 'ul') {
+						node.parentElement.className='';
+						toggle(node.parentElement.parentElement);
+					}
+					openParentNode(node.parentElement);
+				}
+			}
+
 		function toggleNode(node) {
 			if (node.parentElement.children[2].className!='') {
 				node.children[0].className='fa fa-minus-square';
