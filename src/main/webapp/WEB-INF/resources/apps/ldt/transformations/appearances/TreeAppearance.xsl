@@ -25,9 +25,9 @@
 <!--
     DESCRIPTION
 	TreeAppearance, add-on of rdf2html.xsl
-	
+
 	A TreeAppearance shows triples as a hierarchical tree, at the left side of the screen.
-	
+
 -->
 <xsl:stylesheet version="2.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
