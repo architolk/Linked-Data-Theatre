@@ -135,6 +135,16 @@
 				}
 			}
 
+			function toggle(node) {
+				if(node.localName == 'li') {
+					if(node.children.length >= 2) {
+						if(node.children[1].localName == 'a') {
+							node.children[1].children[0].className='fa fa-minus-square';
+						}
+					}
+				}
+			}
+
 		function toggleNode(node) {
 			if (node.parentElement.children[2].className!='') {
 				node.children[0].className='fa fa-minus-square';
