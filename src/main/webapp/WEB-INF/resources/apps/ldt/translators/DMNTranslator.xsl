@@ -42,6 +42,8 @@
 	xmlns:uitv="http://data.digitaalstelselomgevingswet.nl/v0.6/Uitvoeringsregels#"
 	xmlns:bedr="http://data.digitaalstelselomgevingswet.nl/v0.6/Bedrijfsregels#" 
 	xmlns:content="http://data.digitaalstelselomgevingswet.nl/v0.6/Content#"
+	xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+	xmlns:dct="http://purl.org/dc/terms/"
 >
 
 	<!--
@@ -663,12 +665,27 @@
 			<xsl:with-param name="class">InformationItem</xsl:with-param>			
 		</xsl:call-template>
 	</xsl:template>
+	
+	<!-- The property dmn:description can have inline elements, which needs to be handled separately -->
+	<xsl:template match="dmn:description">
+		<xsl:apply-templates select="dmn:inline" mode="relation"/>
+		<xsl:element name="dmno:{local-name(.)}"><xsl:apply-templates/></xsl:element>
+	</xsl:template>
+	
+	<xsl:template match="dmn:inline" mode="relation">
+		<xsl:element name="{@property}">
+			<xsl:attribute name="rdf:resource">
+				<xsl:value-of select="@href"/>
+			</xsl:attribute>
+		</xsl:element>
+	</xsl:template>
+	
+	<xsl:template match="dmn:inline">[<xsl:value-of select="."/>](<xsl:value-of select="@href"/>)</xsl:template>
 
 	<!-- Plain properties, just map on the element itself -->
 	<xsl:template match="dmn:aggregation|						 
 						 dmn:allowedAnswers|
 						 dmn:associationDirection|
-						 dmn:description|
 						 dmn:exporter|
 						 dmn:exporterVersion|
 						 dmn:expressionLanguage|
