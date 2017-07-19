@@ -1,8 +1,8 @@
 <!--
 
     NAME     DMNTranslator.xsl
-    VERSION  1.18.0
-    DATE     2017-06-18
+    VERSION  1.18.1
+    DATE     2017-07-03
 
     Copyright 2012-2017
 
@@ -43,6 +43,7 @@
 	xmlns:bedr="http://data.digitaalstelselomgevingswet.nl/v0.6/Bedrijfsregels#" 
 	xmlns:content="http://data.digitaalstelselomgevingswet.nl/v0.6/Content#"
 	xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+	xmlns:dct="http://purl.org/dc/terms/"
 >
 
 	<!--
