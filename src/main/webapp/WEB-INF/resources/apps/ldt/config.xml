@@ -65,7 +65,7 @@
 
 	For every stage, a named graph contains the detailed LDT configuration (the script of the production that is performed on the stage).
 	The URI for the named graph is created from the domain name and the stage name:
-		http://{domain}/stage/{stage name}
+		http://{domain}/{stage name}/stage
 	If a stage doesn't have a name, the URI for the named graph is created from the domain name only:
 		http://{domain}/stage
 	If you need more than one stage for a single site, you should use the name attribute to differentiate between stages.
