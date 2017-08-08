@@ -141,13 +141,13 @@ lotro:Elf rdf:type owl:Class;
 lotro:Half-elf rdf:type owl:Class;
 	rdfs:label "Half-elf";
 	rdfs:subClassOf lotro:Elf;
-	rdfs:subClassOf lotro:Man;
+	rdfs:subClassOf lotro:Human;
 .
 lotro:Mortal rdf:type owl:Class;
 	rdfs:label "Mortal";
 .
-lotro:Man rdf:type owl:Class;
-	rdfs:label "Man";
+lotro:Human rdf:type owl:Class;
+	rdfs:label "Human";
 	rdfs:subClassOf lotro:Mortal;
 .
 lotro:Elf rdf:type owl:Class;
@@ -183,11 +183,11 @@ lotrc:Gandalf rdf:type lotro:Wizard;
 	foaf:member lotrg:FellowshipOfTheRing;
 	foaf:knows lotrc:Thorin;
 .
-lotrc:Aragorn rdf:type lotro:Man;
+lotrc:Aragorn rdf:type lotro:Human;
 	rdfs:label "Aragorn";
 	foaf:member lotrg:FellowshipOfTheRing;
 .
-lotrc:Boromir rdf:type lotro:Man;
+lotrc:Boromir rdf:type lotro:Human;
 	rdfs:label "Boromir";
 	foaf:member lotrg:FellowshipOfTheRing;
 .
@@ -248,6 +248,12 @@ lotrc:Bofur rdf:type lotro:Dwarf;
 lotrc:Bombur rdf:type lotro:Dwarf;
 	rdfs:label "Bombur";
 	foaf:member lotrg:ThorinsCompany;
+.
+lotrc:Eowyn rdf:type lotro:Human;
+	rdfs:label "Éowyn";
+.
+lotrc:Theoden rdf:type lotro:Human;
+	rdfs:label "Théoden";
 .
 lotrg:FellowshipOfTheRing rdf:type foaf:Group;
 	rdfs:label "Fellowship of the ring";

@@ -1,0 +1,32 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix exont: <http://localhost:8080/def#>.
+
+stage:Search a elmo:Representation;
+	elmo:url-pattern "/query/search$";
+	elmo:index "1";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:fragment [
+		elmo:applies-to "s";
+		elmo:name "SUBJECT";
+		rdfs:label "Search results"@en;
+		rdfs:label "Zoekresultaten"@nl;
+	];
+	elmo:fragment [
+		elmo:applies-to "type";
+		rdfs:label "Type";
+	];
+	elmo:query '''
+		select ?type ?s ?s_label ("@TERM@" as ?search)
+		where {
+			graph <@STAGE@> {
+				?s rdfs:label ?s_label.
+				OPTIONAL {?s rdf:type ?type}
+				FILTER regex(?s_label,"@TERM@","i")
+			}
+		}
+	''';
+.
