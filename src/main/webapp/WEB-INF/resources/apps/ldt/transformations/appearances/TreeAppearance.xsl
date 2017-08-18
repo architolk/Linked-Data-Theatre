@@ -25,9 +25,9 @@
 <!--
     DESCRIPTION
 	TreeAppearance, add-on of rdf2html.xsl
-	
+
 	A TreeAppearance shows triples as a hierarchical tree, at the left side of the screen.
-	
+
 -->
 <xsl:stylesheet version="2.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -102,6 +102,49 @@
 		</ul>
 	</div>
 	<script>
+		$(document).ready(function() {
+			var url = decodeURIComponent(window.location.href);
+			initTree($(".nav-tree"), url);
+		});
+
+		function initTree(tree, subject) {
+			searchChild(tree[0].children[0].children, subject);
+		}
+
+		function searchChild(children, subject) {
+			jQuery.each(children, function(index, item) {
+			if(decodeURIComponent(item.href) == subject &amp;&amp; item.localName == 'a' ) {
+				item.className="active";
+				openParentNode(item);
+			}
+				if(item.children.length != 0) {
+					searchChild(item.children, subject);
+				}
+			});
+		}
+
+		function openParentNode(node) {
+				if(node.parentElement != null) {
+					if(node.parentElement.localName == 'li') {
+						node.parentElement.className='has-child';
+					} else if(node.parentElement.localName == 'ul') {
+						node.parentElement.className='';
+						toggle(node.parentElement.parentElement);
+					}
+					openParentNode(node.parentElement);
+				}
+			}
+
+			function toggle(node) {
+				if(node.localName == 'li') {
+					if(node.children.length >= 2) {
+						if(node.children[1].localName == 'a') {
+							node.children[1].children[0].className='fa fa-minus-square';
+						}
+					}
+				}
+			}
+
 		function toggleNode(node) {
 			if (node.parentElement.children[2].className!='') {
 				node.children[0].className='fa fa-minus-square';
