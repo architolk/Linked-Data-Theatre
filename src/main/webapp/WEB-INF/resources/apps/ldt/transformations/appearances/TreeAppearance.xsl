@@ -1,8 +1,8 @@
 <!--
 
     NAME     TreeAppearance.xsl
-    VERSION  1.18.0
-    DATE     2017-06-18
+    VERSION  1.18.2-SNAPSHOT
+    DATE     2017-08-18
 
     Copyright 2012-2017
 
@@ -69,6 +69,9 @@
 				<xsl:call-template name="cross-site-marker">
 					<xsl:with-param name="url" select="$resource-uri"/>
 				</xsl:call-template>
+				<xsl:if test="rdf:value!=''">
+					<xsl:text> </xsl:text><span class="badge"><xsl:value-of select="rdf:value"/></span>
+				</xsl:if>
 			</a>
 		</p>
 		<xsl:if test="exists($new/uri)">
@@ -103,7 +106,7 @@
 	</div>
 	<script>
 		$(document).ready(function() {
-			var url = decodeURIComponent(window.location.href);
+			var url = '<xsl:value-of select= "/results/context/subject"/>';
 			initTree($(".nav-tree"), url);
 		});
 
