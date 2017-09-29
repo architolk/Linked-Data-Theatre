@@ -1,8 +1,8 @@
 <!--
 
     NAME     GeoAppearance.xsl
-    VERSION  1.18.0
-    DATE     2017-06-18
+    VERSION  1.18.2-SNAPSHOT
+    DATE     2017-09-29
 
     Copyright 2012-2017
 
@@ -76,6 +76,7 @@
 				<script src="{$staticroot}/js/leaflet.js{$ldtversion}"></script>
 				<script src="{$staticroot}/js/proj4-compressed.js{$ldtversion}"></script>
 				<script src="{$staticroot}/js/proj4leaflet.js{$ldtversion}"></script>
+				<script src="{$staticroot}/js/leaflet-tilelayer-wmts.min.js{$ldtversion}"></script>
 				<!-- Clickable map form -->
 				<xsl:variable name="link" select="rdf:Description[elmo:applies-to='http://bp4mc2.org/elmo/def#Appearance']/html:link[1]"/>
 				<xsl:variable name="action">
@@ -184,7 +185,7 @@
 				<div id="map"></div>
 				<!-- TODO: width en height moet ergens vandaan komen. Liefst uit plaatje, maar mag ook uit eigenschappen -->
 				<script type="text/javascript">
-					initMap("<xsl:value-of select="$staticroot"/>",<xsl:value-of select="$zoom"/>,<xsl:value-of select="$lat"/>, <xsl:value-of select="$long"/>, "<xsl:value-of select="$backmap"/>", "<xsl:value-of select="$img"/>", "<xsl:value-of select="$container"/>", <xsl:value-of select="$left"/>, <xsl:value-of select="$top"/>, <xsl:value-of select="$width"/>, <xsl:value-of select="$height"/>);
+					initMap("<xsl:value-of select="$staticroot"/>",<xsl:value-of select="$zoom"/>,<xsl:value-of select="$lat"/>, <xsl:value-of select="$long"/>, "<xsl:value-of select="$backmap"/>", "<xsl:value-of select="$img"/>", "<xsl:value-of select="$container"/>", <xsl:value-of select="$left"/>, <xsl:value-of select="$top"/>, <xsl:value-of select="$width"/>, <xsl:value-of select="$height"/>, "<xsl:value-of select="/results/context/subject"/>");
 
 					<xsl:for-each select="rdf:Description[elmo:applies-to='http://bp4mc2.org/elmo/def#Appearance' and elmo:appearance/@rdf:resource='http://bp4mc2.org/elmo/def#TransparantOverlay']">
 						<xsl:variable name="layers">
