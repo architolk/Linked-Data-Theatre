@@ -1,7 +1,7 @@
 /*
  * NAME     linkeddatamap.js
- * VERSION  1.18.0
- * DATE     2017-06-18
+ * VERSION  1.18.2-SNAPSHOT
+ * DATE     2017-09-29
  *
  * Copyright 2012-2017
  *
@@ -34,9 +34,11 @@ var lastPolygon;
 var containerURL;
 var mapChanged = false;
 var movedItem;
+var subjectURL;
+var subjectPolygon = null;
 
 // Resolutions (pixels per meter) of the zoom levels:
-var res = [3440.640, 1720.320, 860.160, 430.080, 215.040, 107.520, 53.760, 26.880, 13.440, 6.720, 3.360, 1.680, 0.840, 0.420];
+var res = [3440.640, 1720.320, 860.160, 430.080, 215.040, 107.520, 53.760, 26.880, 13.440, 6.720, 3.360, 1.680, 0.840, 0.420, 0.210, 0.105];
 
 // Relative sizing of circles
 var circleQuotient = 0.7;
@@ -429,6 +431,7 @@ function resizeCircle(e) {
 function addWKT(uri, wkt, text, url, styleclass) {
 	var wktObject = parse(wkt);
 	wktObject.url = url;
+	wktObject.uri = uri;
 	wktObject.styleclass = styleclass
 	var html = "";
 	if (url!="") {
@@ -438,6 +441,11 @@ function addWKT(uri, wkt, text, url, styleclass) {
 	}
 	lastPolygon = L.geoJson(wktObject,{style: style,onEachFeature: onEachFeature,pointToLayer: pointToLayer}).addTo(map)
 						.bindPopup(html);
+						
+	if (uri === subjectURL) {
+		subjectPolygon = lastPolygon;
+	}
+						
 	//TESTTESTTEST
 	lastPolygon.uri = uri;
 	//TESTTESTTEST
@@ -497,7 +505,8 @@ function addEdge(subject,predicate,object) {
 function updateMap() {
 	updateTTL = "@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>. ";
 	for(i = 0; i < listOfMarkers.length; ++i) {
-		updateTTL += "<" + listOfMarkers[i].feature.geometry.url + '> geo:geometry "CIRCLE(' + listOfMarkers[i].getLatLng().lng + ' ' + listOfMarkers[i].getLatLng().lat + ',' + listOfMarkers[i].feature.geometry.originalradius + ')". ';
+//		updateTTL += "<" + listOfMarkers[i].feature.geometry.url + '> geo:geometry "CIRCLE(' + listOfMarkers[i].getLatLng().lng + ' ' + listOfMarkers[i].getLatLng().lat + ',' + listOfMarkers[i].feature.geometry.originalradius + ')". ';
+		updateTTL += "<" + listOfMarkers[i].feature.geometry.uri + '> geo:geometry "CIRCLE(' + listOfMarkers[i].getLatLng().lng + ' ' + listOfMarkers[i].getLatLng().lat + ',' + listOfMarkers[i].feature.geometry.originalradius + ')". ';
 	}
 	for(i = 0; i < listOfGeoObjects.length; ++i) {
 		layer = listOfGeoObjects[i].getLayers()[0];
@@ -589,7 +598,10 @@ function mapDblClicked(e) {
 	map.clicked = 0;
 }
 
-function initMap(staticroot, startZoom, latCor, longCor, baseLayer, imageMapURL, contURL, left, top, width, height) {
+function initMap(staticroot, startZoom, latCor, longCor, baseLayer, imageMapURL, contURL, left, top, width, height, psubjectURL) {
+	//Setter
+	subjectURL = psubjectURL;
+	
 	// Pad naar de icons goedmaken
 	L.Icon.Default.imagePath = staticroot + '/images/';
 
@@ -637,8 +649,8 @@ function initMap(staticroot, startZoom, latCor, longCor, baseLayer, imageMapURL,
 					origin: [-285401.92, 22598.08]
 				}
 			);
-			map = L.map('map',{crs: RD, maxZoom: 13});
-			osm = new L.TileLayer('http://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png', {minZoom: 1, maxZoom: 13, tms: true, continuousWorld: true});
+			map = L.map('map',{crs: RD, maxZoom: 14});
+			osm = new L.TileLayer('http://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png', {minZoom: 1, maxZoom: 16, tms: true, continuousWorld: true});
 		} else if (baseLayer=='brk') {
 			//Use BRK tiles
 			//RD Projectie
@@ -652,6 +664,25 @@ function initMap(staticroot, startZoom, latCor, longCor, baseLayer, imageMapURL,
 			map = L.map('map',{crs: RD, maxZoom: 13});
 			osm = new L.TileLayer('http://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png', {minZoom: 1, maxZoom: 13, tms: true, continuousWorld: true});
 			overlay = new L.tileLayer.wms('https://geodata.nationaalgeoregister.nl/kadastralekaartv2/wms', {layers: 'perceel,perceelnummer',format: 'image/png',transparent: true});
+		} else if (baseLayer=='bgt') {
+			//Use BRK tiles
+			//RD Projectie
+			var RD = new L.Proj.CRS( 'EPSG:28992','+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +towgs84=565.2369,50.0087,465.658,-0.406857330322398,0.350732676542563,-1.8703473836068,4.0812 +no_defs',
+				{
+					resolutions: res,
+					bounds: L.bounds([-285401.92, 22598.08], [595401.9199999999, 903401.9199999999]),
+					origin: [-285401.92, 22598.08]
+				}
+			);
+			map = L.map('map',{crs: RD, minZoom: 12, maxZoom: 15});
+			osm = new L.TileLayer.WMTS( "http://geodata.nationaalgeoregister.nl/tiles/service/wmts" ,
+                               {
+                                   layer: "bgtpastel",
+                                   style: "_null",
+                                   tilematrixSet: "EPSG:28992:16",
+                                   format: "image/png"
+                               }
+                              );
 		} else if (baseLayer=='none') {
 			map = L.map('map');
 		} else {
@@ -706,7 +737,10 @@ function showLocations(doZoom, appearance) {
 	.attr('d', 'M0,-5L10,0L0,5');
 	
 	if (listOfGeoObjects.length!=0) {
-		var firstPolygon = listOfGeoObjects[0];
+		var firstPolygon = subjectPolygon;
+		if (!firstPolygon) {
+			firstPolygon = listOfGeoObjects[0];
+		}
 		if (doZoom==1 && (firstPolygon) && !(firstPolygon.getLayers()[0] instanceof L.CircleMarker)) {
 			map.fitBounds(firstPolygon.getBounds());
 		}
