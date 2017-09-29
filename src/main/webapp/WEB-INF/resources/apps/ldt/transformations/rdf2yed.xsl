@@ -2,7 +2,7 @@
 
     NAME     rdf2yed.xsl
     VERSION  1.18.2-SNAPSHOT
-    DATE     2017-07-18
+    DATE     2017-09-29
 
     Copyright 2012-2017
 
@@ -74,32 +74,54 @@
 <xsl:template match="rdf:RDF" mode="yed-vocab">
 	<!-- Parse RDF graph and put result in vocabulary variable -->
 	<xsl:variable name="vocabulary"><xsl:apply-templates select="." mode="VocabularyVariable"/></xsl:variable>
-<!--
-<xsl:copy-of select="$vocabulary"/>
--->
+
+<!--<xsl:copy-of select="$vocabulary"/>-->
+
 	<!-- Nodes -->
-	<xsl:for-each select="$vocabulary/nodeShapes/shape[@class-uri!='' and @empty!='true']">
-		<xsl:variable name="slabel"><xsl:value-of select="replace(@class-uri,'^.*(#|/)([^(#|/)]+)$','$2')"/></xsl:variable>
+	<xsl:for-each select="$vocabulary/nodeShapes/shape[@empty!='true']">
+		<xsl:variable name="slabel">
+			<xsl:choose>
+				<xsl:when test="@class-uri!=''"><xsl:value-of select="replace(@class-uri,'^.*(#|/)([^(#|/)]+)$','$2')"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="replace(@uri,'^.*(#|/)([^(#|/)]+)$','$2')"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
 		<xsl:variable name="label">
 			<xsl:value-of select="@name"/>
 			<xsl:if test="not(@name!='')">
 				<xsl:value-of select="$slabel"/>
-				<xsl:if test="$slabel=''"><xsl:value-of select="@class-uri"/></xsl:if>
+				<xsl:if test="$slabel=''">
+					<xsl:choose>
+						<xsl:when test="@class-uri!=''"><xsl:value-of select="@class-uri"/></xsl:when>
+						<xsl:otherwise><xsl:value-of select="@uri"/></xsl:otherwise>
+					</xsl:choose>
+				</xsl:if>
 			</xsl:if>
 		</xsl:variable>
 		<node id="{@uri}">
 			<data key="d6">
 				<y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
-					<y:Geometry height="{40+13*count(property[not(exists(refshape[@empty='false']))])}" width="200.0" x="0.5" y="0"/>
+					<xsl:variable name="enumerationcnt">
+						<xsl:choose>
+							<xsl:when test="exists(enumvalue)"><xsl:value-of select="count(enumvalue)+1"/></xsl:when>
+							<xsl:otherwise>0</xsl:otherwise>
+						</xsl:choose>
+					</xsl:variable>
+					<y:Geometry height="{40+13*($enumerationcnt+count(property[not(exists(refshape[@empty='false']))]))}" width="200.0" x="0.5" y="0"/>
 					<y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
 					<y:BorderStyle color="#000000" type="line" width="1.0"/>
 					<y:NodeLabel alignment="center" autoSizePolicy="node_width" configuration="CroppingLabel" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" modelName="internal" modelPosition="t" textColor="#000000" visible="true" hasBackgroundColor="false">
 						<xsl:value-of select="$label"/>
 					</y:NodeLabel>
 					<y:NodeLabel alignment="left" autoSizePolicy="node_width" configuration="CroppingLabel" fontFamily="Dialog" fontSize="10" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" modelName="custom" textColor="#000000" visible="true">
+						<!--Properties-->
 						<xsl:for-each select="property[not(exists(refshape[@empty='false']))]">
 							<xsl:if test="position()!=1"><xsl:text>
 </xsl:text></xsl:if><xsl:apply-templates select="." mode="property-placement"/>
+						</xsl:for-each>
+						<!--Enumerations-->
+						<xsl:for-each select="enumvalue">
+							<xsl:if test="position()=1">Possible values:</xsl:if><xsl:text>
+</xsl:text>&#x221a; <xsl:value-of select="@name"/>
 						</xsl:for-each>
 						<y:LabelModel>
 							<y:ErdAttributesNodeLabelModel/>
@@ -116,25 +138,33 @@
 		</node>
 	</xsl:for-each>
 	<!-- Edges for URI nodes -->
-	<xsl:for-each select="$vocabulary/nodeShapes/shape[@class-uri!='']/property/refshape">
+	<xsl:for-each select="$vocabulary/nodeShapes/shape[@empty!='true']/property/refshape">
 		<xsl:variable name="refuri" select="@uri"/>
 		<xsl:variable name="refshape" select="$vocabulary/nodeShapes/shape[@uri=$refuri]"/>
-		<xsl:if test="$refshape/@class-uri!='' and $refshape/@empty!='true'">
+		<xsl:if test="$refshape/@empty!='true'">
 			<edge source="{../../@uri}" target="{@uri}">
 				<data key="d10">
 					<y:PolyLineEdge>
-						<y:LineStyle color="#000000" type="line" width="1.0"/>
-						<y:Arrows source="none" target="standard"/>
-						<y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true">
-							<xsl:apply-templates select=".." mode="property-placement"/>
-							<y:LabelModel>
-								<y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
-							</y:LabelModel>
-							<y:ModelParameter>
-								<y:SmartEdgeLabelModelParameter angle="0.0" distance="30.0" distanceToCenter="true" position="center" ratio="0.5" segment="0"/>
-							</y:ModelParameter>
-							<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
-						</y:EdgeLabel>
+						<xsl:choose>
+							<xsl:when test="@type='role'">
+								<y:LineStyle color="#000000" type="dashed" width="1.0"/>
+								<y:Arrows source="none" target="white_delta"/>
+							</xsl:when>
+							<xsl:otherwise>
+								<y:LineStyle color="#000000" type="line" width="1.0"/>
+								<y:Arrows source="none" target="standard"/>
+								<y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true">
+									<xsl:apply-templates select=".." mode="property-placement"/>
+									<y:LabelModel>
+										<y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
+									</y:LabelModel>
+									<y:ModelParameter>
+										<y:SmartEdgeLabelModelParameter angle="0.0" distance="30.0" distanceToCenter="true" position="center" ratio="0.5" segment="0"/>
+									</y:ModelParameter>
+									<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
+								</y:EdgeLabel>
+							</xsl:otherwise>
+						</xsl:choose>
 						<y:BendStyle smoothed="false"/>
 					</y:PolyLineEdge>
 				</data>
@@ -233,7 +263,7 @@
 		<xsl:variable name="label">
 			<xsl:value-of select="$pfragment/rdfs:label"/>
 			<xsl:if test="not(exists($pfragment/rdfs:label))">
-				<xsl:variable name="plabel" select="key('nodes',$puri)/rdfs:label"/>
+				<xsl:variable name="plabel"><xsl:value-of select="key('nodes',$puri)/rdfs:label"/></xsl:variable>
 				<xsl:value-of select="$plabel"/>
 				<xsl:if test="$plabel=''"><xsl:value-of select="name()"/></xsl:if>
 			</xsl:if>

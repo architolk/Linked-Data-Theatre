@@ -1,8 +1,8 @@
 <!--
 
     NAME     context.xsl
-    VERSION  1.18.1
-    DATE     2017-07-03
+    VERSION  1.18.2-SNAPSHOT
+    DATE     2017-09-29
 
     Copyright 2012-2017
 
@@ -212,6 +212,7 @@
 					<xsl:when test="theatre/format='d3json'">application/x.elmo.d3+json</xsl:when> <!-- Application specific mime-type -->
 					<xsl:when test="theatre/format='plainjson'">application/x.elmo.plain+json</xsl:when> <!-- Application specific mime-type -->
 					<xsl:when test="theatre/@env='dev' and theatre/format='exml'">application/x.elmo.xml</xsl:when> <!-- ONLY FOR DEV: Full XML, all resultsets -->
+					<xsl:when test="theatre/@env='dev' and theatre/format='mxml'">application/x.elmo.mxml</xsl:when> <!-- ONLY FOR DEV: Model XML -->
 					<xsl:when test="theatre/@env='dev' and theatre/format='query'">application/x.elmo.query</xsl:when> <!-- ONLY FOR DEV: Application specific mime-type -->
 					<xsl:when test="theatre/@env='dev' and theatre/format='rdfa'">application/x.elmo.rdfa</xsl:when> <!-- ONLY FOR DEV: Application specific mime-type -->
 					<xsl:when test="contains(request/headers/header[name='accept']/value,'text/html')">text/html</xsl:when>

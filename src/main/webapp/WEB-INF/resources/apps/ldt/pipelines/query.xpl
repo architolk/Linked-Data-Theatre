@@ -1,8 +1,8 @@
 <!--
 
     NAME     query.xpl
-    VERSION  1.18.1
-    DATE     2017-07-03
+    VERSION  1.18.2-SNAPSHOT
+    DATE     2017-09-29
 
     Copyright 2012-2017
 
@@ -1185,6 +1185,32 @@
 							</config>
 						</p:input>
 						<p:input name="data" href="#converted"/>
+					</p:processor>
+				</p:when>
+				<!-- mxml (Model XML used by yed, ModelAppearance and VocabularyAppearance) -->
+				<p:when test="context/format='application/x.elmo.mxml'">
+					<!-- Transform -->
+					<p:processor name="oxf:xslt">
+						<p:input name="data" href="aggregate('root',#querytext,#cache)"/>
+						<p:input name="config">
+							<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+								<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
+								<xsl:include href="../transformations/appearances/ModelTemplates.xsl"/>
+								<xsl:template match="/">
+									<model>
+										<xsl:apply-templates select="root/results/rdf:RDF[1]" mode="VocabularyVariable"/>
+									</model>
+								</xsl:template>
+							</xsl:stylesheet>
+						</p:input>
+						<p:output name="data" id="result"/>
+					</p:processor>
+					<!-- Serialize -->
+					<p:processor name="oxf:xml-serializer">
+						<p:input name="config">
+							<config/>
+						</p:input>
+						<p:input name="data" href="#result"/>
 					</p:processor>
 				</p:when>
 				<!-- Graphml yed -->
