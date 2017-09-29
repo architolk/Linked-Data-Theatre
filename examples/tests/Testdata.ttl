@@ -15,6 +15,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
 @prefix shacl: <http://www.w3.org/ns/shacl#>.
+@prefix dc: <http://purl.org/dc/elements/1.1/>.
 
 #
 # Scrumboard testdata
@@ -80,6 +81,10 @@ dbpedia:Utrecht a dbo:City;
 <http://dbpedia.org/resource/Utrecht_(province)> a dbo:Location;
 	rdfs:label "Utrecht (province)"@en;
 	rdfs:label "Utrecht (provincie)"@nl;
+	dbo:populationTotal [
+		rdf:value 1268489;
+		dc:valid "augustus 2015";
+	];
 	dbo:abstract "Utrecht (Geluidsfragment ) is met een oppervlakte van 1385 km\u00B2 de kleinste provincie van Nederland. De provincie telt ca. 1.268.489 inwoners (augustus 2015).De dichtbevolkte en centraal gelegen provincie wordt algemeen tot de Randstad gerekend. De hoofdstad en grootste stad is Utrecht. Deze stad was het centrum van het bisdom of Sticht Utrecht dat de voorloper was van de huidige provincie. De op een na grootste stad van de provincie is Amersfoort, gevolgd door Veenendaal, Zeist en Nieuwegein."@nl;
 	testo:largestCities (dbpedia:Amersfoort dbpedia:Utrecht)
 .

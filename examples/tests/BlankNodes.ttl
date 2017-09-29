@@ -12,25 +12,33 @@ stage:BlankNodes a elmo:Representation;
 	elmo:contains stage:BlankNodes_data;
 .
 
+# Data version differs from html version, because linked lists cannot be shown correctly at this moment
 stage:BlankNodes_data a elmo:Part;
 	elmo:index "0";
 	elmo:appearance elmo:HiddenAppearance;
 	elmo:query '''
 		prefix testo: <http://localhost:8080/def/test#>
+		prefix dbo: <http://dbpedia.org/ontology/>
 		construct {
 			?s rdfs:label ?label.
 			?s testo:largestCities ?list.
 			?head rdf:rest ?rest.
 			?head rdf:first ?city.
+			?s dbo:populationTotal ?pop.
+			?pop rdf:value ?pop_value.
+			?pop dc:valid ?pop_valid.
 		}
 		where {
 			graph <@STAGE@> {
 				?s rdfs:label ?label.
+				FILTER (?s = <http://dbpedia.org/resource/Utrecht_(province)>)
 				?s testo:largestCities ?list.
 				?list rdf:rest* ?head.
 				?head rdf:rest ?rest.
 				?head rdf:first ?city.
-				FILTER (?s = <http://dbpedia.org/resource/Utrecht_(province)>)
+				?s dbo:populationTotal ?pop.
+				?pop rdf:value ?pop_value.
+				?pop dc:valid ?pop_valid.
 			}
 		}
 	''';
@@ -49,14 +57,21 @@ stage:BlankNodes_content a elmo:Part;
 	elmo:index "2";
 	elmo:query '''
 		prefix testo: <http://localhost:8080/def/test#>
+		prefix dbo: <http://dbpedia.org/ontology/>
 		construct {
 			?s rdfs:label ?label.
-			?s testo:largestCities ?city
+			?s testo:largestCities ?city.
+			?s dbo:populationTotal ?pop.
+			?pop rdf:value ?pop_value.
+			?pop dc:valid ?pop_valid.
 		}
 		where {
 			?s rdfs:label ?label.
 			?s testo:largestCities/rdf:rest*/rdf:first ?city
 			FILTER (?s = <http://dbpedia.org/resource/Utrecht_(province)>)
+			?s dbo:populationTotal ?pop.
+			?pop rdf:value ?pop_value.
+			?pop dc:valid ?pop_valid.
 		}
 	''';
 .

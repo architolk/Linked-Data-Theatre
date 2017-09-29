@@ -14,7 +14,9 @@ stage:ContainerPresentations a elmo:Representation;
 		rdfs:label "Content of containers"@en;
 		rdfs:label "Inhoud van de containers"@nl;
 		elmo:html '''
-			<p><a class="btn btn-default" href="/ldt/query/uploaded-vocabulary">Show uploaded container</a></p>
+			<p><a class="btn btn-default" href="/ldt/query/simple-vocabulary">Show simple container vocabulary page</a></p>
+			<p><a class="btn btn-default" href="/ldt/query/simple-vocabulary.yed">Show simple container vocabulary diagram</a></p>
+			<p><a class="btn btn-default" href="/ldt/query/simple-vocabulary-model">Show simple container vocabulary model</a></p>
 			<p><a class="btn btn-default" href="/ldt/query/uploaded-vocabulary">Show uploaded vocabulary</a></p>
 			<p><a class="btn btn-default" href="/ldt/query/uploaded-model">Show uploaded vocabulary model</a></p>
 			<p><a class="btn btn-default" href="/ldt/query/uploaded-vocabulary.yed">Show uploaded vocabulary yEd model</a></p>
@@ -22,6 +24,48 @@ stage:ContainerPresentations a elmo:Representation;
 			<p><a class="btn btn-default" href="/ldt/query/uploaded-shapes-model">Show uploaded shapes model</a></p>
 			<p><a class="btn btn-default" href="/ldt/query/uploaded-shapes.yed">Show uploaded shapes yED model</a></p>
 			<p><a class="btn btn-default" href="/ldt/query/archicomponents">Show archi container</a></p>
+			<p><a class="btn btn-default" href="/ldt/query/simple-container.yed">Show simple container graph</a></p>
+			<p><a class="btn btn-default" href="/ldt/query/simple-container-concept">Show simple container concepts</a></p>
 		''';
 	]
+.
+
+#stage:SimpleContainer a elmo:Representation;
+#	elmo:url-pattern "/query/simple-container.yed";
+#	elmo:query stage:SimpleContainerQuery;
+#.
+stage:SimpleContainer a elmo:Representation;
+	elmo:url-pattern "/query/simple-vocabulary(|.yed)$";
+	elmo:appearance elmo:VocabularyAppearance;
+	elmo:query stage:SimpleContainerQuery;
+.
+stage:SimpleContainerModel a elmo:Representation;
+	elmo:url-pattern "/query/simple-vocabulary-model$";
+	elmo:appearance elmo:ModelAppearance;
+	elmo:query stage:SimpleContainerQuery;
+.
+stage:SimpleContainerQuery a elmo:Query;
+	elmo:query '''
+		construct {?s?p?o}
+		where {
+			graph <http://localhost:8080/container/simple> {
+				?s?p?o
+			}
+		}
+	''';
+.
+
+stage:SimpleContainerConcepts a elmo:Representation;
+	elmo:url-pattern "/query/simple-container-concepts$";
+	elmo:query '''
+		select ?concept ?concept_label ?definition
+		where {
+			graph <http://localhost:8080/container/simple> {
+				?concept rdf:type skos:Concept.
+				?concept rdfs:label ?concept_label.
+				?concept skos:definition ?definition.
+				FILTER (lang(?concept_label)="" or lang(?concept_label)="@LANGUAGE@")
+			}
+		}
+	''';
 .

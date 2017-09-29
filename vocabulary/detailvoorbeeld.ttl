@@ -1,0 +1,45 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix shape: <http://dotwebstack.org/def/elmo/>.
+@prefix elmo: <http://dotwebstack.org/def/elmo#>.
+@prefix ex: <http://example.org#>.
+
+# -----
+# Shape graph
+# -----
+shape:SparqlBackend a sh:NodeShape;
+	sh:targetClass elmo:SparqlBackend;
+	sh:property [
+		sh:path [ sh:inversePath elmo:backend ];
+		sh:node shape:SparqlInformationProduct;
+		sh:class elmo:InformationProduct;
+	];
+	sh:property [
+		sh:path elmo:endpoint;
+		sh:datatype xsd:AnyURI;
+		sh:minCount 1;
+		sh:maxCount 1;
+		
+	];
+.
+shape:SparqlInformationProduct a sh:NodeShape;
+   sh:property [
+       sh:path elmo:query;
+       sh:minCount 1;
+       sh:maxCount 1;
+   ];
+.
+
+# -----
+# Data graph
+# -----
+
+ex:MyInfo a elmo:InformationProduct;
+	rdfs:label "My information product";
+	elmo:backend ex:MyLocalSparqlBackend;
+	elmo:query "SELECT (COUNT(*) AS ?count) WHERE {?s?p?o}";
+.
+ex:MyLocalSparqlBackend a elmo:SparqlBackend;
+	elmo:endpoint "http://localhost:8890/sparql"^^xsd:AnyURI;
+.

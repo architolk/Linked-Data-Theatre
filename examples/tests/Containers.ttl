@@ -3,6 +3,8 @@
 @prefix container: <http://localhost:8080/container/>.
 @prefix testcontainer: <http://localhost:8888/container/>.
 @prefix stage: <http://localhost:8080/stage#>.
+@prefix sh: <http://www.w3.org/ns/shacl#>.
+@prefix skos: <http://www.w3.org/2004/02/skos/core#>.
 
 container:simple a elmo:Container;
 	elmo:contains stage:NavbarSearchAppearance;
@@ -198,6 +200,22 @@ testcontainer:defquery a elmo:Container;
 		'''
 	];
 	elmo:query stage:ContainerQuery;
+.
+
+container:shape a elmo:Container;
+	rdfs:label "This container should only contain certain shapes";
+	elmo:shape stage:containershape;
+.
+stage:containershape a sh:NodeShape;
+	sh:targetClass skos:Concept;
+	sh:property [
+		rdfs:label "preferred label"@en;
+		rdfs:label "naam"@nl;
+		sh:name "skos:prefLabel";
+		sh:path skos:prefLabel;
+		sh:minCount 1;
+		sh:maxCount 1;
+	];
 .
 
 stage:ContainerQuery a elmo:Query;

@@ -46,7 +46,7 @@ stage:DefaultResource_graph a elmo:Part;
 		''';
 	];
 	elmo:fragment [
-		elmo:applies-to "skos:Concept";
+		elmo:applies-to "skos-Concept";
 		html:stylesheet '''
 			fill: red;
 			fill-opacity: .3;

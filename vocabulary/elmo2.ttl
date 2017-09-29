@@ -32,8 +32,8 @@
 @prefix xhtml: <http://www.w3.org/1999/xhtml/vocab#>.
 @prefix xs: <http://www.w3.org/2001/XMLSchema#>.
 
-@prefix elmo: <http://bp4mc2.org/def/elmo2#>.
-@prefix elmoshape: <http://bp4mc2.org/def/elmo2/>.
+@prefix elmo: <http://dotwebstack.org/def/elmo#>.
+@prefix elmoshape: <http://dotwebstack.org/def/elmo/>.
 
 # ======
 #
@@ -44,28 +44,101 @@ elmo:InformationProduct a owl:Class;
 	rdfs:label "Information product"@en;
 	rdfs:label "Informatieproduct"@nl;
 .
+elmo:backend a owl:ObjectProperty;
+	rdfs:label "backend"@en;
+	rdfs:label "backend"@nl;
+.
+elmo:query a owl:DatatypeProperty;
+	rdfs:label "query"@en;
+	rdfs:label "query"@nl;
+.
 elmoshape:InformationProduct a sh:NodeShape;
 	sh:name "elmo:InformationProduct";
 	sh:targetClass elmo:InformationProduct;
 	sh:property [
-		sh:path elmo:contains;
-		sh:name "elmo:contains";
-		sh:class elmo:InformationProduct;
+		sh:path elmo:backend;
+		sh:name "elmo:backend";
+		sh:class elmo:Backend;
+		sh:minCount 1;
+		sh:maxCount 1;
 	];
 	sh:property [
 		sh:path elmo:query;
 		sh:name "elmo:query";
-		sh:maxCount 1;
 	];
+.
+
+# ======
+#
+# BACKEND
+#
+# ======
+elmo:Backend a owl:Class;
+	rdfs:label "Backend"@en;
+	rdfs:label "Backend"@nl;
 	sh:property [
 		sh:path elmo:endpoint;
 		sh:name "elmo:endpoint";
+	];
+.
+elmoshape:Backend a sh:NodeShape;
+	sh:name "elmo:Backend";
+	sh:targetClass elmo:Backend;
+.
+elmo:HttpBackend a owl:Class;
+	rdfs:label "HTTP Backend"@en;
+	rdfs:label "HTTP Backend"@nl;
+	rdfs:subClassOf elmo:Backend;
+.
+elmoshape:HttpBackend a sh:NodeShape;
+	sh:name "elmo:HttpBackend";
+	sh:targetClass elmo:HttpBackend;
+	sh:property [
+		sh:path elmo:endpoint;
+		sh:name "elmo:endpoint";
+		sh:minCount 1;
 		sh:maxCount 1;
 	];
+.
+elmo:SparqlBackend a owl:Class;
+	rdfs:label "Sparql backend"@en;
+	rdfs:label "Sparql backend"@nl;
+	rdfs:subClassOf elmo:HttpBackend;
+.
+elmoshape:SparqlBackend a sh:NodeShape;
+	sh:name "elmo:SparqlBackend";
+	sh:targetClass elmo:SparqlBackend;
 	sh:property [
-		sh:path elmo:adapter;
-		sh:name "elmo:adapter";
-		sh:maxCount 1;
+		sh:path [ sh:inversePath elmo:backend ];
+		sh:node [
+		   sh:property [
+			   sh:path elmo:query;
+			   sh:minCount 1;
+			   sh:maxCount 1;
+		   ];
+		];
+		sh:class elmo:InformationProduct;
+	];
+.
+
+elmo:ElasticSearchBackend a owl:Class;
+	rdfs:label "Elastic search backend"@en;
+	rdfs:label "Elastic search backend"@nl;
+	rdfs:subClassOf elmo:HttpBackend;
+.
+elmoshape:ElasticSearchBackend a sh:NodeShape;
+	sh:name "elmo:ElasticSearchBackend";
+	sh:targetClass elmo:ElasticSearchBackend;
+	sh:property [
+		sh:path [ sh:inversePath elmo:backend ];
+		sh:node [
+		   sh:property [
+			   sh:path elmo:query;
+			   sh:minCount 1;
+			   sh:maxCount 1;
+		   ];
+		];
+		sh:class elmo:InformationProduct;
 	];
 .
 
