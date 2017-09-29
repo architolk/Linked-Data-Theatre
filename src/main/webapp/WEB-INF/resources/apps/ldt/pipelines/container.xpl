@@ -1,8 +1,8 @@
 <!--
 
     NAME     container.xpl
-    VERSION  1.18.1
-    DATE     2017-07-03
+    VERSION  1.18.2-SNAPSHOT
+    DATE     2017-09-29
 
     Copyright 2012-2017
 
@@ -89,6 +89,7 @@
 		  xmlns:elmo="http://bp4mc2.org/elmo/def#"
 		  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 		  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		  xmlns:sh="http://www.w3.org/ns/shacl#"
 
 		  rdfs:label="Container pipeline"
 		  >
@@ -274,6 +275,7 @@
 						<query>
 						<![CDATA[
 							PREFIX elmo: <http://bp4mc2.org/elmo/def#>
+							PREFIX sh: <http://www.w3.org/ns/shacl#>
 							CONSTRUCT {
 								<]]><xsl:value-of select="context/subject"/><![CDATA[> rdf:type ?type.
 								<]]><xsl:value-of select="context/subject"/><![CDATA[> ?p ?s.
@@ -281,7 +283,10 @@
 								<]]><xsl:value-of select="context/subject"/><![CDATA[> elmo:assertion ?assertion.
 								?assertion ?assertionp ?assertiono.
 								<]]><xsl:value-of select="context/subject"/><![CDATA[> elmo:fragment ?fragment.
-								?fragment ?fragmentp ?fragmento
+								?fragment ?fragmentp ?fragmento.
+								?shape rdf:type sh:NodeShape.
+								?shape ?shapep ?shapeo.
+								?pshape ?pshapep ?pshapeo.
 							}
 							WHERE {
 								GRAPH <]]><xsl:value-of select="context/representation-graph/@uri"/><![CDATA[> {
@@ -295,6 +300,12 @@
 									OPTIONAL {
 										<]]><xsl:value-of select="context/subject"/><![CDATA[> elmo:fragment ?fragment.
 										?fragment ?fragmentp ?fragmento
+									}
+									OPTIONAL {
+										<]]><xsl:value-of select="context/subject"/><![CDATA[> elmo:shape ?shape.
+										?shape ?shapep ?shapeo.
+										?shape sh:property ?pshape.
+										?pshape ?pshapep ?pshapeo.
 									}
 									FILTER (?type = elmo:Container or ?type = elmo:VersionContainer)
 								}
@@ -352,8 +363,9 @@
 							</xsl:choose>
 						</xsl:template>
 						<xsl:template match="/">
+							<xsl:variable name="container" select="/root/context/subject"/>
 							<container>
-								<xsl:for-each select="root/rdf:RDF/rdf:Description[1]">
+								<xsl:for-each select="root/rdf:RDF/rdf:Description[@rdf:about=$container]">
 									<label><xsl:value-of select="rdfs:label"/></label>
 									<url><xsl:value-of select="@rdf:about"/></url>
 									<user-role><xsl:value-of select="elmo:user-role"/></user-role>
@@ -427,6 +439,19 @@
 											</xsl:for-each>
 										</xsl:for-each>
 									</fragments>
+									<shapes>
+										<xsl:for-each select="/root/rdf:RDF/rdf:Description[rdf:type/@rdf:resource='http://www.w3.org/ns/shacl#NodeShape']">
+											<shape uri="{@rdf:about}">
+												<xsl:copy-of select="* except sh:property"/>
+												<xsl:for-each select="sh:property">
+													<xsl:variable name="property" select="@rdf:resource|@rdf:nodeID"/>
+													<sh:property>
+														<xsl:copy-of select="../../rdf:Description[@rdf:nodeID=$property or @rdf:about=$property]"/>
+													</sh:property>
+												</xsl:for-each>
+											</shape>
+										</xsl:for-each>
+									</shapes>
 									<contains>
 										<xsl:for-each select="elmo:contains">
 											<representation uri="{@rdf:resource}"/>
