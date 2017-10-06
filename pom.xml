@@ -126,6 +126,7 @@
 							<jsSourceFiles>
 								<jsSourceFile>d3graphs-inner.js</jsSourceFile>
 								<jsSourceFile>leaflet.label.js</jsSourceFile>
+								<jsSourceFile>leaflet-tilelayer-wmts.js</jsSourceFile>
 								<jsSourceFile>linkeddatamap.js</jsSourceFile>
 								<jsSourceFile>linkedmodel.js</jsSourceFile>
 								<jsSourceFile>rdfmap.js</jsSourceFile>

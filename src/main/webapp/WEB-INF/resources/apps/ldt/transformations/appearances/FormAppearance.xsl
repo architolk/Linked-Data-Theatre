@@ -1,8 +1,8 @@
 <!--
 
     NAME     FormAppearance.xsl
-    VERSION  1.18.1
-    DATE     2017-07-03
+    VERSION  1.18.2-SNAPSHOT
+    DATE     2017-10-06
 
     Copyright 2012-2017
 
@@ -90,6 +90,9 @@
 								<xsl:when test="elmo:valuesFrom/@rdf:resource!=''">
 									<xsl:variable name="applies" select="elmo:applies-to"/>
 									<xsl:variable name="param" select="/results/context/parameters/parameter[name=$applies]/value[1]"/>
+									<xsl:variable name="default">
+										<xsl:if test="not($param!='')"><xsl:value-of select="rdf:value/@rdf:resource"/></xsl:if>
+									</xsl:variable>
 									<xsl:variable name="paramlabel" select="/results/context/parameters/parameter[name=concat($applies,'_label')]/value[1]"/>
 									<xsl:variable name="selcount" select="count(key('rdf',elmo:valuesFrom/@rdf:resource)/rdf:Description)"/>
 									<xsl:variable name="paramquery">
@@ -121,7 +124,7 @@
 													</xsl:attribute>
 													<xsl:for-each select="key('rdf',elmo:valuesFrom/@rdf:resource)/rdf:Description"><xsl:sort select="rdfs:label[1]"/>
 														<option value="{@rdf:about}" data-rdfvalue="{rdf:value}">
-															<xsl:if test="$param=@rdf:about"><xsl:attribute name="selected">selected</xsl:attribute></xsl:if>
+															<xsl:if test="$param=@rdf:about or @rdf:about=$default"><xsl:attribute name="selected">selected</xsl:attribute></xsl:if>
 															<xsl:value-of select="rdfs:label"/>
 														</option>
 													</xsl:for-each>
@@ -130,7 +133,6 @@
 											</div>
 										</xsl:when>
 										<xsl:otherwise>
-											<xsl:variable name="default" select="rdf:value/@rdf:resource"/>
 											<xsl:for-each select="key('rdf',elmo:valuesFrom/@rdf:resource)/rdf:Description"><xsl:sort select="rdfs:label[1]"/>
 												<label class="radio-inline">
 													<input type="radio" id="{$applies}" name="{$applies}" value="{@rdf:about}">
@@ -155,7 +157,11 @@
 									<input type="file" class="form-control" id="{elmo:applies-to}" name="{elmo:applies-to}"/>
 								</xsl:when>
 								<xsl:when test="elmo:valueDatatype/@rdf:resource='http://www.w3.org/2001/XMLSchema#Date'">
-									<input type="text" class="form-control datepicker" id="{elmo:applies-to}" name="{elmo:applies-to}"/>
+									<input type="text" class="form-control datepicker" id="{elmo:applies-to}" name="{elmo:applies-to}">
+										<xsl:if test="rdf:value/@rdf:resource='http://bp4mc2.org/elmo/def#Now'">
+											<xsl:attribute name="value"><xsl:value-of select="substring-before(/results/context/timestamp,'T')"/></xsl:attribute>
+										</xsl:if>
+									</input>
 								</xsl:when>
 								<xsl:when test="elmo:valueDatatype/@rdf:resource='http://www.w3.org/2001/XMLSchema#String'">
 									<textarea type="text" class="form-control" id="{elmo:applies-to}" name="{elmo:applies-to}" rows="30">
@@ -182,7 +188,7 @@
 						</div>
 					</div>
 				</xsl:for-each>
-				<script>$('.datepicker').datepicker({language: '<xsl:value-of select="/results/context/language"/>'});</script>
+				<script>$('.datepicker').datepicker({format: 'yyyy-mm-dd', todayHighlight: true, autoclose: true, language: '<xsl:value-of select="/results/context/language"/>'});</script>
 				<xsl:if test="$turtleEditorID!=''">
 					<script>var editor = CodeMirror.fromTextArea(document.getElementById("<xsl:value-of select="$turtleEditorID"/>"), {mode: "text/turtle",matchBrackets: true,lineNumbers:true});</script>
 				</xsl:if>

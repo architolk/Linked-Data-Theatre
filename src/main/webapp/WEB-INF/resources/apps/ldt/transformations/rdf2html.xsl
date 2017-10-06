@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2html.xsl
-    VERSION  1.18.1
-    DATE     2017-07-03
+    VERSION  1.18.2-SNAPSHOT
+    DATE     2017-10-06
 
     Copyright 2012-2017
 
@@ -590,7 +590,7 @@
 
 		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/bootstrap.min.css{$ldtversion}"/>
 		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/dataTables.bootstrap.min.css{$ldtversion}"/>
-		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/bootstrap-datepicker3.min.css{$ldtversion}"/>
+		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/bootstrap-datepicker3.standalone.min.css{$ldtversion}"/>
 		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/ldt-theme.min.css{$ldtversion}"/>
 		<link rel="stylesheet" type="text/css" href="{$staticroot}/css/font-awesome.min.css{$ldtversion}"/>
 
