@@ -2,7 +2,7 @@
 
     NAME     VocabularyAppearance.xsl
     VERSION  1.18.2-SNAPSHOT
-    DATE     2017-07-18
+    DATE     2017-10-07
 
     Copyright 2012-2017
 
@@ -63,10 +63,12 @@
 			<term id="Subproperty of:">Subeigenschap van:</term>
 			<term id="Properties include:">Eigenschappen:</term>
 			<term id="Inherited properties:">Geërfde eigenschappen:</term>
+			<term id="Properties from ">Eigenschappen via </term>
 			<term id="Property of:">Eigenschap van:</term>
 			<term id="Class of object:">Gerelateerde klasse:</term>
 			<term id="Datatype:">Datatype:</term>
 			<term id="Values from:">Waarden uit:</term>
+			<term id="Possible values:">Mogelijke waarden:</term>
 			<term id="Classes and properties">Klassen en eigenschappen</term>
 			<term id="Used with property:">Gebruikt bij eigenschap:</term>
 		</list>
@@ -385,6 +387,18 @@
 								</td>
 							</tr>
 						</xsl:if>
+						<xsl:for-each select="role-shape">
+							<xsl:variable name="shape" select="@uri"/>
+							<tr>
+								<td>- <xsl:value-of select="$vocabulary/nodeShapes/shape[@uri=$shape]/@name"/></td>
+								<td>
+									<xsl:for-each select="$vocabulary/nodeShapes/shape[@uri=$shape]/property"><xsl:sort select="@uri"/>
+										<xsl:if test="position()!=1">, </xsl:if>
+										<xsl:apply-templates select="@uri" mode="link"><xsl:with-param name="owneditems" select="$owneditems"/></xsl:apply-templates>
+									</xsl:for-each>
+								</td>
+							</tr>
+						</xsl:for-each>
 						<xsl:if test="exists(inherited-shape/@uri)">
 							<tr>
 								<td><xsl:value-of select="ldt:label('Inherited properties:')"/></td>
@@ -433,15 +447,17 @@
 							<td><xsl:value-of select="ldt:label('URI:')"/></td>
 							<td><xsl:value-of select="@uri"/></td>
 						</tr>
-						<tr>
-							<td><xsl:value-of select="ldt:label('Property of:')"/></td>
-							<td>
-								<xsl:for-each select="scope-class"><xsl:sort select="@uri"/>
-									<xsl:if test="position()!=1">, </xsl:if>
-									<xsl:apply-templates select="@uri" mode="link"><xsl:with-param name="owneditems" select="$owneditems"/></xsl:apply-templates>
-								</xsl:for-each>
-							</td>
-						</tr>
+						<xsl:if test="exists(scope-class)">
+							<tr>
+								<td><xsl:value-of select="ldt:label('Property of:')"/></td>
+								<td>
+									<xsl:for-each select="scope-class"><xsl:sort select="@uri"/>
+										<xsl:if test="position()!=1">, </xsl:if>
+										<xsl:apply-templates select="@uri" mode="link"><xsl:with-param name="owneditems" select="$owneditems"/></xsl:apply-templates>
+									</xsl:for-each>
+								</td>
+							</tr>
+						</xsl:if>
 						<xsl:if test="exists(super)">
 							<tr>
 								<td><xsl:value-of select="ldt:label('Subproperty of:')"/></td>
@@ -488,6 +504,27 @@
 									</xsl:for-each>
 								</td>
 							</tr>
+						</xsl:if>
+						<xsl:if test="exists(valuelist)">
+							<xsl:for-each select="valuelist">
+								<xsl:variable name="shape" select="@shape"/>
+								<tr>
+									<td><xsl:value-of select="ldt:label('Possible values:')"/> (<xsl:value-of select="$vocabulary/nodeShapes/shape[@uri=$shape]/@name"/>)</td>
+									<td>
+										<xsl:for-each select="item">
+											<xsl:if test="position()!=1">, </xsl:if>
+											<xsl:choose>
+												<xsl:when test="exists(@uri)">
+													<xsl:apply-templates select="@uri" mode="link">
+														<xsl:with-param name="owneditems" select="$owneditems"/>
+													</xsl:apply-templates>
+												</xsl:when>
+												<xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
+											</xsl:choose>
+										</xsl:for-each>
+									</td>
+								</tr>
+							</xsl:for-each>
 						</xsl:if>
 					</tbody>
 				</table>
