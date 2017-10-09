@@ -1,8 +1,8 @@
 <!--
 
     NAME     edit.xpl
-    VERSION  1.18.0
-    DATE     2017-06-18
+    VERSION  1.18.2-SNAPSHOT
+    DATE     2017-10-09
 
     Copyright 2012-2017
 
@@ -40,40 +40,82 @@
 	<!-- Configuration> -->
 	<p:param type="input" name="instance"/>
 
-	<p:processor name="oxf:httpclient-processor">
-		<p:input name="data">
-			<input>
-				<newFileName>newresource.ttl</newFileName>
-				<oldFileName>newresource.ttl</oldFileName>
-				<branch>master</branch>
-				<path/>
-				<message>update</message>
-				<charset>UTF-8</charset>
-				<lineSeparator>CRLF</lineSeparator>
-				<content><![CDATA[<http://test> a <http://testcase>.]]></content>
-			</input>
-		</p:input>
-		<p:input name="config">
-			<config>
-				<auth-method>form</auth-method>
-				<auth-url>http://git.localhost:8080/signin</auth-url>
-				<username>root</username>
-				<password>root</password>
-				<input-type>form</input-type>
-				<output-type>text</output-type>
-				<url>http://git.localhost:8080/root/test1/update</url>
-				<method>post</method>
-			</config>
-		</p:input>
-		<p:output name="data" id="output"/>
-	</p:processor>
-	
-	<p:processor name="oxf:xml-serializer">
-		<p:input name="config">
-			<config>
-			</config>
-		</p:input>
-		<p:input name="data" href="#output"/>
-	</p:processor>
+	<!-- Only in development mode -->
+	<p:choose href="#instance">
+		<p:when test="theatre/@env='dev'">
+		
+			<p:processor name="oxf:httpclient-processor">
+				<p:input name="data">
+					<input>
+						<newFileName>newresource.ttl</newFileName>
+						<oldFileName>newresource.ttl</oldFileName>
+						<branch>master</branch>
+						<path/>
+						<message>update</message>
+						<charset>UTF-8</charset>
+						<lineSeparator>CRLF</lineSeparator>
+						<content><![CDATA[<http://test> a <http://testcase>.]]></content>
+					</input>
+				</p:input>
+				<p:input name="config">
+					<config>
+						<auth-method>form</auth-method>
+						<auth-url>http://git.localhost:8080/signin</auth-url>
+						<username>root</username>
+						<password>root</password>
+						<input-type>form</input-type>
+						<output-type>text</output-type>
+						<url>http://git.localhost:8080/root/test1/update</url>
+						<method>post</method>
+					</config>
+				</p:input>
+				<p:output name="data" id="output"/>
+			</p:processor>
+			
+			<p:processor name="oxf:xml-serializer">
+				<p:input name="config">
+					<config>
+					</config>
+				</p:input>
+				<p:input name="data" href="#output"/>
+			</p:processor>
+			
+		</p:when>
+		<p:otherwise>
+			<p:processor name="oxf:identity">
+				<p:input name="data">
+					<parameters>
+							<error-nr>404</error-nr>
+					</parameters>
+				</p:input>
+				<p:output name="data" id="errortext"/>
+			</p:processor>
+			<p:processor name="oxf:xslt">
+				<p:input name="data" href="aggregate('results',#errortext)"/>
+				<p:input name="config" href="../transformations/error2html.xsl"/>
+				<p:output name="data" id="html"/>
+			</p:processor>
+			<p:processor name="oxf:html-converter">
+				<p:input name="config">
+					<config>
+						<encoding>utf-8</encoding>
+						<version>5.0</version>
+					</config>
+				</p:input>
+				<p:input name="data" href="#html"/>
+				<p:output name="data" id="htmlres" />
+			</p:processor>
+			<!-- Serialize -->
+			<p:processor name="oxf:http-serializer">
+				<p:input name="config">
+					<config>
+						<cache-control><use-local-cache>false</use-local-cache></cache-control>
+						<status-code>404</status-code>
+					</config>
+				</p:input>
+				<p:input name="data" href="#htmlres"/>
+			</p:processor>
+		</p:otherwise>
+	</p:choose>
 	
 </p:config>

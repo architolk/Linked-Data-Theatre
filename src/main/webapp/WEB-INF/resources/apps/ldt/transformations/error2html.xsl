@@ -1,8 +1,8 @@
 <!--
 
     NAME     error2html.xsl
-    VERSION  1.18.0
-    DATE     2017-06-18
+    VERSION  1.18.2-SNAPSHOT
+    DATE     2017-10-09
 
     Copyright 2012-2017
 
@@ -104,14 +104,8 @@
 								</div>
 							</div>
 						</div>
-						<xsl:variable name="divclass">
-							<xsl:choose>
-								<xsl:when test="results/context/@env='dev'">row</xsl:when>
-								<xsl:otherwise>row hidden</xsl:otherwise>
-							</xsl:choose>
-						</xsl:variable>
-						<xsl:if test="exists(results/exceptions)">
-							<div class="{$divclass}" id="errors">
+						<xsl:if test="exists(results/exceptions) and results/context/@env='dev'">
+							<div class="row" id="errors">
 								<script type="text/javascript" charset="utf-8">
 									$(document).ready(function() {$('#errortable').dataTable(elmo_language);} );
 								</script>
