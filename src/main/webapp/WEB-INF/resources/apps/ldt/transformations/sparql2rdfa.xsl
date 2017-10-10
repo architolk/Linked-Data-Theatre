@@ -1,8 +1,8 @@
 <!--
 
     NAME     sparql2rdfa.xsl
-    VERSION  1.18.0
-    DATE     2017-06-18
+    VERSION  1.18.2-SNAPSHOT
+    DATE     2017-10-10
 
     Copyright 2012-2017
 
@@ -48,7 +48,16 @@
 
 <!-- RDF document -->
 <xsl:template match="rdf:RDF">
-	<xsl:copy-of select="."/>
+	<!-- Order by identifier -->
+	<rdf:RDF>
+		<xsl:for-each-group select="rdf:Description" group-by="(@rdf:nodeID|@rdf:about)"><xsl:sort select="(@rdf:nodeID|@rdf:about)"/>
+			<rdf:Description>
+				<xsl:if test="exists(@rdf:nodeID)"><xsl:attribute name="rdf:nodeID" select="@rdf:nodeID"/></xsl:if>
+				<xsl:if test="exists(@rdf:about)"><xsl:attribute name="rdf:about" select="@rdf:about"/></xsl:if>
+				<xsl:copy-of select="current-group()/*"/>
+			</rdf:Description>
+		</xsl:for-each-group>
+	</rdf:RDF>
 </xsl:template>
 
 <!-- ******************************* -->

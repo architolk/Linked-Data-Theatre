@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.18.2-SNAPSHOT
-    DATE     2017-10-06
+    DATE     2017-10-10
 
     Copyright 2012-2017
 
@@ -346,7 +346,8 @@
 										<xsl:apply-templates select="." mode="object"/>
 									</xsl:when>
 									<xsl:otherwise>
-										<xsl:for-each select="current-group()">
+												<!-- Nested resources sorteren -->
+										<xsl:for-each select="current-group()"><xsl:sort select="rdf:Description/@rdf:about"/>
 											<p><xsl:apply-templates select="." mode="object"/></p>
 										</xsl:for-each>
 									</xsl:otherwise>
