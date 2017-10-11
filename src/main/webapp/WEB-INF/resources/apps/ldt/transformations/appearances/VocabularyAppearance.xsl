@@ -2,7 +2,7 @@
 
     NAME     VocabularyAppearance.xsl
     VERSION  1.18.2-SNAPSHOT
-    DATE     2017-10-07
+    DATE     2017-10-11
 
     Copyright 2012-2017
 
@@ -164,7 +164,7 @@
 	<!-- To avoid cycles, a resource can be present only ones -->
 	<xsl:param name="done"/>
 	<xsl:param name="owneditems"/>
-	<xsl:variable name="uri" select="@uri"/>
+	<xsl:variable name="class-uri" select="@uri"/>
 	<xsl:variable name="new">
 		<xsl:for-each select="sub">
 			<xsl:variable name="about" select="@uri"/>
@@ -174,9 +174,9 @@
 		</xsl:for-each>
 	</xsl:variable>
 	<li>
-		<xsl:if test="exists($new/uri)"><xsl:attribute name="class">has-child tree-collapsed</xsl:attribute></xsl:if>
+		<xsl:if test="exists($new/uri) or exists(role-shape)"><xsl:attribute name="class">has-child tree-collapsed</xsl:attribute></xsl:if>
 		<p><xsl:apply-templates select="@uri" mode="link"><xsl:with-param name="owneditems" select="$owneditems"/></xsl:apply-templates></p>
-		<xsl:if test="exists($new/uri)">
+		<xsl:if test="exists($new/uri) or exists(role-shape)">
 			<a class="" href="#" onclick="toggleNode(this);return false;"><i class="fa fa-plus-square"></i></a>
 			<ul class="hide"> <!-- Default: collapsed tree -->
 				<xsl:for-each select="sub"><xsl:sort select="@uri"/>
@@ -190,6 +190,16 @@
 							<xsl:with-param name="owneditems" select="$owneditems"/>
 						</xsl:apply-templates>
 					</xsl:if>
+				</xsl:for-each>
+				<xsl:for-each select="role-shape"><xsl:sort select="@uri"/>
+					<li>
+						<p>
+							<xsl:apply-templates select="$class-uri" mode="link">
+								<xsl:with-param name="owneditems" select="$owneditems"/>
+								<xsl:with-param name="label">&#x00AB;<xsl:value-of select="replace(@uri,'^.*(#|/)([^(#|/)]+)$','$2')"/>&#x00BB;</xsl:with-param>
+							</xsl:apply-templates>
+						</p>
+					</li>
 				</xsl:for-each>
 			</ul>
 		</xsl:if>
