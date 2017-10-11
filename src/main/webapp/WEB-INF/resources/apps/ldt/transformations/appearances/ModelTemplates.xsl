@@ -2,7 +2,7 @@
 
     NAME     ModelTemplates.xsl
     VERSION  1.18.2-SNAPSHOT
-    DATE     2017-10-07
+    DATE     2017-10-11
 
     Copyright 2012-2017
 
@@ -96,17 +96,30 @@
 				</xsl:for-each>
 				<xsl:for-each select="current-group()/sh:node">
 					<xsl:variable name="refnode" select="@rdf:nodeID|@rdf:resource"/>
-					<ref-node uri="{$refnode}"/> <!-- Ref-node is an alternative to sh:class, more specific to a specific shape. But also blank ref-nodes are possible! -->
-					<!-- A particular refnode could be defined as scoping the values. This defines the domain -->
-					<!-- Conditions should be: only the first sh:property (such a node should have only one sh:property), and should contain a targetNode -->
-					<xsl:for-each select="../../rdf:Description[@rdf:about=$refnode or @rdf:nodeID=$refnode]/sh:property">
-						<xsl:if test="position()=1"> <!-- Only the first -->
-							<xsl:variable name="refproperty" select="@rdf:resource|@rdf:nodeID"/>
-							<xsl:for-each select="../../rdf:Description[@rdf:about=$refproperty or @rdf:nodeID=$refproperty]/sh:targetNode">
-								<domain uri="{@rdf:resource}"/>
+					<xsl:choose>
+						<!-- Logical expression with regard to nodes -->
+						<xsl:when test="exists(../../rdf:Description[@rdf:nodeID=$refnode]/sh:xone)">
+							<xsl:for-each select="../../rdf:Description[@rdf:nodeID=$refnode]/sh:xone">
+								<ref-nodes uri="{$refnode}" logic="{local-name()}">
+									<xsl:variable name="list" select="@rdf:nodeID"/>
+									<xsl:apply-templates select="../../rdf:Description[@rdf:nodeID=$list]" mode="traverse-list"/>
+								</ref-nodes>
 							</xsl:for-each>
-						</xsl:if>
-					</xsl:for-each>
+						</xsl:when>
+						<xsl:otherwise>
+							<ref-node uri="{$refnode}"/> <!-- Ref-node is an alternative to sh:class, more specific to a specific shape. But also blank ref-nodes are possible! -->
+							<!-- A particular refnode could be defined as scoping the values. This defines the domain -->
+							<!-- Conditions should be: only the first sh:property (such a node should have only one sh:property), and should contain a targetNode -->
+							<xsl:for-each select="../../rdf:Description[@rdf:about=$refnode or @rdf:nodeID=$refnode]/sh:property">
+								<xsl:if test="position()=1"> <!-- Only the first -->
+									<xsl:variable name="refproperty" select="@rdf:resource|@rdf:nodeID"/>
+									<xsl:for-each select="../../rdf:Description[@rdf:about=$refproperty or @rdf:nodeID=$refproperty]/sh:targetNode">
+										<domain uri="{@rdf:resource}"/>
+									</xsl:for-each>
+								</xsl:if>
+							</xsl:for-each>
+						</xsl:otherwise>
+					</xsl:choose>
 				</xsl:for-each>
 				<xsl:for-each select="current-group()/sh:minCount">
 					<mincount><xsl:value-of select="."/></mincount>
@@ -329,6 +342,8 @@
 											<xsl:if test="exists(@type)"><xsl:attribute name="type"><xsl:value-of select="@type"/></xsl:attribute></xsl:if>
 										</refshape>
 									</xsl:for-each-group>
+									<!-- Logic refnodes -->
+									<xsl:copy-of select="$predicate/ref-nodes"/>
 								</property>
 							</xsl:if>
 						</xsl:for-each>

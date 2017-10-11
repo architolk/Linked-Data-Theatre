@@ -2,7 +2,7 @@
 
     NAME     rdf2yed.xsl
     VERSION  1.18.2-SNAPSHOT
-    DATE     2017-09-29
+    DATE     2017-10-11
 
     Copyright 2012-2017
 
@@ -106,7 +106,7 @@
 							<xsl:otherwise>0</xsl:otherwise>
 						</xsl:choose>
 					</xsl:variable>
-					<y:Geometry height="{40+13*($enumerationcnt+count(property[not(exists(refshape[@empty='false']))]))}" width="200.0" x="0.5" y="0"/>
+					<y:Geometry height="{40+13*($enumerationcnt+count(property[not(exists(ref-nodes/item) or exists(refshape[@empty='false']))]))}" width="200.0" x="0.5" y="0"/>
 					<y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
 					<y:BorderStyle color="#000000" type="line" width="1.0"/>
 					<y:NodeLabel alignment="center" autoSizePolicy="node_width" configuration="CroppingLabel" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" modelName="internal" modelPosition="t" textColor="#000000" visible="true" hasBackgroundColor="false">
@@ -114,7 +114,7 @@
 					</y:NodeLabel>
 					<y:NodeLabel alignment="left" autoSizePolicy="node_width" configuration="CroppingLabel" fontFamily="Dialog" fontSize="10" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" modelName="custom" textColor="#000000" visible="true">
 						<!--Properties-->
-						<xsl:for-each select="property[not(exists(refshape[@empty='false']))]">
+						<xsl:for-each select="property[not(exists(ref-nodes/item) or exists(refshape[@empty='false']))]">
 							<xsl:if test="position()!=1"><xsl:text>
 </xsl:text></xsl:if><xsl:apply-templates select="." mode="property-placement"/>
 						</xsl:for-each>
@@ -137,11 +137,35 @@
 			</data>
 		</node>
 	</xsl:for-each>
+	<!-- Logic nodes, with edges -->
+	<xsl:for-each select="$vocabulary/nodeShapes/shape/property/ref-nodes">
+		<xsl:variable name="nodeuri" select="@uri"/>
+		<node id="{$nodeuri}">
+			<data key="d6">
+				<y:ShapeNode>
+					<y:Geometry height="30.0" width="{string-length(@logic)*10}" x="376.0" y="185.0"/>
+					<y:Fill color="#FFFFFF" transparent="false"/>
+					<y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
+					<y:NodeLabel alignment="center" autoSizePolicy="node_width" configuration="CroppingLabel" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" modelName="internal" modelPosition="t" textColor="#000000" visible="true" hasBackgroundColor="false">
+						<xsl:value-of select="@logic"/>
+					</y:NodeLabel>
+					<y:Shape type="ellipse"/>
+				</y:ShapeNode>
+			</data>
+		</node>
+		<xsl:for-each select="item">
+			<xsl:variable name="refuri" select="@uri"/>
+			<xsl:variable name="refshape" select="$vocabulary/nodeShapes/shape[@uri=$refuri]"/>
+			<xsl:if test="$refshape/@empty!='true'">
+				<edge source="{$nodeuri}" target="{@uri}"/>
+			</xsl:if>
+		</xsl:for-each>
+	</xsl:for-each>
 	<!-- Edges for URI nodes -->
-	<xsl:for-each select="$vocabulary/nodeShapes/shape[@empty!='true']/property/refshape">
+	<xsl:for-each select="$vocabulary/nodeShapes/shape[@empty!='true']/property/(refshape|ref-nodes)">
 		<xsl:variable name="refuri" select="@uri"/>
 		<xsl:variable name="refshape" select="$vocabulary/nodeShapes/shape[@uri=$refuri]"/>
-		<xsl:if test="$refshape/@empty!='true'">
+		<xsl:if test="local-name()='ref-nodes' or $refshape/@empty!='true'">
 			<edge source="{../../@uri}" target="{@uri}">
 				<data key="d10">
 					<y:PolyLineEdge>
