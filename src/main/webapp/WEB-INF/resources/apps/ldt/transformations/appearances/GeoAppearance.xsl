@@ -1,7 +1,7 @@
 <!--
 
     NAME     GeoAppearance.xsl
-    VERSION  1.19.0
+    VERSION  1.19.1-SNAPSHOT
     DATE     2017-10-16
 
     Copyright 2012-2017
@@ -185,7 +185,7 @@
 				<div id="map"></div>
 				<!-- TODO: width en height moet ergens vandaan komen. Liefst uit plaatje, maar mag ook uit eigenschappen -->
 				<script type="text/javascript">
-					initMap("<xsl:value-of select="$staticroot"/>",<xsl:value-of select="replace($zoom,'[^0-9]','')"/>,<xsl:value-of select="replace($lat,'[^0-9]','')"/>, <xsl:value-of select="replace($long,'[^0-9]','')"/>, "<xsl:value-of select="$backmap"/>", "<xsl:value-of select="$img"/>", "<xsl:value-of select="$container"/>", <xsl:value-of select="$left"/>, <xsl:value-of select="replace($top,'[^0-9]','')"/>, <xsl:value-of select="replace($width,'[^0-9]','')"/>, <xsl:value-of select="replace($height,'[^0-9]','')"/>, "<xsl:value-of select="/results/context/subject"/>");
+					initMap("<xsl:value-of select="$staticroot"/>",<xsl:value-of select="replace($zoom,'[^0-9\.]','')"/>,<xsl:value-of select="replace($lat,'[^0-9\.]','')"/>, <xsl:value-of select="replace($long,'[^0-9\.]','')"/>, "<xsl:value-of select="$backmap"/>", "<xsl:value-of select="$img"/>", "<xsl:value-of select="$container"/>", <xsl:value-of select="$left"/>, <xsl:value-of select="replace($top,'[^0-9\.]','')"/>, <xsl:value-of select="replace($width,'[^0-9\.]','')"/>, <xsl:value-of select="replace($height,'[^0-9\.]','')"/>, "<xsl:value-of select="/results/context/subject"/>");
 
 					<xsl:for-each select="rdf:Description[elmo:applies-to='http://bp4mc2.org/elmo/def#Appearance' and elmo:appearance/@rdf:resource='http://bp4mc2.org/elmo/def#TransparantOverlay']">
 						<xsl:variable name="layers">
