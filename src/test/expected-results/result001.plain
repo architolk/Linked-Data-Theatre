@@ -27,10 +27,12 @@ file uploaded: HeaderAppearance.ttl
 file uploaded: HtmlAppearance.ttl
 file uploaded: ImageAppearance.ttl
 file uploaded: MarkdownAppearance.ttl
+file uploaded: MissingAppearance.ttl
 file uploaded: ModelAppearance.ttl
 file uploaded: NavBarSearchAppearance.ttl
 file uploaded: Parameters.ttl
 file uploaded: Production.ttl
+file uploaded: Search.ttl
 file uploaded: Service-duo.ttl
 file uploaded: Service.ttl
 file uploaded: Sesame-Formats.ttl

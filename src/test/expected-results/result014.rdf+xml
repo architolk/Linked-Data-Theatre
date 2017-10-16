@@ -20,7 +20,7 @@ Het is in bevolkingsaantal de tweede stad van de provincie Utrecht en de veertie
     <ns2:population rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">153773</ns2:population>
     <ns2:populationAsOf rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2016-04-01</ns2:populationAsOf>
     <ns4:capitalCity rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns4:capitalCity>
-    <ns4:districtNames rdf:nodeID="b485361"/>
+    <ns4:districtNames rdf:nodeID="b566067"/>
   </rdf:Description>
   <rdf:Description rdf:about="http://localhost:8080/def/test#capitalCity">
     <rdfs:label xml:lang="en">capital city</rdfs:label>
@@ -33,71 +33,71 @@ Het is in bevolkingsaantal de tweede stad van de provincie Utrecht en de veertie
     <ns2:isPartOf rdf:resource="http://dbpedia.org/resource/Utrecht_(province)"/>
     <ns4:capitalCity rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns4:capitalCity>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b485361">
+  <rdf:Description rdf:nodeID="b566067">
     <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">stadskern</rdf:first>
-    <rdf:rest rdf:nodeID="b485362"/>
+    <rdf:rest rdf:nodeID="b566068"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b485362">
+  <rdf:Description rdf:nodeID="b566068">
     <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">soesterkwartier</rdf:first>
-    <rdf:rest rdf:nodeID="b485363"/>
+    <rdf:rest rdf:nodeID="b566069"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b485363">
+  <rdf:Description rdf:nodeID="b566069">
     <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">koppel</rdf:first>
-    <rdf:rest rdf:nodeID="b485364"/>
+    <rdf:rest rdf:nodeID="b566070"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b485364">
+  <rdf:Description rdf:nodeID="b566070">
     <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">kruiskamp</rdf:first>
-    <rdf:rest rdf:nodeID="b485365"/>
+    <rdf:rest rdf:nodeID="b566071"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b485365">
+  <rdf:Description rdf:nodeID="b566071">
     <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">schothorst</rdf:first>
-    <rdf:rest rdf:nodeID="b485366"/>
+    <rdf:rest rdf:nodeID="b566072"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b485366">
+  <rdf:Description rdf:nodeID="b566072">
     <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">liendert</rdf:first>
-    <rdf:rest rdf:nodeID="b485367"/>
+    <rdf:rest rdf:nodeID="b566073"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b485367">
+  <rdf:Description rdf:nodeID="b566073">
     <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">rustenburg</rdf:first>
-    <rdf:rest rdf:nodeID="b485368"/>
+    <rdf:rest rdf:nodeID="b566074"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b485368">
+  <rdf:Description rdf:nodeID="b566074">
     <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">schuilenburg</rdf:first>
-    <rdf:rest rdf:nodeID="b485369"/>
+    <rdf:rest rdf:nodeID="b566075"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b485369">
+  <rdf:Description rdf:nodeID="b566075">
     <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">randenbroek</rdf:first>
-    <rdf:rest rdf:nodeID="b485370"/>
+    <rdf:rest rdf:nodeID="b566076"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b485370">
+  <rdf:Description rdf:nodeID="b566076">
     <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">dorrestein</rdf:first>
-    <rdf:rest rdf:nodeID="b485371"/>
+    <rdf:rest rdf:nodeID="b566077"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b485371">
+  <rdf:Description rdf:nodeID="b566077">
     <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">leusderkwartier</rdf:first>
-    <rdf:rest rdf:nodeID="b485372"/>
+    <rdf:rest rdf:nodeID="b566078"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b485372">
+  <rdf:Description rdf:nodeID="b566078">
     <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bergkwartier</rdf:first>
-    <rdf:rest rdf:nodeID="b485373"/>
+    <rdf:rest rdf:nodeID="b566079"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b485373">
+  <rdf:Description rdf:nodeID="b566079">
     <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">zielhorst</rdf:first>
-    <rdf:rest rdf:nodeID="b485374"/>
+    <rdf:rest rdf:nodeID="b566080"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b485374">
+  <rdf:Description rdf:nodeID="b566080">
     <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">kattenbroek</rdf:first>
-    <rdf:rest rdf:nodeID="b485375"/>
+    <rdf:rest rdf:nodeID="b566081"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b485375">
+  <rdf:Description rdf:nodeID="b566081">
     <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">nieuwland</rdf:first>
-    <rdf:rest rdf:nodeID="b485376"/>
+    <rdf:rest rdf:nodeID="b566082"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b485376">
+  <rdf:Description rdf:nodeID="b566082">
     <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">vathorst</rdf:first>
-    <rdf:rest rdf:nodeID="b485377"/>
+    <rdf:rest rdf:nodeID="b566083"/>
   </rdf:Description>
-  <rdf:Description rdf:nodeID="b485377">
+  <rdf:Description rdf:nodeID="b566083">
     <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">vermeerkwartier</rdf:first>
     <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
   </rdf:Description>

@@ -2,7 +2,7 @@
 
     NAME     query.xpl
     VERSION  1.18.2-SNAPSHOT
-    DATE     2017-09-29
+    DATE     2017-10-16
 
     Copyright 2012-2017
 
@@ -1469,10 +1469,11 @@
 							</p:processor>
 							<!-- Convert XML result to HTML -->
 							<p:processor name="oxf:html-converter">
-								<p:input name="config">
-									<config>
+								<p:input name="config" href="#context" transform="oxf:xslt">
+									<config xsl:version="2.0">
+										<xsl:if test="/context/@version='0.0.0'"><method>xhtml</method></xsl:if>
 										<encoding>utf-8</encoding>
-										<version>5.0</version>
+										<xsl:if test="not(/context/@version='0.0.0')"><version>5.0</version></xsl:if>
 									</config>
 								</p:input>
 								<p:input name="data" href="#html" />

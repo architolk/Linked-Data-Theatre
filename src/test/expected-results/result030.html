@@ -1,5 +1,75 @@
-<!DOCTYPE HTML>
-<html lang=""><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Linked Data Theatre</title><link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css?version=0.0.0"><link rel="stylesheet" type="text/css" href="/css/dataTables.bootstrap.min.css?version=0.0.0"><link rel="stylesheet" type="text/css" href="/css/bootstrap-datepicker3.min.css?version=0.0.0"><link rel="stylesheet" type="text/css" href="/css/ldt-theme.min.css?version=0.0.0"><link rel="stylesheet" type="text/css" href="/css/font-awesome.min.css?version=0.0.0"><script type="text/javascript" src="/js/jquery-3.1.1.min.js?version=0.0.0"></script><script type="text/javascript" src="/js/jquery.dataTables.min.js?version=0.0.0"></script><script type="text/javascript" src="/js/dataTables.bootstrap.min.js?version=0.0.0"></script><script type="text/javascript" src="/js/bootstrap.min.js?version=0.0.0"></script><script type="text/javascript" src="/js/bootstrap-datepicker.min.js?version=0.0.0"></script><script type="text/javascript" src="/js/locales/bootstrap-datepicker.nl.min.js?version=0.0.0"></script><script type="text/javascript" src="/js/d3.v3.min.js?version=0.0.0"></script><script type="text/javascript" src="/js/ldt.min.js?version=0.0.0"></script><script type="text/javascript">var elmo_language = {};</script></head><body><div id="page"><div class="container hidden-xs"><div class="row text-center"><img src="/images/ldt-logo.png"></div></div><nav class="navbar navbar-default"><div class="container"><div class="navbar-header"><button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a class="navbar-brand" href="#">localhost:8888</a></div><div id="navbar" class="collapse navbar-collapse"><ul class="nav navbar-nav"><li class=""><a href="http://localhost:8888">Goto stage</a></li><li class=""><a href="http://localhost:8888/backstage/rep">Add representation</a></li><li class=""><a href="http://localhost:8888/backstage/vocabulary">Search vocabulary</a></li><li class=""><a href="http://localhost:8888/backstage/sparql">Query</a></li><li class=""><a href="http://localhost:8888/backstage/import">Import</a></li><li class=""><a href="http://localhost:8888/backstage/export.ttl">Export</a></li></ul></div></div></nav><div class="content"><div class="container"><script type="text/javascript">
+<?xml version="1.0" encoding="utf-8"?><html lang="">
+<head>
+<meta charset="utf-8"></meta>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+<title>Linked Data Theatre</title>
+<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css?version=0.0.0"></link>
+<link rel="stylesheet" type="text/css"
+      href="/css/dataTables.bootstrap.min.css?version=0.0.0"></link>
+<link rel="stylesheet" type="text/css"
+      href="/css/bootstrap-datepicker3.standalone.min.css?version=0.0.0"></link>
+<link rel="stylesheet" type="text/css" href="/css/ldt-theme.min.css?version=0.0.0"></link>
+<link rel="stylesheet" type="text/css" href="/css/font-awesome.min.css?version=0.0.0"></link>
+<script type="text/javascript" src="/js/jquery-3.1.1.min.js?version=0.0.0"></script>
+<script type="text/javascript" src="/js/jquery.dataTables.min.js?version=0.0.0"></script>
+<script type="text/javascript" src="/js/dataTables.bootstrap.min.js?version=0.0.0"></script>
+<script type="text/javascript" src="/js/bootstrap.min.js?version=0.0.0"></script>
+<script type="text/javascript" src="/js/bootstrap-datepicker.min.js?version=0.0.0"></script>
+<script type="text/javascript"
+        src="/js/locales/bootstrap-datepicker.nl.min.js?version=0.0.0"></script>
+<script type="text/javascript" src="/js/d3.v3.min.js?version=0.0.0"></script>
+<script type="text/javascript" src="/js/ldt.min.js?version=0.0.0"></script>
+<script type="text/javascript">var elmo_language = {};</script>
+</head>
+<body>
+<div id="page">
+<div class="container hidden-xs">
+<div class="row text-center">
+<img src="/images/ldt-logo.png"></img>
+</div>
+</div>
+<nav class="navbar navbar-default">
+<div class="container">
+<div class="navbar-header">
+<button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+        data-target="#navbar"
+        aria-expanded="false"
+        aria-controls="navbar">
+<span class="sr-only">Toggle navigation</span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+</button>
+<a class="navbar-brand" href="#">localhost:8888</a>
+</div>
+<div id="navbar" class="collapse navbar-collapse">
+<ul class="nav navbar-nav">
+<li class="">
+<a href="http://localhost:8888">Goto stage</a>
+</li>
+<li class="">
+<a href="http://localhost:8888/backstage/rep">Add representation</a>
+</li>
+<li class="">
+<a href="http://localhost:8888/backstage/vocabulary">Search vocabulary</a>
+</li>
+<li class="">
+<a href="http://localhost:8888/backstage/sparql">Query</a>
+</li>
+<li class="">
+<a href="http://localhost:8888/backstage/import">Import</a>
+</li>
+<li class="">
+<a href="http://localhost:8888/backstage/export.ttl">Export</a>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<div class="content">
+<div class="container">
+<script type="text/javascript">
 				$(document).ready(function() {
 					elmo_language.paging = true;
 					elmo_language.searching = true;
@@ -7,4 +77,1059 @@
 					elmo_language.order = [];
 					$('#datatable2').dataTable(elmo_language);
 				} );
-			</script><table id="datatable2" class="table table-striped table-bordered"><thead><tr><th>type</th><th>Representation</th><th>URL pattern</th><th>Resource type</th></tr></thead><tbody><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ArchiComponents&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ArchiComponents">ArchiComponents</a></td><td>/query/archicomponents</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23BAGWFSVirtualSparql&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23BAGWFSVirtualSparql">BAGWFSVirtualSparql</a></td><td>/query/sparql/bagwfs$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23BlankNodes&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23BlankNodes">BlankNodes</a></td><td>/query/BlankNodes$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Buienradar&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Buienradar">Buienradar</a></td><td>/query/buienradar$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Buienradar2&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Buienradar2">Buienradar2</a></td><td>/query/buienradar2$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23BuienradarVirtualSparql&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23BuienradarVirtualSparql">BuienradarVirtualSparql</a></td><td>/query/sparql/buienradar$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23CharacterResource&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23CharacterResource">CharacterResource</a></td><td></td><td><a href="/resource?subject=http%3A%2F%2Flocalhost%3A8080%2Fdef%2Flotr%23Wizard">Wizard</a></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ChartAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ChartAppearance">ChartAppearance</a></td><td>/query/ChartAppearance</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ConstructFormats&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ConstructFormats">ConstructFormats</a></td><td>/query/ConstructFormats, /api/ConstructFormats</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ConstructFormats_content&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ConstructFormats_content">ConstructFormats_content</a></td><td></td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ContainerDropdown&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ContainerDropdown">ContainerDropdown</a></td><td></td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ContainerPresentations&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ContainerPresentations">ContainerPresentations</a></td><td>/query/containers$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ContentAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ContentAppearance">ContentAppearance</a></td><td>/query/ContentAppearance</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23DefaultResource&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23DefaultResource">DefaultResource</a></td><td>/resource</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Elmo2VocabularyModel&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Elmo2VocabularyModel">Elmo2VocabularyModel</a></td><td>/query/elmo2-model$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Elmo2VocabularyYed&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Elmo2VocabularyYed">Elmo2VocabularyYed</a></td><td>/query/elmo2-model.yed$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ElmoVocabulary&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ElmoVocabulary">ElmoVocabulary</a></td><td>/query/elmo(|.ttl|.xml|.json)$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ElmoVocabularyModel&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ElmoVocabularyModel">ElmoVocabularyModel</a></td><td>/query/elmo-model$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ElmoVocabularyYed&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ElmoVocabularyYed">ElmoVocabularyYed</a></td><td>/query/elmo-model.yed$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Federated2Query&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Federated2Query">Federated2Query</a></td><td></td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Federated3Query&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Federated3Query">Federated3Query</a></td><td></td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FederatedQuery&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FederatedQuery">FederatedQuery</a></td><td></td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FormAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FormAppearance">FormAppearance</a></td><td>/query/FormAppearance$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FormAppearanceAjax&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FormAppearanceAjax">FormAppearanceAjax</a></td><td>/query/FormAppearanceAjax$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FormAppearanceDbPedia&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FormAppearanceDbPedia">FormAppearanceDbPedia</a></td><td>/query/FormAppearanceDbPedia$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FrameAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FrameAppearance">FrameAppearance</a></td><td>/query/FrameAppearance</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FrameAppearance_Left&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FrameAppearance_Left">FrameAppearance_Left</a></td><td>/query/FrameLeft$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FrameAppearance_Right&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FrameAppearance_Right">FrameAppearance_Right</a></td><td>/query/FrameRight$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FrameAppearance_Right2&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FrameAppearance_Right2">FrameAppearance_Right2</a></td><td>/query/FrameRight2$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GeoAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GeoAppearance">GeoAppearance</a></td><td>/query/GeoAppearance$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GeoAppearanceBrt&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GeoAppearanceBrt">GeoAppearanceBrt</a></td><td>/query/GeoAppearanceBrt$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GeoAppearanceBrtFeature&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GeoAppearanceBrtFeature">GeoAppearanceBrtFeature</a></td><td></td><td><a href="/resource?subject=http%3A%2F%2Fwww.opengis.net%2Font%2Fgeosparql%23Feature">Feature</a></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GeoAppearancePointer&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GeoAppearancePointer">GeoAppearancePointer</a></td><td>/query/GeoAppearancePointer$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GlobalLinks&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GlobalLinks">GlobalLinks</a></td><td>/query/GlobalLinks$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GraphAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GraphAppearance">GraphAppearance</a></td><td>/query/GraphAppearance$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GraphAppearanceParameters&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GraphAppearanceParameters">GraphAppearanceParameters</a></td><td>/query/GraphAppearanceParameters$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GraphAppearanceSimple&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GraphAppearanceSimple">GraphAppearanceSimple</a></td><td>/query/GraphAppearanceSimple$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23HtmlAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23HtmlAppearance">HtmlAppearance</a></td><td>^http(s|)://[^/]+(/(?!resource)[^/]+)?(/|)$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23HtmlAppearanceWithParameterSortAndWithoutType&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23HtmlAppearanceWithParameterSortAndWithoutType">HtmlAppearanceWithParameterSortAndWithoutType</a></td><td>/query/paramtest$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23HtmlAppearanceWithParameterTypeAndSort&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23HtmlAppearanceWithParameterTypeAndSort">HtmlAppearanceWithParameterTypeAndSort</a></td><td>/query/paramtest$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23HtmlAppearanceWithParameterTypeAndWithoutSort&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23HtmlAppearanceWithParameterTypeAndWithoutSort">HtmlAppearanceWithParameterTypeAndWithoutSort</a></td><td>/query/paramtest$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23HtmlAppearanceWithoutParameterTypeAndSort&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23HtmlAppearanceWithoutParameterTypeAndSort">HtmlAppearanceWithoutParameterTypeAndSort</a></td><td>/query/paramtest$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ImageAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ImageAppearance">ImageAppearance</a></td><td>/query/ImageAppearance$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23IndexService&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23IndexService">IndexService</a></td><td>/query/indexservice</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23MarkdownAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23MarkdownAppearance">MarkdownAppearance</a></td><td>/query/MarkdownAppearance$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ModelAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ModelAppearance">ModelAppearance</a></td><td>/query/ModelAppearance</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Musicbrainz&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Musicbrainz">Musicbrainz</a></td><td></td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23NavbarSearchAppearance_plain&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23NavbarSearchAppearance_plain">NavbarSearchAppearance_plain</a></td><td>/query/NavbarSearchAppearance$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Parameters&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Parameters">Parameters</a></td><td></td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23SectionTextAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23SectionTextAppearance">SectionTextAppearance</a></td><td></td><td><a href="/resource?subject=http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%2Fvocab%23section">section</a></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23SelectFormats&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23SelectFormats">SelectFormats</a></td><td>/query/SelectFormats, /api/SelectFormats</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23SelectFormats_content&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23SelectFormats_content">SelectFormats_content</a></td><td></td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Service&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Service">Service</a></td><td>/query/service$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ServiceDuo&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ServiceDuo">ServiceDuo</a></td><td>/query/service-duo$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Sesame_ConstructFormats&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Sesame_ConstructFormats">Sesame_ConstructFormats</a></td><td>/query/sesame/ConstructFormats</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Sesame_ConstructFormats_content&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Sesame_ConstructFormats_content">Sesame_ConstructFormats_content</a></td><td></td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Sesame_SelectFormats&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Sesame_SelectFormats">Sesame_SelectFormats</a></td><td>/query/sesame/SelectFormats</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Sesame_SelectFormats_content&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Sesame_SelectFormats_content">Sesame_SelectFormats_content</a></td><td></td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ShowDummyGraph&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ShowDummyGraph">ShowDummyGraph</a></td><td>/query/ShowDummyGraph</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23StylesheetTest&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23StylesheetTest">StylesheetTest</a></td><td>/query/StylesheetTest</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23TableAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23TableAppearance">TableAppearance</a></td><td>/query/TableAppearance$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23TableAppearance2&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23TableAppearance2">TableAppearance2</a></td><td>/query/TableAppearance2</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23TextAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23TextAppearance">TextAppearance</a></td><td>/query/TextAppearance$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23UploadedModelAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23UploadedModelAppearance">UploadedModelAppearance</a></td><td>/query/uploaded-model</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23UploadedShapes&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23UploadedShapes">UploadedShapes</a></td><td>/query/uploaded-shapes$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23UploadedShapesAppearanceYed&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23UploadedShapesAppearanceYed">UploadedShapesAppearanceYed</a></td><td>/query/uploaded-shapes\.yed$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23UploadedShapesModel&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23UploadedShapesModel">UploadedShapesModel</a></td><td>/query/uploaded-shapes-model</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23UploadedVocabulary&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23UploadedVocabulary">UploadedVocabulary</a></td><td>/query/uploaded-vocabulary$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23UploadedVocabularyAppearanceYed&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23UploadedVocabularyAppearanceYed">UploadedVocabularyAppearanceYed</a></td><td>/query/uploaded-vocabulary\.yed$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23VirtualSparql&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23VirtualSparql">VirtualSparql</a></td><td>/query/VirtualSparql$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23VocabularyAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23VocabularyAppearance">VocabularyAppearance</a></td><td>^http://localhost:8080/def/lotr(\.(xml|ttl|json))?$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23VocabularyAppearanceYed&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23VocabularyAppearanceYed">VocabularyAppearanceYed</a></td><td>^http://localhost:8080/def/lotr\.yed?$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Webpage&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Webpage">Webpage</a></td><td>/query/webpage$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Wow&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Wow">Wow</a></td><td>/query/wow$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23XPLTreeview&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23XPLTreeview">XPLTreeview</a></td><td>/query/xpl/treeview</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%2Ftest%2Fblub%23HtmlAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%2Ftest%2Fblub%23HtmlAppearance">HtmlAppearance</a></td><td>^http://localhost:(8080|8888)/stagename/substagename/welcome$</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Production">Production</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fldt%2Fupdate%2FDummyProduction&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fldt%2Fupdate%2FDummyProduction">http://localhost:8080/ldt/update/DummyProduction</a></td><td>http://localhost:8080/ldt/update/DummyProduction</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Production">Production</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fupdate%2FClearGraph&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fupdate%2FClearGraph">http://localhost:8080/update/ClearGraph</a></td><td>http://localhost:8080/update/ClearGraph</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Production">Production</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fupdate%2FDummyProduction&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fupdate%2FDummyProduction">http://localhost:8080/update/DummyProduction</a></td><td>http://localhost:8080/update/DummyProduction</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Production">Production</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8888%2Fupdate%2FDummyProduction&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8888%2Fupdate%2FDummyProduction">http://localhost:8888/update/DummyProduction</a></td><td>http://localhost:8888/update/DummyProduction</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Farchi&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Farchi">http://localhost:8080/container/archi</a></td><td>http://localhost:8080/container/archi</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fdefquery&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fdefquery">http://localhost:8080/container/defquery</a></td><td>http://localhost:8080/container/defquery</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fdmn&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fdmn">http://localhost:8080/container/dmn</a></td><td>http://localhost:8080/container/dmn</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fexcel&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fexcel">http://localhost:8080/container/excel</a></td><td>http://localhost:8080/container/excel</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fgenexcel&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fgenexcel">http://localhost:8080/container/genexcel</a></td><td>http://localhost:8080/container/genexcel</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fpart&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fpart">http://localhost:8080/container/part</a></td><td>http://localhost:8080/container/part</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fquery&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fquery">http://localhost:8080/container/query</a></td><td>http://localhost:8080/container/query</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Freplace&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Freplace">http://localhost:8080/container/replace</a></td><td>http://localhost:8080/container/replace</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fsimple&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fsimple">http://localhost:8080/container/simple</a></td><td>http://localhost:8080/container/simple</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fupdate&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fupdate">http://localhost:8080/container/update</a></td><td>http://localhost:8080/container/update</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fupload&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fupload">http://localhost:8080/container/upload</a></td><td>http://localhost:8080/container/upload</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fxpl&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fxpl">http://localhost:8080/container/xpl</a></td><td>http://localhost:8080/container/xpl</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8888%2Fcontainer%2Fdefquery&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8888%2Fcontainer%2Fdefquery">http://localhost:8888/container/defquery</a></td><td>http://localhost:8888/container/defquery</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8888%2Fcontainer%2Fsimple&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8888%2Fcontainer%2Fsimple">http://localhost:8888/container/simple</a></td><td>http://localhost:8888/container/simple</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8888%2Fcontainer%2Fwrongassertioncontainer&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8888%2Fcontainer%2Fwrongassertioncontainer">http://localhost:8888/container/wrongassertioncontainer</a></td><td>http://localhost:8888/container/wrongassertioncontainer</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8888%2Fcontainer%2Fwrongcontainer&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8888%2Fcontainer%2Fwrongcontainer">http://localhost:8888/container/wrongcontainer</a></td><td>http://localhost:8888/container/wrongcontainer</td><td></td></tr><tr><td><a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23VersionContainer">VersionContainer</a></td><td><a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fversioned&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fversioned">http://localhost:8080/container/versioned</a></td><td>http://localhost:8080/container/versioned</td><td></td></tr></tbody></table><a href="http://localhost:8888/backstage?representation=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23BackstageRepresentation_List&amp;format=xlsx">Excel</a></div></div></div></body></html>
+			
+</script>
+<table id="datatable2" class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>type</th>
+<th>Representation</th>
+<th>URL pattern</th>
+<th>Resource type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ArchiComponents&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ArchiComponents">ArchiComponents</a>
+</td>
+<td>/query/archicomponents</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23BAGWFSVirtualSparql&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23BAGWFSVirtualSparql">BAGWFSVirtualSparql</a>
+</td>
+<td>/query/sparql/bagwfs$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23BlankNodes&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23BlankNodes">BlankNodes</a>
+</td>
+<td>/query/BlankNodes$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Buienradar&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Buienradar">Buienradar</a>
+</td>
+<td>/query/buienradar$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Buienradar2&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Buienradar2">Buienradar2</a>
+</td>
+<td>/query/buienradar2$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23BuienradarVirtualSparql&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23BuienradarVirtualSparql">BuienradarVirtualSparql</a>
+</td>
+<td>/query/sparql/buienradar$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23CharacterResource&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23CharacterResource">CharacterResource</a>
+</td>
+<td></td>
+<td>
+<a href="/resource?subject=http%3A%2F%2Flocalhost%3A8080%2Fdef%2Flotr%23Wizard">Wizard</a>
+</td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ChartAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ChartAppearance">ChartAppearance</a>
+</td>
+<td>/query/ChartAppearance</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ConstructFormats&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ConstructFormats">ConstructFormats</a>
+</td>
+<td>/query/ConstructFormats, /api/ConstructFormats</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ConstructFormats_content&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ConstructFormats_content">ConstructFormats_content</a>
+</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ContainerDropdown&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ContainerDropdown">ContainerDropdown</a>
+</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ContainerPresentations&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ContainerPresentations">ContainerPresentations</a>
+</td>
+<td>/query/containers$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ContentAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ContentAppearance">ContentAppearance</a>
+</td>
+<td>/query/ContentAppearance</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23DefaultResource&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23DefaultResource">DefaultResource</a>
+</td>
+<td>/resource</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Elmo2VocabularyModel&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Elmo2VocabularyModel">Elmo2VocabularyModel</a>
+</td>
+<td>/query/elmo2-model$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Elmo2VocabularyYed&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Elmo2VocabularyYed">Elmo2VocabularyYed</a>
+</td>
+<td>/query/elmo2-model.yed$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ElmoVocabulary&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ElmoVocabulary">ElmoVocabulary</a>
+</td>
+<td>/query/elmo(|.ttl|.xml|.json)$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ElmoVocabularyModel&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ElmoVocabularyModel">ElmoVocabularyModel</a>
+</td>
+<td>/query/elmo-model$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ElmoVocabularyYed&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ElmoVocabularyYed">ElmoVocabularyYed</a>
+</td>
+<td>/query/elmo-model.yed$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Federated2Query&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Federated2Query">Federated2Query</a>
+</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Federated3Query&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Federated3Query">Federated3Query</a>
+</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FederatedQuery&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FederatedQuery">FederatedQuery</a>
+</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FormAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FormAppearance">FormAppearance</a>
+</td>
+<td>/query/FormAppearance$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FormAppearanceAjax&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FormAppearanceAjax">FormAppearanceAjax</a>
+</td>
+<td>/query/FormAppearanceAjax$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FormAppearanceDbPedia&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FormAppearanceDbPedia">FormAppearanceDbPedia</a>
+</td>
+<td>/query/FormAppearanceDbPedia$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FrameAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FrameAppearance">FrameAppearance</a>
+</td>
+<td>/query/FrameAppearance</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FrameAppearance_Left&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FrameAppearance_Left">FrameAppearance_Left</a>
+</td>
+<td>/query/FrameLeft$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FrameAppearance_Right&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FrameAppearance_Right">FrameAppearance_Right</a>
+</td>
+<td>/query/FrameRight$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FrameAppearance_Right2&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23FrameAppearance_Right2">FrameAppearance_Right2</a>
+</td>
+<td>/query/FrameRight2$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GeoAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GeoAppearance">GeoAppearance</a>
+</td>
+<td>/query/GeoAppearance$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GeoAppearanceBrt&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GeoAppearanceBrt">GeoAppearanceBrt</a>
+</td>
+<td>/query/GeoAppearanceBrt$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GeoAppearanceBrtFeature&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GeoAppearanceBrtFeature">GeoAppearanceBrtFeature</a>
+</td>
+<td></td>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fwww.opengis.net%2Font%2Fgeosparql%23Feature">Feature</a>
+</td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GeoAppearancePointer&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GeoAppearancePointer">GeoAppearancePointer</a>
+</td>
+<td>/query/GeoAppearancePointer$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GlobalLinks&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GlobalLinks">GlobalLinks</a>
+</td>
+<td>/query/GlobalLinks$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GraphAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GraphAppearance">GraphAppearance</a>
+</td>
+<td>/query/GraphAppearance$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GraphAppearanceParameters&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GraphAppearanceParameters">GraphAppearanceParameters</a>
+</td>
+<td>/query/GraphAppearanceParameters$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GraphAppearanceSimple&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23GraphAppearanceSimple">GraphAppearanceSimple</a>
+</td>
+<td>/query/GraphAppearanceSimple$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23HtmlAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23HtmlAppearance">HtmlAppearance</a>
+</td>
+<td>^http(s|)://[^/]+(/(?!resource)[^/]+)?(/|)$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23HtmlAppearanceWithParameterSortAndWithoutType&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23HtmlAppearanceWithParameterSortAndWithoutType">HtmlAppearanceWithParameterSortAndWithoutType</a>
+</td>
+<td>/query/paramtest$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23HtmlAppearanceWithParameterTypeAndSort&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23HtmlAppearanceWithParameterTypeAndSort">HtmlAppearanceWithParameterTypeAndSort</a>
+</td>
+<td>/query/paramtest$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23HtmlAppearanceWithParameterTypeAndWithoutSort&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23HtmlAppearanceWithParameterTypeAndWithoutSort">HtmlAppearanceWithParameterTypeAndWithoutSort</a>
+</td>
+<td>/query/paramtest$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23HtmlAppearanceWithoutParameterTypeAndSort&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23HtmlAppearanceWithoutParameterTypeAndSort">HtmlAppearanceWithoutParameterTypeAndSort</a>
+</td>
+<td>/query/paramtest$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ImageAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ImageAppearance">ImageAppearance</a>
+</td>
+<td>/query/ImageAppearance$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23IndexService&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23IndexService">IndexService</a>
+</td>
+<td>/query/indexservice</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23MarkdownAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23MarkdownAppearance">MarkdownAppearance</a>
+</td>
+<td>/query/MarkdownAppearance$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23MissingAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23MissingAppearance">MissingAppearance</a>
+</td>
+<td>/query/MissingAppearance$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ModelAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ModelAppearance">ModelAppearance</a>
+</td>
+<td>/query/ModelAppearance</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Musicbrainz&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Musicbrainz">Musicbrainz</a>
+</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23NavbarSearchAppearance_plain&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23NavbarSearchAppearance_plain">NavbarSearchAppearance_plain</a>
+</td>
+<td>/query/NavbarSearchAppearance$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Parameters&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Parameters">Parameters</a>
+</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Search&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Search">Search</a>
+</td>
+<td>/query/search$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23SectionTextAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23SectionTextAppearance">SectionTextAppearance</a>
+</td>
+<td></td>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%2Fvocab%23section">section</a>
+</td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23SelectFormats&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23SelectFormats">SelectFormats</a>
+</td>
+<td>/query/SelectFormats, /api/SelectFormats</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23SelectFormats_content&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23SelectFormats_content">SelectFormats_content</a>
+</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Service&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Service">Service</a>
+</td>
+<td>/query/service$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ServiceDuo&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ServiceDuo">ServiceDuo</a>
+</td>
+<td>/query/service-duo$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Sesame_ConstructFormats&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Sesame_ConstructFormats">Sesame_ConstructFormats</a>
+</td>
+<td>/query/sesame/ConstructFormats</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Sesame_ConstructFormats_content&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Sesame_ConstructFormats_content">Sesame_ConstructFormats_content</a>
+</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Sesame_SelectFormats&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Sesame_SelectFormats">Sesame_SelectFormats</a>
+</td>
+<td>/query/sesame/SelectFormats</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Sesame_SelectFormats_content&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Sesame_SelectFormats_content">Sesame_SelectFormats_content</a>
+</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ShowDummyGraph&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23ShowDummyGraph">ShowDummyGraph</a>
+</td>
+<td>/query/ShowDummyGraph</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23SimpleContainer&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23SimpleContainer">SimpleContainer</a>
+</td>
+<td>/query/simple-vocabulary(|.yed)$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23SimpleContainerConcepts&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23SimpleContainerConcepts">SimpleContainerConcepts</a>
+</td>
+<td>/query/simple-container-concepts$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23SimpleContainerModel&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23SimpleContainerModel">SimpleContainerModel</a>
+</td>
+<td>/query/simple-vocabulary-model$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23StylesheetTest&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23StylesheetTest">StylesheetTest</a>
+</td>
+<td>/query/StylesheetTest</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23TableAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23TableAppearance">TableAppearance</a>
+</td>
+<td>/query/TableAppearance$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23TableAppearance2&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23TableAppearance2">TableAppearance2</a>
+</td>
+<td>/query/TableAppearance2</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23TextAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23TextAppearance">TextAppearance</a>
+</td>
+<td>/query/TextAppearance$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23UploadedModelAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23UploadedModelAppearance">UploadedModelAppearance</a>
+</td>
+<td>/query/uploaded-model</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23UploadedShapes&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23UploadedShapes">UploadedShapes</a>
+</td>
+<td>/query/uploaded-shapes$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23UploadedShapesAppearanceYed&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23UploadedShapesAppearanceYed">UploadedShapesAppearanceYed</a>
+</td>
+<td>/query/uploaded-shapes\.yed$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23UploadedShapesModel&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23UploadedShapesModel">UploadedShapesModel</a>
+</td>
+<td>/query/uploaded-shapes-model</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23UploadedVocabulary&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23UploadedVocabulary">UploadedVocabulary</a>
+</td>
+<td>/query/uploaded-vocabulary$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23UploadedVocabularyAppearanceYed&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23UploadedVocabularyAppearanceYed">UploadedVocabularyAppearanceYed</a>
+</td>
+<td>/query/uploaded-vocabulary\.yed$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23VirtualSparql&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23VirtualSparql">VirtualSparql</a>
+</td>
+<td>/query/VirtualSparql$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23VocabularyAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23VocabularyAppearance">VocabularyAppearance</a>
+</td>
+<td>^http://localhost:8080/def/lotr(\.(xml|ttl|json))?$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23VocabularyAppearanceYed&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23VocabularyAppearanceYed">VocabularyAppearanceYed</a>
+</td>
+<td>^http://localhost:8080/def/lotr\.yed?$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Webpage&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Webpage">Webpage</a>
+</td>
+<td>/query/webpage$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Wow&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23Wow">Wow</a>
+</td>
+<td>/query/wow$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%23XPLTreeview&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%23XPLTreeview">XPLTreeview</a>
+</td>
+<td>/query/xpl/treeview</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Query">Query</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fstage%2Ftest%2Fblub%23HtmlAppearance&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fstage%2Ftest%2Fblub%23HtmlAppearance">HtmlAppearance</a>
+</td>
+<td>^http://localhost:(8080|8888)/stagename/substagename/welcome$</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Production">Production</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fldt%2Fupdate%2FDummyProduction&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fldt%2Fupdate%2FDummyProduction">http://localhost:8080/ldt/update/DummyProduction</a>
+</td>
+<td>http://localhost:8080/ldt/update/DummyProduction</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Production">Production</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fupdate%2FClearGraph&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fupdate%2FClearGraph">http://localhost:8080/update/ClearGraph</a>
+</td>
+<td>http://localhost:8080/update/ClearGraph</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Production">Production</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fupdate%2FDummyProduction&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fupdate%2FDummyProduction">http://localhost:8080/update/DummyProduction</a>
+</td>
+<td>http://localhost:8080/update/DummyProduction</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Production">Production</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8888%2Fupdate%2FDummyProduction&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8888%2Fupdate%2FDummyProduction">http://localhost:8888/update/DummyProduction</a>
+</td>
+<td>http://localhost:8888/update/DummyProduction</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Farchi&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Farchi">http://localhost:8080/container/archi</a>
+</td>
+<td>http://localhost:8080/container/archi</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fdefquery&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fdefquery">http://localhost:8080/container/defquery</a>
+</td>
+<td>http://localhost:8080/container/defquery</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fdmn&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fdmn">http://localhost:8080/container/dmn</a>
+</td>
+<td>http://localhost:8080/container/dmn</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fexcel&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fexcel">http://localhost:8080/container/excel</a>
+</td>
+<td>http://localhost:8080/container/excel</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fgenexcel&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fgenexcel">http://localhost:8080/container/genexcel</a>
+</td>
+<td>http://localhost:8080/container/genexcel</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fpart&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fpart">http://localhost:8080/container/part</a>
+</td>
+<td>http://localhost:8080/container/part</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fquery&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fquery">http://localhost:8080/container/query</a>
+</td>
+<td>http://localhost:8080/container/query</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Freplace&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Freplace">http://localhost:8080/container/replace</a>
+</td>
+<td>http://localhost:8080/container/replace</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fshape&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fshape">http://localhost:8080/container/shape</a>
+</td>
+<td>http://localhost:8080/container/shape</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fsimple&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fsimple">http://localhost:8080/container/simple</a>
+</td>
+<td>http://localhost:8080/container/simple</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fupdate&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fupdate">http://localhost:8080/container/update</a>
+</td>
+<td>http://localhost:8080/container/update</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fupload&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fupload">http://localhost:8080/container/upload</a>
+</td>
+<td>http://localhost:8080/container/upload</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fxpl&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fxpl">http://localhost:8080/container/xpl</a>
+</td>
+<td>http://localhost:8080/container/xpl</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8888%2Fcontainer%2Fdefquery&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8888%2Fcontainer%2Fdefquery">http://localhost:8888/container/defquery</a>
+</td>
+<td>http://localhost:8888/container/defquery</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8888%2Fcontainer%2Fsimple&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8888%2Fcontainer%2Fsimple">http://localhost:8888/container/simple</a>
+</td>
+<td>http://localhost:8888/container/simple</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8888%2Fcontainer%2Fwrongassertioncontainer&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8888%2Fcontainer%2Fwrongassertioncontainer">http://localhost:8888/container/wrongassertioncontainer</a>
+</td>
+<td>http://localhost:8888/container/wrongassertioncontainer</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23Container">Container</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8888%2Fcontainer%2Fwrongcontainer&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8888%2Fcontainer%2Fwrongcontainer">http://localhost:8888/container/wrongcontainer</a>
+</td>
+<td>http://localhost:8888/container/wrongcontainer</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<a href="/resource?subject=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23VersionContainer">VersionContainer</a>
+</td>
+<td>
+<a href="backstage/rep?subject=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fversioned&amp;SUBJECT=http%3A%2F%2Flocalhost%3A8080%2Fcontainer%2Fversioned">http://localhost:8080/container/versioned</a>
+</td>
+<td>http://localhost:8080/container/versioned</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<a href="http://localhost:8888/backstage?representation=http%3A%2F%2Fbp4mc2.org%2Felmo%2Fdef%23BackstageRepresentation_List&amp;format=xlsx">Excel</a>
+</div>
+</div>
+</div>
+</body>
+</html>

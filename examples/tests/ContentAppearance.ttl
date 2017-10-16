@@ -28,7 +28,9 @@ stage:ContentAppearanceQuery a elmo:Query;
 				OPTIONAL {
 					?s dbo:isPartOf ?w.
 					?w ?wp ?wo
-					FILTER (?wp!=testo:largestCities)
+					FILTER (?wp!=testo:largestCities
+						&&	?wp!=dbo:populationTotal
+					)
 				}
 				FILTER (?s = <http://dbpedia.org/resource/Amersfoort>)
 				FILTER (?p != testo:districtNames)
