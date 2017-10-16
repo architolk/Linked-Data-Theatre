@@ -1,8 +1,8 @@
 <!--
 
     NAME     TreeAppearance.xsl
-    VERSION  1.18.2-SNAPSHOT
-    DATE     2017-08-18
+    VERSION  1.19.0
+    DATE     2017-10-16
 
     Copyright 2012-2017
 

@@ -1,8 +1,8 @@
 <!--
 
     NAME     SimpleTranslator.xsl
-    VERSION  1.18.0
-    DATE     2017-06-18
+    VERSION  1.19.0
+    DATE     2017-10-16
 
     Copyright 2012-2017
 
