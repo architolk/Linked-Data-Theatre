@@ -2,7 +2,7 @@
 
     NAME     VocabularyAppearance.xsl
     VERSION  1.18.2-SNAPSHOT
-    DATE     2017-10-11
+    DATE     2017-10-16
 
     Copyright 2012-2017
 
@@ -71,6 +71,12 @@
 			<term id="Possible values:">Mogelijke waarden:</term>
 			<term id="Classes and properties">Klassen en eigenschappen</term>
 			<term id="Used with property:">Gebruikt bij eigenschap:</term>
+			<term id="Value pattern:">Waarde patroon:</term>
+			<term id="Max length:">Maximale lengte:</term>
+			<term id="between ">tussen </term>
+			<term id=" and "> en </term>
+			<term id="from ">vanaf </term>
+			<term id="up to ">tot en met </term>
 		</list>
 	</xsl:variable>
 
@@ -500,6 +506,44 @@
 									<xsl:for-each select="datatype">
 										<xsl:if test="position()!=1">, </xsl:if>
 										<xsl:apply-templates select="@uri" mode="link"><xsl:with-param name="owneditems" select="$owneditems"/></xsl:apply-templates>
+									</xsl:for-each>
+								</td>
+							</tr>
+						</xsl:if>
+						<xsl:if test="exists(pattern)">
+							<tr>
+								<td><xsl:value-of select="ldt:label('Value pattern:')"/></td>
+								<td>
+									<xsl:for-each select="pattern">
+										<xsl:if test="position()!=1">, </xsl:if>
+										<xsl:choose>
+											<xsl:when test="@minInclusive!='' and @maxInclusive!=''">
+												<xsl:value-of select="ldt:label('between ')"/>
+												<xsl:value-of select="@minInclusive"/>
+												<xsl:value-of select="ldt:label(' and ')"/>
+												<xsl:value-of select="@maxInclusive"/>
+											</xsl:when>
+											<xsl:when test="@minInclusive!=''">
+												<xsl:value-of select="ldt:label('from ')"/>
+												<xsl:value-of select="@minInclusive"/>
+											</xsl:when>
+											<xsl:when test="@maxInclusive!=''">
+												<xsl:value-of select="ldt:label('up to ')"/>
+												<xsl:value-of select="@maxInclusive"/>
+											</xsl:when>
+											<xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
+										</xsl:choose>
+									</xsl:for-each>
+								</td>
+							</tr>
+						</xsl:if>
+						<xsl:if test="exists(maxLength)">
+							<tr>
+								<td><xsl:value-of select="ldt:label('Max length:')"/></td>
+								<td>
+									<xsl:for-each select="maxLength">
+										<xsl:if test="position()!=1">, </xsl:if>
+										<xsl:value-of select="."/>
 									</xsl:for-each>
 								</td>
 							</tr>
