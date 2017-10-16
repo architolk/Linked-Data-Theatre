@@ -2,7 +2,7 @@
 
     NAME     context.xsl
     VERSION  1.18.2-SNAPSHOT
-    DATE     2017-09-29
+    DATE     2017-10-16
 
     Copyright 2012-2017
 
@@ -300,13 +300,15 @@
 						<xsl:otherwise>
 							<parameter>
 								<name><xsl:value-of select="name"/></name>
-								<value>
-									<xsl:choose>
-										<xsl:when test="exists(/sroot) and name='query'"><xsl:value-of select="replace(value,$para-filter-relaxed,'')"/></xsl:when> <!-- Relaxed filter for SPARQL queries -->
-										<xsl:when test="exists(/croot)"><xsl:value-of select="replace(value,$para-filter-relaxed,'')"/></xsl:when> <!-- Relaxed filter for containers (currently, should be improved) -->
-										<xsl:otherwise><xsl:value-of select="replace(value,$para-filter,'')"/></xsl:otherwise>
-									</xsl:choose>
-								</value> <!-- Remove illegal characters to reduce cross site scripting errors -->
+								<xsl:for-each select="value">
+									<value>
+										<xsl:choose>
+											<xsl:when test="exists(/sroot) and name='query'"><xsl:value-of select="replace(.,$para-filter-relaxed,'')"/></xsl:when> <!-- Relaxed filter for SPARQL queries -->
+											<xsl:when test="exists(/croot)"><xsl:value-of select="replace(.,$para-filter-relaxed,'')"/></xsl:when> <!-- Relaxed filter for containers (currently, should be improved) -->
+											<xsl:otherwise><xsl:value-of select="replace(.,$para-filter,'')"/></xsl:otherwise>
+										</xsl:choose>
+									</value> <!-- Remove illegal characters to reduce cross site scripting errors -->
+								</xsl:for-each>
 							</parameter>
 						</xsl:otherwise>
 					</xsl:choose>
