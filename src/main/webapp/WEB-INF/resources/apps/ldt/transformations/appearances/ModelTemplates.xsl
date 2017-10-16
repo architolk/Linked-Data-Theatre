@@ -586,4 +586,20 @@
 	</properties>
 </xsl:template>
 
+<!-- Used in visualisation of rdf2yed and ModelAppearance -->
+<xsl:template match="property" mode="property-placement">
+	<xsl:variable name="slabel"><xsl:value-of select="replace(@uri,'^.*(#|/)([^(#|/)]+)$','$2')"/></xsl:variable>
+	<xsl:variable name="label">
+		<xsl:value-of select="@name"/>
+		<xsl:if test="not(@name!='')">
+			<xsl:value-of select="$slabel"/>
+			<xsl:if test="$slabel=''"><xsl:value-of select="@uri"/></xsl:if>
+		</xsl:if>
+	</xsl:variable>
+	<xsl:value-of select="$label"/>
+	<xsl:if test="@datatype!=''"><xsl:text> (</xsl:text><xsl:value-of select="replace(@datatype,'^.*(#|/)([^(#|/)]+)$','$2')"/><xsl:text>)</xsl:text></xsl:if>
+	<xsl:if test="refshape/@shapename!=''"> &#x2192; <xsl:value-of select="refshape/@shapename"/></xsl:if>
+	<xsl:text> [</xsl:text><xsl:value-of select="@mincount"/><xsl:text>,</xsl:text><xsl:value-of select="@maxcount"/><xsl:text>]</xsl:text>
+</xsl:template>
+
 </xsl:stylesheet>

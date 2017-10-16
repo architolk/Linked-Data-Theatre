@@ -1,7 +1,7 @@
 /*
  * NAME     linkedmodel.js
- * VERSION  1.18.0
- * DATE     2017-06-18
+ * VERSION  1.18.2-SNAPSHOT
+ * DATE     2017-10-16
  *
  * Copyright 2012-2017
  *
@@ -76,6 +76,11 @@ _.each(graph.getLinks(),function(link) {
 			".connection": { stroke: '#000000', 'stroke-width': 1 },
 			".marker-target": { fill: '#FFFFFF', stroke: '#000000', d: 'M 14 0 L 0 7 L 14 14 z' }
 		});
+	} else if (link.attributes.ldttype==="role") {
+		link.attr({
+			".connection": { stroke: '#000000', 'stroke-width': 1, 'stroke-dasharray': '5,5' },
+			".marker-target": { fill: '#FFFFFF', stroke: '#000000', d: 'M 14 0 L 0 7 L 14 14 z' }
+		});
 	} else {
 		link.attr({
 			".connection": { stroke: '#000000', 'stroke-width': 1 },
@@ -98,7 +103,9 @@ _.each(graph.getElements(),function(element) {
 		}
 	});
 	var realWith = paper.findViewByModel(element).getBBox().width+10;
-	element.resize(Math.max(realWith,100),30 + Math.max(element.attributes.events.length*12,10));
+	if (element.attributes.events) {
+		element.resize(Math.max(realWith,100),30 + Math.max(element.attributes.events.length*12,10));
+	}
 });
 
 // Auto-layout
