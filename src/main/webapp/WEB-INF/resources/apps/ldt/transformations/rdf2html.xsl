@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2html.xsl
-    VERSION  1.19.0
-    DATE     2017-10-16
+    VERSION  1.19.1-SNAPSHOT
+    DATE     2017-10-17
 
     Copyright 2012-2017
 
@@ -708,11 +708,12 @@
 	<xsl:variable name="original-link">
 		<xsl:value-of select="../context/url"/>
 		<xsl:text>?</xsl:text>
-		<xsl:for-each select="../context/parameters/parameter"> <!-- This doesn't work if the subject is given as a parameter! -->
+		<xsl:for-each select="../context/parameters/parameter">
 			<xsl:value-of select="name"/>=<xsl:value-of select="encode-for-uri(value[1])"/>
 			<xsl:text>&amp;</xsl:text>
 		</xsl:for-each>
 		<xsl:text>representation=</xsl:text><xsl:value-of select="encode-for-uri(@elmo:query)"/>
+		<xsl:if test="../context/subject!=''">&amp;subject=<xsl:value-of select="encode-for-uri(../context/subject)"/></xsl:if>
 		<xsl:text>&amp;format=</xsl:text>
 	</xsl:variable>
 	<!-- Unique number for this datatable -->		
