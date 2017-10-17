@@ -251,30 +251,33 @@
 									}
 									WHERE {
 										GRAPH <]]><xsl:value-of select="root/context/representation-graph/@uri"/><![CDATA[>{
+											{
+												?rep ?repp ?repo.
+												OPTIONAL {?rep elmo:query/elmo:query ?query}
+												FILTER (]]>
+												<xsl:for-each select="$representations/rep">
+													<xsl:if test="position()!=1"> || </xsl:if>
+													<![CDATA[?rep=]]><xsl:value-of select="."/><![CDATA[
+												]]></xsl:for-each><![CDATA[)
+											}
 										]]><xsl:for-each select="$representations/rep">
-											<xsl:if test="position()!=1">UNION</xsl:if>
-											<![CDATA[{
-												{
-													?rep ?repp ?repo.
-													FILTER (?rep=]]><xsl:value-of select="."/><![CDATA[)
-													OPTIONAL {?rep elmo:query/elmo:query ?query}
-												}
-												UNION
-												{]]><xsl:value-of select="."/><![CDATA[ elmo:fragment ?fragment. ?fragment ?fragmentp ?fragmento }
-												UNION
-												{
-													]]><xsl:value-of select="."/><![CDATA[ elmo:contains ?repchild.
-													?repchild ?repchildp ?repchildo.
-													OPTIONAL { ?repchild elmo:fragment ?fragmentchild. ?fragmentchild ?fragmentchildp ?fragmentchildo }
-													OPTIONAL { ?repchild elmo:query/elmo:query ?querychild }
-												}
-												UNION
-												{
-													]]><xsl:value-of select="."/><![CDATA[ elmo:queryForm ?form.
-													?form ?formp ?formo.
-													OPTIONAL {?form elmo:fragment ?formfragment. ?formfragment ?formfragmentp ?formfragmento}
-												}
-											}]]></xsl:for-each><![CDATA[
+										<![CDATA[
+											UNION
+											{]]><xsl:value-of select="."/><![CDATA[ elmo:fragment ?fragment. ?fragment ?fragmentp ?fragmento }
+											UNION
+											{
+												]]><xsl:value-of select="."/><![CDATA[ elmo:contains ?repchild.
+												?repchild ?repchildp ?repchildo.
+												OPTIONAL { ?repchild elmo:fragment ?fragmentchild. ?fragmentchild ?fragmentchildp ?fragmentchildo }
+												OPTIONAL { ?repchild elmo:query/elmo:query ?querychild }
+											}
+											UNION
+											{
+												]]><xsl:value-of select="."/><![CDATA[ elmo:queryForm ?form.
+												?form ?formp ?formo.
+												OPTIONAL {?form elmo:fragment ?formfragment. ?formfragment ?formfragmentp ?formfragmento}
+											}
+										]]></xsl:for-each><![CDATA[
 										}
 									}
 									]]>
@@ -327,7 +330,7 @@
 	<p:input name="config">
 		<config/>
 	</p:input>
-	<p:input name="data" href="#querytext"/>
+	<p:input name="data" href="#defquery"/>
 </p:processor>
 -->
 
