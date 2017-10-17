@@ -1,8 +1,8 @@
 <!--
 
     NAME     TableExcelTranslator.xsl
-    VERSION  1.19.0
-    DATE     2017-10-16
+    VERSION  1.19.1-SNAPSHOT
+    DATE     2017-10-17
 
     Copyright 2012-2017
 
@@ -80,17 +80,30 @@
 		<xsl:param name="columns"/>
 		<xsl:param name="uri-schema"/>
 
-		<xsl:for-each select="tokenize(replace($uri-schema,'\{[^\}]*\}','@$0@'),'@')">
-			<xsl:choose>
-				<xsl:when test="matches(.,'^\{[^\}]*\}$')">
+		<!-- Check if some elements are empty (in such a case: the uri should be empty) -->
+		<xsl:variable name="flag-empty">
+			<xsl:for-each select="tokenize(replace($uri-schema,'\{[^\}]*\}','@$0@'),'@')">
+				<xsl:if test="matches(.,'^\{[^\}]*\}$')">
 					<xsl:variable name="name" select="substring(.,2,string-length(.)-2)"/>
-					<xsl:value-of select="$columns[@id=$column-names/sheet[@name=$sheet]/column[@name=$name]/@id]"/>
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:value-of select="."/>
-				</xsl:otherwise>
-			</xsl:choose>
-		</xsl:for-each>
+					<xsl:variable name="value"><xsl:value-of select="$columns[@id=$column-names/sheet[@name=$sheet]/column[@name=$name]/@id]"/></xsl:variable>
+					<xsl:if test="$value=''">x</xsl:if>
+				</xsl:if>
+			</xsl:for-each>
+		</xsl:variable>
+		<!-- Create URI from template -->
+		<xsl:if test="$flag-empty=''">
+			<xsl:for-each select="tokenize(replace($uri-schema,'\{[^\}]*\}','@$0@'),'@')">
+				<xsl:choose>
+					<xsl:when test="matches(.,'^\{[^\}]*\}$')">
+						<xsl:variable name="name" select="substring(.,2,string-length(.)-2)"/>
+						<xsl:value-of select="$columns[@id=$column-names/sheet[@name=$sheet]/column[@name=$name]/@id]"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="."/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:for-each>
+		</xsl:if>
 	</xsl:template>
 	
 	<xsl:template match="/">
