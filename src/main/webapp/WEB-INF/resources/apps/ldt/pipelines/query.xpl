@@ -1,8 +1,8 @@
 <!--
 
     NAME     query.xpl
-    VERSION  1.19.0
-    DATE     2017-10-16
+    VERSION  1.19.1
+    DATE     2017-10-17
 
     Copyright 2012-2017
 
