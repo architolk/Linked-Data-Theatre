@@ -10,29 +10,40 @@ stage:TableAppearance a elmo:Representation;
 	elmo:url-pattern "/query/TableAppearance$";
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
-	elmo:contains stage:TableAppearance_table1;
-	elmo:contains stage:TableAppearance_table2;
+	elmo:contains stage:TableAppearance_table_classes;
+	elmo:contains stage:TableAppearance_table_properties;
+	elmo:contains stage:TableAppearance_table_properties_per_class;
 .
-stage:TableAppearance_table1 a elmo:Part;
+stage:TableAppearance_table_classes a elmo:Part;
 	elmo:index "1";
-	elmo:query stage:TableAppearanceQuery1;
+	elmo:fragment [
+		elmo:applies-to "filter";
+		html:link "/query/TableAppearance"
+	];
+	elmo:query stage:TableAppearanceQuery_classes;
 .
-stage:TableAppearance_table2 a elmo:Part;
+stage:TableAppearance_table_properties a elmo:Part;
 	elmo:index "2";
-	elmo:query stage:TableAppearanceQuery2;
+	elmo:without-parameter "subject";
+	elmo:query stage:TableAppearanceQuery_properties;
+.
+stage:TableAppearance_table_properties_per_class a elmo:Part;
+	elmo:index "2";
+#	elmo:with-parameter "subject";
+	elmo:query stage:TableAppearanceQuery_properties_per_class;
 .
 
 #Special table appearance for regression test purposes (to minimize regression due to different data)
 stage:TableAppearance2 a elmo:Representation;
 	elmo:url-pattern "/query/TableAppearance2";
-	elmo:contains stage:TableAppearance2_table1;
-	elmo:contains stage:TableAppearance2_table2;
+	elmo:contains stage:TableAppearance2_table_classes;
+	elmo:contains stage:TableAppearance2_table_properties;
 .
 
-stage:TableAppearanceQuery1 a elmo:Query;
+stage:TableAppearanceQuery_classes a elmo:Query;
 	rdfs:label "All classes within the test dataset";
 	elmo:query '''
-		select distinct ?class ?class_label (count(?item) as ?class_count)
+		select distinct ?class ?class_label (count(?item) as ?class_count) (?class as ?filter)
 		where {
 			graph <@STAGE@> {
 				?item rdf:type ?class.
@@ -41,7 +52,7 @@ stage:TableAppearanceQuery1 a elmo:Query;
 		}
 	''';
 .
-stage:TableAppearanceQuery2 a elmo:Query;
+stage:TableAppearanceQuery_properties a elmo:Query;
 	rdfs:label "All properties within the test dataset";
 	elmo:query '''
 		select distinct ?property ?property_label (count(?item) as ?property_count)
@@ -53,8 +64,21 @@ stage:TableAppearanceQuery2 a elmo:Query;
 		}
 	''';
 .
+stage:TableAppearanceQuery_properties_per_class a elmo:Query;
+	rdfs:label "All properties within the test dataset for a specific class with uri @SUBJECT@";
+	elmo:query '''
+		select distinct ?property ?property_label (count(?item) as ?property_count)
+		where {
+			graph <@STAGE@> {
+				?item rdf:type <@SUBJECT@>.
+				?item ?property ?object.
+				OPTIONAL {?property rdfs:label ?property_label}
+			}
+		}
+	''';
+.
 
-stage:TableAppearance2_table1 a elmo:Part;
+stage:TableAppearance2_table_classes a elmo:Part;
 	rdfs:label "All defined classes within the test dataset";
 	elmo:index "1";
 	elmo:query '''
@@ -71,7 +95,7 @@ stage:TableAppearance2_table1 a elmo:Part;
 		}
 	''';
 .
-stage:TableAppearance2_table2 a elmo:Part;
+stage:TableAppearance2_table_properties a elmo:Part;
 	rdfs:label "All defined properties within the test dataset";
 	elmo:index "2";
 	elmo:query '''

@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2view.xsl
-    VERSION  1.19.0
-    DATE     2017-10-16
+    VERSION  1.19.1-SNAPSHOT
+    DATE     2017-10-17
 
     Copyright 2012-2017
 
@@ -130,12 +130,12 @@
 		<xsl:for-each-group select="rdf:RDF/rdf:Description[exists(elmo:data[1]) or exists(elmo:query[.!='']) or exists(elmo:service[1]) or exists(elmo:webpage[1]) or exists(elmo:queryForm[1]) or rdf:type/@rdf:resource='http://bp4mc2.org/elmo/def#Production']" group-by="@rdf:about"><xsl:sort select="concat(elmo:index[1],'~')"/>
 			<xsl:variable name="with-filter-notok">
 				<xsl:for-each select="elmo:with-parameter">
-					<xsl:if test="not(exists(key('parameters', .)))">x</xsl:if>
+					<xsl:if test="not(exists(key('parameters', .)) or (.='subject' and /root/context/subject!=''))">x</xsl:if>
 				</xsl:for-each>
 			</xsl:variable>
 			<xsl:variable name="without-filter-notok">
 				<xsl:for-each select="elmo:without-parameter">
-					<xsl:if test="exists(key('parameters', .))">x</xsl:if>
+					<xsl:if test="exists(key('parameters', .)) or (.='subject' and /root/context/subject!='')">x</xsl:if>
 				</xsl:for-each>
 			</xsl:variable>
 			<xsl:if test="$with-filter-notok='' and $without-filter-notok=''">
