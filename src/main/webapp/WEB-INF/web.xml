@@ -437,6 +437,27 @@
         <role-name>orbeon-user</role-name>
     </security-role>-->
     <!-- End Form Runner authentication -->
+	<!-- Authentication for the Linked Data Theatre -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Backstage</web-resource-name>
+            <url-pattern>/backstage/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>backstageadmin</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <login-config>
+        <auth-method>FORM</auth-method>
+        <form-login-config>
+            <form-login-page>/login</form-login-page>
+            <form-error-page>/login-error</form-error-page>
+        </form-login-config>
+    </login-config>
+    <security-role>
+        <role-name>backstageadmin</role-name>
+    </security-role>
+	<!-- End Authentication for the Linked Data Theatre -->
     <session-config>
         <session-timeout>60</session-timeout>
     </session-config>

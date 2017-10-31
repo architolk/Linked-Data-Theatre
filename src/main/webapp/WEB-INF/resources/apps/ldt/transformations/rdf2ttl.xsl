@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2ttl.xsl
-    VERSION  1.19.0
-    DATE     2017-10-16
+    VERSION  1.19.2-SNAPSHOT
+    DATE     2017-10-31
 
     Copyright 2012-2017
 
@@ -149,11 +149,11 @@
 </xsl:template>
 
 <xsl:template match="*" mode="list">
-	<xsl:text>(</xsl:text><xsl:apply-templates select="." mode="listrec"/><xsl:text>)</xsl:text>
+	<xsl:text>(</xsl:text><xsl:apply-templates select="key('bnodes',@rdf:nodeID)" mode="listrec"/><xsl:text>)</xsl:text>
 </xsl:template>
 
 <xsl:template match="*" mode="triple"><xsl:param name="tab" as="xs:integer"/>
-<xsl:apply-templates select="." mode="property"/><xsl:text> </xsl:text><xsl:choose><xsl:when test="exists(@rdf:resource)"><xsl:apply-templates select="@rdf:resource" mode="uri"/></xsl:when><xsl:when test="exists(@rdf:nodeID) and exists(key('bnodes',@rdf:nodeID)/rdf:first)"><xsl:apply-templates select="key('bnodes',@rdf:nodeID)" mode="list"/></xsl:when><xsl:when test="exists(@rdf:nodeID)">[
+<xsl:apply-templates select="." mode="property"/><xsl:text> </xsl:text><xsl:choose><xsl:when test="exists(@rdf:resource)"><xsl:apply-templates select="@rdf:resource" mode="uri"/></xsl:when><xsl:when test="exists(@rdf:nodeID) and exists(key('bnodes',@rdf:nodeID)/rdf:first)"><xsl:apply-templates select="." mode="list"/></xsl:when><xsl:when test="exists(@rdf:nodeID)">[
 <xsl:for-each select="key('bnodes',@rdf:nodeID)/*"><xsl:if test="position()!=1">;
 </xsl:if><xsl:value-of select="fn:spaces($tab)"/><xsl:apply-templates select="." mode="triple"><xsl:with-param name="tab" select="$tab+4"/></xsl:apply-templates></xsl:for-each><xsl:text>
 </xsl:text><xsl:value-of select="fn:spaces(-4+$tab)"/>]</xsl:when><xsl:otherwise><xsl:apply-templates select="." mode="literal"/></xsl:otherwise></xsl:choose>
