@@ -1,8 +1,8 @@
 <!--
 
     NAME     sparql2rdfa.xsl
-    VERSION  1.19.0
-    DATE     2017-10-16
+    VERSION  1.19.1-SNAPSHOT
+    DATE     2017-11-14
 
     Copyright 2012-2017
 
@@ -109,8 +109,8 @@
 				<res:variable><xsl:value-of select="$varname"/></res:variable>
 				<res:value>
 					<xsl:if test="exists(res:uri)"><xsl:attribute name="rdf:resource"><xsl:value-of select="res:uri"/></xsl:attribute></xsl:if>
-					<xsl:if test="exists(res:literal)"><xsl:attribute name="datatype"><xsl:value-of select="res:literal/@datatype"/></xsl:attribute><xsl:value-of select="res:literal"/></xsl:if>
 					<xsl:if test="exists(res:bnode)"><xsl:attribute name="rdf:nodeID"><xsl:value-of select="res:bnode"/></xsl:attribute></xsl:if>
+					<xsl:if test="exists(res:literal)"><xsl:attribute name="datatype"><xsl:value-of select="res:literal/@datatype"/></xsl:attribute><xsl:value-of select="res:literal"/></xsl:if>
 				</res:value>
 			</res:binding>
 			<!-- Extra binding -->
