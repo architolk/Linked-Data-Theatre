@@ -1,8 +1,8 @@
 <!--
 
     NAME     context.xsl
-    VERSION  1.19.0
-    DATE     2017-10-16
+    VERSION  1.19.2-SNAPSHOT
+    DATE     2017-11-20
 
     Copyright 2012-2017
 
@@ -303,7 +303,7 @@
 								<xsl:for-each select="value">
 									<value>
 										<xsl:choose>
-											<xsl:when test="exists(/sroot) and name='query'"><xsl:value-of select="replace(.,$para-filter-relaxed,'')"/></xsl:when> <!-- Relaxed filter for SPARQL queries -->
+											<xsl:when test="exists(/sroot) and ../name='query'"><xsl:value-of select="replace(.,$para-filter-relaxed,'')"/></xsl:when> <!-- Relaxed filter for SPARQL queries -->
 											<xsl:when test="exists(/croot)"><xsl:value-of select="replace(.,$para-filter-relaxed,'')"/></xsl:when> <!-- Relaxed filter for containers (currently, should be improved) -->
 											<xsl:otherwise><xsl:value-of select="replace(.,$para-filter,'')"/></xsl:otherwise>
 										</xsl:choose>
