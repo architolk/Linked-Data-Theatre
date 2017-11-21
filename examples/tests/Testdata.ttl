@@ -16,6 +16,8 @@
 @prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
 @prefix shacl: <http://www.w3.org/ns/shacl#>.
 @prefix dc: <http://purl.org/dc/elements/1.1/>.
+@prefix dctype: <http://purl.org/dc/dcmitype/>.
+@prefix skos: <http://www.w3.org/2004/02/skos/core#>.
 
 #
 # Scrumboard testdata
@@ -44,6 +46,22 @@ storystatus:backlog a testo:Status;
 storystatus:todo a testo:Status;
 	rdfs:label "To do";
 	geo:geometry "CIRCLE(200 -20,4)";
+.
+
+#
+#Images testdata
+#
+<urn:logo> a skos:Concept;
+  rdfs:label "Logo";
+  skos:definition "Een logo is een afbeelding die verwijst naar een merk, zoals een product, persoon of organisatie.";
+  skos:example <http://localhost:8080/images/ldt-logo.png>;
+  skos:example <urn:ldtlogo>;
+.
+<http://localhost:8080/images/ldt-logo.png> a dctype:Image;
+.
+<urn:ldtlogo> a skos:Concept;
+  rdfs:label "Linked Data Theatre logo";
+  foaf:depiction <http://localhost:8080/images/ldt-logo.png>
 .
 
 #

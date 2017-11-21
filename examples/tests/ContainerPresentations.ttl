@@ -26,19 +26,44 @@ stage:ContainerPresentations a elmo:Representation;
 			<p><a class="btn btn-default" href="/ldt/query/archicomponents">Show archi container</a></p>
 			<p><a class="btn btn-default" href="/ldt/query/simple-container.yed">Show simple container graph</a></p>
 			<p><a class="btn btn-default" href="/ldt/query/simple-container-concept">Show simple container concepts</a></p>
+			<p><a class="btn btn-default" href="/ldt/query/simple-container-content">Show simple container content</a></p>
 		''';
 	]
 .
 
-#stage:SimpleContainer a elmo:Representation;
-#	elmo:url-pattern "/query/simple-container.yed";
-#	elmo:query stage:SimpleContainerQuery;
-#.
 stage:SimpleContainer a elmo:Representation;
 	elmo:url-pattern "/query/simple-vocabulary(|.yed)$";
 	elmo:appearance elmo:VocabularyAppearance;
 	elmo:query stage:SimpleContainerQuery;
 .
+
+stage:SimpleContainerTest a elmo:Representation;
+  elmo:url-pattern "/query/voctest(|.yed)$";
+  elmo:appearance elmo:VocabularyAppearance;
+  elmo:query '''
+       PREFIX sh: <http://www.w3.org/ns/shacl#>
+        PREFIX dctype: <http://purl.org/dc/dcmitype/>
+        prefix req: <http://data.ontwikkeling.pdok.nl/gco/id/requirement/>
+        CONSTRUCT {
+            ?shape ?shapepred ?shapeobj.
+            ?shape sh:property ?prop.
+            ?prop ?proppred ?propobj.
+        }
+        WHERE {
+            GRAPH <http://bp4mc2.org/id/dataset/requirements> {
+                ?shape ?shapepred ?shapeobj.
+                OPTIONAL {
+                  ?shape sh:property ?prop.
+                  ?prop ?proppred ?propobj.
+                }
+                FILTER (?shape = req:Concept
+                || ?shape = req:ExternConcept
+                )
+            }
+        }
+  ''';
+.
+
 stage:SimpleContainerModel a elmo:Representation;
 	elmo:url-pattern "/query/simple-vocabulary-model$";
 	elmo:appearance elmo:ModelAppearance;
@@ -65,6 +90,18 @@ stage:SimpleContainerConcepts a elmo:Representation;
 				?concept rdfs:label ?concept_label.
 				?concept skos:definition ?definition.
 				FILTER (lang(?concept_label)="" or lang(?concept_label)="@LANGUAGE@")
+			}
+		}
+	''';
+.
+
+stage:SimpleContainerContent a elmo:Representation;
+	elmo:url-pattern "/query/simple-container-content$";
+	elmo:query '''
+		construct {?s?p?o}
+		where {
+			graph <http://localhost:8080/container/simple> {
+				?s?p?o
 			}
 		}
 	''';

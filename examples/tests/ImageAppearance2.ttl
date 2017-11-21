@@ -1,0 +1,88 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+@prefix void: <http://rdfs.org/ns/void#>.
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
+@prefix skos: <http://www.w3.org/2004/02/skos/core#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+
+stage:ImageAppearanceContent	a	elmo:Representation;
+	elmo:url-pattern	"/query/ImageAppearanceContent$";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+  elmo:contains stage:ImageAppearanceContent_Direct;
+  elmo:contains stage:ImageAppearanceContent_Indirect;
+  elmo:contains stage:ImageAppearanceContent_Table
+.
+
+stage:ImageAppearanceContent_Direct a elmo:Part;
+  elmo:index "1";
+  elmo:fragment [
+    elmo:applies-to skos:example;
+    rdfs:label "Voorbeeldafbeelding";
+    elmo:appearance elmo:ImageAppearance;
+  ];
+	elmo:query '''
+    CONSTRUCT {
+      ?s ?p ?o
+    }
+    WHERE {
+      ?s ?p ?o
+      FILTER (?s = <urn:logo>)
+    }
+	''';
+.
+
+stage:ImageAppearanceContent_Indirect a elmo:Part;
+  elmo:index "2";
+  elmo:fragment [
+    rdfs:label "Voorbeeld"@nl;
+    rdfs:label "Example"@en;
+    elmo:applies-to skos:example;
+    elmo:appearance elmo:NestedAppearance;
+  ];
+  elmo:fragment [
+    elmo:applies-to foaf:depiction;
+    rdfs:label "Afbeelding";
+    elmo:appearance elmo:ImageAppearance;
+  ];
+	elmo:query '''
+    CONSTRUCT {
+      ?s ?p ?o.
+      ?ex rdfs:label ?exlabel.
+      ?ex foaf:depiction ?exdepiction.
+    }
+    WHERE {
+      ?s ?p ?o.
+      OPTIONAL {
+        ?s skos:example ?ex.
+        ?ex rdfs:label ?exlabel.
+        ?ex foaf:depiction ?exdepiction.
+      }
+      FILTER (?s = <urn:logo>)
+    }
+	''';
+.
+
+# This doesn't work yet: images will only be depicted in a ContentAppearance
+stage:ImageAppearanceContent_Table a elmo:Part;
+  elmo:index "3";
+  elmo:fragment [
+    elmo:applies-to "example";
+    rdfs:label "Voorbeeld"@nl;
+    rdfs:label "Example"@en;
+    elmo:appearance elmo:ImageAppearance;
+  ];
+	elmo:query '''
+    prefix skos: <http://www.w3.org/2004/02/skos/core#>
+		SELECT ?s ?s_label ?definition ?example
+    WHERE {
+      ?s rdfs:label ?s_label.
+      ?s skos:definition ?definition.
+      ?s skos:example ?example
+      FILTER (?s = <urn:logo>)
+    }
+	''';
+.
