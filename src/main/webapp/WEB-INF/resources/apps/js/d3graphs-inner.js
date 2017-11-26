@@ -108,42 +108,74 @@ var allLinks = container.selectAll(".link"),
 	root = {},
 	currentNode = null;
 
-//Fetch data via Ajax-call and process
-d3.json(jsonApiCall+encodeURIComponent(jsonApiSubject), function(error, json) {
+//Fetch data via Ajax-call and process (ask for json-ld)
+d3.xhr(jsonApiCall+encodeURIComponent(jsonApiSubject),"application/ld+json", function(error, xhr) {
 
-	root.nodes = json.nodes;
-	//Update nodes: the original data contains nodes with an uri-reference to the node, not the node itself (@id holds the uri-reference)
-	root.nodes.forEach(function(x) { nodeMap[x['@id']] = x; });
+  //Parse xhr as if it was json
+  json = JSON.parse(xhr.responseText);
 
-	//Update links
+  var idKey = findPrefix(json["@context"],"@id","@id");
+  var elmoStyle = findPrefix(json["@context"],"http://bp4mc2.org/elmo/def#","elmo") + ":style";
+  var rdfsLabel = findPrefix(json["@context"],"http://www.w3.org/2000/01/rdf-schema#","rdfs") + ":label";
+
+  var availableNodes = {};
+	json.graph.forEach(function(x) { availableNodes[x[idKey]] = x; });
+
+  root.nodes = [];
+  
+  //Find subject and insert (startingpoint = middle of screen)
+  var subject = json.graph.filter(function(r) {return (r[idKey]===jsonApiSubject)})[0];
+  if (!subject) {
+    subject = json.graph.filter(function(r) {return (r[idKey]===jsonApiIDSubject)})[0];
+  }
+  if (!subject) {
+    subject = json.graph[0];
+  }
+  addNode(subject,idKey,elmoStyle,rdfsLabel,json["@context"],width/2,height/2);
+
+  //Add nodes that are linked from the subject and available
+  for (var property in subject) {
+    if (property!==idKey && property!==elmoStyle && (availableNodes[subject[property]])) {
+      addNode(availableNodes[subject[property]],idKey,elmoStyle,rdfsLabel,json["@context"],width/2,height/2);
+    }
+  }
+  //Add nodes that have the subject as target (duplicates will be filtered out by addNode function)
+  json.graph.forEach(function(resource) {
+    var found = false;
+    for (var property in resource) {
+      if (property!=idKey && property!=elmoStyle && resource[property]===jsonApiSubject) {
+        found = true;
+      }
+    }
+    if (found) {
+      addNode(resource,idKey,elmoStyle,rdfsLabel,json["@context"],width/2,height/2);
+    }
+  });
+  
+  //Update and get links
 	root.links = [];
-	json.links.forEach(function(x) {
-		if (linkMap[x.source+x.target]) {
-			//Link already exists, add label to existing link
-			linkMap[x.source+x.target].label = linkMap[x.source+x.target].label+", "+x.label
-		} else {
-			//New link
-			var l = {id:x.source+x.target, source: nodeMap[x.source], target: nodeMap[x.target], label: x.label, uri: x.uri}
-			linkMap[x.source+x.target]=l;
-			root.links.push(l);
-		}
-	});
+  json.graph.forEach(function(resource) {
+    for (var property in resource) {
+      // Only display items that are uri's and exists as nodes
+      if (property!==idKey && property!==elmoStyle && (typeof json["@context"][property] === 'object') && (nodeMap[resource[property]])) {
+        var label = property;
+        var propertyUri = getFullUri(property,json["@context"]);
+        if (availableNodes[propertyUri]) {
+          if (availableNodes[propertyUri][rdfsLabel]) {
+            label = availableNodes[propertyUri][rdfsLabel];
+          }
+        }
+        addLink(resource[idKey],resource[property],property,label);
+      }
+    };
+  });
 
-	//Place first node in the center and set to fixed
-	root.nodes[0].x = width/2;
-	root.nodes[0].y = height/2;
+	//Set first node to fixed
 	root.nodes[0].fixed = true;
 	root.nodes[0].expanded = true;
 	updateTitle(root.nodes[0]);
 
 	//Create network
-	root.nodes.forEach(function(n) {
-		n.inLinks = {};
-		n.outLinks = {};
-		n.linkCount = 0;
-		n.parentLink;
-		n.elementType = "rect"; //Maybe not the best place...
-	});
 	root.links.forEach(function(l) {
 		l.source.outLinks[l.uri] = l.source.outLinks[l.uri] || [];
 		l.source.outLinks[l.uri].push(l);
@@ -159,6 +191,98 @@ d3.json(jsonApiCall+encodeURIComponent(jsonApiSubject), function(error, json) {
 	update();
 
 });
+
+function findPrefix(context,searchValue,defaultValue) {
+  var value = defaultValue;
+  for (var key in context) {
+    if (context[key]===searchValue) {
+      value = key;
+    }
+  }
+  return value
+}
+
+function getFullUri(name,context) {
+  var propertyPrefix = name.split(':')[0];
+  if (propertyPrefix) {
+    var namespace = json["@context"][propertyPrefix];
+    if (namespace) {
+      var propertyLocalname = name.split(':')[1];
+      if (propertyLocalname) {
+        return namespace + propertyLocalname
+      } else {
+        return name
+      }
+    } else {
+      return name
+    }
+  } else {
+    return name
+  }
+}
+
+function addNode(resource,idKey,elmoStyle,rdfsLabel,context,x,y) {
+  
+  //Only add a node if it doesn't exists already
+  if (!nodeMap[resource[idKey]]) {
+  
+    var nodeClass = "";
+    if (resource[elmoStyle]) {
+      if (elmoStyles[resource[elmoStyle]]) {
+        nodeClass = elmoStyles[resource[elmoStyle]];
+      }
+    }
+    var nodeLabel = resource[idKey];
+    if (resource[rdfsLabel]) {
+      nodeLabel = resource[rdfsLabel];
+    }
+    var nodeData = {};
+    for (var property in resource) {
+      if (property!==idKey && property!=rdfsLabel && (!context[property])) {
+        nodeData[property]=resource[property];
+      }
+    }
+    var node = {"@id":resource[idKey]
+        ,"label":nodeLabel
+        ,"class":nodeClass
+        ,"data": nodeData
+        };
+    root.nodes.push(node);
+    nodeMap[resource[idKey]] = node;
+    
+    // startingpoint of new node
+    node.x = x;
+    node.y = y;
+    //Create network: initialize new node
+    node.inLinks = {};
+    node.outLinks = {};
+    node.linkCount = 0;
+    node.parentLink;
+    node.elementType = "rect";
+  }
+
+}
+
+function addLink(sourceUri,targetUri,propertyUri,propertyLabel) {
+  
+  if (linkMap[sourceUri+targetUri]) {
+    //Link already exists, add label to existing link
+    linkMap[sourceUri+targetUri].label+= ", "+propertyLabel;
+    return linkMap[sourceUri+targetUri]
+  } else {
+    //New link
+    var l = {"id":sourceUri+targetUri
+            ,"source":nodeMap[sourceUri]
+            ,"target":nodeMap[targetUri]
+            ,"uri":propertyUri
+            ,"label":propertyLabel
+            };
+    linkMap[l.id]=l;
+    root.links.push(l);
+    return l;
+  }
+  
+}
 
 function movePropertyBox() {
 	if (propertyBoxVisible && propertyNode) {
@@ -530,46 +654,78 @@ function dblclick(d) {
 		//Only query if the nodes hasn't been expanded yet
 		if (!d.expanded) {
 			//Fetch new data via Ajax call
-			d3.json(jsonApiCall+encodeURIComponent(d['@id']), function(error, json) {
-				//Only add new nodes
-				var newNodes = json.nodes.filter(function(x) {return !nodeMap[x['@id']]});
-				newNodes.forEach(function(x) {
-					//force.nodes().push(x); OLD
-					root.nodes.push(x); //NEW
-					nodeMap[x['@id']] = x;
-					// startingpoint of new nodes = position starting node
-					x.x = d.x;
-					x.y = d.y;
-					//Create network: initialize new node
-					x.inLinks = {};
-					x.outLinks = {};
-					x.linkCount = 0;
-					x.parentLink;
-					x.elementType = "rect";
-				})
+      d3.xhr(jsonApiCall+encodeURIComponent(d['@id']),"application/ld+json", function(error, xhr) {
+
+        //Parse xhr as if it was json
+        json = JSON.parse(xhr.responseText);
+
+        var idKey = findPrefix(json["@context"],"@id","@id");
+        var elmoStyle = findPrefix(json["@context"],"http://bp4mc2.org/elmo/def#","elmo") + ":style";
+        var rdfsLabel = findPrefix(json["@context"],"http://www.w3.org/2000/01/rdf-schema#","rdfs") + ":label";
+
+        var availableNodes = {};
+        json.graph.forEach(function(x) { availableNodes[x[idKey]] = x; });
+
+        //Find subject and insert
+        var subject = json.graph.filter(function(r) {return (r[idKey]===d['@id'])})[0];
+        
+        //Add nodes that are linked from the subject and available
+        for (var property in subject) {
+          if (property!==idKey && property!==elmoStyle && (availableNodes[subject[property]])) {
+            if (!nodeMap[subject[property]]) {
+              // startingpoint of new nodes = position starting node
+              addNode(availableNodes[subject[property]],idKey,elmoStyle,rdfsLabel,json["@context"],d.x,d.y);
+            }
+          }
+        };
+        //Add nodes that have the subject as target (duplicates will be filtered out by addNode function)
+        json.graph.forEach(function(resource) {
+          var found = false;
+          for (var property in resource) {
+            if (property!=idKey && property!=elmoStyle && resource[property]===d['@id']) {
+              found = true;
+            }
+          }
+          if (found) {
+            if (!nodeMap[resource[idKey]]) {
+              addNode(resource,idKey,elmoStyle,rdfsLabel,json["@context"],d.x,d.y);
+            }
+          }
+        });
+        
 				//Only add new lines
-				json.links.forEach(function(x) {
-					if (linkMap[x.source+x.target]) {
-						//Existing link, check if uri is different and label is different, add label to existing link
-						var el = linkMap[x.source+x.target];
-						if ((el.uri!=x.uri) && (el.label!=x.label)) {
-							el.label = el.label + ", " + x.label;
-						}
-					} else {
-						var l = {id:x.source+x.target,source:nodeMap[x.source],target:nodeMap[x.target],label:x.label,uri:x.uri};
-						root.links.push(l);
-						linkMap[x.source+x.target] = l;
-						//Create network: set in & out-links
-						l.source.outLinks[l.uri] = l.source.outLinks[l.uri] || [];
-						l.source.outLinks[l.uri].push(l);
-						l.source.linkCount++;
-						l.source.parentLink = l;
-						l.target.inLinks[l.uri] = l.target.inLinks[l.uri] || [];
-						l.target.inLinks[l.uri].push(l);
-						l.target.linkCount++;
-						l.target.parentLink = l;
-					}
-				})
+        json.graph.forEach(function(resource) {
+          for (var property in resource) {
+            // Only display items that are uri's and exists as nodes
+            if (property!==idKey && property!==elmoStyle && (typeof json["@context"][property] === 'object') && (nodeMap[resource[property]])) {
+              var label = property;
+              var propertyUri = getFullUri(property,json["@context"]);
+              if (availableNodes[propertyUri]) {
+                if (availableNodes[propertyUri][rdfsLabel]) {
+                  label = availableNodes[propertyUri][rdfsLabel];
+                }
+              }
+              if (linkMap[resource[idKey]+resource[property]]) {
+                //Existing link, check if uri is different and label is different, add label to existing link
+                var el = linkMap[resource[idKey]+resource[property]];
+                if ((el.uri!=property) && (el.label!=label)) {
+                  el.label+= ", " + label;
+                }
+              } else {
+                var l = addLink(resource[idKey],resource[property],property,label);
+                //Create network: set in & out-links
+                l.source.outLinks[l.uri] = l.source.outLinks[l.uri] || [];
+                l.source.outLinks[l.uri].push(l);
+                l.source.linkCount++;
+                l.source.parentLink = l;
+                l.target.inLinks[l.uri] = l.target.inLinks[l.uri] || [];
+                l.target.inLinks[l.uri].push(l);
+                l.target.linkCount++;
+                l.target.parentLink = l;
+              }
+            }
+          };
+        });
 
 				d.expanded = true;
 				updateTitle(d);
