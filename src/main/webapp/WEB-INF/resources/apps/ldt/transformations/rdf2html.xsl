@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2html.xsl
-    VERSION  1.19.1
-    DATE     2017-10-17
+    VERSION  1.19.2-SNAPSHOT
+    DATE     2017-11-27
 
     Copyright 2012-2017
 
@@ -972,7 +972,22 @@
 					</xsl:for-each>
 				</ul>
 				<xsl:if test="$search='true'">
-					<form class="navbar-form navbar-right" method="get" action="{$docroot}{$subdomain}/query/search">
+					<xsl:variable name="searchlink">
+						<xsl:choose>
+							<xsl:when test="exists($root/html:search)">
+								<xsl:if test="not(matches(html:search,'^(/|[a-zA-Z0-9]+:)'))">
+									<xsl:if test="$docroot!=''"><xsl:value-of select="$docroot"/></xsl:if>
+									<xsl:if test="$subdomain!=''"><xsl:value-of select="$subdomain"/></xsl:if>
+									<xsl:text>/</xsl:text>
+								</xsl:if>
+								<xsl:value-of select="$root/html:search"/>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/><xsl:text>/query/search</xsl:text>
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:variable>
+					<form class="navbar-form navbar-right" method="get" action="{$searchlink}">
 						<div class="input-group">
 							<input class="form-control" type="text" placeholder="Search" name="term"/>
 							<span class="input-group-btn">

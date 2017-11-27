@@ -15,6 +15,7 @@ stage:NavbarSearchAppearance a elmo:Part;
 	elmo:data [
 		rdfs:label "Linked Data Theater"@nl;
 		rdfs:label "Linked Data Theatre"@en;
+    html:search "query/search";
 		elmo:data [
 			elmo:index "1";
 			rdfs:label "Appearances";
