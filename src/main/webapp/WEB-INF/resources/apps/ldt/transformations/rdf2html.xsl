@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.19.2-SNAPSHOT
-    DATE     2017-11-27
+    DATE     2017-11-30
 
     Copyright 2012-2017
 
@@ -564,12 +564,16 @@
 											<xsl:apply-templates select="rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#TreeAppearance']" mode="TreeAppearance"/>
 										</div>
 										<div class="col-md-8">
-											<xsl:apply-templates select="rdf:RDF" mode="present"/>
+											<xsl:for-each select="rdf:RDF"><xsl:sort select="@elmo:index"/>
+												<xsl:apply-templates select="." mode="present"/>
+											</xsl:for-each>
 										</div>
 									</div>
 								</xsl:when>
 								<xsl:otherwise>
-									<xsl:apply-templates select="rdf:RDF" mode="present"/>
+									<xsl:for-each select="rdf:RDF"><xsl:sort select="@elmo:index"/>
+										<xsl:apply-templates select="." mode="present"/>
+									</xsl:for-each>
 								</xsl:otherwise>
 							</xsl:choose>
 						</div>

@@ -15,7 +15,8 @@ stage:DefaultResource a elmo:Representation;
 	elmo:query '''
 		construct {
 			<@SUBJECT@> ?p ?o.
-			?o rdfs:label ?olabel
+			?o rdfs:label ?olabel.
+      ?o ?pb ?ob.
 		}
 		where {
 			<@SUBJECT@> ?p ?o
@@ -23,6 +24,10 @@ stage:DefaultResource a elmo:Representation;
 				?o rdfs:label ?olabel
 				FILTER (lang(?olabel)="@LANGUAGE@" or lang(?olabel)="")
 			}
+      OPTIONAL {
+        ?o ?pb ?ob.
+        FILTER (IsBlank(?o))
+      }
 		}
 	''';
 .
