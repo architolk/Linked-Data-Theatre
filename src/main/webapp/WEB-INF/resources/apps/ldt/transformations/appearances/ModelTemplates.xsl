@@ -1,8 +1,8 @@
 <!--
 
     NAME     ModelTemplates.xsl
-    VERSION  1.19.0
-    DATE     2017-10-16
+    VERSION  1.19.2-SNAPSHOT
+    DATE     2017-11-15
 
     Copyright 2012-2017
 
@@ -70,6 +70,13 @@
 </xsl:template>
 
 <xsl:template match="rdf:RDF" mode="VocabularyVariable">
+	<!-- All (other) named entities -->
+	<xsl:variable name="all-named-entities">
+		<xsl:for-each select="rdf:Description[not(exists(rdf:type)) and exists(sh:name)]/sh:targetNode">
+			<named-entity uri="{@rdf:resource}"><xsl:value-of select="../sh:name"/></named-entity>
+		</xsl:for-each>
+	</xsl:variable>
+	<xsl:copy-of select="$all-named-entities"/>
 	<!-- All property shapes -->
 	<!-- Currently limited to simple paths and inverse paths, where the path is equal to the predicate -->
 	<xsl:variable name="all-property-shapes">
@@ -92,6 +99,25 @@
 				</xsl:if>
 				<xsl:for-each select="current-group()/sh:datatype">
 					<datatype uri="{@rdf:resource}"/>
+				</xsl:for-each>
+				<xsl:for-each select="current-group()/sh:hasValue">
+					<xsl:variable name="uri" select="@rdf:resource"/>
+					<xsl:variable name="entity"><xsl:value-of select="$all-named-entities/named-entity[@uri=$uri]"/></xsl:variable>
+					<xsl:variable name="datatype">
+						<xsl:choose>
+							<xsl:when test="$entity!=''">entity</xsl:when>
+							<xsl:when test="exists(@rdf:resource)">uri</xsl:when>
+							<xsl:when test="@rdf:datatype='http://www.w3.org/2001/XMLSchema#integer'">nummeric</xsl:when>
+							<xsl:when test="@rdf:datatype='http://www.w3.org/2001/XMLSchema#decimal'">nummeric</xsl:when>
+							<xsl:otherwise>string</xsl:otherwise>
+						</xsl:choose>
+					</xsl:variable>
+					<value datatype="{$datatype}">
+						<xsl:choose>
+							<xsl:when test="$entity!=''"><xsl:value-of select="$entity"/></xsl:when>
+							<xsl:otherwise><xsl:value-of select="."/><xsl:value-of select="@rdf:resource"/></xsl:otherwise>
+						</xsl:choose>
+					</value>
 				</xsl:for-each>
 				<xsl:for-each select="current-group()/sh:pattern">
 					<pattern><xsl:value-of select="."/></pattern>
@@ -210,7 +236,7 @@
 						<xsl:when test="exists(../rdf:Description[@rdf:about=$class]/rdfs:subClassOf)">false</xsl:when>
 						<xsl:when test="exists(../rdf:Description[rdfs:subClassOf/@rdf:resource=$class])">false</xsl:when>
 						<xsl:when test="exists(sh:property)">
-							<xsl:variable name="property" select="sh:property/@rdf:nodeID"/>
+							<xsl:variable name="property" select="sh:property/(@rdf:nodeID|@rdf:resource)"/>
 							<xsl:choose>
 								<!-- If the shape is actually a list shape, don't count the shape -->
 								<xsl:when test="$all-property-shapes/propertyShape[@uri=$property]/@list='true'">true</xsl:when>
@@ -270,6 +296,7 @@
 									<xsl:if test="$predicate/datatype[1]/@uri!=''">
 										<xsl:attribute name="datatype"><xsl:value-of select="$predicate/datatype[1]/@uri"/></xsl:attribute>
 									</xsl:if>
+									<xsl:copy-of select="$predicate/value[1]"/>
 									<xsl:copy-of select="$predicate/label"/>
 									<!-- Refshapes are all shapes that have the particular refclass as target. @refnode contains a particular explicitly definied shape. Typically, this is one of the refshapes -->
 									<!-- Refshapes can be duplicated, so we need to strip the duplicated items -->
@@ -311,7 +338,7 @@
 												<xsl:choose>
 													<xsl:when test="exists(sh:property)">
 														<!-- If the shape is actually a list shape, don't count the shape -->
-														<xsl:variable name="property" select="sh:property/@rdf:nodeID"/>
+														<xsl:variable name="property" select="sh:property/(@rdf:nodeID|@rdf:resource)"/>
 														<xsl:choose>
 															<xsl:when test="$all-property-shapes/propertyShape[@uri=$property]/@list='true'">true</xsl:when>
 															<xsl:otherwise>false</xsl:otherwise>
@@ -597,6 +624,14 @@
 		</xsl:if>
 	</xsl:variable>
 	<xsl:value-of select="$label"/>
+	<xsl:if test="exists(value)">
+		<xsl:text> = </xsl:text>
+		<xsl:if test="value/@datatype='string'">"</xsl:if>
+		<xsl:if test="value/@datatype='uri'">&lt;</xsl:if>
+		<xsl:value-of select="value"/>
+		<xsl:if test="value/@datatype='string'">"</xsl:if>
+		<xsl:if test="value/@datatype='uri'">&gt;</xsl:if>
+	</xsl:if>
 	<xsl:if test="@datatype!=''"><xsl:text> (</xsl:text><xsl:value-of select="replace(@datatype,'^.*(#|/)([^(#|/)]+)$','$2')"/><xsl:text>)</xsl:text></xsl:if>
 	<xsl:if test="refshape/@shapename!=''"> &#x2192; <xsl:value-of select="refshape/@shapename"/></xsl:if>
 	<xsl:text> [</xsl:text><xsl:value-of select="@mincount"/><xsl:text>,</xsl:text><xsl:value-of select="@maxcount"/><xsl:text>]</xsl:text>
