@@ -54,7 +54,8 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:data [elmo:index "12"; rdfs:label "Ajax form"; html:link "/query/FormAppearanceAjax"];
 			elmo:data [elmo:index "13"; rdfs:label "Dereferenced URI"; html:link "/id/character/Gandalf"];
 			elmo:data [elmo:index "14"; rdfs:label "Dereferenced timed URI"; html:link "/id/2017/01/21/character/Gandalf"];
-			elmo:data [elmo:index "14"; rdfs:label "Image in content"; html:link "query/ImageAppearanceContent"];
+			elmo:data [elmo:index "15"; rdfs:label "Image in content"; html:link "query/ImageAppearanceContent"];
+			elmo:data [elmo:index "16"; rdfs:label "Model template tests"; html:link "query/modeltemplatetests"];
 		];
 		elmo:data [
 			elmo:index "3";

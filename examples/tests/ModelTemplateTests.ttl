@@ -1,0 +1,140 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+stage:ModelTemplateTests a elmo:Representation;
+  elmo:url-pattern "/query/modeltemplatetests$";
+  elmo:index "1";
+  elmo:contains stage:HeaderAppearance;
+  elmo:contains stage:NavbarSearchAppearance;
+  elmo:appearance elmo:HtmlAppearance;
+  elmo:data [
+    rdfs:label "Modeltemplate tests"@en;
+    rdfs:label "Modeltemplate testen"@nl;
+    elmo:html '''
+      <p><a class="btn btn-default" href="/ldt/query/model/class">One class</a></p>
+      <p><a class="btn btn-default" href="/ldt/query/model/association">Association</a></p>
+    ''';
+  ]
+.
+
+stage:Model_class a elmo:Representation;
+  elmo:url-pattern "/query/model/class";
+  elmo:contains stage:HeaderAppearance;
+  elmo:contains stage:NavbarSearchAppearance;
+  elmo:contains stage:Model_class_turtle;
+  elmo:contains stage:Model_class_diagram
+.
+stage:Model_class_query a elmo:Query;
+  elmo:query '''
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    CONSTRUCT {
+      <urn:foaf:Person> a sh:NodeShape;
+        sh:property [
+          sh:path foaf:publications;
+        ]
+      .
+      <urn:foaf:PersonA> a sh:NodeShape;
+        sh:targetClass foaf:Person;
+        sh:property [
+          sh:path foaf:publications;
+        ]
+      .
+      <urn:foaf:PersonB> a sh:NodeShape;
+        sh:targetClass foaf:Person;
+        sh:name "foaf:Person";
+        sh:property [
+          sh:path foaf:publications;
+        ]
+      .
+      <urn:foaf:PersonC> a sh:NodeShape;
+        sh:targetClass foaf:Person;
+        sh:name "foaf:Person";
+        sh:property [
+          sh:path foaf:publications;
+          sh:name "foaf:publications"
+        ]
+      .
+    }
+    WHERE {}
+  '''
+.
+stage:Model_class_turtle a elmo:Part;
+  elmo:index "1";
+  elmo:appearance elmo:TurtleAppearance;
+  elmo:query stage:Model_class_query
+.
+stage:Model_class_diagram a elmo:Part;
+  elmo:index "2";
+  elmo:appearance elmo:ModelAppearance;
+  elmo:query stage:Model_class_query
+.
+
+stage:Model_association a elmo:Representation;
+  elmo:url-pattern "/query/model/association";
+  elmo:contains stage:HeaderAppearance;
+  elmo:contains stage:NavbarSearchAppearance;
+  elmo:contains stage:Model_association_turtle;
+  elmo:contains stage:Model_association_diagram
+.
+stage:Model_association_query a elmo:Query;
+  elmo:query '''
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    CONSTRUCT {
+      <urn:foaf:PersonA> a sh:NodeShape;
+        sh:property [
+          sh:path foaf:publications;
+          sh:node <urn:foaf:DocumentA>
+        ]
+      .
+      <urn:foaf:DocumentA> a sh:NodeShape;
+        sh:name "foaf:Document"
+      .
+      <urn:foaf:PersonB> a sh:NodeShape;
+        sh:property [
+          sh:path foaf:publications;
+          sh:class foaf:Document
+        ]
+      .
+      <urn:foaf:DocumentB> a sh:NodeShape;
+        sh:name "foaf:Document";
+        sh:targetClass foaf:Document
+      .
+      <urn:foaf:PersonC> a sh:NodeShape;
+        sh:property [
+          sh:path foaf:currentProject;
+          sh:node <urn:foaf:Project>
+        ]
+      .
+      <urn:foaf:PersonD> a sh:NodeShape;
+        sh:property [
+          sh:path foaf:currentProject;
+          sh:class foaf:Project
+        ]
+      .
+      <urn:foaf:Project> a sh:NodeShape;
+        sh:property [
+          sh:path rdfs:label
+        ]
+      .
+      <urn:foaf:ProjectA> a sh:NodeShape;
+        sh:targetClass foaf:Project;
+        sh:property [
+          sh:path rdfs:label
+        ]
+      .
+    }
+    WHERE {}
+  '''
+.
+stage:Model_association_turtle a elmo:Part;
+  elmo:index "1";
+  elmo:appearance elmo:TurtleAppearance;
+  elmo:query stage:Model_association_query
+.
+stage:Model_association_diagram a elmo:Part;
+  elmo:index "2";
+  elmo:appearance elmo:ModelAppearance;
+  elmo:query stage:Model_association_query
+.
