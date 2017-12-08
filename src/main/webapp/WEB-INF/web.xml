@@ -460,6 +460,10 @@
 	<!-- End Authentication for the Linked Data Theatre -->
     <session-config>
         <session-timeout>60</session-timeout>
+	<cookie-config>
+            <http-only>true</http-only>
+            <secure>true</secure>
+        </cookie-config>
     </session-config>
 	<!-- Added configuration settings from original Orbeon web.xml for the Linked Data Theatre -->
 	<!-- Custom default http error pages -->
