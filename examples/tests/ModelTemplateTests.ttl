@@ -22,6 +22,7 @@ stage:ModelTemplateTests a elmo:Representation;
       <p><a class="btn btn-default" href="/ldt/query/model/class">One class</a></p>
       <p><a class="btn btn-default" href="/ldt/query/model/class-no-blank-nodes">One class - without blank nodes</a></p>
       <p><a class="btn btn-default" href="/ldt/query/model/association">Association</a></p>
+      <p><a class="btn btn-default" href="/ldt/query/model/association-no-blank-nodes">Association - without blanke nodes</a></p>
       <p><a class="btn btn-default" href="/ldt/query/model/role">Role</a></p>
       <p><a class="btn btn-default" href="/ldt/query/model/enumeration">Enumeration</a></p>
     ''';
@@ -34,7 +35,7 @@ stage:ModelTemplateTests a elmo:Representation;
 #
 # ==================
 stage:Model_class a elmo:Representation;
-  elmo:url-pattern "/query/model/class";
+  elmo:url-pattern "/query/model/class$";
   elmo:contains stage:HeaderAppearance;
   elmo:contains stage:NavbarSearchAppearance;
   elmo:contains stage:Model_class_turtle;
@@ -91,7 +92,7 @@ stage:Model_class_diagram a elmo:Part;
 #
 # ==================
 stage:Model_classNBN a elmo:Representation;
-  elmo:url-pattern "/query/model/class-no-blank-nodes";
+  elmo:url-pattern "/query/model/class-no-blank-nodes$";
   elmo:contains stage:HeaderAppearance;
   elmo:contains stage:NavbarSearchAppearance;
   elmo:contains stage:Model_classNBN_turtle;
@@ -119,9 +120,9 @@ stage:Model_classNBN_query a elmo:Query;
       <urn:foaf:PersonC> a sh:NodeShape;
         sh:targetClass foaf:Person;
         sh:name "foaf:Person";
-        sh:property <urn:foaf:Person.publicationsC>
+        sh:property <urn:foaf:PersonC.publications>
       .
-      <urn:foaf:Person.publicationsC> a sh:PropertyShape;
+      <urn:foaf:PersonC.publications> a sh:PropertyShape;
         sh:path foaf:publications;
         sh:name "foaf:publications"
     }
@@ -146,7 +147,7 @@ stage:Model_classNBN_diagram a elmo:Part;
 # ==================
 
 stage:Model_association a elmo:Representation;
-  elmo:url-pattern "/query/model/association";
+  elmo:url-pattern "/query/model/association$";
   elmo:contains stage:HeaderAppearance;
   elmo:contains stage:NavbarSearchAppearance;
   elmo:contains stage:Model_association_turtle;
@@ -215,12 +216,89 @@ stage:Model_association_diagram a elmo:Part;
 
 # ==================
 #
+# Association, without blank nodes
+#
+# ==================
+
+stage:Model_associationNBN a elmo:Representation;
+  elmo:url-pattern "/query/model/association-no-blank-nodes$";
+  elmo:contains stage:HeaderAppearance;
+  elmo:contains stage:NavbarSearchAppearance;
+  elmo:contains stage:Model_associationNBN_turtle;
+  elmo:contains stage:Model_associationNBN_diagram
+.
+stage:Model_associationNBN_query a elmo:Query;
+  elmo:query '''
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    CONSTRUCT {
+      <urn:foaf:PersonA> a sh:NodeShape;
+        sh:property <urn:foaf:PersonA.publications>
+      .
+      <urn:foaf:PersonA.publications> a sh:PropertyShape;
+        sh:path foaf:publications;
+        sh:node <urn:foaf:DocumentA>
+      .
+      <urn:foaf:DocumentA> a sh:NodeShape;
+        sh:name "foaf:Document"
+      .
+      <urn:foaf:PersonB> a sh:NodeShape;
+        sh:property <urn:foaf:PersonB.publications>
+      .
+      <urn:foaf:PersonB.publications> a sh:PropertyShape;
+        sh:path foaf:publications;
+        sh:class foaf:Document
+      .
+      <urn:foaf:DocumentB> a sh:NodeShape;
+        sh:name "foaf:Document";
+        sh:targetClass foaf:Document
+      .
+      <urn:foaf:PersonC> a sh:NodeShape;
+        sh:property <urn:foaf:PersonC.currentProject>
+      .
+      <urn:foaf:PersonC.currentProject> a sh:PropertyShape;
+        sh:path foaf:currentProject;
+        sh:node <urn:foaf:Project>
+      .
+      <urn:foaf:PersonD> a sh:NodeShape;
+        sh:property <urn:foaf:PersonD.currentProject>
+      .
+      <urn:foaf:PersonD.currentProject> a sh:PropertyShape;
+        sh:path foaf:currentProject;
+        sh:class foaf:Project
+      .
+      <urn:foaf:Project> a sh:NodeShape;
+        sh:property <urn:foaf:Project.label>
+      .
+      <urn:foaf:Project.label> a sh:PropertyShape;
+        sh:path rdfs:label
+      .
+      <urn:foaf:ProjectA> a sh:NodeShape;
+        sh:targetClass foaf:Project;
+        sh:property <urn:foaf:Project.label>
+      .
+    }
+    WHERE {}
+  '''
+.
+stage:Model_associationNBN_turtle a elmo:Part;
+  elmo:index "1";
+  elmo:appearance elmo:TurtleAppearance;
+  elmo:query stage:Model_associationNBN_query
+.
+stage:Model_associationNBN_diagram a elmo:Part;
+  elmo:index "2";
+  elmo:appearance elmo:ModelAppearance;
+  elmo:query stage:Model_associationNBN_query
+.
+
+# ==================
+#
 # Role
 #
 # ==================
 
 stage:Model_role a elmo:Representation;
-  elmo:url-pattern "/query/model/role";
+  elmo:url-pattern "/query/model/role$";
   elmo:contains stage:HeaderAppearance;
   elmo:contains stage:NavbarSearchAppearance;
   elmo:contains stage:Model_role_turtle;
@@ -275,7 +353,7 @@ stage:Model_role_diagram a elmo:Part;
 # ==================
 
 stage:Model_enumeration a elmo:Representation;
-  elmo:url-pattern "/query/model/enumeration";
+  elmo:url-pattern "/query/model/enumeration$";
   elmo:contains stage:HeaderAppearance;
   elmo:contains stage:NavbarSearchAppearance;
   elmo:contains stage:Model_enumeration_turtle;
