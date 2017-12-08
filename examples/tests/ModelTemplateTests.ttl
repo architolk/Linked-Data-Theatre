@@ -3,6 +3,12 @@
 @prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 
+# ==================
+#
+# Start page for individual tests
+#
+# ==================
+
 stage:ModelTemplateTests a elmo:Representation;
   elmo:url-pattern "/query/modeltemplatetests$";
   elmo:index "1";
@@ -15,10 +21,17 @@ stage:ModelTemplateTests a elmo:Representation;
     elmo:html '''
       <p><a class="btn btn-default" href="/ldt/query/model/class">One class</a></p>
       <p><a class="btn btn-default" href="/ldt/query/model/association">Association</a></p>
+      <p><a class="btn btn-default" href="/ldt/query/model/role">Role</a></p>
+      <p><a class="btn btn-default" href="/ldt/query/model/enumeration">Enumeration</a></p>
     ''';
   ]
 .
 
+# ==================
+#
+# One class
+#
+# ==================
 stage:Model_class a elmo:Representation;
   elmo:url-pattern "/query/model/class";
   elmo:contains stage:HeaderAppearance;
@@ -70,6 +83,12 @@ stage:Model_class_diagram a elmo:Part;
   elmo:appearance elmo:ModelAppearance;
   elmo:query stage:Model_class_query
 .
+
+# ==================
+#
+# Association
+#
+# ==================
 
 stage:Model_association a elmo:Representation;
   elmo:url-pattern "/query/model/association";
@@ -137,4 +156,118 @@ stage:Model_association_diagram a elmo:Part;
   elmo:index "2";
   elmo:appearance elmo:ModelAppearance;
   elmo:query stage:Model_association_query
+.
+
+# ==================
+#
+# Role
+#
+# ==================
+
+stage:Model_role a elmo:Representation;
+  elmo:url-pattern "/query/model/role";
+  elmo:contains stage:HeaderAppearance;
+  elmo:contains stage:NavbarSearchAppearance;
+  elmo:contains stage:Model_role_turtle;
+  elmo:contains stage:Model_role_diagram
+.
+stage:Model_role_query a elmo:Query;
+  elmo:query '''
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    CONSTRUCT {
+      <urn:foaf:Person> a sh:NodeShape;
+        sh:targetClass foaf:Person;
+        sh:name "foaf:Person";
+        sh:property [
+          sh:name "foaf:name";
+          sh:path foaf:name
+        ]
+      .
+      <urn:foaf:Author> a sh:NodeShape;
+        sh:name "Author";
+        sh:property [
+          sh:path rdf:type;
+          sh:hasValue foaf:Person
+        ];
+        sh:property [
+          sh:path foaf:publications;
+          sh:class foaf:Document
+        ]
+      .
+      <urn:foaf:Document> a sh:NodeShape;
+        sh:targetClass foaf:Document;
+        sh:name "foaf:Document"
+      .
+    }
+    WHERE {}
+  '''
+.
+stage:Model_role_turtle a elmo:Part;
+  elmo:index "1";
+  elmo:appearance elmo:TurtleAppearance;
+  elmo:query stage:Model_role_query
+.
+stage:Model_role_diagram a elmo:Part;
+  elmo:index "2";
+  elmo:appearance elmo:ModelAppearance;
+  elmo:query stage:Model_role_query
+.
+
+# ==================
+#
+# Enumeration
+#
+# ==================
+
+stage:Model_enumeration a elmo:Representation;
+  elmo:url-pattern "/query/model/enumeration";
+  elmo:contains stage:HeaderAppearance;
+  elmo:contains stage:NavbarSearchAppearance;
+  elmo:contains stage:Model_enumeration_turtle;
+  elmo:contains stage:Model_enumeration_diagram
+.
+stage:Model_enumeration_query a elmo:Query;
+  elmo:query '''
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    PREFIX dcat: <http://www.w3.org/ns/dcat#>
+    CONSTRUCT {
+      <urn:dcat:Dataset> a sh:NodeShape;
+        sh:targetClass dcat:Dataset;
+        sh:name "dcat:Dataset";
+        sh:property [
+          sh:name "dcat:theme";
+          sh:path dcat:theme;
+          sh:node <urn:dcat:themes>;
+          sh:class skos:Concept
+        ]
+      .
+      <urn:dcat:themes> a sh:NodeShape;
+        sh:name "skos:Concept (theme)";
+        sh:property [
+          sh:path skos:inScheme;
+          sh:hasValue <urn:catalog:themes>
+        ]
+      .
+      <urn:catalog:themes> a skos:ConceptScheme.
+      <urn:catalog:themes:music> a skos:Concept;
+        skos:inScheme <urn:catalog:themes>;
+        rdfs:label "Music"@en
+      .
+      <urn:catalog:themes:sport> a skos:Concept;
+        skos:inScheme <urn:catalog:themes>;
+        rdfs:label "Sport"@en
+      .
+    }
+    WHERE {}
+  '''
+.
+stage:Model_enumeration_turtle a elmo:Part;
+  elmo:index "1";
+  elmo:appearance elmo:TurtleAppearance;
+  elmo:query stage:Model_enumeration_query
+.
+stage:Model_enumeration_diagram a elmo:Part;
+  elmo:index "2";
+  elmo:appearance elmo:ModelAppearance;
+  elmo:query stage:Model_enumeration_query
 .
