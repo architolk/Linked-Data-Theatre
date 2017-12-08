@@ -20,6 +20,7 @@ stage:ModelTemplateTests a elmo:Representation;
     rdfs:label "Modeltemplate testen"@nl;
     elmo:html '''
       <p><a class="btn btn-default" href="/ldt/query/model/class">One class</a></p>
+      <p><a class="btn btn-default" href="/ldt/query/model/class-no-blank-nodes">One class - without blank nodes</a></p>
       <p><a class="btn btn-default" href="/ldt/query/model/association">Association</a></p>
       <p><a class="btn btn-default" href="/ldt/query/model/role">Role</a></p>
       <p><a class="btn btn-default" href="/ldt/query/model/enumeration">Enumeration</a></p>
@@ -82,6 +83,60 @@ stage:Model_class_diagram a elmo:Part;
   elmo:index "2";
   elmo:appearance elmo:ModelAppearance;
   elmo:query stage:Model_class_query
+.
+
+# ==================
+#
+# One class, without blank nodes
+#
+# ==================
+stage:Model_classNBN a elmo:Representation;
+  elmo:url-pattern "/query/model/class-no-blank-nodes";
+  elmo:contains stage:HeaderAppearance;
+  elmo:contains stage:NavbarSearchAppearance;
+  elmo:contains stage:Model_classNBN_turtle;
+  elmo:contains stage:Model_classNBN_diagram
+.
+stage:Model_classNBN_query a elmo:Query;
+  elmo:query '''
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    CONSTRUCT {
+      <urn:foaf:Person> a sh:NodeShape;
+        sh:property <urn:foaf:Person.publications>
+      .
+      <urn:foaf:Person.publications> a sh:PropertyShape;
+        sh:path foaf:publications
+      .
+      <urn:foaf:PersonA> a sh:NodeShape;
+        sh:targetClass foaf:Person;
+        sh:property <urn:foaf:Person.publications>
+      .
+      <urn:foaf:PersonB> a sh:NodeShape;
+        sh:targetClass foaf:Person;
+        sh:name "foaf:Person";
+        sh:property <urn:foaf:Person.publications>
+      .
+      <urn:foaf:PersonC> a sh:NodeShape;
+        sh:targetClass foaf:Person;
+        sh:name "foaf:Person";
+        sh:property <urn:foaf:Person.publicationsC>
+      .
+      <urn:foaf:Person.publicationsC> a sh:PropertyShape;
+        sh:path foaf:publications;
+        sh:name "foaf:publications"
+    }
+    WHERE {}
+  '''
+.
+stage:Model_classNBN_turtle a elmo:Part;
+  elmo:index "1";
+  elmo:appearance elmo:TurtleAppearance;
+  elmo:query stage:Model_classNBN_query
+.
+stage:Model_classNBN_diagram a elmo:Part;
+  elmo:index "2";
+  elmo:appearance elmo:ModelAppearance;
+  elmo:query stage:Model_classNBN_query
 .
 
 # ==================
