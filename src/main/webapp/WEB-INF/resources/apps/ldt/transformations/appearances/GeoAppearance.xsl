@@ -1,8 +1,8 @@
 <!--
 
     NAME     GeoAppearance.xsl
-    VERSION  1.19.1
-    DATE     2017-10-17
+    VERSION  1.19.2-SNAPSHOT
+    DATE     2017-12-08
 
     Copyright 2012-2017
 
@@ -199,7 +199,6 @@
 						addPoint(<xsl:value-of select="geo:lat[1]"/>,<xsl:value-of select="geo:long[1]"/>,"<xsl:apply-templates select="rdfs:label" mode="safejsonstring"/>","<xsl:value-of select="$resource-uri"/>","<xsl:value-of select="rdf:value"/>","<xsl:value-of select="html:icon"/>");
 					</xsl:for-each>
 					<xsl:for-each select="rdf:Description[geo:geometry!='']"><xsl:sort select="string-length(geo:geometry[1])" data-type="number" order="descending"/>
-						<!-- //<xsl:value-of select="string-length(geo:geometry[1])"/>-<xsl:value-of select="key('resource',elmo:style[1]/@rdf:resource)/elmo:name"/> -->
 						<xsl:variable name="link-uri">
 							<xsl:choose>
 								<xsl:when test="exists(html:link)"><xsl:copy-of select="html:link"/></xsl:when>
@@ -212,11 +211,12 @@
 								<xsl:with-param name="var" select="$link-uri/html:link"/>
 							</xsl:call-template>
 						</xsl:variable>
+						<xsl:variable name="styleuri" select="elmo:style/@rdf:resource"/>
 						<xsl:variable name="styleclass">
 							<xsl:choose>
-								<xsl:when test="elmo:style/@rdf:resource='http://bp4mc2.org/elmo/def#HiddenStyle'">hidden-object</xsl:when>
+								<xsl:when test="$styleuri='http://bp4mc2.org/elmo/def#HiddenStyle'">hidden-object</xsl:when>
 								<xsl:when test="html:stylesheet!=''"><xsl:value-of select="html:stylesheet"/></xsl:when>
-								<xsl:otherwise><xsl:value-of select="key('resource',elmo:style[1]/@rdf:resource)/elmo:name[1]"/></xsl:otherwise>
+								<xsl:otherwise><xsl:value-of select="../rdf:Description[@rdf:about=$styleuri]/elmo:name[1]"/></xsl:otherwise>
 							</xsl:choose>
 						</xsl:variable>
 						addWKT("<xsl:value-of select="@rdf:about"/>","<xsl:value-of select="geo:geometry[1]"/>","<xsl:value-of select="rdfs:label[1]"/>","<xsl:value-of select="$resource-uri"/>","s<xsl:value-of select="$styleclass"/><xsl:if test="$styleclass=''">default</xsl:if>");

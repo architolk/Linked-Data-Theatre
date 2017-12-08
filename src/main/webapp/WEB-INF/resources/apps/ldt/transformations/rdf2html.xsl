@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.19.2-SNAPSHOT
-    DATE     2017-12-07
+    DATE     2017-12-08
 
     Copyright 2012-2017
 
@@ -56,12 +56,12 @@
 
 <xsl:output method="xml" indent="yes"/>
 
-<xsl:key name="rdf" match="results/rdf:RDF" use="@elmo:query"/>
-<xsl:key name="resource" match="results/rdf:RDF/rdf:Description" use="@rdf:about"/>
-<xsl:key name="nav-bnode" match="results/rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarSearchAppearance' or @elmo:appearance='http://bp4mc2.org/elmo/def#NavbarAppearance']/rdf:Description" use="@rdf:nodeID|@rdf:about"/>
-<xsl:key name="nav-data" match="results/rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarSearchAppearance' or @elmo:appearance='http://bp4mc2.org/elmo/def#NavbarAppearance']/rdf:Description" use="elmo:data/@rdf:nodeID|elmo:data/@rdf:resource"/>
+<xsl:key name="rdf" match="rdf:RDF" use="@elmo:query"/>
+<xsl:key name="bnode" match="rdf:Description" use="@rdf:nodeID"/>
+<xsl:key name="nav-bnode" match="rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarSearchAppearance' or @elmo:appearance='http://bp4mc2.org/elmo/def#NavbarAppearance']/rdf:Description" use="@rdf:nodeID|@rdf:about"/>
+<xsl:key name="nav-data" match="rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarSearchAppearance' or @elmo:appearance='http://bp4mc2.org/elmo/def#NavbarAppearance']/rdf:Description" use="elmo:data/@rdf:nodeID|elmo:data/@rdf:resource"/>
 
-<xsl:key name="nested" match="results/rdf:RDF/rdf:Description/*[@elmo:appearance='http://bp4mc2.org/elmo/def#NestedAppearance']/rdf:Description" use="@rdf:about"/>
+<xsl:key name="nested" match="rdf:Description/*[@elmo:appearance='http://bp4mc2.org/elmo/def#NestedAppearance']/rdf:Description" use="@rdf:about"/>
 
 <xsl:variable name="serverdomain"><xsl:value-of select="substring-before(replace(/results/context/url,'^((http|https)://)',''),'/')"/></xsl:variable>
 <xsl:variable name="docroot"><xsl:value-of select="/results/context/@docroot"/></xsl:variable>
