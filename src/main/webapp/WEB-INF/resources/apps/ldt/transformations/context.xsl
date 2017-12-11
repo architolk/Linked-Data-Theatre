@@ -2,7 +2,7 @@
 
     NAME     context.xsl
     VERSION  1.19.2-SNAPSHOT
-    DATE     2017-11-20
+    DATE     2017-12-11
 
     Copyright 2012-2017
 
@@ -140,7 +140,7 @@
 			</xsl:choose>
 		</xsl:variable>
 		
-		<context env="{theatre/@env}" docroot="{$docroot}" staticroot="{$staticroot}" version="{$version}" timestamp="{version/timestamp}" sparql="{theatre/@sparql}">
+		<context env="{theatre/@env}" docroot="{$docroot}" staticroot="{$staticroot}" version="{$version}" timestamp="{version/timestamp}" sparql="{theatre/@sparql}" linkstrategy="{theatre/@linkstrategy}">
 			<configuration-endpoint><xsl:value-of select="theatre/@configuration-endpoint"/></configuration-endpoint>
 			<local-endpoint>
 				<xsl:choose>

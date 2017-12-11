@@ -1,8 +1,8 @@
 <!--
 
     NAME     config.xml
-    VERSION  1.19.0
-    DATE     2017-10-16
+    VERSION  1.19.2-SNAPSHOT
+    DATE     2017-12-11
 
     Copyright 2012-2017
 
@@ -39,6 +39,7 @@
 	- cors: states if the json-ld service should support CORS (no value defaults to 'yes')
 	- cache: states the caching period for a specific call. (no value defaults to 'none' - no caching). See http://www.w3.org/TR/xmlschema-2#duration. For example: PT1M means 1 minute.
 	- querycache: state the caching period for the configuration of a specific call. Query caching can be used independent of normal caching, but should be enabled if data caching is used.
+	- linkstrategy, if any: the strategy for creating links in de UI. Default will create /resource links, "global" will maintain the original URI
     - the <site> node contains the configuration for every domainname that is served by the LDT
       - domain: the domainname for this configuration
   	  - icon: (optional) the favicon.ico that is visible for this domain
