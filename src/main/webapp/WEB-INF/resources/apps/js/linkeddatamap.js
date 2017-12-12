@@ -651,21 +651,8 @@ function initMap(staticroot, startZoom, latCor, longCor, baseLayer, imageMapURL,
 			);
 			map = L.map('map',{crs: RD, maxZoom: 14});
 			osm = new L.TileLayer('http://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png', {minZoom: 1, maxZoom: 16, tms: true, continuousWorld: true});
-		} else if (baseLayer=='brk') {
-			//Use BRK tiles
-			//RD Projectie
-			var RD = new L.Proj.CRS( 'EPSG:28992','+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +towgs84=565.2369,50.0087,465.658,-0.406857330322398,0.350732676542563,-1.8703473836068,4.0812 +no_defs',
-				{
-					resolutions: res,
-					bounds: L.bounds([-285401.92, 22598.08], [595401.9199999999, 903401.9199999999]),
-					origin: [-285401.92, 22598.08]
-				}
-			);
-			map = L.map('map',{crs: RD, maxZoom: 13});
-			osm = new L.TileLayer('http://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png', {minZoom: 1, maxZoom: 13, tms: true, continuousWorld: true});
-			overlay = new L.tileLayer.wms('https://geodata.nationaalgeoregister.nl/kadastralekaartv2/wms', {layers: 'perceel,perceelnummer',format: 'image/png',transparent: true});
 		} else if (baseLayer=='bgt') {
-			//Use BRK tiles
+			//Use BGT tiles
 			//RD Projectie
 			var RD = new L.Proj.CRS( 'EPSG:28992','+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +towgs84=565.2369,50.0087,465.658,-0.406857330322398,0.350732676542563,-1.8703473836068,4.0812 +no_defs',
 				{
