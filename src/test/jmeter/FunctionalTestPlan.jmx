@@ -119,7 +119,7 @@
           </ResponseAssertion>
           <hashTree/>
           <MD5HexAssertion guiclass="MD5HexAssertionGUI" testclass="MD5HexAssertion" testname="MD5Hex Assertion" enabled="true">
-            <stringProp name="MD5HexAssertion.size">deeca6fcff004aaa1ed95b27ec267fab</stringProp>
+            <stringProp name="MD5HexAssertion.size">7624487e0a5aae69c2a7714d1d92cbf1</stringProp>
           </MD5HexAssertion>
           <hashTree/>
         </hashTree>
@@ -195,7 +195,7 @@
           </ResponseAssertion>
           <hashTree/>
           <MD5HexAssertion guiclass="MD5HexAssertionGUI" testclass="MD5HexAssertion" testname="MD5Hex Assertion" enabled="true">
-            <stringProp name="MD5HexAssertion.size">e7e5575d615f968115543d9133f9ac8d</stringProp>
+            <stringProp name="MD5HexAssertion.size">92eedcda0c97757a086d01bfd2f6f7ea</stringProp>
           </MD5HexAssertion>
           <hashTree/>
         </hashTree>
@@ -229,7 +229,7 @@
           </ResponseAssertion>
           <hashTree/>
           <MD5HexAssertion guiclass="MD5HexAssertionGUI" testclass="MD5HexAssertion" testname="MD5Hex Assertion" enabled="true">
-            <stringProp name="MD5HexAssertion.size">5685fab5e63a1b65d408b4c2739ba70d</stringProp>
+            <stringProp name="MD5HexAssertion.size">f240a62862935952daa1e4848e67b9cd</stringProp>
           </MD5HexAssertion>
           <hashTree/>
         </hashTree>
@@ -1167,7 +1167,7 @@ container:defquery void:triples 1.&#xd;
           </ResponseAssertion>
           <hashTree/>
           <MD5HexAssertion guiclass="MD5HexAssertionGUI" testclass="MD5HexAssertion" testname="MD5Hex Assertion" enabled="true">
-            <stringProp name="MD5HexAssertion.size">053f06014dfc209f372a680b792d73f9</stringProp>
+            <stringProp name="MD5HexAssertion.size">08408bf994479b579a4955fb29952a37</stringProp>
           </MD5HexAssertion>
           <hashTree/>
         </hashTree>
@@ -1327,7 +1327,7 @@ container:defquery void:triples 1.&#xd;
           </ResponseAssertion>
           <hashTree/>
           <MD5HexAssertion guiclass="MD5HexAssertionGUI" testclass="MD5HexAssertion" testname="MD5Hex Assertion" enabled="true">
-            <stringProp name="MD5HexAssertion.size">12ae83b65f3b6b4c84b7278fb9d34f98</stringProp>
+            <stringProp name="MD5HexAssertion.size">066286179aebaea75200cf3d5ba8f2e6</stringProp>
           </MD5HexAssertion>
           <hashTree/>
         </hashTree>
@@ -1395,7 +1395,7 @@ container:defquery void:triples 1.&#xd;
           </ResponseAssertion>
           <hashTree/>
           <MD5HexAssertion guiclass="MD5HexAssertionGUI" testclass="MD5HexAssertion" testname="MD5Hex Assertion" enabled="true">
-            <stringProp name="MD5HexAssertion.size">e99ae96d623a0c6d625c7cbe453dff04</stringProp>
+            <stringProp name="MD5HexAssertion.size">706ff0059d0adcdfb57e0004af707b49</stringProp>
           </MD5HexAssertion>
           <hashTree/>
         </hashTree>

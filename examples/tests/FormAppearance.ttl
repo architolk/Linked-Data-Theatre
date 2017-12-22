@@ -12,6 +12,19 @@ stage:FormAppearance	a	elmo:Representation;
 	elmo:appearance elmo:ContentAppearance;
 	elmo:queryForm stage:FormAppearance-form;
 	elmo:contains stage:FormAppearance_text;
+  elmo:contains stage:FormAppearance_result;
+.
+stage:FormAppearanceTest	a	elmo:Representation;
+	elmo:url-pattern	"/query/FormAppearanceTest$";
+	elmo:contains	stage:FormAppearance-species;
+	elmo:appearance elmo:ContentAppearance;
+	elmo:queryForm stage:FormAppearance-form;
+	elmo:contains stage:FormAppearance_text;
+  elmo:contains stage:FormAppearance_result;
+.
+
+stage:FormAppearance_result a elmo:Part;
+	elmo:queryForm stage:FormAppearance-form;
 	elmo:index "2";
 	elmo:fragment [
 		elmo:applies-to "name";
