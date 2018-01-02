@@ -116,22 +116,27 @@ For this proposal, we would like to make the distinction between some different 
 3. Multiple subject information resources: resources that correspond to a named graph. These resources conform to the [SPARQL Graph Update](http://www.w3.org/TR/sparql11-http-rdf-update) recommendation.
 4. Query Non-REST information resources: resources that correspond to particular SPARQL queries.
 5. Update Non-REST services: resources that envoke a particular SPARUL update query.
+6. Access points: for retrieving or updating resources of type 2 or 3 whose URI's are not dereferenceable (at all or by this particular server)
 
 The proposal focusses on GET, POST, PUT and DELETE operations and should be compliant to the three standards mentioned at the beginning of this document.
 
 The table below gives an overview of all resource types
 
-| Id | Type                                  | Goal           | Typical URI template           | Allowed methods     | Response (happy flow)                          |
-|----|---------------------------------------|----------------|--------------------------------|---------------------|------------------------------------------------|
-| 1A | Non-information resource, 303-style   | Reference      | `/id/{collection}/{reference}` | GET                 | 303 See other: `/doc/{collection}/{reference}` |
-| 1B | Non-information resource, #-style     | Reference      | `/{document}#{reference}`      | -                   | See: `/{document}` (type-3) |
-| 2A | Single subject information resource   | LDP/REST       | `/{collection}/{reference}     | GET,POST,PUT,DELETE | 200 Ok |
-| 2B | Collection information resource       | LDP/REST       | `/{collection}                 | GET,POST,PUT,DELETE | 200 Ok, 201 Created |
-| 3  | Multiple subject information resource | Graph protocol | `/{document}`                  | GET,POST,PUT,DELETE | 200 Ok |
-| 4  | Query resources                       | SPARQL queries | `/{query}`                     | GET,POST-form       | 200 Ok |
-| 5  | Production resources                  | SPARQL updates | `/{production}`                | GET,POST-form,POST  | 200 Ok |
+| Id | Type                                  | Goal           | Typical URI template            | Allowed methods     | Response (happy flow)                          |
+|----|---------------------------------------|----------------|---------------------------------|---------------------|------------------------------------------------|
+| 1A | Non-information resource, 303-style   | Reference      | `/id/{collection}/{reference}`  | GET                 | 303 See other: `/doc/{collection}/{reference}` |
+| 1B | Non-information resource, #-style     | Reference      | `/{document}#{reference}`       | -                   | See: `/{document}` (type-3) |
+| 2A | Single subject information resource   | LDP/REST       | `/{collection}/{reference}      | GET,POST,PUT,DELETE | 200 Ok |
+| 2B | Collection information resource       | LDP/REST       | `/{collection}                  | GET,POST,PUT,DELETE | 200 Ok, 201 Created |
+| 3  | Multiple subject information resource | Graph protocol | `/{document}`                   | GET,POST,PUT,DELETE | 200 Ok |
+| 4  | Query resources                       | SPARQL queries | `/{query}`                      | GET,POST-form       | 200 Ok |
+| 5  | Production resources                  | SPARQL updates | `/{production}`                 | GET,POST-form,POST  | 200 Ok |
+| 6A | Access-point for resources            | Access         | `/{access-point}?resource={URI}`| GET,POST,PUT,DELETE | 200 Ok |
+| 6B | Access-point for named graphs         | Access         | `/{access-point}?graph={URI}`   | GET,POST,PUT,DELETE | 200 Ok |
 
 A complete [spreadsheet version](Read-Write-API.xlsx) is also available.
+
+The result of 6A is the same as the result of 2 in case of a "regular" dereferenceable URI. The result of 6B is the same as the result of 3 in case of a "regular" dereferenceable URI.
 
 As the type of resource cannot be determined by the URI, some server-side configuration is necessary to make the distinction. The use of `id` and `doc` for types 1A and 2A is recommended, but could be something completely different, as long as the URI for the non-information resource differs from the URI for the information resource.
 
