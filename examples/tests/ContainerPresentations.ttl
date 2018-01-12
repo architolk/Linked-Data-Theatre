@@ -1,7 +1,11 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
 @prefix stage: <http://localhost:8080/stage#>.
 @prefix elmo: <http://bp4mc2.org/elmo/def#>.
 @prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix yed: <http://bp4mc2.org/yed#>.
+@prefix gn: <http://www.geonames.org/ontology#>.
 
 stage:ContainerPresentations a elmo:Representation;
 	elmo:url-pattern "/query/containers$";
@@ -24,7 +28,7 @@ stage:ContainerPresentations a elmo:Representation;
 			<p><a class="btn btn-default" href="/ldt/query/uploaded-shapes-model">Show uploaded shapes model</a></p>
 			<p><a class="btn btn-default" href="/ldt/query/uploaded-shapes.yed">Show uploaded shapes yED model</a></p>
 			<p><a class="btn btn-default" href="/ldt/query/archicomponents">Show archi container</a></p>
-			<p><a class="btn btn-default" href="/ldt/query/simple-container.yed">Show simple container graph</a></p>
+			<p><a class="btn btn-default" href="/ldt/query/simple-container-content.yed">Show simple container graph</a></p>
 			<p><a class="btn btn-default" href="/ldt/query/simple-container-concept">Show simple container concepts</a></p>
 			<p><a class="btn btn-default" href="/ldt/query/simple-container-content">Show simple container content</a></p>
 		''';
@@ -106,3 +110,45 @@ stage:SimpleContainerContent a elmo:Representation;
 		}
 	''';
 .
+
+stage:SimpleContainerContentYed a elmo:Representation;
+	elmo:url-pattern "/query/simple-container-content.yed$";
+	elmo:fragment [
+		elmo:applies-to "CLASS";
+		yed:backgroundColor "#00FFFF";
+	];
+	elmo:fragment [
+		elmo:applies-to "DOC";
+		yed:backgroundColor "#A0A0A0";
+	];
+	elmo:fragment [
+		elmo:applies-to "CONCEPT";
+		yed:backgroundColor "#FFFF00";
+	];
+	elmo:query '''
+    prefix elmo: <http://bp4mc2.org/elmo/def#>
+		construct {
+      ?s?p?o.
+      ?s elmo:style ?style
+    }
+		where {
+			graph <http://localhost:8080/container/simple> {
+				?s?p?o
+			}
+      optional {
+        graph <http://localhost:8080/container/simple> {
+          ?s rdf:type ?namedclass
+        }
+        graph <@STAGE@> {
+          ?namedclass elmo:style ?style
+        }
+      }
+		}
+	''';
+.
+owl:Class elmo:style "CLASS".
+rdfs:Class elmo:style "CLASS".
+foaf:Document elmo:style "DOC".
+foaf:Image elmo:style "DOC".
+skos:Concept elmo:style "CONCEPT".
+gn:Code elmo:style "CONCEPT".

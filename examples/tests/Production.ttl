@@ -26,7 +26,6 @@ ldtupdatestage:DummyProduction a elmo:Production;
 #Production for test installations
 testupdatestage:DummyProduction a elmo:Production;
 	elmo:contains stage:HeaderAppearance;
-	elmo:contains stage:NavbarSearchAppearance;
 	elmo:contains stage:DummyProduction_text;
 	elmo:queryForm stage:DummyProduction_form;
 	elmo:contains stage:DummyProduction_scene1;
@@ -35,6 +34,7 @@ testupdatestage:DummyProduction a elmo:Production;
 
 stage:DummyProduction_text a elmo:Part;
 	elmo:appearance elmo:MarkdownAppearance;
+  elmo:index "0";
 	elmo:data [
 		elmo:md '''This dummy production creates a new graph `<http://localhost:8080/id/dataset/dummy>` with exactly one triple `<urntest> rdfs:label "testvalue"`. The label will be according to the value entered below.'''@en;
 		elmo:md '''Deze dummy productie creeert een nieuwe graph `<http://localhost:8080/id/dataset/dummy>` met precies een triple `<urntest> rdfs:label "testwaarde"`. Het label zal gelijk zijn aan de waarde die hieronder wordt opgegeven.'''@nl;
