@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2turtle.xsl
-    VERSION  1.19.2-SNAPSHOT
-    DATE     2017-12-22
+    VERSION  1.20.0
+    DATE     2018-01-12
 
     Copyright 2012-2017
 
