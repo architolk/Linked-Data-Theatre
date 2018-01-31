@@ -428,7 +428,7 @@ function resizeCircle(e) {
 	}
 }
 
-function addWKT(uri, wkt, text, url, styleclass) {
+function addWKT(uri, wkt, text, url, styleclass, iconvalue) {
 	var wktObject = parse(wkt);
 	wktObject.url = url;
 	wktObject.uri = uri;
@@ -442,6 +442,11 @@ function addWKT(uri, wkt, text, url, styleclass) {
 	lastPolygon = L.geoJson(wktObject,{style: style,onEachFeature: onEachFeature,pointToLayer: pointToLayer}).addTo(map)
 						.bindPopup(html);
 						
+	if (iconvalue!="") {
+    var layer = lastPolygon.getLayers()[0];
+		layer.setIcon(L.icon({iconUrl: iconvalue}));
+	}
+  
 	if (uri === subjectURL) {
 		subjectPolygon = lastPolygon;
 	}

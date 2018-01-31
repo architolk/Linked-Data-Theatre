@@ -87,6 +87,7 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:data [elmo:index "1"; rdfs:label "Create a dummy graph"; html:link "update/DummyProduction"];
 			elmo:data [elmo:index "2"; rdfs:label "Clear the dummy graph"; html:link "update/ClearGraph"];
 			elmo:data [elmo:index "3"; rdfs:label "Show dummy graph"; html:link "query/ShowDummyGraph"];
+      elmo:data [elmo:index "4"; rdfs:label "Infer vocabulary and shape graph"; html:link "update/ShapeProduction"];
 		];
 		elmo:data [
 			elmo:index "6";

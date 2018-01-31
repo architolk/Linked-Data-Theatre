@@ -1,8 +1,8 @@
 <!--
 
     NAME     GeoAppearance.xsl
-    VERSION  1.20.0
-    DATE     2018-01-12
+    VERSION  1.20.1-SNAPSHOT
+    DATE     2018-01-31
 
     Copyright 2012-2017
 
@@ -139,6 +139,12 @@
 		<xsl:variable name="width"><xsl:value-of select="$htmlwidth"/><xsl:if test="not($htmlwidth!='')">1000</xsl:if></xsl:variable>
 		<xsl:variable name="height"><xsl:value-of select="$htmlheight"/><xsl:if test="not($htmlheight!='')">600</xsl:if></xsl:variable>
 		
+		<xsl:variable name="icons">
+			<xsl:for-each select="rdf:Description[html:icon!='' and elmo:applies-to!='' and not(matches(elmo:applies-to,'^http://bp4mc2.org/elmo/def'))]">
+				<icon class="{elmo:applies-to}"><xsl:value-of select="html:icon"/></icon>
+			</xsl:for-each>
+		</xsl:variable>
+		
 		<style>
 				.shidden-object {
 					display:none;
@@ -219,7 +225,7 @@
 								<xsl:otherwise><xsl:value-of select="../rdf:Description[@rdf:about=$styleuri]/elmo:name[1]"/></xsl:otherwise>
 							</xsl:choose>
 						</xsl:variable>
-						addWKT("<xsl:value-of select="@rdf:about"/>","<xsl:value-of select="geo:geometry[1]"/>","<xsl:value-of select="rdfs:label[1]"/>","<xsl:value-of select="$resource-uri"/>","s<xsl:value-of select="$styleclass"/><xsl:if test="$styleclass=''">default</xsl:if>");
+						addWKT("<xsl:value-of select="@rdf:about"/>","<xsl:value-of select="geo:geometry[1]"/>","<xsl:value-of select="rdfs:label[1]"/>","<xsl:value-of select="$resource-uri"/>","s<xsl:value-of select="$styleclass"/><xsl:if test="$styleclass=''">default</xsl:if>","<xsl:value-of select="$icons/icon[@class=$styleclass]"/>");
 					</xsl:for-each>
 
 					<xsl:for-each select="rdf:Description[geo:geometry!='']/(* except (html:link|elmo:style))[exists(@rdf:resource)]">

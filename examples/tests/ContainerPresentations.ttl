@@ -31,6 +31,7 @@ stage:ContainerPresentations a elmo:Representation;
 			<p><a class="btn btn-default" href="/ldt/query/simple-container-content.yed">Show simple container graph</a></p>
 			<p><a class="btn btn-default" href="/ldt/query/simple-container-concept">Show simple container concepts</a></p>
 			<p><a class="btn btn-default" href="/ldt/query/simple-container-content">Show simple container content</a></p>
+			<p><a class="btn btn-default" href="/ldt/query/simple-container-total-graph">Show simple container total graph</a></p>
 		''';
 	]
 .
@@ -152,3 +153,38 @@ foaf:Document elmo:style "DOC".
 foaf:Image elmo:style "DOC".
 skos:Concept elmo:style "CONCEPT".
 gn:Code elmo:style "CONCEPT".
+
+stage:SimpleContainerTotalGraph a elmo:Representation;
+  elmo:url-pattern "/query/simple-container-total-graph.yed$";
+  elmo:fragment [
+    elmo:applies-to "RESOURCE";
+    yed:nodeType "com.yworks.flowchart.start1";
+  ];
+  elmo:query '''
+    prefix elmo: <http://bp4mc2.org/elmo/def#>
+    construct {
+      ?s ?p ?o.
+      ?s elmo:style "RESOURCE".
+      ?o elmo:style "RESOURCE".
+      ?s rdf:type ?stype.
+      ?o rdf:type ?otype.
+      ?s ?pl _:1.
+      _:1 rdfs:label ?ol.
+      _:1 rdf:type rdfs:Literal
+    }
+    where {
+        graph <http://localhost:8080/container/simple> {
+          {
+            ?s rdf:type ?stype.
+            ?s ?p ?o.
+            ?o rdf:type ?otype
+          }
+          UNION
+          {
+            ?s ?pl ?ol
+            FILTER (isLiteral(?ol))
+          }
+        }
+    }
+  ''';
+.
