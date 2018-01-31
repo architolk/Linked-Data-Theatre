@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2yed.xsl
-    VERSION  1.20.0
-    DATE     2018-01-12
+    VERSION  1.20.1-SNAPSHOT
+    DATE     2017-01-31
 
     Copyright 2012-2017
 
@@ -229,6 +229,12 @@
 			<xsl:value-of select="$fragment/yed:backgroundColor"/>
 			<xsl:if test="not(exists($fragment/yed:backgroundColor))">#FFFFFF</xsl:if> <!-- #B7C9E3 -->
 		</xsl:variable>
+		<xsl:variable name="modelposition">
+			<xsl:choose>
+				<xsl:when test="exists(rdfs:comment)">t</xsl:when>
+				<xsl:otherwise>c</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
 		<node id="{@rdf:about}{@rdf:nodeID}"> <!-- URI nodes and blank nodes -->
 			<data key="d6">
 				<xsl:variable name="nodeType">
@@ -239,7 +245,7 @@
 					<y:Geometry height="100.0" width="200.0" x="0.5" y="0"/>
 					<y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
 					<y:BorderStyle color="#000000" type="line" width="1.0"/>
-					<y:NodeLabel alignment="center" autoSizePolicy="node_width" configuration="CroppingLabel" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" modelName="internal" modelPosition="t" textColor="#000000" visible="true">
+					<y:NodeLabel alignment="center" autoSizePolicy="node_width" configuration="CroppingLabel" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" modelName="internal" modelPosition="{$modelposition}" textColor="#000000" visible="true">
 						<xsl:choose>
 							<xsl:when test="$fragment/yed:backgroundColor!=''"><xsl:attribute name="backgroundColor"><xsl:value-of select="$fragment/yed:backgroundColor"/></xsl:attribute></xsl:when>
 							<xsl:otherwise><xsl:attribute name="hasBackgroundColor">false</xsl:attribute></xsl:otherwise>
