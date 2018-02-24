@@ -2,7 +2,7 @@
 
     NAME     rdf2yed.xsl
     VERSION  1.20.1-SNAPSHOT
-    DATE     2017-01-31
+    DATE     2017-02-24
 
     Copyright 2012-2017
 
@@ -91,7 +91,7 @@
 							<xsl:otherwise>0</xsl:otherwise>
 						</xsl:choose>
 					</xsl:variable>
-					<y:Geometry height="{40+13*($enumerationcnt+count(property[not(exists(ref-nodes/item) or exists(refshape[@empty='false']))]))}" width="200.0" x="0.5" y="0"/>
+					<y:Geometry height="{40+13*($enumerationcnt+count(property[not(exists(refshape[@type='role']) or exists(ref-nodes/item) or exists(refshape[@empty='false']))]))}" width="200.0" x="0.5" y="0"/>
 					<y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
 					<y:BorderStyle color="#000000" type="line" width="1.0"/>
 					<y:NodeLabel alignment="center" autoSizePolicy="node_width" configuration="CroppingLabel" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" modelName="internal" modelPosition="t" textColor="#000000" visible="true" hasBackgroundColor="false">
@@ -99,7 +99,7 @@
 					</y:NodeLabel>
 					<y:NodeLabel alignment="left" autoSizePolicy="node_width" configuration="CroppingLabel" fontFamily="Dialog" fontSize="10" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" modelName="custom" textColor="#000000" visible="true">
 						<!--Properties-->
-						<xsl:for-each select="property[not(exists(ref-nodes/item) or exists(refshape[@empty='false']))]">
+						<xsl:for-each select="property[not(exists(refshape[@type='role']) or exists(ref-nodes/item) or exists(refshape[@empty='false']))]">
 							<xsl:if test="position()!=1"><xsl:text>
 </xsl:text></xsl:if><xsl:apply-templates select="." mode="property-placement"/>
 						</xsl:for-each>
@@ -150,6 +150,12 @@
 	<xsl:for-each select="$vocabulary/nodeShapes/shape[@empty!='true']/property/(refshape|ref-nodes)">
 		<xsl:variable name="refuri" select="@uri"/>
 		<xsl:variable name="refshape" select="$vocabulary/nodeShapes/shape[@uri=$refuri]"/>
+		<xsl:variable name="sourcestyle">
+			<xsl:choose>
+				<xsl:when test="../@nodekind='BlankNode'">diamond</xsl:when>
+				<xsl:otherwise>none</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
 		<xsl:if test="local-name()='ref-nodes' or $refshape/@empty!='true'">
 			<edge source="{../../@uri}" target="{@uri}">
 				<data key="d10">
@@ -161,7 +167,7 @@
 							</xsl:when>
 							<xsl:otherwise>
 								<y:LineStyle color="#000000" type="line" width="1.0"/>
-								<y:Arrows source="none" target="standard"/>
+								<y:Arrows source="{$sourcestyle}" target="standard"/>
 								<y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true">
 									<xsl:apply-templates select=".." mode="property-placement"/>
 									<y:LabelModel>

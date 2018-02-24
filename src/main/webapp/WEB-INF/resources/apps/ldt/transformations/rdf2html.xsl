@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2html.xsl
-    VERSION  1.20.0
-    DATE     2018-01-12
+    VERSION  1.20.1-SNAPSHOT
+    DATE     2018-02-24
 
     Copyright 2012-2017
 
@@ -549,43 +549,50 @@
 <xsl:template match="/">
 	<xsl:for-each select="results">
 		<html lang="{$language}">
-			<xsl:apply-templates select="." mode="html-head"/>
-			<body>
-				<div id="page">
-					<!-- More than one query is possible -->
-					<!-- First header appearances -->
-					<!-- More than one navbar leads to non-defined behaviour -->
-					<xsl:apply-templates select="rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#HeaderAppearance']" mode="HeaderAppearance"/>
-					<xsl:apply-templates select="rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarAppearance']" mode="NavbarSearchAppearance"><xsl:with-param name="search">false</xsl:with-param></xsl:apply-templates>
-					<xsl:apply-templates select="rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarSearchAppearance']" mode="NavbarSearchAppearance"><xsl:with-param name="search">true</xsl:with-param></xsl:apply-templates>
-					<!-- Real content -->
-					<div class="content">
-						<div class="container">
-							<xsl:choose>
-								<xsl:when test="exists(rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#TreeAppearance'])">
-									<div class="row">
-										<div class="col-md-4">
-											<xsl:apply-templates select="rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#TreeAppearance']" mode="TreeAppearance"/>
-										</div>
-										<div class="col-md-8">
+			<xsl:choose>
+				<xsl:when test="rdf:RDF[1]/@elmo:appearance='http://bp4mc2.org/elmo/def#PlainHtmlAppearance'">
+					<xsl:apply-templates select="rdf:RDF[1]" mode="HtmlAppearance"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:apply-templates select="." mode="html-head"/>
+					<body>
+						<div id="page">
+							<!-- More than one query is possible -->
+							<!-- First header appearances -->
+							<!-- More than one navbar leads to non-defined behaviour -->
+							<xsl:apply-templates select="rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#HeaderAppearance']" mode="HeaderAppearance"/>
+							<xsl:apply-templates select="rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarAppearance']" mode="NavbarSearchAppearance"><xsl:with-param name="search">false</xsl:with-param></xsl:apply-templates>
+							<xsl:apply-templates select="rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#NavbarSearchAppearance']" mode="NavbarSearchAppearance"><xsl:with-param name="search">true</xsl:with-param></xsl:apply-templates>
+							<!-- Real content -->
+							<div class="content">
+								<div class="container">
+									<xsl:choose>
+										<xsl:when test="exists(rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#TreeAppearance'])">
+											<div class="row">
+												<div class="col-md-4">
+													<xsl:apply-templates select="rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#TreeAppearance']" mode="TreeAppearance"/>
+												</div>
+												<div class="col-md-8">
+													<xsl:for-each select="rdf:RDF"><xsl:sort select="@elmo:index"/>
+														<xsl:apply-templates select="." mode="present"/>
+													</xsl:for-each>
+												</div>
+											</div>
+										</xsl:when>
+										<xsl:otherwise>
 											<xsl:for-each select="rdf:RDF"><xsl:sort select="@elmo:index"/>
 												<xsl:apply-templates select="." mode="present"/>
 											</xsl:for-each>
-										</div>
-									</div>
-								</xsl:when>
-								<xsl:otherwise>
-									<xsl:for-each select="rdf:RDF"><xsl:sort select="@elmo:index"/>
-										<xsl:apply-templates select="." mode="present"/>
-									</xsl:for-each>
-								</xsl:otherwise>
-							</xsl:choose>
+										</xsl:otherwise>
+									</xsl:choose>
+								</div>
+							</div>
+							<!-- Last footer appearances-->
+							<xsl:apply-templates select="rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#FooterAppearance']" mode="FooterAppearance"/>
 						</div>
-					</div>
-					<!-- Last footer appearances-->
-					<xsl:apply-templates select="rdf:RDF[@elmo:appearance='http://bp4mc2.org/elmo/def#FooterAppearance']" mode="FooterAppearance"/>
-				</div>
-			</body>
+					</body>
+				</xsl:otherwise>
+			</xsl:choose>
 		</html>
 	</xsl:for-each>
 </xsl:template>

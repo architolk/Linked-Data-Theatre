@@ -1,8 +1,8 @@
 <!--
 
     NAME     ModelTemplates.xsl
-    VERSION  1.20.0
-    DATE     2018-01-12
+    VERSION  1.20.1-SNAPSHOT
+    DATE     2018-02-24
 
     Copyright 2012-2017
 
@@ -80,7 +80,7 @@
 	<!-- All property shapes -->
 	<!-- Currently limited to simple paths and inverse paths, where the path is equal to the predicate -->
 	<xsl:variable name="all-property-shapes">
-		<xsl:for-each-group select="rdf:Description[exists(sh:path/(@rdf:resource|@rdf:nodeID))]" group-by="(@rdf:about|@rdf:nodeID)">
+		<xsl:for-each-group select="rdf:Description[rdf:type/@rdf:resource='http://www.w3.org/ns/shacl#PropertyShape' or exists(sh:path/(@rdf:resource|@rdf:nodeID))]" group-by="(@rdf:about|@rdf:nodeID)">
 			<xsl:variable name="predicate"><xsl:value-of select="sh:path/@rdf:resource"/></xsl:variable>
 			<xsl:variable name="path-uri" select="sh:path/@rdf:nodeID"/>
 			<xsl:variable name="inverse-predicate"><xsl:value-of select="../rdf:Description[@rdf:nodeID=$path-uri]/sh:inversePath/@rdf:resource"/></xsl:variable>
@@ -97,6 +97,9 @@
 						<ref-class uri="{@rdf:resource}"/>
 					</xsl:for-each>
 				</xsl:if>
+				<xsl:for-each select="current-group()/sh:nodeKind">
+					<nodekind uri="{@rdf:resource}"/>
+				</xsl:for-each>
 				<xsl:for-each select="current-group()/sh:datatype">
 					<datatype uri="{@rdf:resource}"/>
 				</xsl:for-each>
@@ -295,6 +298,20 @@
 									</xsl:attribute>
 									<xsl:if test="$predicate/datatype[1]/@uri!=''">
 										<xsl:attribute name="datatype"><xsl:value-of select="$predicate/datatype[1]/@uri"/></xsl:attribute>
+									</xsl:if>
+									<xsl:variable name="nodekind">
+										<xsl:choose>
+											<xsl:when test="$predicate/nodekind[1]/@uri='http://www.w3.org/ns/shacl#BlankNodeOrIRI'">BlankNodeOrIRI</xsl:when>
+											<xsl:when test="$predicate/nodekind[1]/@uri='http://www.w3.org/ns/shacl#BlankNode'">BlankNode</xsl:when>
+											<xsl:when test="$predicate/nodekind[1]/@uri='http://www.w3.org/ns/shacl#IRI'">IRI</xsl:when>
+											<xsl:when test="$predicate/nodekind[1]/@uri='http://www.w3.org/ns/shacl#Literal'">Literal</xsl:when>
+											<xsl:when test="$refclass!=''">BlankNodeOrIRI</xsl:when>
+											<xsl:when test="$predicate/datatype[1]/@uri!=''">Literal</xsl:when>
+											<xsl:otherwise />
+										</xsl:choose>
+									</xsl:variable>
+									<xsl:if test="$nodekind!=''">
+										<xsl:attribute name="nodekind"><xsl:value-of select="$nodekind"/></xsl:attribute>
 									</xsl:if>
 									<xsl:copy-of select="$predicate/value[1]"/>
 									<xsl:copy-of select="$predicate/label"/>
