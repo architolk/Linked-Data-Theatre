@@ -551,7 +551,7 @@
 		<html lang="{$language}">
 			<xsl:choose>
 				<xsl:when test="rdf:RDF[1]/@elmo:appearance='http://bp4mc2.org/elmo/def#PlainHtmlAppearance'">
-					<xsl:apply-templates select="rdf:RDF[1]" mode="HtmlAppearance"/>
+					<xsl:apply-templates select="rdf:RDF[1]" mode="PlainHtmlAppearance"/>
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:apply-templates select="." mode="html-head"/>

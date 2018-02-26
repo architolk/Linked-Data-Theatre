@@ -426,6 +426,17 @@
 						</configuration>
 					</execution>
 					<!-- END -->
+					<execution>
+						<id>get-respec</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>https://raw.githubusercontent.com/architolk/respec/develop/builds/respec-ldt.js</url>
+							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
+							<skipCache>true</skipCache>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>

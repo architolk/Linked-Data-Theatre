@@ -1,8 +1,8 @@
 <!--
 
     NAME     HtmlAppearance.xsl
-    VERSION  1.20.0
-    DATE     2018-01-12
+    VERSION  1.20.1-SNAPSHOT
+    DATE     2018-02-24
 
     Copyright 2012-2017
 
@@ -71,6 +71,36 @@
 	</xsl:choose>
 </xsl:template>
 
+<xsl:template match="rdf:RDF" mode="PlainHtmlAppearance">
+	<!-- HTML as part of a construct query -->
+	<xsl:if test="exists(rdf:Description/elmo:html)">
+		<xsl:variable name="validHTML">
+			<xsl:call-template name="string-replace-all">
+		  <xsl:with-param name="text" select="rdf:Description/elmo:html" />
+		  <xsl:with-param name="replace" select="'&amp;'" />
+		  <xsl:with-param name="by" select="'&amp;amp;'" />
+		</xsl:call-template>
+		</xsl:variable>
+		<xsl:variable name="html">&lt;div>
+			<xsl:call-template name="normalize-language">
+				<xsl:with-param name="text" select="$validHTML"/>
+			</xsl:call-template>&lt;/div>
+		</xsl:variable>
+		<xsl:copy-of select="saxon:parse($html)/div/*" xmlns:saxon="http://saxon.sf.net/"/>
+	</xsl:if>
+	<!-- HTML as part of a select query -->
+	<xsl:if test="rdf:Description/res:resultVariable='html'">
+		<xsl:variable name="html">
+			<xsl:text>&lt;div></xsl:text>
+			<xsl:for-each select="rdf:Description/res:solution">
+				<xsl:value-of select="res:binding[res:variable='html']/res:value"/>
+			</xsl:for-each>
+			<xsl:text>&lt;/div></xsl:text>
+		</xsl:variable>
+		<xsl:copy-of select="saxon:parse($html)/div/*" xmlns:saxon="http://saxon.sf.net/"/>
+	</xsl:if>
+</xsl:template>
+
 <xsl:template match="rdf:RDF" mode="HtmlAppearance">
 	<div class="panel panel-primary">
 		<div class="panel-heading">
@@ -80,33 +110,7 @@
 			</h3>
 		</div>
 		<div class="panel-body htmlapp">
-			<!-- HTML as part of a construct query -->
-			<xsl:if test="exists(rdf:Description/elmo:html)">
-				<xsl:variable name="validHTML">
-					<xsl:call-template name="string-replace-all">
-			      <xsl:with-param name="text" select="rdf:Description/elmo:html" />
-			      <xsl:with-param name="replace" select="'&amp;'" />
-			      <xsl:with-param name="by" select="'&amp;amp;'" />
-			    </xsl:call-template>
-				</xsl:variable>
-				<xsl:variable name="html">&lt;div>
-					<xsl:call-template name="normalize-language">
-						<xsl:with-param name="text" select="$validHTML"/>
-					</xsl:call-template>&lt;/div>
-				</xsl:variable>
-				<xsl:copy-of select="saxon:parse($html)" xmlns:saxon="http://saxon.sf.net/"/>
-			</xsl:if>
-			<!-- HTML as part of a select query -->
-			<xsl:if test="rdf:Description/res:resultVariable='html'">
-				<xsl:variable name="html">
-					<xsl:text>&lt;div></xsl:text>
-					<xsl:for-each select="rdf:Description/res:solution">
-						<xsl:value-of select="res:binding[res:variable='html']/res:value"/>
-					</xsl:for-each>
-					<xsl:text>&lt;/div></xsl:text>
-				</xsl:variable>
-				<xsl:copy-of select="saxon:parse($html)" xmlns:saxon="http://saxon.sf.net/"/>
-			</xsl:if>
+			<xsl:apply-templates select="." mode="PlainHtmlAppearance"/>
 		</div>
 	</div>
 </xsl:template>
