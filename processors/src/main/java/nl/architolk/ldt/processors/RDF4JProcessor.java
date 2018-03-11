@@ -125,7 +125,7 @@ public class RDF4JProcessor extends SimpleProcessor {
 			conn = db.getConnection();
 
 			try {
-				//conn.begin(IsolationLevels.NONE);
+				conn.begin(IsolationLevels.NONE);
 				
 				// Clear target graph, partially (all triples in original container) or completely
 				if (action.equals("replace")) {
@@ -266,7 +266,7 @@ public class RDF4JProcessor extends SimpleProcessor {
 					contentHandler.characters(msg.toCharArray(),0,msg.length());
 					contentHandler.endElement("", "scene", "scene");
 				}
-				//conn.commit();
+				conn.commit();
 				
 			} finally {
 				conn.close();

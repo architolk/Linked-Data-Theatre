@@ -1,8 +1,8 @@
 <!--
 
     NAME     container.xpl
-    VERSION  1.20.0
-    DATE     2018-01-12
+    VERSION  1.20.1-SNAPSHOT
+    DATE     2018-03-11
 
     Copyright 2012-2017
 
@@ -96,6 +96,15 @@
 
 	<!-- Configuration> -->
 	<p:param type="input" name="instance"/>
+	<p:processor name="oxf:url-generator" rdfs:label="get config">
+		<p:input name="config">
+			<config>
+				<url>../config.xml</url>
+				<content-type>application/xml</content-type>
+			</config>
+		</p:input>
+		<p:output name="data" id="config"/>
+	</p:processor>
 
 	<!-- Generate original request -->
 	<p:processor name="oxf:request" rdfs:label="retrieve http-request">
@@ -113,6 +122,28 @@
 		<p:output name="data" id="request"/>
 	</p:processor>
 
+	<!-- Dirty fix when instance is not the configuration (in a particular case with upload) -->
+	<p:processor name="oxf:xslt">
+		<p:input name="config">
+			<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+				<xsl:template match="/root">
+					<xsl:choose>
+						<xsl:when test="exists(input/theatre)"><xsl:copy-of select="input/theatre"/></xsl:when>
+						<xsl:otherwise>
+							<theatre>
+								<xsl:copy-of select="theatre/@*"/>
+								<xsl:copy-of select="theatre/(* except subdomain)"/>
+								<subdomain><xsl:value-of select="substring-before(request/request-path,'/container')"/></subdomain>
+							</theatre>
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:template>
+			</xsl:stylesheet>
+		</p:input>
+		<p:input name="data" href="aggregate('root',aggregate('input',#instance),#request,#config)"/>
+		<p:output name="data" id="instancefixed"/>
+	</p:processor>
+	
 	<!-- /request/body can only be obtained when no parameters are serialized within the body! -->
 	<p:choose href="#request" rdfs:label="get request body, if available">
 		<p:when test="not(exists(/request/parameters))">
@@ -137,7 +168,7 @@
 
 	<!-- Get credentials and user roles -->
 	<p:processor name="oxf:request-security" rdfs:label="get request security context">
-		<p:input name="config" transform="oxf:xslt" href="#instance">
+		<p:input name="config" transform="oxf:xslt" href="#instancefixed">
 			<config xsl:version="2.0">
 				<xsl:for-each select="theatre/roles/role">
 					<role><xsl:value-of select="."/></role>
@@ -160,7 +191,7 @@
 
 	<!-- Create context -->
 	<p:processor name="oxf:unsafe-xslt" rdfs:label="create context">
-		<p:input name="data" href="aggregate('croot',#instance,#request,#requestbody,#roles)"/>
+		<p:input name="data" href="aggregate('croot',#instancefixed,#request,#requestbody,#roles)"/>
 		<p:input name="config" href="../transformations/context.xsl"/>
 		<p:output name="data" id="context"/>
 	</p:processor>
@@ -543,6 +574,7 @@
 												<xsl:variable name="type">
 													<xsl:choose>
 														<xsl:when test="root/context/upload-file/@type='application/xml'">xml</xsl:when>
+														<xsl:when test="root/context/upload-file/@type='application/rdf+xml'">xml</xsl:when>
 														<xsl:when test="root/context/upload-file/@type='application/ld+json'">jsonld</xsl:when>
 														<xsl:when test="root/container/translator!=''">xml</xsl:when> <!-- A translator implies xml -->
 														<xsl:otherwise>ttl</xsl:otherwise> <!-- If all fails, assume turtle -->
@@ -704,7 +736,7 @@
 	<p:input name="config">
 		<config/>
 	</p:input>
-	<p:input name="data" href="#filelist"/>
+	<p:input name="data" href="#context"/>
 </p:processor>
 -->
 					<p:for-each href="#filelist" select="/files/file" root="results" id="rdffile" rdfs:label="read and convert each file in filelist to rdf">
@@ -1302,7 +1334,7 @@
 							</p:processor>
 							<!-- Serialize -->
 							<p:processor name="oxf:http-serializer">
-								<p:input name="config" href="#instance" transform="oxf:xslt">
+								<p:input name="config" href="#instancefixed" transform="oxf:xslt">
 									<config xsl:version="2.0">
 										<cache-control><use-local-cache>false</use-local-cache></cache-control>
 										<xsl:if test="not(theatre/@cors='no')">

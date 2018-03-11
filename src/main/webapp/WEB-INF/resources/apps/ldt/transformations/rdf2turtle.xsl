@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2turtle.xsl
-    VERSION  1.20.0
-    DATE     2018-01-12
+    VERSION  1.20.1-SNAPSHOT
+    DATE     2018-03-11
 
     Copyright 2012-2017
 
@@ -151,7 +151,7 @@
 <xsl:variable name="prefix"><xsl:apply-templates select="." mode="rdf2turtle-getprefixes"/></xsl:variable>
 <xsl:for-each-group select="$prefix/prefix" group-by=".">@prefix <xsl:value-of select="@name"/>: &lt;<xsl:value-of select="."/>>.
 </xsl:for-each-group>
-<xsl:for-each-group select="rdf:Description" group-by="@rdf:about">
+<xsl:for-each-group select="rdf:Description" group-by="@rdf:about"><xsl:sort select="@rdf:about"/>
 <xsl:apply-templates select="@rdf:about" mode="rdf2turtle-uri"><xsl:with-param name="prefix" select="$prefix"/></xsl:apply-templates><xsl:for-each select="current-group()/*"><xsl:choose><xsl:when test="position()!=1">;
     </xsl:when><xsl:otherwise><xsl:text> </xsl:text></xsl:otherwise></xsl:choose><xsl:apply-templates select="." mode="rdf2turtle-triple"><xsl:with-param name="tab">9</xsl:with-param><xsl:with-param name="prefix" select="$prefix"/></xsl:apply-templates></xsl:for-each>
 .

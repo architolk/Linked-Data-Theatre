@@ -2,7 +2,7 @@
 
     NAME     param2query.xsl
     VERSION  1.20.1-SNAPSHOT
-    DATE     2018-02-24
+    DATE     2018-11-03
 
     Copyright 2012-2017
 
@@ -65,7 +65,7 @@
 			<xsl:variable name="query3" select="replace($query2,'@USER@',/root/context/user)"/>
 			<xsl:variable name="query4" select="replace($query3,'@CURRENTMOMENT@',string(current-dateTime()))"/>
 			<xsl:variable name="query5" select="replace($query4,'@STAGE@',/root/context/back-of-stage)"/>
-			<xsl:variable name="query6" select="replace($query5,'@REPRESENTATION@',/root/(scene|representation)/@uri)"/>
+			<xsl:variable name="query6" select="replace($query5,'@REPRESENTATION@',/root/((scene|representation)/@uri)|container/url)"/>
 			<xsl:variable name="query7" select="replace($query6,'@TIMESTAMP@',/root/context/timestamp)"/>
 			<xsl:variable name="query8" select="replace($query7,'@DATE@',/root/context/date)"/>
 			<xsl:variable name="query9" select="replace($query8,'@DOCSUBJECT@',/root/context/docsubject)"/>
