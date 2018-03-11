@@ -1,8 +1,8 @@
 <!--
 
     NAME     VocabularyAppearance.xsl
-    VERSION  1.20.0
-    DATE     2018-01-12
+    VERSION  1.20.1-SNAPSHOT
+    DATE     2018-03-11
 
     Copyright 2012-2017
 
@@ -95,8 +95,13 @@
 		<xsl:value-of select="$label"/>
 		<xsl:if test="not($label!='')"><xsl:value-of select="$name"/></xsl:if>
 	</xsl:variable>
+	<xsl:variable name="owned">
+		<xsl:for-each select="$owneditems/prefix">
+			<xsl:if test="starts-with($uri,.)">x</xsl:if>
+		</xsl:for-each>
+	</xsl:variable>
 	<xsl:choose>
-		<xsl:when test="starts-with($uri,$owneditems/prefix) or exists($owneditems/item[.=$uri])">
+		<xsl:when test="$owned!='' or exists($owneditems/item[.=$uri])">
 			<a href="#{$name}"><xsl:value-of select="$label"/></a>
 		</xsl:when>
 		<xsl:otherwise>
@@ -254,12 +259,14 @@
 	<xsl:variable name="onto-prefix"><xsl:value-of select="$vocabulary/ontology[1]/@prefix"/></xsl:variable>
 	<!-- All classes that have non-empty shapes are part of the deal as well -->
 	<xsl:variable name="owneditems">
-		<prefix>
-			<xsl:choose>
-				<xsl:when test="$onto-prefix!=''"><xsl:value-of select="$onto-prefix"/></xsl:when>
-				<xsl:otherwise>~</xsl:otherwise>
-			</xsl:choose>
-		</prefix>
+		<xsl:choose>
+			<xsl:when test="$onto-prefix!=''">
+				<xsl:for-each select="$vocabulary/ontology[@prefix!='']/@prefix">
+					<prefix><xsl:value-of select="."/></prefix>
+				</xsl:for-each>
+			</xsl:when>
+			<xsl:otherwise><prefix>~</prefix></xsl:otherwise>
+		</xsl:choose>
 		<xsl:for-each-group select="$vocabulary/nodeShapes/shape[@class-uri!='' and @empty='false']" group-by="@class-uri">
 			<item><xsl:value-of select="@class-uri"/></item>
 		</xsl:for-each-group>
