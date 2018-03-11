@@ -121,6 +121,7 @@
 								<cssSourceFile>codemirror.css</cssSourceFile>
 								<cssSourceFile>ldt-theme.css</cssSourceFile>
 								<cssSourceFile>signin.css</cssSourceFile>
+								<cssSourceFile>slickgrid-ldt.css</cssSourceFile>
 							</cssSourceFiles>
 							<jsSourceDir>WEB-INF/resources/apps/js</jsSourceDir>
 							<jsSourceFiles>
@@ -132,6 +133,9 @@
 								<jsSourceFile>rdfmap.js</jsSourceFile>
 								<jsSourceFile>ldt.js</jsSourceFile>
 								<jsSourceFile>chosen.ajax.js</jsSourceFile>
+								<jsSourceFile>slick.ldt-grid.js</jsSourceFile>
+								<jsSourceFile>slick.ldt-remotemodel.js</jsSourceFile>
+								<jsSourceFile>uuid.js</jsSourceFile>
 							</jsSourceFiles>
 						</configuration>
 						<goals>

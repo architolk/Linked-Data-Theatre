@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.20.1-SNAPSHOT
-    DATE     2018-02-24
+    DATE     2018-03-11
 
     Copyright 2012-2017
 
@@ -539,6 +539,9 @@
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#TurtleAppearance'">		
 			<xsl:apply-templates select="." mode="TurtleAppearance"/>		
 		</xsl:when>
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#EditorAppearance'">		
+			<xsl:apply-templates select="." mode="EditorAppearance"/>		
+		</xsl:when>
 		<xsl:otherwise>
 			<!-- No, or an unknown appearance, use the data to select a suitable appearance -->
 			<xsl:apply-templates select="." mode="ContentAppearance"/>
@@ -1036,5 +1039,6 @@
 <xsl:include href="appearances/ModelAppearance.xsl"/>
 <xsl:include href="appearances/VocabularyAppearance.xsl"/>
 <xsl:include href="appearances/TurtleAppearance.xsl"/>
+<xsl:include href="appearances/EditorAppearance.xsl"/>
 
 </xsl:stylesheet>

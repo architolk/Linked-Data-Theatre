@@ -1,0 +1,56 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+@prefix void: <http://rdfs.org/ns/void#>.
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
+@prefix container: <http://localhost:8080/container/>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+
+stage:EditorAppearance	a	elmo:Representation;
+	elmo:url-pattern	"/query/EditorAppearance$";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:EditorAppearance;
+  elmo:container container:simple;
+	elmo:fragment [
+    elmo:index "1";
+		elmo:applies-to skos:prefLabel;
+		rdfs:label "Naam"@nl;
+		rdfs:label "Name"@en;
+	];
+  elmo:fragment [
+    elmo:index "2";
+    elmo:applies-to skos:definition;
+    rdfs:label "Definitie"@nl;
+    rdfs:label "Definition"@en;
+    elmo:valueDatatype xsd:String;
+  ];
+  elmo:fragment [
+    elmo:applies-to rdf:type;
+    rdf:value skos:Concept;
+    elmo:appearance elmo:HiddenAppearance;
+  ];
+  elmo:fragment [
+    elmo:appearance elmo:SubmitAppearance;
+    rdfs:label "Opslaan"@nl;
+    rdfs:label "Save"@en;
+  ];
+	elmo:query '''
+    prefix container: <http://localhost:8080/container/>
+    construct {
+      ?concept skos:prefLabel ?label.
+      ?concept skos:definition ?definition.
+    }
+    where {
+      select ?concept ?label ?definition
+      where {
+        graph container:simple {
+          ?concept skos:prefLabel ?label.
+          OPTIONAL {?concept skos:definition ?definition}
+        }
+      }
+    }
+	''';
+.

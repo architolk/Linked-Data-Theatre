@@ -437,6 +437,17 @@
 							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
+					<execution>
+						<id>get-slickgrid</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>https://github.com/6pac/SlickGrid/archive/2.3.16.zip</url>
+							<unpack>true</unpack>
+							<outputDirectory>zips</outputDirectory>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>
@@ -474,6 +485,45 @@
 								<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
 							</fileset>
 						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.samaxes.maven</groupId>
+				<artifactId>minify-maven-plugin</artifactId>
+				<version>1.7.6</version>
+				<executions>
+					<execution>
+						<id>default-minify</id>
+						<configuration>
+							<charset>UTF-8</charset>
+							<cssSourceDir>../../../zips/SlickGrid-2.3.16</cssSourceDir>
+							<cssSourceFiles>
+								<cssSourceFile>css/smoothness/jquery-ui-1.11.3.custom.css</cssSourceFile>
+								<cssSourceFile>slick.grid.css</cssSourceFile>
+								<cssSourceFile>slick-default-theme.css</cssSourceFile>
+							</cssSourceFiles>
+							<cssTargetDir>../../WEB-INF/resources/apps/css</cssTargetDir>
+							<cssFinalFile>slick.grid.pkg.css</cssFinalFile>
+							<jsSourceDir>../../../zips/SlickGrid-2.3.16</jsSourceDir>
+							<jsSourceFiles>
+								<jsSourceFile>lib/firebugx.js</jsSourceFile>
+								<jsSourceFile>lib/jquery-ui-1.11.3.js</jsSourceFile>
+								<jsSourceFile>lib/jquery.event.drag-2.3.0.js</jsSourceFile>
+								<jsSourceFile>slick.core.js</jsSourceFile>
+								<jsSourceFile>plugins/slick.cellrangedecorator.js</jsSourceFile>
+								<jsSourceFile>plugins/slick.cellrangeselector.js</jsSourceFile>
+								<jsSourceFile>plugins/slick.cellselectionmodel.js</jsSourceFile>
+								<jsSourceFile>slick.editors.js</jsSourceFile>
+								<jsSourceFile>slick.formatters.js</jsSourceFile>
+								<jsSourceFile>slick.grid.js</jsSourceFile>
+							</jsSourceFiles>
+							<jsTargetDir>../../WEB-INF/resources/apps/js</jsTargetDir>
+							<jsFinalFile>slick.grid.pkg.js</jsFinalFile>
+						</configuration>
+						<goals>
+							<goal>minify</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>
@@ -570,6 +620,30 @@
 							</resources>              
 							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
 						</configuration>            
+					</execution>
+					<execution>
+						<id>copy-css-image-resources</id>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<phase>package</phase>
+						<configuration>
+							<resources>
+								<resource>
+									<directory>zips/SlickGrid-2.3.16/images</directory>
+									<includes>
+										<include>**</include>
+									</includes>
+								</resource>
+								<resource>
+									<directory>zips/SlickGrid-2.3.16/css/smoothness/images</directory>
+									<includes>
+										<include>**</include>
+									</includes>
+								</resource>
+							</resources>
+							<outputDirectory>WEB-INF/resources/apps/css/images</outputDirectory>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>

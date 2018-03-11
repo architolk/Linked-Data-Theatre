@@ -35,6 +35,7 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:data [elmo:index "IM"; rdfs:label "ImageAppearance"; html:link "query/ImageAppearance"];
 			elmo:data [elmo:index "MO"; rdfs:label "ModelAppearance"; html:link "query/ModelAppearance"];
 			elmo:data [elmo:index "FO"; rdfs:label "FormAppearance"; html:link "query/FormAppearance"];
+			elmo:data [elmo:index "ED"; rdfs:label "EditorAppearance"; html:link "query/EditorAppearance"];
 		];
 		elmo:data [
 			elmo:index "2";
