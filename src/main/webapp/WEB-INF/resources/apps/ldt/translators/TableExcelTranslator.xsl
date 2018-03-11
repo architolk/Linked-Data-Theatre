@@ -1,8 +1,8 @@
 <!--
 
     NAME     TableExcelTranslator.xsl
-    VERSION  1.20.0
-    DATE     2018-01-12
+    VERSION  1.20.1-SNAPSHOT
+    DATE     2018-03-11
 
     Copyright 2012-2017
 
@@ -92,18 +92,64 @@
 		</xsl:variable>
 		<!-- Create URI from template -->
 		<xsl:if test="$flag-empty=''">
-			<xsl:for-each select="tokenize(replace($uri-schema,'\{[^\}]*\}','@$0@'),'@')">
-				<xsl:choose>
-					<xsl:when test="matches(.,'^\{[^\}]*\}$')">
-						<xsl:variable name="name" select="substring(.,2,string-length(.)-2)"/>
-						<xsl:value-of select="$columns[@id=$column-names/sheet[@name=$sheet]/column[@name=$name]/@id]"/>
-					</xsl:when>
-					<xsl:otherwise>
-						<xsl:value-of select="."/>
-					</xsl:otherwise>
-				</xsl:choose>
+			<xsl:variable name="basevalue">
+				<xsl:for-each select="tokenize(replace($uri-schema,'\{[^\}]*\}','@$0@'),'@')">
+					<xsl:choose>
+						<xsl:when test="matches(.,'^\{[^\}]*\}$')">
+							<xsl:variable name="name" select="substring(.,2,string-length(.)-2)"/>
+							<xsl:variable name="value" select="$columns[@id=$column-names/sheet[@name=$sheet]/column[@name=$name]/@id]"/>
+							<!-- URI cannot contain spaces. Remove spaces using CamelCase -->
+							<xsl:text>&lt;</xsl:text><xsl:value-of select="replace($value,' ','')"/><xsl:text>&gt;</xsl:text>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:value-of select="."/>
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:for-each>
+			</xsl:variable>
+			<!-- Check if multiple entries are added. In such a case: create duplicate elements -->
+			<!-- Restriction: only one column may contain multiple entries! -->
+			<xsl:for-each select="tokenize($basevalue,'&#xA;')">
+				<xsl:variable name="pos" select="position()"/>
+				<uri>
+					<xsl:for-each select="tokenize($basevalue,'&lt;')">
+						<xsl:choose>
+							<xsl:when test="matches(.,'&gt;')">
+								<xsl:for-each select="tokenize(concat(substring-before(.,'&gt;'),'&#xA;'),'&#xA;')">
+									<xsl:if test="position()=$pos"><xsl:value-of select="."/></xsl:if>
+								</xsl:for-each>
+								<xsl:value-of select="substring-after(.,'&gt;')"/>
+							</xsl:when>
+							<xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
+						</xsl:choose>
+					</xsl:for-each>
+				</uri>
 			</xsl:for-each>
 		</xsl:if>
+	</xsl:template>
+	
+	<xsl:template name="create-value">
+		<xsl:param name="sheet"/>
+		<xsl:param name="columns"/>
+		<xsl:param name="valuetemplate"/>
+		<xsl:param name="value"/>
+		
+		<xsl:choose>
+			<xsl:when test="$valuetemplate!=''">
+				<xsl:for-each select="tokenize(replace($valuetemplate,'\{[^\}]*\}','@$0@'),'@')">
+					<xsl:choose>
+						<xsl:when test="matches(.,'^\{[^\}]*\}$')">
+							<xsl:variable name="name" select="substring(.,2,string-length(.)-2)"/>
+							<xsl:value-of select="$columns[@id=$column-names/sheet[@name=$sheet]/column[@name=$name]/@id]"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:value-of select="."/>
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:for-each>
+			</xsl:when>
+			<xsl:otherwise><xsl:value-of select="$value"/></xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 	
 	<xsl:template match="/">
@@ -143,6 +189,9 @@
 				<xsl:variable name="properties">
 					<xsl:for-each select="key('properties',$valuesheet)">
 						<xsl:variable name="pname" select="column[@id='3']"/>
+						<xsl:variable name="language" select="column[@id='4']"/>
+						<xsl:variable name="datatype" select="column[@id='5']"/>
+						<xsl:variable name="valuetemplate" select="column[@id='6']"/>
 						<!-- Create full uri from pname -->
 						<!-- URI-schema depends on the condition -->
 						<xsl:variable name="condition-value" select="column[@id=$pconditions/condition[1]/@checkcolumn]"/>
@@ -166,13 +215,14 @@
 							</xsl:call-template>
 						</xsl:variable>
 						<!-- Create property definition, use other definition for inverse properties -->
+						<!-- Only support for single value properties. In case of multi-values, only the first is used -->
 						<xsl:variable name="column" select="column[@id='1']"/>
 						<xsl:choose>
 							<xsl:when test="substring($pname,1,1)='^'">
-								<inverseproperty column="{$column-names/sheet[@name=$valuesheet]/column[@name=$column]/@id}" uri="{$puri}"/>
+								<inverseproperty column="{$column-names/sheet[@name=$valuesheet]/column[@name=$column]/@id}" uri="{$puri/uri[1]}"/>
 							</xsl:when>
 							<xsl:otherwise>
-								<property column="{$column-names/sheet[@name=$valuesheet]/column[@name=$column]/@id}" uri="{$puri}"/>
+								<property column="{$column-names/sheet[@name=$valuesheet]/column[@name=$column]/@id}" uri="{$puri/uri[1]}" language="{$language}" datatype="{$datatype}" valuetemplate="{$valuetemplate}"/>
 							</xsl:otherwise>
 						</xsl:choose>
 					</xsl:for-each>
@@ -207,6 +257,7 @@
 						</xsl:choose>
 					</xsl:variable>
 					<!-- Create URI -->
+					<!-- Only single value URI's are supported. In case of multiple URI's, only the first is used -->
 					<xsl:variable name="uri">
 						<xsl:call-template name="create-uri">
 							<xsl:with-param name="sheet" select="$valuesheet"/>
@@ -215,9 +266,11 @@
 						</xsl:call-template>
 					</xsl:variable>
 					<xsl:variable name="columns" select="*"/>
-					<xsl:if test="$uri!=''">
-						<rdf:Description rdf:about="{$uri}">
-							<rdf:type rdf:resource="{$class-uri}"/>
+					<xsl:if test="$uri/uri[1]!=''">
+						<rdf:Description rdf:about="{$uri/uri[1]}">
+							<xsl:for-each select="$class-uri/uri">
+								<rdf:type rdf:resource="{.}"/>
+							</xsl:for-each>
 							<!-- Only proces regular properties -->
 							<xsl:for-each select="$properties/property">
 								<xsl:variable name="column" select="@column"/>
@@ -242,32 +295,65 @@
 									</xsl:choose>
 								</xsl:variable>
 								<xsl:variable name="value"><xsl:value-of select="$columns[@id=$column]"/></xsl:variable>
-								<xsl:if test="exists($columns[@id=$column]) and ($objecturi='' or normalize-space($value)!='')">
+								<xsl:if test="exists($columns[@id=$column]) and ($objecturi/uri[1]='' or normalize-space($value)!='')">
 									<xsl:variable name="prefix" select="replace(@uri,'(/|#|\\)[0-9A-Za-z-._~()@]+$','$1')"/>
 									<xsl:choose>
 										<xsl:when test="$prefix=@uri">
-											<xsl:element name="{@uri}">
-												<xsl:choose>
-													<xsl:when test="$objecturi!=''">
-														<xsl:attribute name="rdf:resource" select="$objecturi"/>
-													</xsl:when>
-													<xsl:otherwise>
-														<xsl:value-of select="$columns[@id=$column]"/>
-													</xsl:otherwise>
-												</xsl:choose>
-											</xsl:element>
+											<xsl:choose>
+												<xsl:when test="$objecturi/uri[1]!=''">
+													<xsl:for-each select="$objecturi/uri">
+														<xsl:element name="{$prefix}">
+															<xsl:attribute name="rdf:resource" select="."/>
+														</xsl:element>
+													</xsl:for-each>
+												</xsl:when>
+												<xsl:otherwise>
+													<xsl:element name="{$prefix}">
+														<xsl:if test="@language!=''">
+															<xsl:attribute name="xml:lang"><xsl:value-of select="@language"/></xsl:attribute>
+														</xsl:if>
+														<xsl:if test="@datatype!=''">
+															<xsl:attribute name="rdf:datatype">http://www.w3.org/2001/XMLSchema#<xsl:value-of select="@datatype"/></xsl:attribute>
+														</xsl:if>
+														<xsl:call-template name="create-value">
+															<xsl:with-param name="sheet" select="$valuesheet"/>
+															<xsl:with-param name="columns" select="$columns"/>
+															<xsl:with-param name="valuetemplate" select="@valuetemplate"/>
+															<xsl:with-param name="value" select="$columns[@id=$column]"/>
+														</xsl:call-template>
+														<!--<xsl:value-of select="$columns[@id=$column]"/>-->
+													</xsl:element>
+												</xsl:otherwise>
+											</xsl:choose>
 										</xsl:when>
 										<xsl:otherwise>
-											<xsl:element name="{substring-after(@uri,$prefix)}" namespace="{$prefix}">
-												<xsl:choose>
-													<xsl:when test="$objecturi!=''">
-														<xsl:attribute name="rdf:resource" select="$objecturi"/>
-													</xsl:when>
-													<xsl:otherwise>
-														<xsl:value-of select="$columns[@id=$column]"/>
-													</xsl:otherwise>
-												</xsl:choose>
-											</xsl:element>
+											<xsl:variable name="localname" select="substring-after(@uri,$prefix)"/>
+											<xsl:choose>
+												<xsl:when test="$objecturi/uri[1]!=''">
+													<xsl:for-each select="$objecturi/uri">
+														<xsl:element name="{$localname}" namespace="{$prefix}">
+															<xsl:attribute name="rdf:resource" select="."/>
+														</xsl:element>
+													</xsl:for-each>
+												</xsl:when>
+												<xsl:otherwise>
+													<xsl:element name="{$localname}" namespace="{$prefix}">
+														<xsl:if test="@language!=''">
+															<xsl:attribute name="xml:lang"><xsl:value-of select="@language"/></xsl:attribute>
+														</xsl:if>
+														<xsl:if test="@datatype!=''">
+															<xsl:attribute name="rdf:datatype">http://www.w3.org/2001/XMLSchema#<xsl:value-of select="@datatype"/></xsl:attribute>
+														</xsl:if>
+														<xsl:call-template name="create-value">
+															<xsl:with-param name="sheet" select="$valuesheet"/>
+															<xsl:with-param name="columns" select="$columns"/>
+															<xsl:with-param name="valuetemplate" select="@valuetemplate"/>
+															<xsl:with-param name="value" select="$columns[@id=$column]"/>
+														</xsl:call-template>
+														<!--<xsl:value-of select="$columns[@id=$column]"/>-->
+													</xsl:element>
+												</xsl:otherwise>
+											</xsl:choose>
 										</xsl:otherwise>
 									</xsl:choose>
 								</xsl:if>
@@ -296,18 +382,18 @@
 										<xsl:otherwise />
 									</xsl:choose>
 								</xsl:variable>
-								<xsl:if test="$objecturi!=''">
-									<rdf:Description rdf:about="{$objecturi}">
+								<xsl:if test="$objecturi/uri[1]!=''">
+									<rdf:Description rdf:about="{$objecturi/uri}">
 										<xsl:variable name="prefix" select="replace(@uri,'(/|#|\\)[0-9A-Za-z-._~()@]+$','$1')"/>
 										<xsl:choose>
 											<xsl:when test="$prefix=@uri">
 												<xsl:element name="{@uri}">
-													<xsl:attribute name="rdf:resource"><xsl:value-of select="$uri"/></xsl:attribute>
+													<xsl:attribute name="rdf:resource"><xsl:value-of select="$uri/uri[1]"/></xsl:attribute>
 												</xsl:element>
 											</xsl:when>
 											<xsl:otherwise>
 												<xsl:element name="{substring-after(@uri,$prefix)}" namespace="{$prefix}">
-													<xsl:attribute name="rdf:resource"><xsl:value-of select="$uri"/></xsl:attribute>
+													<xsl:attribute name="rdf:resource"><xsl:value-of select="$uri/uri[1]"/></xsl:attribute>
 												</xsl:element>
 											</xsl:otherwise>
 										</xsl:choose>
