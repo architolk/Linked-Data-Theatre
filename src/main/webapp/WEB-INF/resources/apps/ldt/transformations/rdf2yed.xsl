@@ -2,7 +2,7 @@
 
     NAME     rdf2yed.xsl
     VERSION  1.20.1-SNAPSHOT
-    DATE     2017-02-24
+    DATE     2017-03-13
 
     Copyright 2012-2017
 
@@ -156,7 +156,12 @@
 				<xsl:otherwise>none</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
-		<xsl:if test="local-name()='ref-nodes' or $refshape/@empty!='true'">
+		<!-- Show edges whenever -->
+		<!-- 1. It's a ref-node, or -->
+		<!-- 2. The refshape is not empty AND -->
+		<!--   a no explicitly defined refnode is available, or -->
+		<!--   b the refshape is the same as the refnode -->
+		<xsl:if test="local-name()='ref-nodes' or ($refshape/@empty!='true' and (not(../@refnode!='') or @uri=../@refnode))">
 			<edge source="{../../@uri}" target="{@uri}">
 				<data key="d10">
 					<y:PolyLineEdge>
