@@ -2,7 +2,7 @@
 
     NAME     TableExcelTranslator.xsl
     VERSION  1.20.1-SNAPSHOT
-    DATE     2018-03-11
+    DATE     2018-03-13
 
     Copyright 2012-2017
 
@@ -362,6 +362,7 @@
 						<!-- Proces inverse properties: subject and object are reversed -->
 						<xsl:for-each select="$properties/inverseproperty">
 							<xsl:variable name="column" select="@column"/>
+							<xsl:variable name="property-uri" select="@uri"/>
 							<xsl:if test="exists($columns[@id=$column])">
 								<xsl:variable name="objecturi">
 									<xsl:choose>
@@ -382,23 +383,23 @@
 										<xsl:otherwise />
 									</xsl:choose>
 								</xsl:variable>
-								<xsl:if test="$objecturi/uri[1]!=''">
-									<rdf:Description rdf:about="{$objecturi/uri}">
-										<xsl:variable name="prefix" select="replace(@uri,'(/|#|\\)[0-9A-Za-z-._~()@]+$','$1')"/>
+								<xsl:for-each select="$objecturi/uri[.!='']">
+									<rdf:Description rdf:about="{.}">
+										<xsl:variable name="prefix" select="replace($property-uri,'(/|#|\\)[0-9A-Za-z-._~()@]+$','$1')"/>
 										<xsl:choose>
-											<xsl:when test="$prefix=@uri">
-												<xsl:element name="{@uri}">
+											<xsl:when test="$prefix=$property-uri">
+												<xsl:element name="{$property-uri}">
 													<xsl:attribute name="rdf:resource"><xsl:value-of select="$uri/uri[1]"/></xsl:attribute>
 												</xsl:element>
 											</xsl:when>
 											<xsl:otherwise>
-												<xsl:element name="{substring-after(@uri,$prefix)}" namespace="{$prefix}">
+												<xsl:element name="{substring-after($property-uri,$prefix)}" namespace="{$prefix}">
 													<xsl:attribute name="rdf:resource"><xsl:value-of select="$uri/uri[1]"/></xsl:attribute>
 												</xsl:element>
 											</xsl:otherwise>
 										</xsl:choose>
 									</rdf:Description>
-								</xsl:if>
+								</xsl:for-each>
 							</xsl:if>
 						</xsl:for-each>
 					</xsl:if>
