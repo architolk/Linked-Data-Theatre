@@ -56,11 +56,10 @@ Rename (or remove) the root directory:
 >> mv ROOT oldROOT
 ```
 
-Download the Linked Data Theatre:
+Download the Linked Data Theatre (replace VERSION with the most current version of the LDT, for example 1.20.0):
 ```
->> wget https://github.com/architolk/Linked-Data-Theatre/releases/download/v1.7.0/ldt-1.7.0.war -O ROOT.war
+>> wget https://github.com/architolk/Linked-Data-Theatre/releases/download/VERSION/ldt-VERSION.war -O ROOT.war
 ```
-NOTE: The will install version 1.7.0. You can change the download link if you prefer a different version.
 
 Restart tomcat
 ```
