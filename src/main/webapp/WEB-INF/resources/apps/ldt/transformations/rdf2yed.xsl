@@ -2,7 +2,7 @@
 
     NAME     rdf2yed.xsl
     VERSION  1.20.1-SNAPSHOT
-    DATE     2017-03-13
+    DATE     2017-03-19
 
     Copyright 2012-2017
 
@@ -87,7 +87,7 @@
 				<y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
 					<xsl:variable name="enumerationcnt">
 						<xsl:choose>
-							<xsl:when test="exists(enumvalue)"><xsl:value-of select="count(enumvalue)+1"/></xsl:when>
+							<xsl:when test="exists(enumvalue|enumeration)"><xsl:value-of select="count(enumvalue|enumeration)+1"/></xsl:when>
 							<xsl:otherwise>0</xsl:otherwise>
 						</xsl:choose>
 					</xsl:variable>
@@ -106,7 +106,11 @@
 						<!--Enumerations-->
 						<xsl:for-each select="enumvalue">
 							<xsl:if test="position()=1">Possible values:</xsl:if><xsl:text>
-</xsl:text>&#x221a; <xsl:value-of select="@name"/>
+&#x221a; </xsl:text><xsl:value-of select="@name"/>
+						</xsl:for-each>
+						<xsl:for-each select="enumeration">
+							<xsl:if test="position()=1">Values from:</xsl:if><xsl:text>
+- </xsl:text><xsl:value-of select="@uri"/>
 						</xsl:for-each>
 						<y:LabelModel>
 							<y:ErdAttributesNodeLabelModel/>

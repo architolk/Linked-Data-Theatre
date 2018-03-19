@@ -2,7 +2,7 @@
 
     NAME     ModelTemplates.xsl
     VERSION  1.20.1-SNAPSHOT
-    DATE     2018-03-11
+    DATE     2018-03-19
 
     Copyright 2012-2017
 
@@ -196,6 +196,13 @@
 						<xsl:for-each select="current-group()/sh:hasValue">
 							<enumeration uri="{@rdf:resource}"/>
 						</xsl:for-each>
+						<!-- Enumerations are also possible as instances of sh:in -->
+						<xsl:for-each select="current-group()/sh:in">
+							<xsl:variable name="listhead" select="@rdf:nodeID"/>
+							<enumeration>
+								<xsl:apply-templates select="../../rdf:Description[@rdf:nodeID=$listhead]" mode="traverse-list"/>
+							</enumeration>
+						</xsl:for-each>
 					</xsl:if>
 				</xsl:for-each>
 				<xsl:for-each select="current-group()/rdfs:label">
@@ -278,15 +285,21 @@
 				<xsl:variable name="predicate" select="$all-property-shapes/propertyShape[@uri=$property]"/>
 				<xsl:choose>
 					<xsl:when test="$predicate/enumeration/@uri!=''">
-						<xsl:attribute name="enumeration"><xsl:value-of select="$predicate/enumeration/@uri"/></xsl:attribute>
-						<xsl:for-each select="../rdf:Description[skos:inScheme/@rdf:resource=$predicate/enumeration/@uri]"><xsl:sort select="rdfs:label"/>
+						<xsl:variable name="enumeration" select="$predicate/enumeration/@uri"/>
+						<xsl:attribute name="enumeration"><xsl:value-of select="$enumeration"/></xsl:attribute>
+						<xsl:for-each select="../rdf:Description[skos:inScheme/@rdf:resource=$enumeration]"><xsl:sort select="rdfs:label"/>
 							<enumvalue name="{rdfs:label}" uri="{@rdf:about}"/>
 						</xsl:for-each>
-						<xsl:for-each select="../rdf:Description[@rdf:about=$predicate/enumeration/@uri]/skos:member">
+						<xsl:for-each select="../rdf:Description[@rdf:about=$enumeration]/skos:member">
 							<xsl:variable name="member" select="@rdf:resource"/>
 							<xsl:for-each select="../../rdf:Description[@rdf:about=$member]"><xsl:sort select="rdfs:label"/>
 								<enumvalue name="{rdfs:label}" uri="{@rdf:about}"/>
 							</xsl:for-each>
+						</xsl:for-each>
+					</xsl:when>
+					<xsl:when test="$predicate/enumeration/item[1]/@uri!=''">
+						<xsl:for-each select="$predicate/enumeration/item">
+							<enumeration uri="{@uri}"/>
 						</xsl:for-each>
 					</xsl:when>
 					<xsl:otherwise>
