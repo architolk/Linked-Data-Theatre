@@ -904,7 +904,7 @@
 								<!-- Parse parameters for assertions-->
 								<p:processor name="oxf:xslt">
 									<p:input name="config" href="../transformations/param2query.xsl"/>
-									<p:input name="data" href="aggregate('root',current(),#containercontext,#context,#context#xpointer(context/parameters))"/>
+									<p:input name="data" href="aggregate('root',current(),aggregate('container',#containercontext#xpointer(container/url)),#context,#context#xpointer(context/parameters))"/>
 									<p:output name="data" id="query"/>
 								</p:processor>
 								<!-- Execute assertion-check -->
