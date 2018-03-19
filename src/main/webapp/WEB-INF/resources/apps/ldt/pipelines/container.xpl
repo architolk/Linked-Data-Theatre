@@ -2,7 +2,7 @@
 
     NAME     container.xpl
     VERSION  1.20.1-SNAPSHOT
-    DATE     2018-03-11
+    DATE     2018-03-19
 
     Copyright 2012-2017
 
@@ -904,7 +904,7 @@
 								<!-- Parse parameters for assertions-->
 								<p:processor name="oxf:xslt">
 									<p:input name="config" href="../transformations/param2query.xsl"/>
-									<p:input name="data" href="aggregate('root',current(),#context,#context#xpointer(context/parameters))"/>
+									<p:input name="data" href="aggregate('root',current(),#containercontext,#context,#context#xpointer(context/parameters))"/>
 									<p:output name="data" id="query"/>
 								</p:processor>
 								<!-- Execute assertion-check -->
