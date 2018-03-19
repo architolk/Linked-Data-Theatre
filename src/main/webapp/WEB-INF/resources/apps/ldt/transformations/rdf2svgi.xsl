@@ -1,10 +1,10 @@
 <!--
 
     NAME     rdf2svgi.xsl
-    VERSION  1.20.0
-    DATE     2018-01-12
+    VERSION  1.21.0
+    DATE     2018-03-19
 
-    Copyright 2012-2017
+    Copyright 2012-2018
 
     This file is part of the Linked Data Theatre.
 
