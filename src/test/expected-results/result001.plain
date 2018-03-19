@@ -7,6 +7,7 @@ file uploaded: ContainerPresentations.ttl
 file uploaded: Containers.ttl
 file uploaded: ContentAppearance.ttl
 file uploaded: DefaultResource.ttl
+file uploaded: EditorAppearance.ttl
 file uploaded: ElmoVocabulary.ttl
 file uploaded: FederatedQuery.ttl
 file uploaded: FooterAppearance.ttl
@@ -28,12 +29,14 @@ file uploaded: HtmlAppearance.ttl
 file uploaded: ImageAppearance.ttl
 file uploaded: ImageAppearance2.ttl
 file uploaded: MarkdownAppearance.ttl
+file uploaded: MarkdownFormat.ttl
 file uploaded: MissingAppearance.ttl
 file uploaded: ModelAppearance.ttl
 file uploaded: ModelTemplateTests.ttl
 file uploaded: NavBarSearchAppearance.ttl
 file uploaded: Parameters.ttl
 file uploaded: Production.ttl
+file uploaded: ProductionCreateShape.ttl
 file uploaded: Search.ttl
 file uploaded: Service-duo.ttl
 file uploaded: Service.ttl

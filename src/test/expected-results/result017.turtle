@@ -1,32 +1,32 @@
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
-@prefix ns4: <http://localhost:8080/def/test#>.
-@prefix ns2: <http://dbpedia.org/ontology/>.
 @prefix dbpprop: <http://dbpedia.org/property/>.
 @prefix n2: <http://dbpedia.org/resource/>.
-n2:Amsterdam rdf:type ns2:City;
-    rdfs:label "Amsterdam"^^xsd:string;
-    ns4:capitalCity true
-.
-n2:Amersfoort rdf:type ns2:City;
-    rdfs:label "Amersfoort"^^xsd:string;
-    ns2:isPartOf <http://dbpedia.org/resource/Utrecht_(province)>;
+@prefix ns2: <http://dbpedia.org/ontology/>.
+@prefix ns4: <http://localhost:8080/def/test#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+n2:Amersfoort a ns2:City;
     dbpprop:east n2:Amsterdam;
     ns2:abstract '''Amersfoort is een stad en gemeente in het oosten van de Nederlandse provincie Utrecht.
 Het is in bevolkingsaantal de tweede stad van de provincie Utrecht en de veertiende van Nederland. Amersfoort is een groeistad en vervult economisch een regiofunctie met een sterk gegroeid bedrijfsleven, heeft een van de grootste spoorwegknooppunten van Nederland en is een belangrijke garnizoensstad. De binnenstad bezit een middeleeuws karakter met grachten'''@nl;
     ns2:altitude 2.9;
+    ns2:isPartOf <http://dbpedia.org/resource/Utrecht_(province)>;
     ns2:population 153773;
     ns2:populationAsOf "2016-04-01"^^xsd:date;
     ns4:capitalCity false;
-    ns4:districtNames ("stadskern"^^xsd:string "soesterkwartier"^^xsd:string "koppel"^^xsd:string "kruiskamp"^^xsd:string "schothorst"^^xsd:string "liendert"^^xsd:string "rustenburg"^^xsd:string "schuilenburg"^^xsd:string "randenbroek"^^xsd:string "dorrestein"^^xsd:string "leusderkwartier"^^xsd:string "bergkwartier"^^xsd:string "zielhorst"^^xsd:string "kattenbroek"^^xsd:string "nieuwland"^^xsd:string "vathorst"^^xsd:string "vermeerkwartier"^^xsd:string )
+    ns4:districtNames ("stadskern"^^xsd:string "soesterkwartier"^^xsd:string "koppel"^^xsd:string "kruiskamp"^^xsd:string "schothorst"^^xsd:string "liendert"^^xsd:string "rustenburg"^^xsd:string "schuilenburg"^^xsd:string "randenbroek"^^xsd:string "dorrestein"^^xsd:string "leusderkwartier"^^xsd:string "bergkwartier"^^xsd:string "zielhorst"^^xsd:string "kattenbroek"^^xsd:string "nieuwland"^^xsd:string "vathorst"^^xsd:string "vermeerkwartier"^^xsd:string );
+    rdfs:label "Amersfoort"^^xsd:string
 .
-ns4:capitalCity rdfs:label "capital city"@en;
-    rdfs:label "hoofdstad"@nl;
-    rdfs:comment "De hoofdstad van een land"@nl
+n2:Amsterdam a ns2:City;
+    ns4:capitalCity true;
+    rdfs:label "Amsterdam"^^xsd:string
 .
-n2:Utrecht rdf:type ns2:City;
-    rdfs:label "Utrecht"^^xsd:string;
+n2:Utrecht a ns2:City;
     ns2:isPartOf <http://dbpedia.org/resource/Utrecht_(province)>;
-    ns4:capitalCity false
+    ns4:capitalCity false;
+    rdfs:label "Utrecht"^^xsd:string
+.
+ns4:capitalCity rdfs:comment "De hoofdstad van een land"@nl;
+    rdfs:label "capital city"@en;
+    rdfs:label "hoofdstad"@nl
 .
