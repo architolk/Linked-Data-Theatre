@@ -1,6 +1,6 @@
 /*
  * NAME     slick.ldt-remotemodel.js
- * VERSION  1.21.0
+ * VERSION  1.21.1-SNAPSHOT
  * DATE     2018-03-19
  *
  * Copyright 2012-2018
@@ -125,6 +125,7 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
         onDataLoading.notify({from: from, to: to});
 
         req = $.ajax({
+          headers: {Accept: "application/ld+json"},
           datatype: "json",
           url: url,
           cache: true,
@@ -141,6 +142,8 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
 
     function onError(fromPage, toPage) {
       alert("error loading pages " + fromPage + " to " + toPage);
+      //Notify to remove loading splash screen. Better would be a specific event
+      onDataLoaded.notify({from: 0, to: 0});
     }
 
     function onSuccess(resp) {
@@ -161,7 +164,9 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
         }
       }
       //Load data
+      //TODO: Needs refactoring. Same code three times
       if ('graph' in resp) {
+        // Data contains a graph statement: triples are part of a graph node
         to = from + resp.graph.length;
         data.length = resp.graph.length;
         for (var i = 0; i < resp.graph.length; i++) {
@@ -209,37 +214,83 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
           data[from + i]['#'] = 0; // Keep track of changes in the data
         }
       } else if ('@id' in resp) {
-          to = from + 1;
-          var resource = resp;
+        //Single item, not part of a graph statement
+        to = from + 1;
+        var resource = resp;
+        var item = {};
+        //Populate item with data from JSON-LD
+        for (var property in resource) {
+          if (resource.hasOwnProperty(property) && property!=='@context') {
+            var pos = property.indexOf(":");
+            var url = property;
+            if (pos > 0) {
+              var prefix = property.substring(0,pos);
+              var name = property.substring(pos+1);
+              var namespace = context[prefix];
+              if (namespace !== "") {
+                url = [namespace+name];
+              }
+            }
+            item[url] = resource[property];
+          }
+        }
+        //Populate item for calculated fields
+        for (var key in fragments) {
+          if (fragments.hasOwnProperty(key)) {
+            if (fragments[key] === key) {
+              item[key]='calc';
+            }
+          }
+        }
+        
+        data[from] = item;
+        data[from].index = from;
+        data[from]['#'] = 0; // Keep track of changes in the data
+      } else if ($.isArray(resp)) {
+        //Multiple items, contained in an array
+        to = from + resp.length;
+        data.length = resp.length;
+        for (var i = 0; i < resp.length; i++) {
+          var resource = resp[i];
           var item = {};
           //Populate item with data from JSON-LD
           for (var property in resource) {
-            if (resource.hasOwnProperty(property) && property!=='@context') {
-              var pos = property.indexOf(":");
+            if (resource.hasOwnProperty(property)) {
               var url = property;
-              if (pos > 0) {
-                var prefix = property.substring(0,pos);
-                var name = property.substring(pos+1);
-                var namespace = context[prefix];
-                if (namespace !== "") {
-                  url = [namespace+name];
-                }
+              if (url === "@type") {
+                url = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
               }
-              item[url] = resource[property];
+              var value = resource[property];
+              if ($.isArray(value)) {
+                value = value[0]; //Multiple values are not supported yet
+              }
+              if (typeof value === "object") {
+                item[url] = value['@value'];
+              } else {
+                item[url] = value;
+              }
             }
           }
           //Populate item for calculated fields
           for (var key in fragments) {
             if (fragments.hasOwnProperty(key)) {
               if (fragments[key] === key) {
-                item[key]='calc';
+                for (var value in templateItem) {
+                  if (templateItem.hasOwnProperty(value) && item.hasOwnProperty(value)) {
+                    if (templateItem[value].indexOf("{"+key+"}")>0) {
+                      var regex = new RegExp("^"+templateItem[value].replace("{"+key+"}","(.+)")+"$","g");
+                      item[key]=item[value].replace(regex,"$1");
+                    }
+                  }
+                }
               }
             }
           }
           
-          data[from] = item;
-          data[from].index = from;
-          data[from]['#'] = 0; // Keep track of changes in the data
+          data[from + i] = item;
+          data[from + i].index = from + i;
+          data[from + i]['#'] = 0; // Keep track of changes in the data
+        }
       } else {
         to = from;
       }
@@ -348,6 +399,8 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
         },
         error: function () {
           alert('Some error occured');
+        //Notify to remove saving splash screen. Better would be a specific event
+        onDataSaved.notify();
         }
       })
     }

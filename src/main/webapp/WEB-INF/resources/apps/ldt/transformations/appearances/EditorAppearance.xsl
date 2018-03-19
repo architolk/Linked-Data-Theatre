@@ -1,7 +1,7 @@
 <!--
 
     NAME     EditorAppearance.xsl
-    VERSION  1.21.0
+    VERSION  1.21.1-SNAPSHOT
     DATE     2018-03-19
 
     Copyright 2012-2018
@@ -71,7 +71,8 @@
 	<script src="{$staticroot}/js/slick.ldt-remotemodel.min.js"></script>
 	<script>
 		var containerurl = "<xsl:value-of select="$container"/>";
-		var apicall = "<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource.json?representation=<xsl:value-of select="encode-for-uri(@elmo:query)"/>&amp;subject=<xsl:value-of select="/results/context/subject"/>";
+		//var apicall = "<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource.json?representation=<xsl:value-of select="encode-for-uri(@elmo:query)"/>&amp;subject=<xsl:value-of select="/results/context/subject"/>";
+		var apicall = "<xsl:value-of select="/results/context/url"/>?subject=<xsl:value-of select="/results/context/subject"/>";
 		var defaultItem = {
 			<xsl:for-each select="rdf:Description[exists(rdf:value)]">
 				<xsl:if test="position()!=1">,</xsl:if>
