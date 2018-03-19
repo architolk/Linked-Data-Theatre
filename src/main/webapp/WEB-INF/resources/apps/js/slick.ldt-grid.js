@@ -8,6 +8,7 @@ var options = {
   autoEdit: false
 };
 var loadingIndicator = null;
+var savingIndicator = null;
 $(function () {
   grid = new Slick.Grid("#myGrid", loader.data, columns, options);
   grid.onViewportChanged.subscribe(function (e, args) {
@@ -20,11 +21,33 @@ $(function () {
     loader.ensureData(vp.top, vp.bottom);
   });
   grid.onCellChange.subscribe(function (e, args) {
-    if (args.item['#']===0) {
+    if (args.item['#'] == 0) {
       args.item['#'] = 2;
     }
+    loader.updateRow(args.row,templateItem,fragments);
     grid.invalidateRow(args.row);
     grid.render();
+  });
+  grid.onClick.subscribe(function (e, args) {
+    if (args.cell == 0) {
+      grid.setActiveCell(args.row, 1, false, false, true);
+      grid.getSelectionModel().setSelectedRanges([new Slick.Range(args.row,1,args.row,grid.getColumns().length-1)]);
+    }
+  });
+  grid.onKeyDown.subscribe(function(e, args) {
+    // 46: delete key
+    if (e.which == 46) {
+      ranges = grid.getSelectionModel().getSelectedRanges();
+      if (ranges.length == 1) {
+        if (ranges[0].fromRow == ranges[0].toRow && ranges[0].fromCell == 1 && ranges[0].toCell == grid.getColumns().length-1) {
+          loader.removeRow(ranges[0].fromRow,1);
+          grid.invalidate();
+          grid.getSelectionModel().setSelectedRanges([]);
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }
+    }
   });
   loader.onDataLoading.subscribe(function () {
     if (!loadingIndicator) {
@@ -44,6 +67,20 @@ $(function () {
     grid.updateRowCount();
     grid.render();
     loadingIndicator.fadeOut();
+  });
+  loader.onDataSaving.subscribe(function () {
+    if (!savingIndicator) {
+      savingIndicator = $("<span class='loading-indicator'><label>Saving...</label></span>").appendTo(document.body);
+      var $g = $("#myGrid");
+      savingIndicator
+          .css("position", "absolute")
+          .css("top", $g.position().top + $g.height() / 2 - savingIndicator.height() / 2)
+          .css("left", $g.position().left + $g.width() / 2 - savingIndicator.width() / 2);
+    }
+    savingIndicator.show();
+  });
+  loader.onDataSaved.subscribe(function (e, args) {
+    savingIndicator.fadeOut();
   });
   $("#txtSearch").keyup(function (e) {
     if (e.which == 13) {

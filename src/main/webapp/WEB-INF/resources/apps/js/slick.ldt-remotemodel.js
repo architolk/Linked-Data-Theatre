@@ -27,10 +27,13 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
     var h_request = null;
     var req = null; // ajax request
     var url = pUrl;
+    var resourceProperties = {};
 
     // events
     var onDataLoading = new Slick.Event();
     var onDataLoaded = new Slick.Event();
+    var onDataSaving = new Slick.Event();
+    var onDataSaved = new Slick.Event();
 
 
     function init() {
@@ -55,6 +58,9 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
       data.length = 0;
     }
 
+    function removeRow(row) {
+      data.splice(row,1);
+    }
 
     function ensureData(from, to) {
       if (req) {
@@ -118,11 +124,25 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
     function onSuccess(resp) {
       var from = 0;
       var context = resp['@context'];
+      //Save resource properties to know which values are URI's
+      for (var item in context) {
+        if (typeof context[item] === 'object') {
+          var pos = item.indexOf(":");
+          if (pos > 0) {
+            var prefix = item.substring(0,pos);
+            var name = item.substring(pos+1);
+            var namespace = context[prefix];
+            if (namespace !== "") {
+              resourceProperties[namespace+name] = true;
+            }
+          }
+        }
+      }
+      //Load data
       if ('graph' in resp) {
         to = from + resp.graph.length;
         data.length = resp.graph.length;
         for (var i = 0; i < resp.graph.length; i++) {
-          //var item = resp.graph[i];
           var resource = resp.graph[i];
           var item = {};
           for (var property in resource) {
@@ -134,7 +154,12 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
                 var name = property.substring(pos+1);
                 var namespace = context[prefix];
                 if (namespace !== "") {
-                  url = [namespace+name];
+                  url = namespace+name;
+                }
+              } else {
+                var alias = context[property];
+                if (alias !== "") {
+                  url = alias;
                 }
               }
               item[url] = resource[property];
@@ -173,19 +198,6 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
       }
       
       req = null
-      /*
-      var from = resp.request.start, to = from + resp.results.length;
-      data.length = Math.min(parseInt(resp.hits),1000); // limitation of the API
-
-      for (var i = 0; i < resp.results.length; i++) {
-        var item = resp.results[i].item;
-
-        data[from + i] = item;
-        data[from + i].index = from + i;
-      }
-
-      req = null;
-      */
 
       onDataLoaded.notify({from: from, to: to});
     }
@@ -223,14 +235,43 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
       grid.updateRowCount();
       grid.render();
     }
+
+    function updateRow(row,template,fragments) {
+      for (var property in template) {
+        var value = template[property];
+        for (var name in fragments) {
+          var newvalue = data[row][fragments[name]];
+          value = value.replace("{"+name+"}",newvalue);
+        }
+        data[row][property] = value
+      }
+    }
     
     function saveData(url,context) {
 
+      var mergedContext = {};
+      for (var item in context) {
+        if (context.hasOwnProperty(item)) {
+          if (typeof context[item] === 'object') {
+            mergedContext[item]={'@type': '@id'};
+          } else {
+            mergedContext[item]=context[item];
+          }
+        }
+      }
+      for (var item in resourceProperties) {
+        if (resourceProperties.hasOwnProperty(item)) {
+          mergedContext[item]={'@type': '@id'};
+        }
+      }
+    
       var body = {
-        '@context': context,
+        '@context': mergedContext,
         graph: data
       };
-    
+
+      onDataSaving.notify();
+      
       $.ajax({
         type: "PUT",
         contentType: "application/ld+json",
@@ -242,7 +283,7 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
           }
           grid.invalidateAllRows();
           grid.render();
-          alert('Succes');
+          onDataSaved.notify();
         },
         error: function () {
           alert('Some error occured');
@@ -264,11 +305,15 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
       "setSort": setSort,
       "setSearch": setSearch,
       "addRow": addRow,
+      "removeRow": removeRow,
+      "updateRow": updateRow,
       "saveData": saveData,
 
       // events
       "onDataLoading": onDataLoading,
-      "onDataLoaded": onDataLoaded
+      "onDataLoaded": onDataLoaded,
+      "onDataSaving": onDataSaving,
+      "onDataSaved": onDataSaved
     };
   }
 

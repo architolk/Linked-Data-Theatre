@@ -2,7 +2,7 @@
 
     NAME     EditorAppearance.xsl
     VERSION  1.20.1-SNAPSHOT
-    DATE     2018-03-11
+    DATE     2018-03-19
 
     Copyright 2012-2017
 
@@ -78,10 +78,25 @@
 				"<xsl:value-of select="elmo:applies-to"/>": "<xsl:value-of select="rdf:value"/><xsl:value-of select="rdf:value/@rdf:resource"/>"
 			</xsl:for-each>
 		}
+		var templateItem = {
+			<xsl:for-each select="rdf:Description[exists(elmo:valueTemplate)]">
+				<xsl:if test="position()!=1">,</xsl:if>
+				"<xsl:value-of select="elmo:applies-to"/>": "<xsl:value-of select="elmo:valueTemplate"/>"
+			</xsl:for-each>
+		}
+		var fragments = {
+			<xsl:for-each select="rdf:Description[exists(elmo:name)]">
+				<xsl:if test="position()!=1">,</xsl:if>
+				"<xsl:value-of select="elmo:name"/>": "<xsl:value-of select="elmo:applies-to"/>"
+			</xsl:for-each>
+		}
 		var context = {
           graph: '@graph',
           id: '@id',
 		  'http://www.w3.org/1999/02/22-rdf-syntax-ns#type': {'@type':'@id'}
+		  <xsl:for-each select="rdf:Description[elmo:valueDatatype/@rdf:resource='http://www.w3.org/2000/01/rdf-schema#Resource']">
+		  ,'<xsl:value-of select="elmo:applies-to"/>': {'@type':'@id'}
+		  </xsl:for-each>
 		}
 		var columns = [
 			{
@@ -91,6 +106,7 @@
 				width: 20,
 				selectable: false,
 				resizable: false,
+				behaviour: "selectAndMove",
 				cssClass: "cell-reorder dnd",
 				cannotTriggerInsert: true,
 				focusable: false,

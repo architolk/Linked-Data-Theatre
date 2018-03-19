@@ -14,8 +14,15 @@ stage:EditorAppearance	a	elmo:Representation;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:appearance elmo:EditorAppearance;
   elmo:container container:simple;
+  elmo:fragment [
+    elmo:index "0";
+    elmo:applies-to "@id";
+    rdfs:label "URI";
+    elmo:valueTemplate "http://concept/id/{name}"
+  ];
 	elmo:fragment [
     elmo:index "1";
+    elmo:name "name";
 		elmo:applies-to skos:prefLabel;
 		rdfs:label "Naam"@nl;
 		rdfs:label "Name"@en;
@@ -26,6 +33,21 @@ stage:EditorAppearance	a	elmo:Representation;
     rdfs:label "Definitie"@nl;
     rdfs:label "Definition"@en;
     elmo:valueDatatype xsd:String;
+  ];
+  elmo:fragment [
+    elmo:index "3";
+    elmo:applies-to "broader";
+    rdfs:label "Broader"@en;
+    rdfs:label "Breder"@nl;
+    elmo:name "broader";
+  ];
+  elmo:fragment [
+    elmo:index "4";
+    elmo:applies-to skos:broader;
+    rdfs:label "BroaderURI"@en;
+    rdfs:label "BrederURI"@nl;
+    elmo:valueTemplate "http://concept/id/{broader}";
+    elmo:valueDatatype rdfs:Resource
   ];
   elmo:fragment [
     elmo:applies-to rdf:type;
@@ -43,14 +65,15 @@ stage:EditorAppearance	a	elmo:Representation;
       ?concept rdf:type skos:Concept.
       ?concept skos:prefLabel ?label.
       ?concept skos:definition ?definition.
+      ?concept skos:broader ?broader.
+      ?concept skos:related ?related.
     }
     where {
-      select ?concept ?label ?definition
-      where {
-        graph container:simple {
-          ?concept skos:prefLabel ?label.
-          OPTIONAL {?concept skos:definition ?definition}
-        }
+      graph container:simple {
+        ?concept skos:prefLabel ?label.
+        OPTIONAL {?concept skos:definition ?definition}
+        OPTIONAL {?concept skos:broader ?broader}
+        OPTIONAL {?concept skos:related ?related}
       }
     }
 	''';
