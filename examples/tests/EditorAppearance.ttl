@@ -47,7 +47,8 @@ stage:EditorAppearance	a	elmo:Representation;
     rdfs:label "BroaderURI"@en;
     rdfs:label "BrederURI"@nl;
     elmo:valueTemplate "http://concept/id/{broader}";
-    elmo:valueDatatype rdfs:Resource
+    elmo:valueDatatype rdfs:Resource;
+    elmo:appearance elmo:HiddenAppearance;
   ];
   elmo:fragment [
     elmo:applies-to rdf:type;

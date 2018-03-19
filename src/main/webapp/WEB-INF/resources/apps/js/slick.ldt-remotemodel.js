@@ -145,6 +145,7 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
         for (var i = 0; i < resp.graph.length; i++) {
           var resource = resp.graph[i];
           var item = {};
+          //Populate item with data from JSON-LD
           for (var property in resource) {
             if (resource.hasOwnProperty(property)) {
               var pos = property.indexOf(":");
@@ -165,6 +166,21 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
               item[url] = resource[property];
             }
           }
+          //Populate item for calculated fields
+          for (var key in fragments) {
+            if (fragments.hasOwnProperty(key)) {
+              if (fragments[key] === key) {
+                for (var value in templateItem) {
+                  if (templateItem.hasOwnProperty(value) && item.hasOwnProperty(value)) {
+                    if (templateItem[value].indexOf("{"+key+"}")>0) {
+                      var regex = new RegExp("^"+templateItem[value].replace("{"+key+"}","(.+)")+"$","g");
+                      item[key]=item[value].replace(regex,"$1");
+                    }
+                  }
+                }
+              }
+            }
+          }
           
           data[from + i] = item;
           data[from + i].index = from + i;
@@ -174,6 +190,7 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
           to = from + 1;
           var resource = resp;
           var item = {};
+          //Populate item with data from JSON-LD
           for (var property in resource) {
             if (resource.hasOwnProperty(property) && property!=='@context') {
               var pos = property.indexOf(":");
@@ -187,6 +204,14 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
                 }
               }
               item[url] = resource[property];
+            }
+          }
+          //Populate item for calculated fields
+          for (var key in fragments) {
+            if (fragments.hasOwnProperty(key)) {
+              if (fragments[key] === key) {
+                item[key]='calc';
+              }
             }
           }
           
@@ -238,12 +263,26 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
 
     function updateRow(row,template,fragments) {
       for (var property in template) {
-        var value = template[property];
-        for (var name in fragments) {
-          var newvalue = data[row][fragments[name]];
-          value = value.replace("{"+name+"}",newvalue);
+        if (template.hasOwnProperty(property)) {
+          var value = template[property];
+          for (var name in fragments) {
+            if (fragments.hasOwnProperty(name)) {
+              if (value.indexOf("{"+name+"}")>0) {
+                var newvalue = data[row][fragments[name]];
+                if (newvalue === "") {
+                  value = "";
+                } else {
+                  value = value.replace("{"+name+"}",newvalue);
+                }
+              }
+            }
+          }
         }
-        data[row][property] = value
+        if (value === "") {
+          delete data[row][property];
+        } else {
+          data[row][property] = value;
+        }
       }
     }
     
