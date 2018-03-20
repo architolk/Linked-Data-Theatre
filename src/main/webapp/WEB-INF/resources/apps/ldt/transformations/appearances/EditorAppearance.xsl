@@ -70,6 +70,7 @@
 	<script src="{$staticroot}/js/slick.grid.pkg.min.js"></script>
 	<script src="{$staticroot}/js/slick.ldt-remotemodel.min.js"></script>
 	<script>
+		var staticroot = "<xsl:value-of select="$staticroot"/>";
 		var containerurl = "<xsl:value-of select="$container"/>";
 		//var apicall = "<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource.json?representation=<xsl:value-of select="encode-for-uri(@elmo:query)"/>&amp;subject=<xsl:value-of select="/results/context/subject"/>";
 		var apicall = "<xsl:value-of select="/results/context/url"/>?subject=<xsl:value-of select="/results/context/subject"/>";
