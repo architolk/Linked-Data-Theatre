@@ -61,6 +61,22 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
     function init() {
     }
 
+    function alertError(resp) {
+      if (resp.hasOwnProperty("status")) {
+        if (resp.status == 0) {
+          alert("Connection lost - please try again");
+        } else {
+          if (resp.hasOwnProperty("responseText")) {
+            alert(resp.status + ": " + resp.responseText);
+          } else {
+            alert("Error: " + resp.status + "(sorry, don't have more information)");
+          }
+        }
+      } else {
+        alert("Connection lost - please try again");
+      }
+    }
+    
 
     function isDataLoaded(from, to) {
       for (var i = from; i <= to; i++) {
@@ -130,8 +146,8 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
           datatype: "json",
           url: url,
           success: onSuccess,
-          error: function () {
-            onError(fromPage, toPage)
+          error: function (resp) {
+            onError(resp, fromPage, toPage)
           }
         });
         req.fromPage = fromPage;
@@ -140,8 +156,9 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
     }
 
 
-    function onError(fromPage, toPage) {
-      alert("error loading pages " + fromPage + " to " + toPage);
+    function onError(resp, fromPage, toPage) {
+      alertError(resp);
+      //alert("error loading pages " + fromPage + " to " + toPage);
       //Notify to remove loading splash screen. Better would be a specific event
       onDataLoaded.notify({from: 0, to: 0});
     }
@@ -395,7 +412,7 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
       onDataSaving.notify();
       
       $.ajax({
-        type: "PUT",
+        type: "POST", //Temporary changed to "POST", because the current implementation cannot deal with PUT
         contentType: "application/ld+json",
         url: url,
         data: JSON.stringify(body),
@@ -407,10 +424,10 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
           grid.render();
           onDataSaved.notify();
         },
-        error: function () {
-          alert('Some error occured');
-        //Notify to remove saving splash screen. Better would be a specific event
-        onDataSaved.notify();
+        error: function (resp) {
+          alertError(resp);
+          //Notify to remove saving splash screen. Better would be a specific event
+          onDataSaved.notify();
         }
       })
     }
