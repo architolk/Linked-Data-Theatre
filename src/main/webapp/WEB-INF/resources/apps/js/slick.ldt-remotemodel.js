@@ -1,7 +1,7 @@
 /*
  * NAME     slick.ldt-remotemodel.js
  * VERSION  1.21.1-SNAPSHOT
- * DATE     2018-03-19
+ * DATE     2018-03-20
  *
  * Copyright 2012-2018
  *
@@ -26,9 +26,9 @@ function saveGrid() {
 function statusFormatter(row, cell, value, columnDef, dataContent) {
   var img = "";
   if (value === 1) { //New item
-    img = "<img src='../css/images/tick.png'>"
+    img = "<img src='"+staticroot+"/css/images/tick.png'>";
   } else if (value === 2) { //Changed item
-    img = "<img src='../css/images/tag_red.png'>"
+    img = "<img src='"+staticroot+"/css/images/tag_red.png'>";
   }
   return img;
 }
@@ -125,10 +125,10 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
         onDataLoading.notify({from: from, to: to});
 
         req = $.ajax({
+          cache: false,
           headers: {Accept: "application/ld+json"},
           datatype: "json",
           url: url,
-          cache: true,
           success: onSuccess,
           error: function () {
             onError(fromPage, toPage)
@@ -265,7 +265,12 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
                 value = value[0]; //Multiple values are not supported yet
               }
               if (typeof value === "object") {
-                item[url] = value['@value'];
+                if (value.hasOwnProperty('@value')) {
+                  item[url] = value['@value'];
+                }
+                if (value.hasOwnProperty('@id')) {
+                  item[url] = value['@id'];
+                }
               } else {
                 item[url] = value;
               }
@@ -327,25 +332,30 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
             item[property]=defaultItem[property];
         }
       }
-      item.id = UUIDjs.create().toURN();
-      grid.invalidateRow(data.length);
+      item['@id'] = UUIDjs.create().toURN();
       data.push(item);
+      updateRow(data.length-1);
+      grid.invalidateRow(data.length-1);
       grid.updateRowCount();
       grid.render();
     }
 
-    function updateRow(row,template,fragments) {
-      for (var property in template) {
-        if (template.hasOwnProperty(property)) {
-          var value = template[property];
+    function updateRow(row) {
+      for (var property in templateItem) {
+        if (templateItem.hasOwnProperty(property)) {
+          var value = templateItem[property];
           for (var name in fragments) {
             if (fragments.hasOwnProperty(name)) {
               if (value.indexOf("{"+name+"}")>0) {
-                var newvalue = data[row][fragments[name]];
-                if (newvalue === "") {
-                  value = "";
+                if (data[row].hasOwnProperty(fragments[name])) {
+                  var newvalue = data[row][fragments[name]];
+                  if (newvalue !== "") {
+                    value = value.replace("{"+name+"}",newvalue);
+                  } else {
+                    value = "";
+                  }
                 } else {
-                  value = value.replace("{"+name+"}",newvalue);
+                  value = "";
                 }
               }
             }

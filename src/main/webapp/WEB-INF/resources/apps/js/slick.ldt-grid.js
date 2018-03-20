@@ -1,7 +1,7 @@
 /*
  * NAME     slick.ldt-grid.js
- * VERSION  1.21.0
- * DATE     2018-03-19
+ * VERSION  1.21.1-SNAPSHOT
+ * DATE     2018-03-20
  *
  * Copyright 2012-2018
  *
@@ -46,7 +46,7 @@ $(function () {
     if (args.item['#'] == 0) {
       args.item['#'] = 2;
     }
-    loader.updateRow(args.row,templateItem,fragments);
+    loader.updateRow(args.row);
     grid.invalidateRow(args.row);
     grid.render();
   });
