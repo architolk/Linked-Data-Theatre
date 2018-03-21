@@ -1,0 +1,21 @@
+@prefix stage: <http://localhost:8080/excel2rdf/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix xhtml: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+stage:ShowData a elmo:Representation;
+	elmo:url-pattern "/data$";
+  elmo:appearance elmo:TurtleAppearance;
+	elmo:index "1";
+  elmo:query '''
+    PREFIX containerlocal: <http://localhost:8080/excel2rdf/container/>
+    CONSTRUCT {
+      ?s ?p ?o
+    }
+    WHERE {
+      GRAPH containerlocal:upload {
+        ?s ?p ?o
+      }
+    }
+  '''
+.

@@ -1,0 +1,12 @@
+@prefix stage: <http://localhost:8080/excel2rdf/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix xhtml: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix containerlocal: <http://localhost:8080/excel2rdf/container/>.
+
+containerlocal:upload a elmo:Container;
+	elmo:representation elmo:UploadRepresentation;
+  elmo:contains stage:Menu;
+	elmo:translator elmo:GenericExcelTranslator;
+  rdfs:label "Upload an excel file"@en;
+.

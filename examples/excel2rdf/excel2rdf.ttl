@@ -1,0 +1,43 @@
+@prefix stage: <http://localhost:8080/excel2rdf/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix xhtml: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+stage:Excel2Rdf a elmo:Representation;
+	elmo:url-pattern "/excel2rdf(/|)$";
+	elmo:index "1";
+	elmo:contains stage:Menu;
+	elmo:appearance elmo:HtmlAppearance;
+	elmo:data [
+		rdfs:label "excel2rdf"@en;
+		rdfs:label "excel2rdf"@nl;
+		elmo:html '''
+      <p>Please click on the button below to upload your Excel spreadsheet</p>
+      <p>Your Excel spreadsheet will be transformed to RDF Linked Data</p>
+      <p>The RDF linked data will be available from this location, so only upload data you want to be out in the open!</p>
+      <p><b>It is not allowed to upload data that is not yours to disclose</b></p>
+			<a href="/excel2rdf/container/upload"><button type="button" class="btn btn-default">Upload excel</button></a>
+		''';
+	]
+.
+
+stage:Menu a elmo:Part;
+	elmo:without-parameter "jmetertest";
+	elmo:appearance elmo:NavbarSearchAppearance;
+	elmo:index "~";
+	elmo:data [
+		rdfs:label "excel2rdf"@nl;
+		rdfs:label "excel2rdf"@en;
+    xhtml:search "query/search";
+		elmo:data [
+			elmo:index "1";
+			rdfs:label "Upload";
+      xhtml:link "container/upload";
+    ];
+    elmo:data [
+      elmo:index "2";
+      rdfs:label "Show data";
+      xhtml:link "data";
+    ]
+  ]
+.
