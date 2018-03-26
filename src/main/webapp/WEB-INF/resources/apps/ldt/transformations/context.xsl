@@ -1,8 +1,8 @@
 <!--
 
     NAME     context.xsl
-    VERSION  1.21.0
-    DATE     2018-03-19
+    VERSION  1.21.1-SNAPSHOT
+    DATE     2018-03-26
 
     Copyright 2012-2018
 
@@ -163,6 +163,7 @@
 				</xsl:choose>
 			</title>
 			<url><xsl:value-of select="$url"/></url>
+			<request-path><xsl:value-of select="request/request-path"/></request-path>
 			<request-hash><xsl:value-of xmlns:saxon="http://saxon.sf.net/" xmlns:Hasher="nl.architolk.ldt.utils.Hasher" select="Hasher:hash(saxon:serialize($request,'xml'))"/></request-hash>
 			<querycache>
 				<validity>
