@@ -448,6 +448,17 @@
 							<outputDirectory>zips</outputDirectory>
 						</configuration>
 					</execution>
+					<execution>
+						<id>get-jsonld-js</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>https://cdn.jsdelivr.net/npm/jsonld@1.0.1/dist/jsonld.min.js</url>
+							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
+							<skipCache>true</skipCache>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>

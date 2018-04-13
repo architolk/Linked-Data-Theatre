@@ -1,8 +1,8 @@
 <!--
 
     NAME     GraphAppearance.xsl
-    VERSION  1.21.0
-    DATE     2018-03-19
+    VERSION  1.21.1-SNAPSHOT
+    DATE     2018-04-13
 
     Copyright 2012-2018
 
@@ -83,11 +83,13 @@
 		</xsl:for-each>
 	</style>
 	<xsl:variable name="jsonParams"><xsl:for-each select="/results/context/parameters/parameter"><xsl:value-of select="name"/>=<xsl:value-of select="encode-for-uri(value)"/>&amp;</xsl:for-each></xsl:variable>
+	<!-- TODO: jsonApiCall is changed to resource? instead of resource.d3json? -> This means that de javascript should use regular JSON-LD! -->
 	<script type="text/javascript">
 		var jsonApiSubject = "<xsl:value-of select="/results/context/subject"/>";
-		var jsonApiCall = "<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource.d3json?representation=<xsl:value-of select="encode-for-uri(@elmo:query)"/>&amp;date=<xsl:value-of select="/results/context/date"/>&amp;<xsl:value-of select="$jsonParams"/>subject=";
+		var jsonApiCall = "<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource?representation=<xsl:value-of select="encode-for-uri(@elmo:query)"/>&amp;date=<xsl:value-of select="/results/context/date"/>&amp;<xsl:value-of select="$jsonParams"/>subject=";
 		var uriEndpoint = "<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource?<xsl:value-of select="$jsonParams"/>subject=";
 	</script>
+	<script src="{$staticroot}/js/jsonld.min.js" type="text/javascript"/>
 	<script src="{$staticroot}/js/d3graphs-inner.min.js" type="text/javascript"/>
 </xsl:template>
 
