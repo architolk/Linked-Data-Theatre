@@ -412,7 +412,7 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
       onDataSaving.notify();
       
       $.ajax({
-        type: "POST", //Temporary changed to "POST", because the current implementation cannot deal with PUT
+        type: "PUT",
         contentType: "application/ld+json",
         url: url,
         data: JSON.stringify(body),
