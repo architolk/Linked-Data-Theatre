@@ -1,7 +1,7 @@
 /*
  * NAME     slick.ldt-remotemodel.js
  * VERSION  1.21.1-SNAPSHOT
- * DATE     2018-03-20
+ * DATE     2018-04-21
  *
  * Copyright 2012-2018
  *
@@ -23,6 +23,10 @@
 function saveGrid() {
   loader.saveData(containerurl,context);
 }
+function saveChangedGrid() {
+  loader.saveChangedData(containerurl,context);
+}
+
 function statusFormatter(row, cell, value, columnDef, dataContent) {
   var img = "";
   if (value === 1) { //New item
@@ -43,6 +47,7 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
     // private
     var PAGESIZE = 50;
     var data = [];
+    var deletedData = [];
     var searchstr = "";
     var sortcol = null;
     var sortdir = 1;
@@ -97,6 +102,11 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
     }
 
     function removeRow(row) {
+      var d = new Date(Date.now());
+      deletedData.push({
+        "@id": data[row]["@id"],
+        "": d.toISOString()
+      });
       data.splice(row,1);
     }
 
@@ -431,7 +441,109 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
         }
       })
     }
+    
+    function saveChangedData(url,context) {
 
+      function onlyInsertedItems(value) {
+        return (value['#'] === 1)
+      }
+      function onlyChangedItems(value) {
+        return (value['#'] === 2)
+      }
+      function handleSucces() {
+        callCount--;
+        if (callCount === 0) {
+          callCount = -1;
+          for (var i = 0; i < data.length; i++) {
+            data[i]['#'] = 0; //Saved, so reset change indication
+          }
+          deletedData.splice(0,deletedData.length);
+          grid.invalidateAllRows();
+          grid.render();
+          onDataSaved.notify();
+        }
+      }
+    
+      var mergedContext = {};
+      for (var item in context) {
+        if (context.hasOwnProperty(item)) {
+          if (typeof context[item] === 'object') {
+            mergedContext[item]={'@type': '@id'};
+          } else {
+            mergedContext[item]=context[item];
+          }
+        }
+      }
+      for (var item in resourceProperties) {
+        if (resourceProperties.hasOwnProperty(item)) {
+          mergedContext[item]={'@type': '@id'};
+        }
+      }
+    
+      var bodyInserted = {
+        '@context': mergedContext,
+        graph: data.filter(onlyInsertedItems)
+      };
+      var bodyChanged = {
+        '@context': mergedContext,
+        graph: data.filter(onlyChangedItems)
+      };
+      var bodyDeleted = {
+        '@context': mergedContext,
+        graph: deletedData
+      };
+
+      var callCount = 0;
+      if (bodyDeleted.graph.length > 0) {callCount++}
+      if (bodyInserted.graph.length > 0) {callCount++}
+      if (bodyChanged.graph.length > 0) {callCount++}
+      
+      if (callCount > 0) {onDataSaving.notify();}
+      
+      if (bodyDeleted.graph.length > 0) {
+        $.ajax({
+          type: "DELETE",
+          contentType: "application/ld+json",
+          url: url,
+          data: JSON.stringify(bodyDeleted),
+          success: handleSucces,
+          error: function (resp) {
+            alertError(resp);
+            //Notify to remove saving splash screen. Better would be a specific event
+            onDataSaved.notify();
+          }
+        })
+      }
+      if (bodyInserted.graph.length > 0) {
+        $.ajax({
+          type: "POST",
+          contentType: "application/ld+json",
+          url: url,
+          data: JSON.stringify(bodyInserted),
+          success: handleSucces,
+          error: function (resp) {
+            alertError(resp);
+            //Notify to remove saving splash screen. Better would be a specific event
+            onDataSaved.notify();
+          }
+        })
+      }
+      if (bodyChanged.graph.length > 0) {
+        $.ajax({
+          type: "PUT",
+          contentType: "application/ld+json",
+          url: url,
+          data: JSON.stringify(bodyChanged),
+          success: handleSucces,
+          error: function (resp) {
+            alertError(resp);
+            //Notify to remove saving splash screen. Better would be a specific event
+            onDataSaved.notify();
+          }
+        })
+      }
+    }
+    
     init();
 
     return {
@@ -449,6 +561,7 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
       "removeRow": removeRow,
       "updateRow": updateRow,
       "saveData": saveData,
+      "saveChangedData": saveChangedData,
 
       // events
       "onDataLoading": onDataLoading,
