@@ -105,7 +105,7 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
       var d = new Date(Date.now());
       deletedData.push({
         "@id": data[row]["@id"],
-        "": d.toISOString()
+        "http://www.w3.org/ns/prov#invalidatedAtTime> ": d.toISOString()
       });
       data.splice(row,1);
     }
