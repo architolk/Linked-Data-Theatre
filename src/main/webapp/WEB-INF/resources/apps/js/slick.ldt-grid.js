@@ -1,7 +1,7 @@
 /*
  * NAME     slick.ldt-grid.js
  * VERSION  1.21.1-SNAPSHOT
- * DATE     2018-03-20
+ * DATE     2018-04-22
  *
  * Copyright 2012-2018
  *
@@ -21,7 +21,7 @@
  * along with the Linked Data Theatre.  If not, see <http://www.gnu.org/licenses/>.
  */
 var grid, s;
-var loader = new Slick.Data.RemoteModel(apicall);
+var loader = new Slick.Data.RemoteModel(apicall,subjecturi);
 var options = {
   editable: true,
   enableAddRow: true,

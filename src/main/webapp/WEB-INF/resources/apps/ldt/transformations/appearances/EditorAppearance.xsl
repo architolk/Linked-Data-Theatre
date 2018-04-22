@@ -2,7 +2,7 @@
 
     NAME     EditorAppearance.xsl
     VERSION  1.21.1-SNAPSHOT
-    DATE     2018-04-21
+    DATE     2018-04-22
 
     Copyright 2012-2018
 
@@ -78,8 +78,9 @@
 	<script>
 		var staticroot = "<xsl:value-of select="$staticroot"/>";
 		var containerurl = "<xsl:value-of select="$container"/>";
+		var subjecturi = "<xsl:value-of select="/results/context/subject"/>";
 		//var apicall = "<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource.json?representation=<xsl:value-of select="encode-for-uri(@elmo:query)"/>&amp;subject=<xsl:value-of select="/results/context/subject"/>";
-		var apicall = "<xsl:value-of select="/results/context/request-path"/>?subject=<xsl:value-of select="/results/context/subject"/>";
+		var apicall = "<xsl:value-of select="/results/context/request-path"/>";
 		var defaultItem = {
 			<xsl:for-each select="rdf:Description[exists(rdf:value)]">
 				<xsl:if test="position()!=1">,</xsl:if>

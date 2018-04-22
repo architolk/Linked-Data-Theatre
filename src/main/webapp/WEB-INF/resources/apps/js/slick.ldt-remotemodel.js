@@ -1,7 +1,7 @@
 /*
  * NAME     slick.ldt-remotemodel.js
  * VERSION  1.21.1-SNAPSHOT
- * DATE     2018-04-21
+ * DATE     2018-04-22
  *
  * Copyright 2012-2018
  *
@@ -21,10 +21,18 @@
  * along with the Linked Data Theatre.  If not, see <http://www.gnu.org/licenses/>.
  */
 function saveGrid() {
-  loader.saveData(containerurl,context);
+  var url = containerurl;
+  if (subjecturi!=="") {
+    url = url + "?subject=" + encodeURIComponent(pSubjectUri);
+  }
+  loader.saveData(url,context);
 }
 function saveChangedGrid() {
-  loader.saveChangedData(containerurl,context);
+  var url = containerurl;
+  if (subjecturi!=="") {
+    url = url + "?subject=" + encodeURIComponent(pSubjectUri);
+  }
+  loader.saveChangedData(url,context);
 }
 
 function statusFormatter(row, cell, value, columnDef, dataContent) {
@@ -43,7 +51,7 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
    * Right now, it's hooked up to load search results from Octopart, but can
    * easily be extended to support any JSONP-compatible backend that accepts paging parameters.
    */
-  function RemoteModel(pUrl) {
+  function RemoteModel(pUrl, pSubjectUri) {
     // private
     var PAGESIZE = 50;
     var data = [];
@@ -56,6 +64,10 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
     var url = pUrl;
     var resourceProperties = {};
 
+    if (pSubjectUri!=="") {
+      url = url + "?subject=" + encodeURIComponent(pSubjectUri);
+    }
+    
     // events
     var onDataLoading = new Slick.Event();
     var onDataLoaded = new Slick.Event();
