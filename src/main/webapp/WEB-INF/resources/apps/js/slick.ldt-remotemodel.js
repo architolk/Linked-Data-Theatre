@@ -23,14 +23,14 @@
 function saveGrid() {
   var url = containerurl;
   if (subjecturi!=="") {
-    url = url + "?subject=" + encodeURIComponent(pSubjectUri);
+    url = url + "?subject=" + encodeURIComponent(subjecturi);
   }
   loader.saveData(url,context);
 }
 function saveChangedGrid() {
   var url = containerurl;
   if (subjecturi!=="") {
-    url = url + "?subject=" + encodeURIComponent(pSubjectUri);
+    url = url + "?subject=" + encodeURIComponent(subjecturi);
   }
   loader.saveChangedData(url,context);
 }
