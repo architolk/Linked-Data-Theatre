@@ -60,6 +60,11 @@ stage:EditorAppearance	a	elmo:Representation;
     rdfs:label "Opslaan"@nl;
     rdfs:label "Save"@en;
   ];
+  elmo:fragment [
+    elmo:appearance elmo:ChangeSubmitAppearance;
+    rdfs:label "Opslaan (delta)"@nl;
+    rdfs:label "Save (delta)"@en;
+  ];
 	elmo:query '''
     prefix container: <http://localhost:8080/container/>
     construct {

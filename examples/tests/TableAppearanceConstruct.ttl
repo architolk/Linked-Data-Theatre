@@ -6,9 +6,10 @@
 @prefix dbpedia: <http://dbpedia.org/resource/>.
 @prefix dbp: <http://dbpedia.org/property/>.
 
-stage:ContentAppearance a elmo:Representation;
+stage:TableAppearanceConstruct a elmo:Representation;
   elmo:fragment [
     elmo:applies-to rdf:type;
+    rdfs:label "TYPE";
     elmo:index "3";
   ];
   elmo:fragment [
@@ -19,34 +20,9 @@ stage:ContentAppearance a elmo:Representation;
     elmo:applies-to dbp:east;
     elmo:index "2";
   ];
-	elmo:url-pattern "/query/ContentAppearance";
+	elmo:url-pattern "/query/TableAppearanceConstruct$";
+  elmo:appearance elmo:TableAppearance;
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:query stage:ContentAppearanceQuery;
 .
-
-stage:ContentAppearanceQuery a elmo:Query;
-	rdfs:label "Amersfoort";
-	elmo:query '''
-		prefix dbo: <http://dbpedia.org/ontology/>
-		prefix testo: <http://localhost:8080/def/test#>
-		construct {
-			?s?p?o.
-			?w ?wp ?wo.
-		}
-		where {
-			graph <@STAGE@> {
-				?s?p?o.
-				OPTIONAL {
-					?s dbo:isPartOf ?w.
-					?w ?wp ?wo
-					FILTER (?wp!=testo:largestCities
-						&&	?wp!=dbo:populationTotal
-					)
-				}
-				FILTER (?s = <http://dbpedia.org/resource/Amersfoort>)
-				FILTER (?p != testo:districtNames)
-			}
-		}
-	''';
-.	

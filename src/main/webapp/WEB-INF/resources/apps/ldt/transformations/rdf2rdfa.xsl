@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2rdfa.xsl
-    VERSION  1.21.0
-    DATE     2018-03-19
+    VERSION  1.21.1-SNAPSHOT
+    DATE     2018-04-25
 
     Copyright 2012-2018
 
@@ -207,7 +207,7 @@
 					</rdf:Description>
 				</xsl:for-each>
 			</xsl:when>
-			<xsl:when test="$appearance='http://bp4mc2.org/elmo/def#ContentAppearance' or $appearance='http://bp4mc2.org/elmo/def#CarouselAppearance'">
+			<xsl:when test="$appearance='http://bp4mc2.org/elmo/def#ContentAppearance' or $appearance='http://bp4mc2.org/elmo/def#CarouselAppearance' or ($appearance='http://bp4mc2.org/elmo/def#TableAppearance' and not(exists(/root/results/rdf:RDF[position()=$index]/rdf:Description[@rdf:nodeID='rset'])))">
 				<xsl:variable name="fragments" select="fragment"/>
 				<xsl:variable name="properties">
 					<xsl:for-each-group select="/root/results/rdf:RDF[position()=$index]/rdf:Description/*" group-by="name()">

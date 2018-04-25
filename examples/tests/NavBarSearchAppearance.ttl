@@ -30,6 +30,7 @@ stage:NavbarSearchAppearance a elmo:Part;
 			elmo:data [elmo:index "GE3"; rdfs:label "GeoAppearance (Pointer)"; html:link "query/GeoAppearancePointer"];
 			elmo:data [elmo:index "TE"; rdfs:label "TextAppearance"; html:link "query/TextAppearance"];
 			elmo:data [elmo:index "TA"; rdfs:label "TableAppearance"; html:link "query/TableAppearance"];
+			elmo:data [elmo:index "TAC"; rdfs:label "TableAppearanceConstruct"; html:link "query/TableAppearanceConstruct"];
 			elmo:data [elmo:index "FR"; rdfs:label "FrameAppearance"; html:link "query/FrameAppearance"];
 			elmo:data [elmo:index "CO"; rdfs:label "ContentAppearance"; html:link "query/ContentAppearance"];
 			elmo:data [elmo:index "IM"; rdfs:label "ImageAppearance"; html:link "query/ImageAppearance"];
