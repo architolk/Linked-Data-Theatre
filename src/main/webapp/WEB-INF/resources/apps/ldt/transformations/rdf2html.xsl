@@ -801,7 +801,7 @@
 	<!-- If it's not a select query, construct the table: a column for a property, and a row for a resource -->
 	<xsl:if test="not(exists(rdf:Description[@rdf:nodeID='rset']))">
 		<xsl:variable name="columns">
-			<xsl:for-each-group select="rdf:Description[exists(@rdf:about)]/*" group-by="local-name()"><xsl:sort select="@elmo:index"/>
+			<xsl:for-each-group select="rdf:Description[exists(@rdf:about)]/*[not(@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance')]" group-by="local-name()"><xsl:sort select="@elmo:index"/>
 				<xsl:variable name="label">
 					<xsl:value-of select="@elmo:label"/>
 					<xsl:if test="not(@elmo:label!='')"><xsl:value-of select="local-name()"/></xsl:if>
