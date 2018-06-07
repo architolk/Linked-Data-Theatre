@@ -508,15 +508,16 @@
 						<id>default-minify</id>
 						<configuration>
 							<charset>UTF-8</charset>
-							<cssSourceDir>../../../zips/SlickGrid-2.3.16</cssSourceDir>
+							<webappSourceDir>${basedir}</webappSourceDir>
+							<cssSourceDir>zips/SlickGrid-2.3.16</cssSourceDir>
 							<cssSourceFiles>
 								<cssSourceFile>css/smoothness/jquery-ui-1.11.3.custom.css</cssSourceFile>
 								<cssSourceFile>slick.grid.css</cssSourceFile>
 								<cssSourceFile>slick-default-theme.css</cssSourceFile>
 							</cssSourceFiles>
-							<cssTargetDir>../../WEB-INF/resources/apps/css</cssTargetDir>
+							<cssTargetDir>WEB-INF/resources/apps/css</cssTargetDir>
 							<cssFinalFile>slick.grid.pkg.css</cssFinalFile>
-							<jsSourceDir>../../../zips/SlickGrid-2.3.16</jsSourceDir>
+							<jsSourceDir>zips/SlickGrid-2.3.16</jsSourceDir>
 							<jsSourceFiles>
 								<jsSourceFile>lib/firebugx.js</jsSourceFile>
 								<jsSourceFile>lib/jquery-ui-1.11.3.js</jsSourceFile>
@@ -529,7 +530,7 @@
 								<jsSourceFile>slick.formatters.js</jsSourceFile>
 								<jsSourceFile>slick.grid.js</jsSourceFile>
 							</jsSourceFiles>
-							<jsTargetDir>../../WEB-INF/resources/apps/js</jsTargetDir>
+							<jsTargetDir>WEB-INF/resources/apps/js</jsTargetDir>
 							<jsFinalFile>slick.grid.pkg.js</jsFinalFile>
 						</configuration>
 						<goals>
