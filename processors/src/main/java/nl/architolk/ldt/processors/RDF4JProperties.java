@@ -31,11 +31,17 @@ package nl.architolk.ldt.processors;
 import org.orbeon.oxf.properties.Properties;
 import org.orbeon.oxf.properties.PropertySet;
 
+import org.apache.log4j.Logger;
+import org.orbeon.oxf.util.LoggerFactory;
+
 import virtuoso.rdf4j.driver.VirtuosoRepository;
 import org.eclipse.rdf4j.repository.http.HTTPRepository;
+import org.eclipse.rdf4j.repository.sparql.SPARQLRepository;
 import org.eclipse.rdf4j.repository.Repository;
 
 public class RDF4JProperties {
+
+	private static final Logger logger = LoggerFactory.createLogger(RDF4JProperties.class);
 
 	private static boolean notInitialized = true;
 	private static Repository db;
@@ -49,12 +55,19 @@ public class RDF4JProperties {
 		String connectString = props.getString("oxf.rdf.repository.connectString");
 		String username = props.getString("oxf.rdf.repository.username");
 		String password = props.getString("oxf.rdf.repository.password");
+		String queryEndpoint = props.getString("oxf.rdf.repository.queryEndpoint");
+		String updateEndpoint = props.getString("oxf.rdf.repository.updateEndpoint");
+
+		logger.info(String.format("Database: %s", database));
 
 		if (database.equals("virtuoso")) {
 			db = new VirtuosoRepository(connectString, username, password);
+		} else if (database.equals("sparql")) {
+			db = new SPARQLRepository(queryEndpoint, updateEndpoint);
 		} else if (database.equals("rdf4j")) {
 			db = new HTTPRepository(connectString);
 		}
+		db.initialize();
 	}
 
 	//Creates a repository, or returns the available repository.

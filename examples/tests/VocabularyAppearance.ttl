@@ -63,17 +63,18 @@ stage:UploadedShapesModel a elmo:Representation;
 stage:UploadedShapesQuery a elmo:Query;
 	elmo:query '''
 		prefix shacl: <http://www.w3.org/ns/shacl#>
+		prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 		construct {
 			?shape ?sp ?so.
-			?class rdf:type rdfs:Class.
+			?class a rdfs:Class.
 			?class rdfs:comment "".
 			?subclass rdfs:subClassOf ?superclass.
-			?superclass rdf:type rdfs:Class.
+			?superclass a rdfs:Class.
 			?pc ?pcp ?pco.
-			?property rdf:type rdf:Property.
+			?property a rdf:Property.
 			?property rdfs:comment "".
 			?subproperty rdfs:subPropertyOf ?superproperty.
-			?superproperty rdf:type rdf:Property.
+			?superproperty a rdf:Property.
 		}
 		where {
 			graph <http://localhost:8080/container/upload> {
@@ -113,11 +114,13 @@ stage:UploadedShapesAppearanceYed a elmo:Representation;
 	];
 	elmo:query '''
 		prefix shacl: <http://www.w3.org/ns/shacl#>
+		prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+		prefix owl: <http://www.w3.org/2002/07/owl#>
 		CONSTRUCT {
 			?element rdfs:comment ?attribs.
 			?element rdfs:subClassOf ?super.
 			?element ?pc ?class.
-			?element rdf:type owl:Class.
+			?element a owl:Class.
 			?pc rdfs:label ?plabel.
 		}
 		WHERE {
@@ -146,7 +149,7 @@ stage:UploadedShapesAppearanceYed a elmo:Representation;
 						OPTIONAL {?pc shacl:maxCount ?maxc}
 						FILTER NOT EXISTS {
 							?pc shacl:class ?class.
-							?class rdf:type owl:Class.
+							?class a owl:Class.
 						}
 					}
 					group by ?shape
@@ -167,17 +170,19 @@ stage:UploadedVocabularyAppearanceYed a elmo:Representation;
 	];
 	elmo:query '''
 		prefix shacl: <http://www.w3.org/ns/shacl#>
+		prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+		prefix owl: <http://www.w3.org/2002/07/owl#>
 		CONSTRUCT {
 			?element rdfs:label ?label.
 			?element rdfs:comment ?attribs.
 			?element rdfs:subClassOf ?super.
 			?element ?pc ?class.
-			?element rdf:type owl:Class.
+			?element a owl:Class.
 			?pc rdfs:label ?plabel.
 		}
 		WHERE {
 			GRAPH <http://localhost:8080/container/upload> {
-				?element rdf:type owl:Class.
+				?element a owl:Class.
 				?element rdfs:label ?label
 				OPTIONAL {?element rdfs:subClassOf ?super}
 				OPTIONAL {
@@ -187,7 +192,7 @@ stage:UploadedVocabularyAppearanceYed a elmo:Representation;
 						?shape shacl:property ?pc.
 						?pc shacl:predicate ?pred.
 						?pc shacl:class ?class.
-						?class rdf:type owl:Class.
+						?class a owl:Class.
 						OPTIONAL {?pred rdfs:label ?plabel}
 						OPTIONAL {?pc shacl:minCount ?minc}
 						OPTIONAL {?pc shacl:maxCount ?maxc}
@@ -206,7 +211,7 @@ stage:UploadedVocabularyAppearanceYed a elmo:Representation;
 						OPTIONAL {?pc shacl:maxCount ?maxc}
 						FILTER NOT EXISTS {
 							?pc shacl:class ?class.
-							?class rdf:type owl:Class.
+							?class a owl:Class.
 						}
 					}
 					group by ?element
@@ -227,17 +232,19 @@ stage:VocabularyAppearanceYed a elmo:Representation;
 	];
 	elmo:query '''
 		prefix shacl: <http://www.w3.org/ns/shacl#>
+		prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+		prefix owl: <http://www.w3.org/2002/07/owl#>
 		CONSTRUCT {
 			?element rdfs:label ?label.
 			?element rdfs:comment ?attribs.
 			?element rdfs:subClassOf ?super.
 			?element ?pc ?class.
-			?element rdf:type owl:Class.
+			?element a owl:Class.
 			?pc rdfs:label ?plabel.
 		}
 		WHERE {
 			GRAPH <http://localhost:8080/stage> {
-				?element rdf:type owl:Class.
+				?element a owl:Class.
 				?element rdfs:label ?label
 				OPTIONAL {?element rdfs:subClassOf ?super}
 				OPTIONAL {
@@ -247,7 +254,7 @@ stage:VocabularyAppearanceYed a elmo:Representation;
 						?shape shacl:property ?pc.
 						?pc shacl:predicate ?pred.
 						?pc shacl:class ?class.
-						?class rdf:type owl:Class.
+						?class a owl:Class.
 						OPTIONAL {?pred rdfs:label ?plabel}
 						OPTIONAL {?pc shacl:minCount ?minc}
 						OPTIONAL {?pc shacl:maxCount ?maxc}
@@ -266,7 +273,7 @@ stage:VocabularyAppearanceYed a elmo:Representation;
 						OPTIONAL {?pc shacl:maxCount ?maxc}
 						FILTER NOT EXISTS {
 							?pc shacl:class ?class.
-							?class rdf:type owl:Class.
+							?class a owl:Class.
 						}
 					}
 					group by ?element
@@ -280,8 +287,11 @@ stage:VocabularyQuery a elmo:Query;
 	elmo:query '''
 		prefix dcterms: <http://purl.org/dc/terms/>
 		prefix shacl: <http://www.w3.org/ns/shacl#>
+		prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+		prefix skos: <http://www.w3.org/2004/02/skos/core#>
+		prefix owl: <http://www.w3.org/2002/07/owl#>
 		CONSTRUCT {
-			?element rdf:type ?type.
+			?element a ?type.
 			?element rdfs:label ?label.
 			?element rdfs:comment ?def.
 			?element rdfs:subClassOf ?super.
@@ -295,7 +305,7 @@ stage:VocabularyQuery a elmo:Query;
 		}
 		WHERE {
 			GRAPH <http://localhost:8080/stage> {
-				?element rdf:type ?type.
+				?element a ?type.
 				OPTIONAL {?element rdfs:label ?label}
 				OPTIONAL {?element rdfs:comment ?def}
 				OPTIONAL {
