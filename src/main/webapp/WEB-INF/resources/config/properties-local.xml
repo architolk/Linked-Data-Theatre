@@ -36,5 +36,12 @@
 	<property as="xs:string" name="oxf.rdf.repository.database" value="rdf4j"/>
 	<property as="xs:string" name="oxf.rdf.repository.connectString" value="http://localhost:8877/repositories/SYSTEM"/>
 	-->
-			
+
+	<!-- Default RDF4J configuration for generic SPARQL stores -->
+	<!--
+	<property as="xs:string" name="oxf.rdf.repository.database" value="sparql"/>
+	<property as="xs:string" name="oxf.rdf.repository.queryEndpoint" value="http://localhost:3030/ldt/query"/>
+	<property as="xs:string" name="oxf.rdf.repository.updateEndpoint" value="http://localhost:3030/ldt/update"/>
+	-->
+
 </properties>
