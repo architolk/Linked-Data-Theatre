@@ -10,3 +10,18 @@ containerlocal:upload a elmo:Container;
 	elmo:translator elmo:GenericExcelTranslator;
   rdfs:label "Upload an excel file"@en;
 .
+
+containerlocal:spec-upload a elmo:Container;
+	elmo:representation elmo:UploadRepresentation;
+  elmo:contains stage:Menu;
+	elmo:translator elmo:TableExcelTranslator;
+  elmo:replaces containerlocal:upload;
+  rdfs:label "Upload an excel file"@en;
+.
+
+containerlocal:rdf-upload a elmo:Container;
+	elmo:representation elmo:UploadRepresentation;
+  elmo:contains stage:Menu;
+  elmo:replaces containerlocal:upload;
+  rdfs:label "Upload RDF"@en;
+.

@@ -1,0 +1,53 @@
+@prefix stage: <http://localhost:8080/excel2rdf/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix xhtml: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+stage:Compare a elmo:Representation;
+	elmo:url-pattern "/compare$";
+  elmo:contains stage:Menu;
+  elmo:contains stage:Compare_added;
+  elmo:contains stage:Compare_removed
+.
+stage:Compare_added a elmo:Part;
+  elmo:index "1";
+  elmo:fragment [
+    elmo:applies-to "s";
+    rdfs:label "Added triples";
+  ];
+  elmo:query '''
+    PREFIX containerlocal: <http://localhost:8080/excel2rdf/container/>
+    SELECT ?s ?p ?o
+    WHERE {
+      GRAPH <http://localhost:8080/excel2rdf/container/upload> {
+        ?s ?p ?o
+      }
+      FILTER NOT EXISTS {
+        GRAPH <http://localhost:8080/excel2rdf/container/moved> {
+          ?s ?p ?o
+        }
+      }
+    }
+  '''
+.
+stage:Compare_removed a elmo:Part;
+  elmo:index "1";
+  elmo:fragment [
+    elmo:applies-to "s";
+    rdfs:label "Removed triples";
+  ];
+  elmo:query '''
+    PREFIX containerlocal: <http://localhost:8080/excel2rdf/container/>
+    SELECT ?s ?p ?o
+    WHERE {
+      GRAPH <http://localhost:8080/excel2rdf/container/moved> {
+        ?s ?p ?o
+      }
+      FILTER NOT EXISTS {
+        GRAPH <http://localhost:8080/excel2rdf/container/upload> {
+          ?s ?p ?o
+        }
+      }
+    }
+  '''
+.

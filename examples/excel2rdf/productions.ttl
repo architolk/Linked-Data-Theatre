@@ -1,0 +1,33 @@
+@prefix stage: <http://localhost:8080/excel2rdf/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix xhtml: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix updatestage: <http://localhost:8080/excel2rdf/update/>.
+
+#Production for root installations
+updatestage:move a elmo:Production;
+	elmo:contains stage:Menu;
+	elmo:contains stage:Move_scene1;
+	elmo:contains stage:Move_scene2;
+.
+stage:Move_scene1 a elmo:Scene;
+	elmo:index "1";
+	rdfs:label "Clear graph";
+	elmo:query "clear graph <http://localhost:8080/excel2rdf/container/moved>";
+.
+stage:Move_scene2 a elmo:Scene;
+	elmo:index "1";
+	rdfs:label "Copy data";
+	elmo:query '''
+    INSERT {
+      GRAPH <http://localhost:8080/excel2rdf/container/moved> {
+        ?s ?p ?o
+      }
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/excel2rdf/container/upload> {
+        ?s ?p ?o
+      }
+    }
+  '''
+.

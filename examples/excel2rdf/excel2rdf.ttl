@@ -38,6 +38,19 @@ stage:Menu a elmo:Part;
       elmo:index "2";
       rdfs:label "Show data";
       xhtml:link "data";
+    ];
+    elmo:data [
+      elmo:index "2";
+      rdfs:label "Download data";
+      xhtml:link "download";
+    ];
+    elmo:data [
+      elmo:index "3";
+      rdfs:label "Advanced";
+      elmo:data [elmo:index "1"; rdfs:label "Upload specified excel"; xhtml:link "container/spec-upload"];
+      elmo:data [elmo:index "2"; rdfs:label "Upload RDF"; xhtml:link "container/rdf-upload"];
+      elmo:data [elmo:index "3"; rdfs:label "Move data to compare"; xhtml:link "update/move"];
+      elmo:data [elmo:index "4"; rdfs:label "Compare data"; xhtml:link "query/compare"];
     ]
   ]
 .
