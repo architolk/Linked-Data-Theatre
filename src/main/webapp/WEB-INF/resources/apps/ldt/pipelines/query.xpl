@@ -117,12 +117,12 @@
 						<![CDATA[
 							PREFIX elmo: <http://bp4mc2.org/elmo/def#>
 							CONSTRUCT {
-								?rep rdf:type elmo:Representation.
+								?rep a elmo:Representation.
 								?rep elmo:layer ?layer.
 							}
 							WHERE {
 								GRAPH <]]><xsl:value-of select="context/representation-graph/@uri"/><![CDATA[> {
-									?rep rdf:type elmo:Representation
+									?rep a elmo:Representation
 									OPTIONAL {?rep elmo:layer ?layer}
 								}
 								{
@@ -220,12 +220,12 @@
 							<xsl:variable name="representations">
 								<xsl:choose>
 									<!-- Show default representation if non exists -->
-									<xsl:when test="root/context/query='' and not(exists(root/rdf:RDF/rdf:Description[elmo:layer/@rdf:resource=$layer or (not(exists(elmo:layer)) and $layer='http://bp4mc2.org/elmo/def#DefaultLayer')]))">
+									<xsl:when test="root/context/query='' and not(exists(root/rdf:RDF/(elmo:Representation|rdf:Description)[elmo:layer/@rdf:resource=$layer or (not(exists(elmo:layer)) and $layer='http://bp4mc2.org/elmo/def#DefaultLayer')]))">
 										<rep>&lt;rep://elmo.localhost/resource&gt;</rep>
 									</xsl:when>
 									<!-- Representations on the right layer -->
 									<xsl:otherwise>
-										<xsl:for-each select="root/rdf:RDF/rdf:Description[elmo:layer/@rdf:resource=$layer or (not(exists(elmo:layer)) and $layer='http://bp4mc2.org/elmo/def#DefaultLayer')]">
+										<xsl:for-each select="root/rdf:RDF/(elmo:Representation|rdf:Description)[elmo:layer/@rdf:resource=$layer or (not(exists(elmo:layer)) and $layer='http://bp4mc2.org/elmo/def#DefaultLayer')]">
 											<rep>&lt;<xsl:value-of select="@rdf:about"/>&gt;</rep>
 										</xsl:for-each>
 									</xsl:otherwise>
@@ -330,7 +330,7 @@
 	<p:input name="config">
 		<config/>
 	</p:input>
-	<p:input name="data" href="#defquery"/>
+	<p:input name="data" href="#querytext"/>
 </p:processor>
 -->
 

@@ -37,8 +37,8 @@
 
 <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="no"/>
 
-<xsl:key name="bnodes" match="root/rdf:RDF/rdf:Description" use="@rdf:nodeID"/>
-<xsl:key name="resources" match="root/rdf:RDF/rdf:Description" use="@rdf:about"/>
+<xsl:key name="bnodes" match="root/rdf:RDF/*[exists(@rdf:nodeID)]" use="@rdf:nodeID"/>
+<xsl:key name="resources" match="root/rdf:RDF/*[exists(@rdf:about)]" use="@rdf:about"/>
 <xsl:key name="parameters" match="root/context/parameters/parameter" use="name"/>
 
 <xsl:template match="elmo:fragment">
@@ -126,8 +126,8 @@
 
 <xsl:template match="/root">
 	<view>
-		<xsl:apply-templates select="rdf:RDF/rdf:Description[rdf:type/@rdf:resource!='http://bp4mc2.org/elmo/def#fragment']/html:stylesheet"/>
-		<xsl:for-each-group select="rdf:RDF/rdf:Description[exists(elmo:data[1]) or exists(elmo:query[.!='']) or exists(elmo:service[1]) or exists(elmo:webpage[1]) or exists(elmo:queryForm[1]) or rdf:type/@rdf:resource='http://bp4mc2.org/elmo/def#Production']" group-by="@rdf:about"><xsl:sort select="concat(elmo:index[1],'~')"/>
+		<xsl:apply-templates select="rdf:RDF/(elmo:Fragment|rdf:Description[rdf:type/@rdf:resource!='http://bp4mc2.org/elmo/def#fragment'])/html:stylesheet"/>
+		<xsl:for-each-group select="rdf:RDF/(*|*/elmo:contains/*)[exists(elmo:data[1]) or exists(elmo:query[.!='']) or exists(elmo:service[1]) or exists(elmo:webpage[1]) or exists(elmo:queryForm[1]) or rdf:type/@rdf:resource='http://bp4mc2.org/elmo/def#Production']" group-by="@rdf:about"><xsl:sort select="concat(elmo:index[1],'~')"/>
 			<xsl:variable name="repuri"><xsl:value-of select="@rdf:about"/></xsl:variable>
 			<xsl:variable name="repindex"><xsl:value-of select="position()"/></xsl:variable>
 			<xsl:variable name="with-filter-notok">
@@ -155,7 +155,7 @@
 					<xsl:when test="rdf:type/@rdf:resource='http://bp4mc2.org/elmo/def#Scene'">
 						<xsl:if test="exists(elmo:query[.!=''])">
 							<xsl:variable name="queryForm">
-								<xsl:apply-templates select="../rdf:Description[elmo:contains/@rdf:resource=$repuri]/elmo:queryForm"/>
+								<xsl:apply-templates select="../*[elmo:contains/@rdf:resource=$repuri]/elmo:queryForm"/>
 							</xsl:variable>
 							<!-- Don't include the scene if the queryForm is not satisfied -->
 							<xsl:if test="not($queryForm/queryForm/@satisfied!='')">

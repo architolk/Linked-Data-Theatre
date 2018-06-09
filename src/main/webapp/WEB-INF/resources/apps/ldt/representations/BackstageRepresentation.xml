@@ -54,12 +54,14 @@
 		<elmo:query>
 			<![CDATA[
 			prefix elmo: <http://bp4mc2.org/elmo/def#>
+			prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+			prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 			construct {
 				?presentation ?p ?o.
 			}
 			where {
 				graph <@STAGE@> {
-					?presentation rdf:type elmo:Presentation.
+					?presentation a elmo:Presentation.
 					?presentation ?p ?o.
 					FILTER (?p = rdfs:label ||
 							?p = rdf:type ||
@@ -100,17 +102,17 @@
 			where {
 				graph <@STAGE@> {
 					{
-						?rep rdf:type elmo:Representation.
+						?rep a elmo:Representation.
 						OPTIONAL {?rep elmo:url-pattern ?urlpattern}
 						OPTIONAL {
 							?rep elmo:applies-to ?pattern.
-							?pattern rdf:type ?object.
+							?pattern a ?object.
 						}
 						BIND (elmo:Query as ?type)
 					}
 					UNION
 					{
-						?rep rdf:type ?type.
+						?rep a ?type.
 						BIND(str(?rep) as ?urlpattern)
 						FILTER (?type = elmo:Container || ?type = elmo:VersionContainer || ?type = elmo:Production)
 					}
@@ -128,6 +130,7 @@
 			prefix elmo: <http://bp4mc2.org/elmo/def#>
 			prefix html: <http://www.w3.org/1999/xhtml/vocab#>
 			prefix dcterms: <http://purl.org/dc/terms/>
+			prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 			construct {
 				<urn:menu-item7> rdfs:label "Export".
 				<urn:menu-item7> html:link ?export.
@@ -168,8 +171,8 @@
 						(if(bound(?pres),?pres,?default) as ?presentation)
 				where {
 					graph <@STAGE@> {
-						OPTIONAL {?pres rdf:type elmo:Presentation}
-						{select (count(?pres) as ?pcnt) where {?presentation rdf:type elmo:Presentation}}
+						OPTIONAL {?pres a elmo:Presentation}
+						{select (count(?pres) as ?pcnt) where {?presentation a elmo:Presentation}}
 						BIND(<@STAGE@#Presentation> as ?default)
 					}
 				}

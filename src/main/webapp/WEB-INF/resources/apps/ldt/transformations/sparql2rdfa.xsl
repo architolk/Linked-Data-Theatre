@@ -46,17 +46,33 @@
 <!-- Annotation of RDF document -->
 <!-- ************************** -->
 
+<xsl:template match="*" mode="flatten">
+	<rdf:Description rdf:nodeID="{generate-id()}">
+		<xsl:copy-of select="*[not(@rdf:parseType='Resource')]"/>
+		<xsl:for-each select="*[@rdf:parseType='Resource']">
+			<xsl:element name="{name()}">
+				<xsl:attribute name="rdf:nodeID"><xsl:value-of select="generate-id()"/></xsl:attribute>
+			</xsl:element>
+		</xsl:for-each>
+	</rdf:Description>
+	<xsl:apply-templates select="*[@rdf:parseType='Resource']" mode="flatten"/>
+</xsl:template>
+
 <!-- RDF document -->
 <xsl:template match="rdf:RDF">
 	<!-- Order by identifier -->
 	<rdf:RDF>
-		<xsl:for-each-group select="rdf:Description" group-by="(@rdf:nodeID|@rdf:about)"><xsl:sort select="(@rdf:nodeID|@rdf:about)"/>
+		<xsl:for-each-group select="*[exists(@rdf:nodeID|@rdf:about)]" group-by="(@rdf:nodeID|@rdf:about)"><xsl:sort select="(@rdf:nodeID|@rdf:about)"/>
 			<rdf:Description>
 				<xsl:if test="exists(@rdf:nodeID)"><xsl:attribute name="rdf:nodeID" select="@rdf:nodeID"/></xsl:if>
 				<xsl:if test="exists(@rdf:about)"><xsl:attribute name="rdf:about" select="@rdf:about"/></xsl:if>
+				<xsl:if test="local-name()!='Description'">
+					<rdf:type rdf:resource="{namespace-uri()}{local-name()}"/>
+				</xsl:if>
 				<xsl:copy-of select="current-group()/*"/>
 			</rdf:Description>
 		</xsl:for-each-group>
+		<xsl:apply-templates select="*[not(exists(@rdf:nodeID|@rdf:about))]" mode="flatten"/>
 	</rdf:RDF>
 </xsl:template>
 
@@ -166,7 +182,7 @@
 		<!-- Sparql returned something unusual, maybe error, just return input -->
 		<xsl:when test="not(exists(rdf:RDF|res:sparql))"><xsl:copy-of select="*"/></xsl:when>
 		<!-- When the requested format is xml or json, don't do any annotations -->
-		<xsl:when test="context/format='application/x.elmo.xml'"><xsl:copy-of select="rdf:RDF|res:sparql"/></xsl:when>
+		<xsl:when test="context/format='application/x.elmo.xmlx'"><xsl:copy-of select="rdf:RDF|res:sparql"/></xsl:when>
 		<xsl:when test="context/format='application/xml'"><xsl:apply-templates select="rdf:RDF|res:sparql" mode="plain"/></xsl:when>
 		<xsl:when test="context/format='application/rdf+xml'"><xsl:apply-templates select="rdf:RDF|res:sparql" mode="plain"/></xsl:when>
 		<xsl:when test="context/format='application/json'"><xsl:apply-templates select="rdf:RDF|res:sparql" mode="plain"/></xsl:when>
