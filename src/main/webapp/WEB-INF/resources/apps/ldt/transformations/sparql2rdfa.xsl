@@ -182,7 +182,7 @@
 		<!-- Sparql returned something unusual, maybe error, just return input -->
 		<xsl:when test="not(exists(rdf:RDF|res:sparql))"><xsl:copy-of select="*"/></xsl:when>
 		<!-- When the requested format is xml or json, don't do any annotations -->
-		<xsl:when test="context/format='application/x.elmo.xmlx'"><xsl:copy-of select="rdf:RDF|res:sparql"/></xsl:when>
+		<xsl:when test="context/format='application/x.elmo.xml'"><xsl:copy-of select="rdf:RDF|res:sparql"/></xsl:when>
 		<xsl:when test="context/format='application/xml'"><xsl:apply-templates select="rdf:RDF|res:sparql" mode="plain"/></xsl:when>
 		<xsl:when test="context/format='application/rdf+xml'"><xsl:apply-templates select="rdf:RDF|res:sparql" mode="plain"/></xsl:when>
 		<xsl:when test="context/format='application/json'"><xsl:apply-templates select="rdf:RDF|res:sparql" mode="plain"/></xsl:when>
