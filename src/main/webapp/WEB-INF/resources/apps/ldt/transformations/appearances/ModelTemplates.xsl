@@ -138,6 +138,11 @@
 						</xsl:choose>
 					</xsl:variable>
 					<value datatype="{$datatype}">
+						<xsl:if test="$datatype='uri'">
+							<xsl:variable name="refuri" select="@rdf:resource"/>
+							<xsl:variable name="label"><xsl:value-of select="../../rdf:Description[@rdf:about=$refuri]/sh:name[1]"/></xsl:variable>
+							<xsl:if test="$label!=''"><xsl:attribute name="name" select="$label"/></xsl:if>
+						</xsl:if>
 						<xsl:choose>
 							<xsl:when test="$entity!=''"><xsl:value-of select="$entity"/></xsl:when>
 							<xsl:otherwise><xsl:value-of select="."/><xsl:value-of select="@rdf:resource"/></xsl:otherwise>
@@ -428,11 +433,13 @@
 						<xsl:value-of select="."/>
 					</label>
 				</xsl:for-each>
+				<xsl:copy-of select="$roles/role"/>
 			</shape>
 		</xsl:for-each-group>
 	</xsl:variable>
 	<!-- All classes -->
 	<xsl:variable name="all-classes">
+		<CLASSES-1/>
 		<xsl:for-each-group select="rdf:Description[rdf:type/@rdf:resource='http://www.w3.org/2002/07/owl#Class' or rdf:type/@rdf:resource='http://www.w3.org/2000/01/rdf-schema#Class']" group-by="@rdf:about">
 			<xsl:variable name="about" select="@rdf:about"/>
 			<xsl:variable name="name"><xsl:value-of select="replace($about,'^.*(#|/)([^(#|/)]+)$','$2')"/></xsl:variable>
@@ -469,7 +476,7 @@
 				<xsl:for-each select="$all-node-shapes/shape[@class-uri=$about and not(@role='yes')]">
 					<shape uri="{@uri}"/>
 				</xsl:for-each>
-				<xsl:for-each select="$all-node-shapes/shape[@class-uri=$about and @role='yes']">
+				<xsl:for-each select="$all-node-shapes/shape[role/@uri=$about]">
 					<role-shape uri="{@uri}"/>
 				</xsl:for-each>
 				<xsl:for-each-group select="$all-property-shapes/propertyShape[ref-class/@uri=$about]" group-by="@uri">
@@ -478,6 +485,7 @@
 				<xsl:apply-templates select="." mode="supershape-rec"/>
 			</class>
 		</xsl:for-each-group>
+		<CLASSES-2/>
 		<!-- All classes that are targetClasses of shapes, but not themeselves states in this repo -->
 		<xsl:for-each-group select="rdf:Description/sh:targetClass" group-by="@rdf:resource">
 			<xsl:variable name="classuri" select="@rdf:resource"/>
@@ -494,12 +502,13 @@
 					<xsl:for-each select="$all-node-shapes/shape[@class-uri=$classuri and not(@role='yes')]">
 						<shape uri="{@uri}"/>
 					</xsl:for-each>
-					<xsl:for-each select="$all-node-shapes/shape[@class-uri=$classuri and @role='yes']">
+					<xsl:for-each select="$all-node-shapes/shape[role/@uri=$classuri]">
 						<role-shape uri="{@uri}"/>
 					</xsl:for-each>
 				</class>
 			</xsl:if>
 		</xsl:for-each-group>
+		<CLASSES-3/>
 		<!-- All superclasses that are not defined in the ontology, and not a targetclass of a shape -->
 		<xsl:for-each-group select="rdf:Description[rdf:type/@rdf:resource='http://www.w3.org/2002/07/owl#Class' or rdf:type/@rdf:resource='http://www.w3.org/2000/01/rdf-schema#Class']/rdfs:subClassOf" group-by="@rdf:resource">
 			<xsl:variable name="classuri" select="@rdf:resource"/>
@@ -702,11 +711,12 @@
 	<xsl:value-of select="$label"/>
 	<xsl:if test="exists(value)">
 		<xsl:text> = </xsl:text>
-		<xsl:if test="value/@datatype='string'">"</xsl:if>
-		<xsl:if test="value/@datatype='uri'">&lt;</xsl:if>
-		<xsl:value-of select="value"/>
-		<xsl:if test="value/@datatype='string'">"</xsl:if>
-		<xsl:if test="value/@datatype='uri'">&gt;</xsl:if>
+		<xsl:choose>
+			<xsl:when test="value/@datatype='string'">"<xsl:value-of select="value"/>"</xsl:when>
+			<xsl:when test="value/@datatype='uri' and value/@name!=''"><xsl:value-of select="value/@name"/></xsl:when>
+			<xsl:when test="value/@datatype='uri'">&lt;<xsl:value-of select="value"/>&gt;</xsl:when>
+			<xsl:otherwise>[<xsl:value-of select="value"/>]</xsl:otherwise>
+		</xsl:choose>
 	</xsl:if>
 	<xsl:if test="@datatype!=''"><xsl:text> (</xsl:text><xsl:value-of select="replace(@datatype,'^.*(#|/)([^(#|/)]+)$','$2')"/><xsl:text>)</xsl:text></xsl:if>
 	<xsl:if test="refshape/@shapename!=''"> &#x2192; <xsl:value-of select="refshape/@shapename"/></xsl:if>
