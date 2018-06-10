@@ -800,51 +800,62 @@
 	</xsl:for-each>
 	<!-- If it's not a select query, construct the table: a column for a property, and a row for a resource -->
 	<xsl:if test="not(exists(rdf:Description[@rdf:nodeID='rset']))">
-		<xsl:variable name="columns">
-			<xsl:for-each-group select="rdf:Description[exists(@rdf:about)]/*[not(@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance')]" group-by="local-name()"><xsl:sort select="@elmo:index"/>
-				<xsl:variable name="label">
-					<xsl:value-of select="@elmo:label"/>
-					<xsl:if test="not(@elmo:label!='')"><xsl:value-of select="local-name()"/></xsl:if>
-				</xsl:variable>
-				<column name="{local-name()}" label="{$label}"/>
-			</xsl:for-each-group>
-		</xsl:variable>
-		<table id="datatable{$table-id}" class="table table-striped table-bordered">
-			<thead>
-				<tr>
-					<xsl:for-each select="$columns/column">
-						<th><xsl:value-of select="@label"/></th>
-					</xsl:for-each>
-				</tr>
-			</thead>
-			<tbody>
-				<xsl:for-each-group select="rdf:Description" group-by="@rdf:about">
+		<xsl:if test="$paging='true' or exists(rdf:Description/@rdf:about)">
+			<script type="text/javascript">
+				$(document).ready(function() {
+					elmo_language.paging = <xsl:value-of select="$paging"/>;
+					elmo_language.searching = <xsl:value-of select="$paging"/>;
+					elmo_language.info = <xsl:value-of select="$paging"/>;
+					elmo_language.order = [];
+					$('#datatable<xsl:value-of select="$table-id"/>').dataTable(elmo_language);
+				} );
+			</script>
+			<xsl:variable name="columns">
+				<xsl:for-each-group select="rdf:Description[exists(@rdf:about)]/*[not(@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance')]" group-by="local-name()"><xsl:sort select="@elmo:index"/>
+					<xsl:variable name="label">
+						<xsl:value-of select="@elmo:label"/>
+						<xsl:if test="not(@elmo:label!='')"><xsl:value-of select="local-name()"/></xsl:if>
+					</xsl:variable>
+					<column name="{local-name()}" label="{$label}"/>
+				</xsl:for-each-group>
+			</xsl:variable>
+			<table id="datatable{$table-id}" class="table table-striped table-bordered">
+				<thead>
 					<tr>
-						<xsl:variable name="group" select="current-group()"/>
 						<xsl:for-each select="$columns/column">
-							<xsl:variable name="column" select="@name"/>
-							<xsl:variable name="cellnodes" select="$group/*[local-name()=$column]"/>
-							<!--
-							<td><xsl:value-of select="$group/*[local-name()=$column]"/></td>
-							-->
-							<td>
-								<xsl:choose>
-									<xsl:when test="count($cellnodes)=1">
-										<xsl:apply-templates select="$cellnodes" mode="object"/>
-									</xsl:when>
-									<xsl:otherwise>
-										<!-- Nested resources sorteren -->
-										<xsl:for-each select="$cellnodes"><xsl:sort select="rdf:Description/@rdf:about"/>
-											<p><xsl:apply-templates select="." mode="object"/></p>
-										</xsl:for-each>
-									</xsl:otherwise>
-								</xsl:choose>
-							</td>
+							<th><xsl:value-of select="@label"/></th>
 						</xsl:for-each>
 					</tr>
-				</xsl:for-each-group>
-			</tbody>
-		</table>
+				</thead>
+				<tbody>
+					<xsl:for-each-group select="rdf:Description" group-by="@rdf:about">
+						<tr>
+							<xsl:variable name="group" select="current-group()"/>
+							<xsl:for-each select="$columns/column">
+								<xsl:variable name="column" select="@name"/>
+								<xsl:variable name="cellnodes" select="$group/*[local-name()=$column]"/>
+								<!--
+								<td><xsl:value-of select="$group/*[local-name()=$column]"/></td>
+								-->
+								<td>
+									<xsl:choose>
+										<xsl:when test="count($cellnodes)=1">
+											<xsl:apply-templates select="$cellnodes" mode="object"/>
+										</xsl:when>
+										<xsl:otherwise>
+											<!-- Nested resources sorteren -->
+											<xsl:for-each select="$cellnodes"><xsl:sort select="rdf:Description/@rdf:about"/>
+												<p><xsl:apply-templates select="." mode="object"/></p>
+											</xsl:for-each>
+										</xsl:otherwise>
+									</xsl:choose>
+								</td>
+							</xsl:for-each>
+						</tr>
+					</xsl:for-each-group>
+				</tbody>
+			</table>
+		</xsl:if>
 	</xsl:if>
 </xsl:template>
 
