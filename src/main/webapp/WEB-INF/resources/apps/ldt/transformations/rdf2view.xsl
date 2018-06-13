@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2view.xsl
-    VERSION  1.21.0
-    DATE     2018-03-19
+    VERSION  1.21.1-SNAPSHOT
+    DATE     2018-06-13
 
     Copyright 2012-2018
 
@@ -194,16 +194,18 @@
 									?sc?pc?oc.
 									?scc?pcc?occ.
 								}
-								WHERE { GRAPH <]]><xsl:value-of select="/root/context/representation-graph/@uri"/><![CDATA[>
-								{<]]><xsl:value-of select="$repuri"/><![CDATA[> elmo:data ?s.
-									?s?p?o.
-									OPTIONAL {
+								WHERE { GRAPH <]]><xsl:value-of select="/root/context/representation-graph/@uri"/><![CDATA[> {
+									{<]]><xsl:value-of select="$repuri"/><![CDATA[> elmo:data ?s.
+										?s?p?o.
+									}
+									UNION {<]]><xsl:value-of select="$repuri"/><![CDATA[> elmo:data ?s.
 										?s elmo:data ?sc.
-										?sc ?pc ?oc.
-										OPTIONAL {
-											?sc elmo:data ?scc.
-											?scc ?pcc ?occ.
-										}
+										?sc ?pc ?oc
+									}
+									UNION {<]]><xsl:value-of select="$repuri"/><![CDATA[> elmo:data ?s.
+										?s elmo:data ?sc.
+										?sc elmo:data ?scc.
+										?scc ?pcc ?occ.
 									}
 								}}
 								]]>
