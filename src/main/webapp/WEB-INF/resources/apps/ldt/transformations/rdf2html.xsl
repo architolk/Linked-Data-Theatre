@@ -337,7 +337,7 @@
 		<div class="panel-body">
 			<table class="table table-striped table-bordered">
 				<tbody>
-				<xsl:for-each-group select="*" group-by="name()"><xsl:sort select="@elmo:index"/>
+				<xsl:for-each-group select="*" group-by="name()"><xsl:sort select="concat(@elmo:index,'~')"/><xsl:sort select="local-name()"/>
 					<xsl:if test="not(@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance')">
 						<tr>
 							<td><xsl:apply-templates select="." mode="predicate"/></td>
