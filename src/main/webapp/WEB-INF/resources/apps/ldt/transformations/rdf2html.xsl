@@ -1,7 +1,7 @@
 <!--
 
     NAME     rdf2html.xsl
-    VERSION  1.21.1-SNAPSHOT
+    VERSION  1.22.0
     DATE     2018-06-13
 
     Copyright 2012-2018

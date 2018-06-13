@@ -1,8 +1,8 @@
 <!--
 
     NAME     GraphAppearance.xsl
-    VERSION  1.21.1-SNAPSHOT
-    DATE     2018-04-13
+    VERSION  1.22.0
+    DATE     2018-06-13
 
     Copyright 2012-2018
 
