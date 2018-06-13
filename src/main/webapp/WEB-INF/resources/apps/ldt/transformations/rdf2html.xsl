@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.21.1-SNAPSHOT
-    DATE     2018-04-25
+    DATE     2018-06-13
 
     Copyright 2012-2018
 
@@ -96,10 +96,10 @@
 	<xsl:param name="text"/>
 
 	<xsl:choose>
-		<xsl:when test="$text[@xml:lang=$language]!=''"><xsl:value-of select="$text[@xml:lang=$language]"/></xsl:when> <!-- First choice: language of browser -->
-		<xsl:when test="$text[not(exists(@xml:lang))]!=''"><xsl:value-of select="$text[not(exists(@xml:lang))]"/></xsl:when> <!-- Second choice: no language -->
-		<xsl:when test="$text[@xml:lang='nl']!=''"><xsl:value-of select="$text[@xml:lang='nl']"/></xsl:when> <!-- Third choice: dutch -->
-		<xsl:when test="$text[@xml:lang='en']!=''"><xsl:value-of select="$text[@xml:lang='en']"/></xsl:when> <!-- Fourth choice: english -->
+		<xsl:when test="$text[@xml:lang=$language]!=''"><xsl:value-of select="$text[@xml:lang=$language][1]"/></xsl:when> <!-- First choice: language of browser -->
+		<xsl:when test="$text[not(exists(@xml:lang))]!=''"><xsl:value-of select="$text[not(exists(@xml:lang))][1]"/></xsl:when> <!-- Second choice: no language -->
+		<xsl:when test="$text[@xml:lang='nl']!=''"><xsl:value-of select="$text[@xml:lang='nl'][1]"/></xsl:when> <!-- Third choice: dutch -->
+		<xsl:when test="$text[@xml:lang='en']!=''"><xsl:value-of select="$text[@xml:lang='en'][1]"/></xsl:when> <!-- Fourth choice: english -->
 		<xsl:otherwise><xsl:value-of select="$text[1]"/></xsl:otherwise> <!-- If all fails, the first label -->
 	</xsl:choose>
 </xsl:template>
