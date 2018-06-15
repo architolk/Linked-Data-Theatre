@@ -143,7 +143,7 @@
 		<p:input name="data" href="aggregate('root',aggregate('input',#instance),#request,#config)"/>
 		<p:output name="data" id="instancefixed"/>
 	</p:processor>
-	
+
 	<!-- /request/body can only be obtained when no parameters are serialized within the body! -->
 	<p:choose href="#request" rdfs:label="get request body, if available">
 		<p:when test="not(exists(/request/parameters))">
@@ -308,20 +308,20 @@
 							PREFIX elmo: <http://bp4mc2.org/elmo/def#>
 							PREFIX sh: <http://www.w3.org/ns/shacl#>
 							CONSTRUCT {
-								<]]><xsl:value-of select="context/subject"/><![CDATA[> rdf:type ?type.
+								<]]><xsl:value-of select="context/subject"/><![CDATA[> a ?type.
 								<]]><xsl:value-of select="context/subject"/><![CDATA[> ?p ?s.
 								<]]><xsl:value-of select="context/subject"/><![CDATA[> elmo:query ?query.
 								<]]><xsl:value-of select="context/subject"/><![CDATA[> elmo:assertion ?assertion.
 								?assertion ?assertionp ?assertiono.
 								<]]><xsl:value-of select="context/subject"/><![CDATA[> elmo:fragment ?fragment.
 								?fragment ?fragmentp ?fragmento.
-								?shape rdf:type sh:NodeShape.
+								?shape a sh:NodeShape.
 								?shape ?shapep ?shapeo.
 								?pshape ?pshapep ?pshapeo.
 							}
 							WHERE {
 								GRAPH <]]><xsl:value-of select="context/representation-graph/@uri"/><![CDATA[> {
-									<]]><xsl:value-of select="context/subject"/><![CDATA[> rdf:type ?type.
+									<]]><xsl:value-of select="context/subject"/><![CDATA[> a ?type.
 									<]]><xsl:value-of select="context/subject"/><![CDATA[> ?p ?s.
 									OPTIONAL { <]]><xsl:value-of select="context/subject"/><![CDATA[> elmo:query/elmo:query ?query }.
 									OPTIONAL {
@@ -338,7 +338,7 @@
 										?shape sh:property ?pshape.
 										?pshape ?pshapep ?pshapeo.
 									}
-									FILTER (?type = elmo:Container or ?type = elmo:VersionContainer)
+									FILTER (?type = elmo:Container || ?type = elmo:VersionContainer)
 								}
 							}
 						]]>
@@ -396,7 +396,7 @@
 						<xsl:template match="/">
 							<xsl:variable name="container" select="/root/context/subject"/>
 							<container>
-								<xsl:for-each select="root/rdf:RDF/rdf:Description[@rdf:about=$container]">
+								<xsl:for-each select="root/rdf:RDF/(elmo:Container|elmo:VersionContainer|rdf:Description)[@rdf:about=$container]">
 									<label><xsl:value-of select="rdfs:label"/></label>
 									<url><xsl:value-of select="@rdf:about"/></url>
 									<user-role><xsl:value-of select="elmo:user-role"/></user-role>
@@ -1313,7 +1313,7 @@
 					</p:processor>
 
 					<p:choose href="#context">
-					
+
 						<p:when test="context/format='application/json'">
 							<!-- Transform -->
 							<p:processor name="oxf:xslt">
@@ -1387,7 +1387,7 @@
 							</p:processor>
 						</p:when>
 						<p:otherwise>
-					
+
 							<!-- Convert result to turtle -->
 							<p:processor name="oxf:xslt" rdfs:label="create data from container content">
 								<p:input name="data" href="aggregate('xmlresult',#sparql,#containercontext)"/>

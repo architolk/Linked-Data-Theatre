@@ -16,13 +16,13 @@ stage:Excel2Rdf a elmo:Representation;
       <p>Your Excel spreadsheet will be transformed to RDF Linked Data</p>
       <p>The RDF linked data will be available from this location, so only upload data you want to be out in the open!</p>
       <p><b>It is not allowed to upload data that is not yours to disclose</b></p>
-			<a href="/excel2rdf/container/upload"><button type="button" class="btn btn-default">Upload excel</button></a>
+			<a href="/excel2rdf/container/upload/excel"><button type="button" class="btn btn-default">Upload excel</button></a>
+			<a href="/excel2rdf/container/upload/csv"><button type="button" class="btn btn-default">Upload csv</button></a>
 		''';
 	]
 .
 
 stage:Menu a elmo:Part;
-	elmo:without-parameter "jmetertest";
 	elmo:appearance elmo:NavbarSearchAppearance;
 	elmo:index "~";
 	elmo:data [
@@ -32,7 +32,7 @@ stage:Menu a elmo:Part;
 		elmo:data [
 			elmo:index "1";
 			rdfs:label "Upload";
-      xhtml:link "container/upload";
+      xhtml:link "container/upload/excel";
     ];
     elmo:data [
       elmo:index "2";
@@ -40,17 +40,18 @@ stage:Menu a elmo:Part;
       xhtml:link "data";
     ];
     elmo:data [
-      elmo:index "2";
+      elmo:index "3";
       rdfs:label "Download data";
       xhtml:link "download";
     ];
     elmo:data [
-      elmo:index "3";
+      elmo:index "4";
       rdfs:label "Advanced";
       elmo:data [elmo:index "1"; rdfs:label "Upload specified excel"; xhtml:link "container/spec-upload"];
-      elmo:data [elmo:index "2"; rdfs:label "Upload RDF"; xhtml:link "container/rdf-upload"];
-      elmo:data [elmo:index "3"; rdfs:label "Move data to compare"; xhtml:link "update/move"];
-      elmo:data [elmo:index "4"; rdfs:label "Compare data"; xhtml:link "query/compare"];
+			elmo:data [elmo:index "2"; rdfs:label "Upload CSV"; xhtml:link "container/upload/csv"];
+      elmo:data [elmo:index "3"; rdfs:label "Upload RDF"; xhtml:link "container/rdf-upload"];
+      elmo:data [elmo:index "4"; rdfs:label "Move data to compare"; xhtml:link "update/move"];
+      elmo:data [elmo:index "5"; rdfs:label "Compare data"; xhtml:link "query/compare"];
     ]
   ]
 .

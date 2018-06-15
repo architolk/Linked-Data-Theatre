@@ -25,10 +25,10 @@
 <!--
     DESCRIPTION
     Transforms container content (turtle format) to rdfa for presentation in the UI (and further processing by container.xpl pipeline and rdfa2html.xsl)
-	
+
 -->
 <xsl:stylesheet version="2.0"
-	xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 	xmlns:html="http://www.w3.org/1999/xhtml/vocab#"
 	xmlns:elmo="http://bp4mc2.org/elmo/def#"
@@ -37,12 +37,23 @@
 	xmlns:dcterms="http://purl.org/dc/terms/"
 >
 
-<xsl:key name="bnode" match="/root/rdf:RDF/rdf:Description" use="@rdf:nodeID"/>
-<xsl:key name="node" match="/root/rdf:RDF/rdf:Description" use="@rdf:about"/>
+<xsl:key name="bnode" match="/root/rdf:RDF/*[exists(@rdf:nodeID)]" use="@rdf:nodeID"/>
+<xsl:key name="node" match="/root/rdf:RDF/*[exists(@rdf:about)]" use="@rdf:about"/>
 
 <xsl:template match="rdf:Description" mode="data">
 	<xsl:copy-of select="."/>
 	<xsl:apply-templates select="key('bnode',elmo:data/@rdf:nodeID)" mode="data"/>
+	<xsl:apply-templates select="key('node',elmo:data/@rdf:resource)" mode="data"/>
+</xsl:template>
+
+<xsl:template match="elmo:data" mode="data">
+	<rdf:Description rdf:nodeID="{generate-id()}">
+		<xsl:copy-of select="* except elmo:data"/>
+		<xsl:for-each select="elmo:data">
+			<elmo:data rdf:nodeID="{generate-id()}"/>
+		</xsl:for-each>
+	</rdf:Description>
+	<xsl:apply-templates select="elmo:data[@rdf:parseType='Resource']" mode="data"/>
 </xsl:template>
 
 <xsl:template match="/">
@@ -53,10 +64,11 @@
 			<xsl:copy-of select="root/context/*"/>
 		</context>
 		-->
-		<xsl:for-each select="root/rdf:RDF/rdf:Description[exists(elmo:appearance)]">
+		<xsl:for-each select="root/rdf:RDF/*[exists(elmo:appearance)]">
 			<rdf:RDF elmo:appearance="{elmo:appearance/@rdf:resource}" elmo:query="{@rdf:about}" elmo:index="{position()}">
 				<xsl:apply-templates select="key('bnode',elmo:data/@rdf:nodeID)" mode="data"/>
 				<xsl:apply-templates select="key('node',elmo:data/@rdf:resource)" mode="data"/>
+				<xsl:apply-templates select="elmo:data[@rdf:parseType='Resource']" mode="data"/>
 			</rdf:RDF>
 		</xsl:for-each>
 		<rdf:RDF elmo:appearance="http://bp4mc2.org/elmo/def#FormAppearance" elmo:index="0">
