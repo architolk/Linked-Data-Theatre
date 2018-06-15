@@ -1,4 +1,5 @@
 target/
 /webapps/
 /virtuoso_data/
+/local/
 docs/*.bak
