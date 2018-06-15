@@ -1,0 +1,5 @@
+concept;definition;broader-concept;comments
+bicycle;A vehicle with two wheels, propelled by human power;vehicle;This column will not be processed, because it has no header which is defined in the sheet 'Properties'
+vehicle;A transportation device;   ;Cell C3 contains spaces, but will not generate a broader-concept
+car;;vehicle;Cell B4 contains nothing and will not generate a definition
+car;  ;vehicle;Cell B5 contains spaces and will generate a definition (containing spaces)
