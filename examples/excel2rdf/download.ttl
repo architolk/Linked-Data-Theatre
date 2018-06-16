@@ -5,7 +5,7 @@
 
 stage:Download a elmo:Representation;
 	elmo:url-pattern "/download$";
-  elmo:appearance elmo:HtmlAppearance;
+  elmo:contains stage:Menu;
 	elmo:index "1";
 	elmo:appearance elmo:HtmlAppearance;
 	elmo:data [

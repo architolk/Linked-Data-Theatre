@@ -6,6 +6,7 @@
 stage:ShowData a elmo:Representation;
 	elmo:url-pattern "/data$";
   elmo:appearance elmo:TurtleAppearance;
+	elmo:contains stage:Menu;
 	elmo:index "1";
   elmo:query '''
     PREFIX containerlocal: <http://localhost:8080/excel2rdf/container/>
