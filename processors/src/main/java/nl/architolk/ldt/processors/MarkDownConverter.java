@@ -1,7 +1,7 @@
 /**
  * NAME     MarkDownConverter.java
- * VERSION  1.18.0
- * DATE     2017-06-18
+ * VERSION  1.22.0
+ * DATE     2018-06-16
  *
  * Copyright 2012-2017
  *
