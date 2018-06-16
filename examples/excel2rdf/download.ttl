@@ -4,7 +4,7 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 
 stage:Download a elmo:Representation;
-	elmo:url-pattern "/download$";
+	elmo:url-pattern "/query/download$";
   elmo:contains stage:Menu;
 	elmo:index "1";
 	elmo:appearance elmo:HtmlAppearance;
@@ -19,7 +19,7 @@ stage:Download a elmo:Representation;
 .
 
 stage:DownloadData a elmo:Representation;
-  elmo:url-pattern "/data.(ttl|xml|json)$";
+  elmo:url-pattern "/query/data.(ttl|xml|json)$";
   elmo:query '''
     CONSTRUCT {
       ?s ?p ?o

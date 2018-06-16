@@ -4,7 +4,7 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 
 stage:ShowData a elmo:Representation;
-	elmo:url-pattern "/data$";
+	elmo:url-pattern "/query/data$";
   elmo:appearance elmo:TurtleAppearance;
 	elmo:contains stage:Menu;
 	elmo:index "1";

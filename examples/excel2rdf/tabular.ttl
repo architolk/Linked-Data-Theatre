@@ -1,0 +1,53 @@
+@prefix stage: <http://localhost:8080/excel2rdf/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix xhtml: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+stage:Tabular a elmo:Representation;
+	elmo:url-pattern "/query/tabular$";
+  elmo:contains stage:Menu;
+	elmo:index "1";
+	elmo:contains stage:Tabular_tables
+.
+
+stage:Table a elmo:Representation;
+	elmo:uri-pattern "upload/.+/table$";
+	elmo:contains stage:Menu;
+	elmo:index "1";
+	elmo:contains stage:Tabular_tables;
+	elmo:contains stage:Tabular_table;
+.
+
+stage:Tabular_tables a elmo:Part;
+	elmo:appearance elmo:TreeAppearance;
+	elmo:query '''
+		prefix csvw: <http://www.w3.org/ns/csvw#>
+		prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+		CONSTRUCT {
+			?table rdfs:label ?tablename
+		}
+		WHERE {
+		  graph <http://localhost:8080/excel2rdf/container/upload> {
+				?table a csvw:Table.
+				?table rdfs:label ?tablename
+			}
+		}
+	''';
+.
+
+stage:Tabular_table a elmo:Part;
+	elmo:appearance elmo:TableAppearance;
+	elmo:query '''
+		prefix csvw: <http://www.w3.org/ns/csvw#>
+		CONSTRUCT {
+			?s ?p ?o
+		}
+		WHERE {
+			graph <http://localhost:8080/excel2rdf/container/upload> {
+				<@SUBJECT@> csvw:row ?row.
+				?row csvw:describes ?s.
+				?s ?p ?o
+			}
+		}
+	''';
+.
