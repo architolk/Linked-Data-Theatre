@@ -29,7 +29,7 @@
  * - connect-string: the url to connect to the database
  * - username: the username to use when connecting to the database (mandatory for virtuoso, optional for rdf4j)
  * - password: the password to use when connecting to the database (mandatory for virtuoso, optional for rdf4j)
- * 
+ *
  * The data input should contain a list of files to upload, using the structure:
  * <filelist>
  *   <file name="{original name of the file}">{location of the file}</file>
@@ -80,6 +80,7 @@ import org.eclipse.rdf4j.IsolationLevels;
 import org.eclipse.rdf4j.repository.http.HTTPRepository;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.sparql.SPARQLConnection;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
@@ -105,7 +106,7 @@ public class RDF4JProcessor extends SimpleProcessor {
 
 		Document configDocument = readInputAsDOM4J(context, INPUT_CONFIG);
 		Node configNode = configDocument.selectSingleNode("//config");
-		
+
 		contentHandler.startDocument();
 		contentHandler.startElement("", "response", "response", new AttributesImpl());
 
@@ -115,9 +116,9 @@ public class RDF4JProcessor extends SimpleProcessor {
 		String pgraph = configNode.valueOf("pgraph"); // The parent graph, for version information
 		String postQuery = configNode.valueOf("postquery"); // Some post query, optional
 		String uriPrefix = configNode.valueOf("uriprefix"); // The uri prefix for relative uri's
-		
+
 		String errorMsg = "";
-		
+
 		db = RDF4JProperties.createRepository();
 		if (db==null) {
 			errorMsg = "Unknown database. \n";
@@ -125,8 +126,10 @@ public class RDF4JProcessor extends SimpleProcessor {
 			conn = db.getConnection();
 
 			try {
-				conn.begin(IsolationLevels.NONE);
-				
+        if (!(conn instanceof SPARQLConnection)) {
+				  conn.begin(IsolationLevels.NONE);
+        }
+
 				// Clear target graph, partially (all triples in original container) or completely
 				if (action.equals("replace")) {
 					String msg = "Target graph <" + tgraph + "> cleared";
@@ -198,7 +201,7 @@ public class RDF4JProcessor extends SimpleProcessor {
 					contentHandler.characters(msg.toCharArray(),0,msg.length());
 					contentHandler.endElement("", "scene", "scene");
 				}
-				
+
 				// Remove existing properties in case of action = update
 				if (action.equals("update")) {
 					String msg ="Target graph cleared for update";
@@ -218,7 +221,7 @@ public class RDF4JProcessor extends SimpleProcessor {
 					contentHandler.characters(msg.toCharArray(),0,msg.length());
 					contentHandler.endElement("", "scene", "scene");
 				}
-				
+
 				// Populate target graph with content of the container-graph
 				if (action.equals("part") || action.equals("replace") || action.equals("update")) {
 					String msg ="Target graph <" + tgraph + "> populated from container <" + cgraph + ">";
@@ -234,7 +237,7 @@ public class RDF4JProcessor extends SimpleProcessor {
 					contentHandler.characters(msg.toCharArray(),0,msg.length());
 					contentHandler.endElement("", "scene", "scene");
 				}
-				
+
 				// Insert version-info into parent graph, if applicable
 				if (!(cgraph.equals(pgraph) || pgraph.isEmpty())) {
 					String msg ="Version metadata inserted into parent graph";
@@ -250,7 +253,7 @@ public class RDF4JProcessor extends SimpleProcessor {
 					contentHandler.characters(msg.toCharArray(),0,msg.length());
 					contentHandler.endElement("", "scene", "scene");
 				}
-				
+
 				// Execute post query
 				if (!postQuery.isEmpty()) {
 					String msg ="Post query executed";
@@ -266,14 +269,16 @@ public class RDF4JProcessor extends SimpleProcessor {
 					contentHandler.characters(msg.toCharArray(),0,msg.length());
 					contentHandler.endElement("", "scene", "scene");
 				}
-				conn.commit();
-				
+        if (!(conn instanceof SPARQLConnection)) {
+				  conn.commit();
+        }
+
 			} finally {
 				conn.close();
 			}
-			
+
 		}
-		
+
 		if (!errorMsg.isEmpty()) {
 			contentHandler.startElement("", "error", "error", new AttributesImpl());
 			contentHandler.characters(errorMsg.toCharArray(),0,errorMsg.length());
@@ -305,18 +310,18 @@ public class RDF4JProcessor extends SimpleProcessor {
 			encoding = "UTF-8"; // Default encoding
 		}
 		fis.close();
-		
+
 		//Open stream according to detected encoding
 		FileInputStream fis2 = new FileInputStream(filePath);
 		InputStreamReader isr = new InputStreamReader(fis2,encoding);
-		
+
 		IRI context = db.getValueFactory().createIRI(cgraph);
 		//Infer parser from filename, or else assume RDF-XML
 		conn.add(isr,uriPrefix,Rio.getParserFormatForFileName(filename).orElse(RDFFormat.RDFXML),context);
-		
+
 		isr.close();
 		fis2.close();
-		
+
 	}
-    
+
 }

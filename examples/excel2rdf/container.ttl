@@ -5,6 +5,7 @@
 @prefix containerlocal: <http://localhost:8080/excel2rdf/container/>.
 
 containerlocal:excel-upload a elmo:Container;
+  elmo:replaces containerlocal:upload;
 	elmo:representation elmo:UploadRepresentation;
   elmo:contains stage:Menu;
 	elmo:translator elmo:GenericExcelTranslator;
@@ -12,14 +13,15 @@ containerlocal:excel-upload a elmo:Container;
 .
 
 containerlocal:spec-upload a elmo:Container;
+  elmo:replaces containerlocal:upload;
 	elmo:representation elmo:UploadRepresentation;
   elmo:contains stage:Menu;
 	elmo:translator elmo:TableExcelTranslator;
-  elmo:replaces containerlocal:upload;
   rdfs:label "Upload an excel file"@en;
 .
 
 containerlocal:csv-upload a elmo:Container;
+	elmo:replaces containerlocal:upload;
 	elmo:representation elmo:UploadRepresentation;
   elmo:contains stage:Menu;
 	elmo:translator elmo:GenericCSVTranslator;
@@ -27,8 +29,8 @@ containerlocal:csv-upload a elmo:Container;
 .
 
 containerlocal:rdf-upload a elmo:Container;
+  elmo:replaces containerlocal:upload;
 	elmo:representation elmo:UploadRepresentation;
   elmo:contains stage:Menu;
-  elmo:replaces containerlocal:upload;
   rdfs:label "Upload RDF"@en;
 .

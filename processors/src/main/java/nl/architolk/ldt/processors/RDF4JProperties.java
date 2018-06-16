@@ -45,7 +45,7 @@ public class RDF4JProperties {
 
 	private static boolean notInitialized = true;
 	private static Repository db;
-	
+
 	private static void initialize() {
 		notInitialized = false;
 
@@ -59,6 +59,8 @@ public class RDF4JProperties {
 		String updateEndpoint = props.getString("oxf.rdf.repository.updateEndpoint");
 
 		logger.info(String.format("Database: %s", database));
+		logger.debug(String.format("query endpoint: %s", queryEndpoint));
+		logger.debug(String.format("update endpoint: %s", updateEndpoint));
 
 		if (database.equals("virtuoso")) {
 			db = new VirtuosoRepository(connectString, username, password);
@@ -75,5 +77,5 @@ public class RDF4JProperties {
 		if (notInitialized) {initialize();}
 		return db;
 	}
-	
+
 }
