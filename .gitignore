@@ -3,3 +3,4 @@ target/
 /virtuoso_data/
 /local/
 docs/*.bak
+examples/excel2rdf/config.zip
