@@ -1,0 +1,3 @@
+echo Deploying basic configuration...
+curl -X PUT -T ../basic-configuration.ttl http://localhost:8080/ldt/backstage/import
+echo Done.

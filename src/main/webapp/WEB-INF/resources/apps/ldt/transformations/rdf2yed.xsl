@@ -27,7 +27,7 @@
 	Transformation of RDF document to graphml format, with yed extension
 
 	Depended on: ModelTemplates.xsl (in case of a elmo:VocabularyAppearance)
-	
+
 -->
 <xsl:stylesheet version="2.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -177,7 +177,7 @@
 							<xsl:otherwise>
 								<y:LineStyle color="#000000" type="line" width="1.0"/>
 								<y:Arrows source="{$sourcestyle}" target="standard"/>
-								<y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true">
+								<y:EdgeLabel alignment="center" backgroundColor="#FFFFFF" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true">
 									<xsl:apply-templates select=".." mode="property-placement"/>
 									<y:LabelModel>
 										<y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
@@ -322,7 +322,7 @@
 				<xsl:element name="{$edgetype}">
 					<y:LineStyle color="#000000" type="{$line}" width="1.0"/>
 					<y:Arrows source="{$source}" target="{$target}"/>
-					<y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true"><xsl:value-of select="$label"/><y:LabelModel>
+					<y:EdgeLabel alignment="center" backgroundColor="#FFFFFF" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true"><xsl:value-of select="$label"/><y:LabelModel>
 							<y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
 						</y:LabelModel>
 						<y:ModelParameter>
@@ -342,7 +342,7 @@
 				<y:PolyLineEdge>
 					<y:LineStyle color="#000000" type="line" width="1.0"/>
 					<y:Arrows source="none" target="standard"/>
-					<y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true"><xsl:value-of select="name()"/><y:LabelModel>
+					<y:EdgeLabel alignment="center" backgroundColor="#FFFFFF" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true"><xsl:value-of select="name()"/><y:LabelModel>
 							<y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
 						</y:LabelModel>
 						<y:ModelParameter>
