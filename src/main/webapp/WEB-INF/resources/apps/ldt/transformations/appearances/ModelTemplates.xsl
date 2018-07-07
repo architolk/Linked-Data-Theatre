@@ -25,16 +25,16 @@
 <!--
     DESCRIPTION
 	Model templates contains some generic templates for processing a shacl graph, vocabulary or ontology
-	
+
 	This template is used by:
 	- VocabularyAppearance
 	- ModelAppearance
 	- rdf2yed
-	
+
 	NB: This templates uses both versions of shacl (for backward compatibility):
 		sh:path and sh:predicate (old)
 		sh:targetClass and sh:scopeClass (old)
-	
+
 -->
 <xsl:stylesheet version="2.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -71,6 +71,13 @@
 </xsl:template>
 
 <xsl:template match="rdf:RDF" mode="VocabularyVariable">
+	<!-- All reified statements -->
+	<xsl:variable name="all-metadata">
+		<xsl:for-each-group select="rdf:Description[rdf:type/@rdf:resource='http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement']" group-by="@rdf:about">
+			<statement subject="{rdf:subject/@rdf:resource}" predicate="{rdf:predicate/@rdf:resource}" object="{rdf:object/@rdf:resource}">
+			</statement>
+		</xsl:for-each-group>
+	</xsl:variable>
 	<!-- All (other) named entities -->
 	<xsl:variable name="all-named-entities">
 		<xsl:for-each select="rdf:Description[not(exists(rdf:type)) and exists(sh:name)]/sh:targetNode">
@@ -422,6 +429,8 @@
 									</xsl:for-each-group>
 									<!-- Logic refnodes -->
 									<xsl:copy-of select="$predicate/ref-nodes"/>
+									<!-- Metadata -->
+									<xsl:copy-of select="$all-metadata/statement[@subject=$class and @predicate=$predicate/@predicate and @object=$refclass]"/>
 								</property>
 							</xsl:if>
 						</xsl:for-each>

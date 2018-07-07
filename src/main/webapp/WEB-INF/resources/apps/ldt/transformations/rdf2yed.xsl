@@ -166,6 +166,22 @@
 		<!--   a no explicitly defined refnode is available, or -->
 		<!--   b the refshape is the same as the refnode -->
 		<xsl:if test="local-name()='ref-nodes' or ($refshape/@empty!='true' and (not(../@refnode!='') or @uri=../@refnode))">
+			<!-- Annotate linestyle for specific metadata statements -->
+			<!-- This needs to be improved.-->
+			<!-- Current situation: any reified statement will trigger this linestyle -->
+			<!-- A better solution would be to trigger a specific linestyle for specific metadata -->
+			<xsl:variable name="linestyle">
+				<xsl:choose>
+						<xsl:when test="exists(../statement)">
+							<color>#FF0000</color>
+							<width>3.0</width>
+						</xsl:when>
+						<xsl:otherwise>
+							<color>#000000</color>
+							<width>1.0</width>
+						</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
 			<edge source="{../../@uri}" target="{@uri}">
 				<data key="d10">
 					<y:PolyLineEdge>
@@ -175,7 +191,7 @@
 								<y:Arrows source="none" target="white_delta"/>
 							</xsl:when>
 							<xsl:otherwise>
-								<y:LineStyle color="#000000" type="line" width="1.0"/>
+								<y:LineStyle color="{$linestyle/color}" type="line" width="{$linestyle/width}"/>
 								<y:Arrows source="{$sourcestyle}" target="standard"/>
 								<y:EdgeLabel alignment="center" backgroundColor="#FFFFFF" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true">
 									<xsl:apply-templates select=".." mode="property-placement"/>
