@@ -184,6 +184,7 @@ lotro:founded rdf:type owl:ObjectProperty;
 lotrc:Bilbo rdf:type lotro:Hobbit;
 	rdfs:label "Bilbo";
 	foaf:knows lotrc:Gandalf;
+	foaf:knows lotrc:Thorin;
 .
 lotrc:Frodo rdf:type lotro:Hobbit;
 	rdfs:label "Frodo";

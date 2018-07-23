@@ -59,6 +59,7 @@ stage:DefaultResource_graph a elmo:Part;
 		''';
 	];
 	elmo:query '''
+		prefix elmo: <http://bp4mc2.org/elmo/def#>
 		construct {
 			<@SUBJECT@> rdfs:label ?slabel.
 			<@SUBJECT@> ?p ?o.

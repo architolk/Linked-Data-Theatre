@@ -124,7 +124,7 @@ d3.xhr(jsonApiCall+encodeURIComponent(jsonApiSubject),"application/ld+json", fun
   //Parse xhr as if it was json, and expand (lose context)
   jsonld.expand(JSON.parse(xhr.responseText),function (err, json) {
     if (!err) {
-      
+
       //Stijlen ophalen
       json.forEach(function(resource) {
         var found = false;
@@ -132,12 +132,12 @@ d3.xhr(jsonApiCall+encodeURIComponent(jsonApiSubject),"application/ld+json", fun
           elmoStyles[resource["@id"]]=resource[elmoName][0]["@value"]
         }
       });
-      
+
       var availableNodes = {};
       json.forEach(function(x) { availableNodes[x[idKey]] = x; });
 
       root.nodes = [];
-      
+
       //Find subject and insert (startingpoint = middle of screen)
       var subject = json.filter(function(r) {return (r[idKey]===jsonApiSubject)})[0];
       if (!subject) {
@@ -150,37 +150,51 @@ d3.xhr(jsonApiCall+encodeURIComponent(jsonApiSubject),"application/ld+json", fun
 
       //Add nodes that are linked from the subject and available
       for (var property in subject) {
-        if (property!==idKey && property!==elmoStyle && (availableNodes[subject[property][0][idKey]])) {
-          addNode(availableNodes[subject[property][0][idKey]],width/2,height/2);
+        if (property!==idKey && property!==elmoStyle) {
+          for (var objectindex in subject[property]) {
+            if (availableNodes[subject[property][objectindex][idKey]]) {
+              if (!nodeMap[subject[property][objectindex][idKey]]) {
+                addNode(availableNodes[subject[property][objectindex][idKey]],width/2,height/2);
+              }
+            }
+          }
         }
       }
       //Add nodes that have the subject as target (duplicates will be filtered out by addNode function)
       json.forEach(function(resource) {
         var found = false;
         for (var property in resource) {
-          if (property!=idKey && property!=elmoStyle && resource[property][0][idKey]===jsonApiSubject) {
-            found = true;
+          if (property!=idKey && property!=elmoStyle) {
+            for (var objectindex in resource[property]) {
+              if (resource[property][objectindex][idKey]===jsonApiSubject) {
+                found = true;
+              }
+            }
           }
         }
         if (found) {
           addNode(resource,width/2,height/2);
         }
       });
-      
+
       //Update and get links
       root.links = [];
       json.forEach(function(resource) {
         for (var property in resource) {
           // Only display items that are uri's and exists as nodes
-          if (property!==idKey && property!==elmoStyle && (nodeMap[resource[property][0][idKey]])) {
-            var label = property.replace(regexLabelFromURI,"$2");
-            var propertyUri = property;//getFullUri(property,json["@context"]);
-            if (availableNodes[propertyUri]) {
-              if (availableNodes[propertyUri][rdfsLabel]) {
-                label = availableNodes[propertyUri][rdfsLabel][0]["@value"];
+          if (property!==idKey && property!==elmoStyle) {
+            for (objectindex in resource[property]) {
+              if (nodeMap[resource[property][objectindex][idKey]]) {
+                var label = property.replace(regexLabelFromURI,"$2");
+                var propertyUri = property;//getFullUri(property,json["@context"]);
+                if (availableNodes[propertyUri]) {
+                  if (availableNodes[propertyUri][rdfsLabel]) {
+                    label = availableNodes[propertyUri][rdfsLabel][0]["@value"];
+                  }
+                }
+                addLink(resource[idKey],resource[property][objectindex][idKey],property,label);
               }
             }
-            addLink(resource[idKey],resource[property][0][idKey],property,label);
           }
         };
       });
@@ -211,10 +225,10 @@ d3.xhr(jsonApiCall+encodeURIComponent(jsonApiSubject),"application/ld+json", fun
 });
 
 function addNode(resource,x,y) {
-  
+
   //Only add a node if it doesn't exists already
   if (!nodeMap[resource[idKey]]) {
-  
+
     var nodeClass = "";
     if (resource[elmoStyle]) {
       if (elmoStyles[resource[elmoStyle][0][idKey]]) {
@@ -238,7 +252,7 @@ function addNode(resource,x,y) {
         };
     root.nodes.push(node);
     nodeMap[resource[idKey]] = node;
-    
+
     // startingpoint of new node
     node.x = x;
     node.y = y;
@@ -253,7 +267,7 @@ function addNode(resource,x,y) {
 }
 
 function addLink(sourceUri,targetUri,propertyUri,propertyLabel) {
-  
+
   if (linkMap[sourceUri+targetUri]) {
     //Link already exists, add label to existing link
     linkMap[sourceUri+targetUri].label+= ", "+propertyLabel;
@@ -270,7 +284,7 @@ function addLink(sourceUri,targetUri,propertyUri,propertyLabel) {
     root.links.push(l);
     return l;
   }
-  
+
 }
 
 function movePropertyBox() {
@@ -656,19 +670,23 @@ function dblclick(d) {
                 elmoStyles[resource["@id"]]=resource[elmoName][0]["@value"]
               }
             });
-            
+
             var availableNodes = {};
             json.forEach(function(x) { availableNodes[x[idKey]] = x; });
 
             //Find subject and insert
             var subject = json.filter(function(r) {return (r[idKey]===d['@id'])})[0];
-            
+
             //Add nodes that are linked from the subject and available
             for (var property in subject) {
-              if (property!==idKey && property!==elmoStyle && (availableNodes[subject[property][0][idKey]])) {
-                if (!nodeMap[subject[property][0][idKey]]) {
-                  // startingpoint of new nodes = position starting node
-                  addNode(availableNodes[subject[property][0][idKey]],d.x,d.y);
+              if (property!==idKey && property!==elmoStyle) {
+                for (var objectindex in subject[property]) {
+                  if (availableNodes[subject[property][objectindex][idKey]]) {
+                    if (!nodeMap[subject[property][objectindex][idKey]]) {
+                      // startingpoint of new nodes = position starting node
+                      addNode(availableNodes[subject[property][objectindex][idKey]],d.x,d.y);
+                    }
+                  }
                 }
               }
             };
@@ -676,8 +694,12 @@ function dblclick(d) {
             json.forEach(function(resource) {
               var found = false;
               for (var property in resource) {
-                if (property!=idKey && property!=elmoStyle && resource[property][0][idKey]===d['@id']) {
-                  found = true;
+                if (property!=idKey && property!=elmoStyle) {
+                  for (var objectindex in resource[property]) {
+                    if (resource[property][objectindex][idKey]===d['@id']) {
+                      found = true;
+                    }
+                  }
                 }
               }
               if (found) {
@@ -686,36 +708,40 @@ function dblclick(d) {
                 }
               }
             });
-            
+
             //Only add new lines
             json.forEach(function(resource) {
               for (var property in resource) {
                 // Only display items that are uri's and exists as nodes
-                if (property!==idKey && property!==elmoStyle && (nodeMap[resource[property][0][idKey]])) {
-                  var label = property.replace(regexLabelFromURI,"$2");;
-                  var propertyUri = property;//getFullUri(property,json["@context"]);
-                  if (availableNodes[propertyUri]) {
-                    if (availableNodes[propertyUri][rdfsLabel]) {
-                      label = availableNodes[propertyUri][rdfsLabel][0]["@value"];
+                if (property!==idKey && property!==elmoStyle) {
+                  for (objectindex in resource[property]) {
+                    if (nodeMap[resource[property][objectindex][idKey]]) {
+                      var label = property.replace(regexLabelFromURI,"$2");;
+                      var propertyUri = property;//getFullUri(property,json["@context"]);
+                      if (availableNodes[propertyUri]) {
+                        if (availableNodes[propertyUri][rdfsLabel]) {
+                          label = availableNodes[propertyUri][rdfsLabel][0]["@value"];
+                        }
+                      }
+                      if (linkMap[resource[idKey]+resource[property][objectindex][idKey]]) {
+                        //Existing link, check if uri is different and label is different, add label to existing link
+                        var el = linkMap[resource[idKey]+resource[property][objectindex][idKey]];
+                        if ((el.uri!=property) && (el.label!=label)) {
+                          el.label+= ", " + label;
+                        }
+                      } else {
+                        var l = addLink(resource[idKey],resource[property][objectindex][idKey],property,label);
+                        //Create network: set in & out-links
+                        l.source.outLinks[l.uri] = l.source.outLinks[l.uri] || [];
+                        l.source.outLinks[l.uri].push(l);
+                        l.source.linkCount++;
+                        l.source.parentLink = l;
+                        l.target.inLinks[l.uri] = l.target.inLinks[l.uri] || [];
+                        l.target.inLinks[l.uri].push(l);
+                        l.target.linkCount++;
+                        l.target.parentLink = l;
+                      }
                     }
-                  }
-                  if (linkMap[resource[idKey]+resource[property][0][idKey]]) {
-                    //Existing link, check if uri is different and label is different, add label to existing link
-                    var el = linkMap[resource[idKey]+resource[property][0][idKey]];
-                    if ((el.uri!=property) && (el.label!=label)) {
-                      el.label+= ", " + label;
-                    }
-                  } else {
-                    var l = addLink(resource[idKey],resource[property][0][idKey],property,label);
-                    //Create network: set in & out-links
-                    l.source.outLinks[l.uri] = l.source.outLinks[l.uri] || [];
-                    l.source.outLinks[l.uri].push(l);
-                    l.source.linkCount++;
-                    l.source.parentLink = l;
-                    l.target.inLinks[l.uri] = l.target.inLinks[l.uri] || [];
-                    l.target.inLinks[l.uri].push(l);
-                    l.target.linkCount++;
-                    l.target.parentLink = l;
                   }
                 }
               };
