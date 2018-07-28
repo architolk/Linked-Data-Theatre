@@ -190,6 +190,14 @@
 								<y:LineStyle color="#000000" type="dashed" width="1.0"/>
 								<y:Arrows source="none" target="white_delta"/>
 							</xsl:when>
+							<xsl:when test="../@reification='subject'">
+								<y:LineStyle color="#000000" type="line" width="1.0"/>
+								<y:Arrows source="none" target="none"/>
+							</xsl:when>
+							<xsl:when test="../@reification='object'">
+								<y:LineStyle color="#000000" type="line" width="1.0"/>
+								<y:Arrows source="none" target="standard"/>
+							</xsl:when>
 							<xsl:otherwise>
 								<y:LineStyle color="{$linestyle/color}" type="line" width="{$linestyle/width}"/>
 								<y:Arrows source="{$sourcestyle}" target="standard"/>
