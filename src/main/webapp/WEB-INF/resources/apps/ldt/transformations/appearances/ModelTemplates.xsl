@@ -244,7 +244,8 @@
 				<xsl:if test="$predicate!=''"><xsl:attribute name="predicate" select="$predicate"/></xsl:if>
 				<xsl:if test="$inverse-predicate!=''"><xsl:attribute name="inversePredicate" select="$inverse-predicate"/></xsl:if>
 				<xsl:if test="$inverse-predicate='http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate'"><xsl:attribute name="reified">yes</xsl:attribute></xsl:if>
-				<xsl:for-each select="current-group()/sh:class">
+				<!-- rdfs:Literal should not be included as ref-class, because it's a Literal! -->
+				<xsl:for-each select="current-group()/sh:class[not(@rdf:resource='http://www.w3.org/2000/01/rdf-schema#Literal')]">
 					<ref-class uri="{@rdf:resource}"/>
 				</xsl:for-each>
 				<!-- Escape to add rdfs:range as ref-class. Only for specific nodekinds (to avoid adding datatypes like xsd:string as ref-class) -->
