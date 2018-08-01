@@ -205,10 +205,13 @@
 				</xsl:for-each>
 			</xsl:variable>
 			<xsl:for-each-group select="$refshapes/refshape" group-by="@uri">
-				<refshape uri="{@uri}" empty="{@empty}">
-					<xsl:if test="exists(@shapename)"><xsl:attribute name="shapename"><xsl:value-of select="@shapename"/></xsl:attribute></xsl:if>
-					<xsl:if test="exists(@type)"><xsl:attribute name="type"><xsl:value-of select="@type"/></xsl:attribute></xsl:if>
-				</refshape>
+				<!-- Not sure if this is correct, but it seems that you should not elaborate on refshapes when an explicit reference is made! -->
+				<xsl:if test="not($refnode!='') or @uri=$refnode">
+					<refshape uri="{@uri}" empty="{@empty}">
+						<xsl:if test="exists(@shapename)"><xsl:attribute name="shapename"><xsl:value-of select="@shapename"/></xsl:attribute></xsl:if>
+						<xsl:if test="exists(@type)"><xsl:attribute name="type"><xsl:value-of select="@type"/></xsl:attribute></xsl:if>
+					</refshape>
+				</xsl:if>
 			</xsl:for-each-group>
 			<!-- Logic refnodes -->
 			<xsl:copy-of select="$predicate/ref-nodes"/>
