@@ -44,6 +44,7 @@
 
 <xsl:template match="/">
 	<graphml>
+		<key attr.name="url" attr.type="string" for="node" id="d3"/>
 		<key for="node" id="d6" yfiles.type="nodegraphics"/>
 		<key for="edge" id="d10" yfiles.type="edgegraphics"/>
 		<graph id="G" edgedefault="directed">
@@ -83,6 +84,7 @@
 			</xsl:if>
 		</xsl:variable>
 		<node id="{@uri}">
+			<data key="d3"><xsl:value-of select="@uri"/></data>
 			<data key="d6">
 				<y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
 					<xsl:variable name="enumerationcnt">
@@ -91,7 +93,14 @@
 							<xsl:otherwise>0</xsl:otherwise>
 						</xsl:choose>
 					</xsl:variable>
-					<y:Geometry height="{40+13*($enumerationcnt+count(property[not(exists(refshape[@type='role']) or exists(ref-nodes/item) or exists(refshape[@empty='false']))]))}" width="200.0" x="0.5" y="0"/>
+					<xsl:choose>
+						<xsl:when test="exists(geometry)">
+							<y:Geometry height="{geometry/@height}" width="{geometry/@width}" x="{geometry/@x}" y="{geometry/@y}"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<y:Geometry height="{40+13*($enumerationcnt+count(property[not(exists(refshape[@type='role']) or exists(ref-nodes/item) or exists(refshape[@empty='false']))]))}" width="200.0" x="0.5" y="0"/>
+						</xsl:otherwise>
+					</xsl:choose>
 					<y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
 					<y:BorderStyle color="#000000" type="line" width="1.0"/>
 					<y:NodeLabel alignment="center" autoSizePolicy="node_width" configuration="CroppingLabel" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" modelName="internal" modelPosition="t" textColor="#000000" visible="true" hasBackgroundColor="false">

@@ -41,6 +41,7 @@
 	xmlns:sh="http://www.w3.org/ns/shacl#"
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+	xmlns:yed="http://bp4mc2.org/yed#"
 	xmlns:dcterms="http://purl.org/dc/terms/"
 	xmlns:dc="http://purl.org/dc/elements/1.1/"
 	xmlns:foaf="http://xmlns.com/foaf/0.1/"
@@ -488,6 +489,12 @@
 					</label>
 				</xsl:for-each>
 				<xsl:copy-of select="$roles/role"/>
+				<xsl:for-each select="current-group()/yed:geometry">
+					<xsl:variable name="nodeid" select="@rdf:nodeID"/>
+					<xsl:for-each-group select="../../rdf:Description[@rdf:nodeID=$nodeid]" group-by="@rdf:nodeID">
+						<geometry height="{yed:height}" width="{yed:width}" x="{yed:x}" y="{yed:y}"/>
+					</xsl:for-each-group>
+				</xsl:for-each>
 			</shape>
 		</xsl:for-each-group>
 	</xsl:variable>
