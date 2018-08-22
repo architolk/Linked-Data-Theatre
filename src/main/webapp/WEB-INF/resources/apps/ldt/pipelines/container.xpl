@@ -868,7 +868,15 @@
 							<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 								<xsl:template match="/">
 									<filelist>
-										<firstformat><xsl:value-of select="replace(results/file[1]/@name,'.*\.([^\.]+)$','$1')"/></firstformat>
+                    <xsl:variable name="extension"><xsl:value-of select="replace(results/file[1]/@name,'.*\.([^\.]+)$','$1')"/></xsl:variable>
+                    <firstformat>
+                      <xsl:choose>
+                        <!-- Consider extensions owl and rdf as xml format -->
+                        <xsl:when test="$extension='owl'">xml</xsl:when>
+                        <xsl:when test="$extension='rdf'">xml</xsl:when>
+                        <xsl:otherwise><xsl:value-of select="$extension"/></xsl:otherwise>
+                      </xsl:choose>
+  									</firstformat>
 										<xsl:for-each select="results/file">
 											<file name="{@name}">
 												<xsl:value-of select="substring-after(.,'file:')"/>
