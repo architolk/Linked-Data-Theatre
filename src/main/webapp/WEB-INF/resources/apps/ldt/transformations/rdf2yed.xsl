@@ -45,6 +45,9 @@
 <xsl:template match="/">
 	<graphml>
 		<key attr.name="url" attr.type="string" for="node" id="d3"/>
+		<key attr.name="url" attr.type="string" for="edge" id="d7"/>
+		<key attr.name="subject-uri" attr.type="string" for="edge" id="d90"/>
+		<key attr.name="object-uri" attr.type="string" for="edge" id="d91"/>
 		<key for="node" id="d6" yfiles.type="nodegraphics"/>
 		<key for="edge" id="d10" yfiles.type="edgegraphics"/>
 		<graph id="G" edgedefault="directed">
@@ -139,9 +142,17 @@
 	<xsl:for-each select="$vocabulary/nodeShapes/shape/property/ref-nodes">
 		<xsl:variable name="nodeuri" select="@uri"/>
 		<node id="{$nodeuri}">
+			<data key="d3"><xsl:value-of select="$nodeuri"/></data>
 			<data key="d6">
 				<y:ShapeNode>
-					<y:Geometry height="30.0" width="{string-length(@logic)*10}" x="376.0" y="185.0"/>
+					<xsl:choose>
+						<xsl:when test="exists(geometry)">
+							<y:Geometry height="{geometry/@height}" width="{geometry/@width}" x="{geometry/@x}" y="{geometry/@y}"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<y:Geometry height="30.0" width="{string-length(@logic)*10}" x="376.0" y="185.0"/>
+						</xsl:otherwise>
+					</xsl:choose>
 					<y:Fill color="#FFFFFF" transparent="false"/>
 					<y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
 					<y:NodeLabel alignment="center" autoSizePolicy="node_width" configuration="CroppingLabel" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" modelName="internal" modelPosition="t" textColor="#000000" visible="true" hasBackgroundColor="false">
@@ -155,7 +166,22 @@
 			<xsl:variable name="refuri" select="@uri"/>
 			<xsl:variable name="refshape" select="$vocabulary/nodeShapes/shape[@uri=$refuri]"/>
 			<xsl:if test="$refshape/@empty!='true'">
-				<edge source="{$nodeuri}" target="{@uri}"/>
+				<edge source="{$nodeuri}" target="{@uri}">
+					<data key="d90"><xsl:value-of select="$nodeuri"/></data>
+					<data key="d91"><xsl:value-of select="@uri"/></data>
+					<data key="d10">
+						<y:PolyLineEdge>
+							<y:Arrows source="none" target="standard"/>
+							<xsl:for-each select="path">
+								<y:Path sx="{@sx}" sy="{@sy}" tx="{@tx}" ty="{@ty}">
+									<xsl:for-each select="point">
+										<y:Point x="{@x}" y="{@y}"/>
+									</xsl:for-each>
+								</y:Path>
+							</xsl:for-each>
+						</y:PolyLineEdge>
+					</data>
+				</edge>
 			</xsl:if>
 		</xsl:for-each>
 	</xsl:for-each>
@@ -192,8 +218,18 @@
 				</xsl:choose>
 			</xsl:variable>
 			<edge source="{../../@uri}" target="{@uri}">
+				<data key="d7"><xsl:value-of select="../@uri"/></data>
+				<data key="d90"><xsl:value-of select="../../@uri"/></data>
+				<data key="d91"><xsl:value-of select="@uri"/></data>
 				<data key="d10">
 					<y:PolyLineEdge>
+						<xsl:for-each select="path">
+							<y:Path sx="{@sx}" sy="{@sy}" tx="{@tx}" ty="{@ty}">
+								<xsl:for-each select="point">
+									<y:Point x="{@x}" y="{@y}"/>
+								</xsl:for-each>
+							</y:Path>
+						</xsl:for-each>
 						<xsl:choose>
 							<xsl:when test="@type='role'">
 								<y:LineStyle color="#000000" type="dashed" width="1.0"/>

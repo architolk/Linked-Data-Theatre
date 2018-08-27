@@ -42,22 +42,61 @@
 
 	<xsl:template match="/">
 		<rdf:RDF>
-			<xsl:for-each select="root/graphml:graphml/graphml:graph/graphml:node">
-				<xsl:variable name="uri" select="graphml:data[@key='d3']"/>
-				<xsl:if test="$uri!=''">
-					<rdf:Description rdf:about="{$uri}">
-						<xsl:for-each select="graphml:data/y:GenericNode/y:Geometry">
-							<yed:geometry>
-								<rdf:Description>
-									<yed:height><xsl:value-of select="@height"/></yed:height>
-									<yed:width><xsl:value-of select="@width"/></yed:width>
-									<yed:x><xsl:value-of select="@x"/></yed:x>
-									<yed:y><xsl:value-of select="@y"/></yed:y>
-								</rdf:Description>
-							</yed:geometry>
-						</xsl:for-each>
-					</rdf:Description>
-				</xsl:if>
+			<xsl:for-each select="root/graphml:graphml">
+				<xsl:variable name="url-node-key" select="graphml:key[@for='node' and @attr.name='url']/@id"/>
+				<xsl:variable name="url-edge-key" select="graphml:key[@for='edge' and @attr.name='url']/@id"/>
+				<xsl:variable name="subject-edge-key" select="graphml:key[@for='edge' and @attr.name='subject-uri']/@id"/>
+				<xsl:variable name="object-edge-key" select="graphml:key[@for='edge' and @attr.name='object-uri']/@id"/>
+				<xsl:for-each select="graphml:graph">
+					<xsl:for-each select="graphml:node">
+						<xsl:variable name="uri" select="graphml:data[@key=$url-node-key]"/>
+						<xsl:if test="$uri!=''">
+							<rdf:Description rdf:about="{$uri}">
+								<xsl:for-each select="graphml:data/*/y:Geometry">
+									<yed:geometry>
+										<rdf:Description>
+											<yed:height><xsl:value-of select="@height"/></yed:height>
+											<yed:width><xsl:value-of select="@width"/></yed:width>
+											<yed:x><xsl:value-of select="@x"/></yed:x>
+											<yed:y><xsl:value-of select="@y"/></yed:y>
+										</rdf:Description>
+									</yed:geometry>
+								</xsl:for-each>
+							</rdf:Description>
+						</xsl:if>
+					</xsl:for-each>
+					<xsl:for-each select="graphml:edge">
+						<xsl:variable name="urn" select="@id"/>
+						<xsl:variable name="uri" select="graphml:data[@key=$url-edge-key]"/>
+						<xsl:variable name="subject-uri" select="graphml:data[@key=$subject-edge-key]"/>
+						<xsl:variable name="object-uri" select="graphml:data[@key=$object-edge-key]"/>
+						<xsl:if test="$urn!='' and $subject-uri!='' and $object-uri!=''">
+							<rdf:Description rdf:about="urn:id:{$urn}">
+								<rdf:subject rdf:resource="{$subject-uri}"/>
+								<rdf:object rdf:resource="{$object-uri}"/>
+								<xsl:if test="$uri!=''"><rdf:predicate rdf:resource="{$uri}"/></xsl:if>
+								<xsl:for-each select="graphml:data/y:PolyLineEdge/y:Path">
+									<yed:path>
+										<rdf:Description>
+											<yed:sx><xsl:value-of select="@sx"/></yed:sx>
+											<yed:sy><xsl:value-of select="@sy"/></yed:sy>
+											<yed:tx><xsl:value-of select="@tx"/></yed:tx>
+											<yed:ty><xsl:value-of select="@ty"/></yed:ty>
+											<xsl:if test="exists(y:Point)">
+												<yed:wkt>
+													<xsl:for-each select="y:Point">
+														<xsl:if test="position()!=1">,</xsl:if>
+														<xsl:value-of select="@x"/><xsl:text> </xsl:text><xsl:value-of select="@y"/>
+													</xsl:for-each>
+												</yed:wkt>
+											</xsl:if>
+										</rdf:Description>
+									</yed:path>
+								</xsl:for-each>
+							</rdf:Description>
+						</xsl:if>
+					</xsl:for-each>
+				</xsl:for-each>
 			</xsl:for-each>
 		</rdf:RDF>
 	</xsl:template>

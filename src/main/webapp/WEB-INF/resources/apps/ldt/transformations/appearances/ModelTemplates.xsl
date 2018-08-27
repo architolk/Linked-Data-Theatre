@@ -76,6 +76,7 @@
 	<xsl:param name="reified"/>
 	<xsl:param name="class"/>
 	<xsl:param name="real-class"/>
+	<xsl:param name="shape"/>
 	<xsl:param name="roles" as="node()"/>
 	<xsl:param name="all-property-shapes" as="node()"/>
 	<xsl:param name="all-metadata" as="node()"/>
@@ -83,7 +84,7 @@
 
 	<xsl:variable name="property" select="@rdf:resource|@rdf:nodeID"/>
 	<xsl:variable name="predicate" select="$all-property-shapes/propertyShape[@uri=$property]"/>
-	<!-- If this property is part of a reified statement, we need to check toe nodeshape... -->
+	<!-- If this property is part of a reified statement, we need to check the nodeshape... -->
 	<xsl:if test="$predicate/@reified='yes'">
 		<xsl:for-each select="../../rdf:Description[@rdf:nodeID=$predicate/ref-node/@uri]">
 			<xsl:apply-templates select="sh:property" mode="parse-property">
@@ -211,11 +212,28 @@
 					<refshape uri="{@uri}" empty="{@empty}">
 						<xsl:if test="exists(@shapename)"><xsl:attribute name="shapename"><xsl:value-of select="@shapename"/></xsl:attribute></xsl:if>
 						<xsl:if test="exists(@type)"><xsl:attribute name="type"><xsl:value-of select="@type"/></xsl:attribute></xsl:if>
+						<!-- Geometry -->
+						<xsl:variable name="refshape-uri" select="@uri"/>
+						<xsl:copy-of select="$all-metadata/geometry[@subject=$shape and @predicate=$predicate/@predicate and @object=$refshape-uri]/path"/>
 					</refshape>
 				</xsl:if>
 			</xsl:for-each-group>
 			<!-- Logic refnodes -->
-			<xsl:copy-of select="$predicate/ref-nodes"/>
+			<xsl:for-each select="$predicate/ref-nodes">
+				<xsl:variable name="logicuri" select="@uri"/>
+				<ref-nodes uri="{$logicuri}" logic="{@logic}">
+					<xsl:for-each select="item">
+						<xsl:variable name="itemuri" select="@uri"/>
+						<item uri="{$itemuri}">
+							<!-- Geometry of item path -->
+							<xsl:copy-of select="$all-metadata/geometry[@subject=$logicuri and @object=$itemuri]/path"/>
+						</item>
+					</xsl:for-each>
+					<xsl:copy-of select="geometry"/>
+					<!-- Geometry of path -->
+					<xsl:copy-of select="$all-metadata/geometry[@subject=$shape and @predicate=$predicate/@predicate and @object=$logicuri]/path"/>
+				</ref-nodes>
+			</xsl:for-each>
 			<!-- Metadata -->
 			<xsl:copy-of select="$all-metadata/statement[@subject=$class and @predicate=$predicate/@predicate and @object=$refclass]"/>
 		</property>
@@ -228,6 +246,20 @@
 		<xsl:for-each-group select="rdf:Description[rdf:type/@rdf:resource='http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement']" group-by="@rdf:about">
 			<statement subject="{rdf:subject/@rdf:resource}" predicate="{rdf:predicate/@rdf:resource}" object="{rdf:object/@rdf:resource}">
 			</statement>
+		</xsl:for-each-group>
+		<xsl:for-each-group select="rdf:Description[exists(yed:path)]" group-by="@rdf:about">
+			<geometry subject="{rdf:subject/@rdf:resource}" predicate="{rdf:predicate/@rdf:resource}" object="{rdf:object/@rdf:resource}">
+				<xsl:variable name="pathid" select="yed:path/@rdf:nodeID"/>
+				<xsl:for-each select="../rdf:Description[@rdf:nodeID=$pathid]">
+					<path sx="{yed:sx}" sy="{yed:sy}" tx="{yed:tx}" ty="{yed:ty}">
+						<xsl:for-each select="yed:wkt">
+							<xsl:for-each select="tokenize(.,',')">
+								<point x="{substring-before(.,' ')}" y="{substring-after(.,' ')}"/>
+							</xsl:for-each>
+						</xsl:for-each>
+					</path>
+				</xsl:for-each>
+			</geometry>
 		</xsl:for-each-group>
 	</xsl:variable>
 	<!-- All (other) named entities -->
@@ -244,7 +276,8 @@
 			<xsl:variable name="predicate"><xsl:value-of select="sh:path/@rdf:resource"/></xsl:variable>
 			<xsl:variable name="path-uri" select="sh:path/@rdf:nodeID"/>
 			<xsl:variable name="inverse-predicate"><xsl:value-of select="../rdf:Description[@rdf:nodeID=$path-uri]/sh:inversePath/@rdf:resource"/></xsl:variable>
-			<propertyShape name="{sh:name[1]}" uri="{@rdf:about|@rdf:nodeID}">
+			<xsl:variable name="property-shape-uri" select="@rdf:about|@rdf:nodeID"/>
+			<propertyShape name="{sh:name[1]}" uri="{$property-shape-uri}">
 				<xsl:if test="$predicate!=''"><xsl:attribute name="predicate" select="$predicate"/></xsl:if>
 				<xsl:if test="$inverse-predicate!=''"><xsl:attribute name="inversePredicate" select="$inverse-predicate"/></xsl:if>
 				<xsl:if test="$inverse-predicate='http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate'"><xsl:attribute name="reified">yes</xsl:attribute></xsl:if>
@@ -331,9 +364,17 @@
 						<!-- Logical expression with regard to nodes -->
 						<xsl:when test="exists(../../rdf:Description[@rdf:nodeID=$refnode]/sh:xone)">
 							<xsl:for-each select="../../rdf:Description[@rdf:nodeID=$refnode]/sh:xone">
-								<ref-nodes uri="{$refnode}" logic="{local-name()}">
+								<xsl:variable name="logicuri" select="concat($predicate,'?shape=',encode-for-uri($property-shape-uri),'&amp;logic=',local-name())"/>
+								<ref-nodes uri="{$logicuri}" logic="{local-name()}">
 									<xsl:variable name="list" select="@rdf:nodeID"/>
 									<xsl:apply-templates select="../../rdf:Description[@rdf:nodeID=$list]" mode="traverse-list"/>
+									<!-- Geometry -->
+									<xsl:for-each select="../../rdf:Description[@rdf:about=$logicuri]/yed:geometry">
+										<xsl:variable name="nodeid" select="@rdf:nodeID"/>
+										<xsl:for-each-group select="../../rdf:Description[@rdf:nodeID=$nodeid]" group-by="@rdf:nodeID">
+											<geometry height="{yed:height}" width="{yed:width}" x="{yed:x}" y="{yed:y}"/>
+										</xsl:for-each-group>
+									</xsl:for-each>
 								</ref-nodes>
 							</xsl:for-each>
 						</xsl:when>
@@ -423,7 +464,8 @@
 					<xsl:value-of select="$roles/role[1]/@uri"/>
 				</xsl:if>
 			</xsl:variable>
-			<shape name="{sh:name[1]}" uri="{@rdf:about}">
+			<xsl:variable name="shape" select="@rdf:about"/>
+			<shape name="{sh:name[1]}" uri="{$shape}">
 				<xsl:if test="$class!=''">
 					<xsl:attribute name="class-uri"><xsl:value-of select="$class"/></xsl:attribute>
 				</xsl:if>
@@ -476,6 +518,7 @@
 						<xsl:apply-templates select="current-group()/sh:property" mode="parse-property">
 							<xsl:with-param name="class" select="$class"/>
 							<xsl:with-param name="real-class" select="$real-class"/>
+							<xsl:with-param name="shape" select="$shape"/>
 							<xsl:with-param name="roles" select="$roles"/>
 							<xsl:with-param name="all-property-shapes" select="$all-property-shapes"/>
 							<xsl:with-param name="all-metadata" select="$all-metadata"/>
