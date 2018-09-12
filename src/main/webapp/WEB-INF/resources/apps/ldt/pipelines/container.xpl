@@ -782,7 +782,7 @@
 										</p:processor>
 									</p:when>
 									<!-- Upload XML file -->
-									<p:when test="ends-with(file/@name,'.xml') or ends-with(file/@name,'.xpl') or ends-with(file/@name,'.graphml')">
+									<p:when test="ends-with(file/@name,'.xml') or ends-with(file/@name,'.xpl') or ends-with(file/@name,'.graphml') or ends-with(file/@name,'.gc')">
 										<!-- Fetch file -->
 										<p:processor name="oxf:url-generator">
 											<p:input name="config" transform="oxf:xslt" href="current()">
