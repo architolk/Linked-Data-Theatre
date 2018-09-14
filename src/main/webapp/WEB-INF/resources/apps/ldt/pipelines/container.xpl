@@ -427,7 +427,11 @@
 									<xsl:variable name="query5" select="replace($query4,'@STAGE@',/root/context/back-of-stage)"/>
 									<xsl:variable name="query6" select="replace($query5,'@TIMESTAMP@',/root/context/timestamp)"/>
 									<xsl:variable name="query7" select="replace($query6,'@DATE@',/root/context/date)"/>
-									<postquery><xsl:value-of select="normalize-space(translate(replace($query7,'@SUBJECT@',/root/context/subject),$returns,$noreturns))"/></postquery>
+                  <xsl:variable name="endpoint">
+                    <xsl:value-of select="elmo:endpoint/@rdf:resource"/>
+                    <xsl:if test="not(elmo:endpoint/@rdf:resource!='')"><xsl:value-of select="/root/context/local-endpoint"/></xsl:if>
+                  </xsl:variable>
+									<postquery endpoint="{$endpoint}"><xsl:value-of select="normalize-space(translate(replace($query7,'@SUBJECT@',/root/context/subject),$returns,$noreturns))"/></postquery>
 									<xsl:choose>
 										<xsl:when test="elmo:representation/@rdf:resource='http://bp4mc2.org/elmo/def#UploadRepresentation' and not(rdf:type/@rdf:resource='http://bp4mc2.org/elmo/def#VersionContainer')">
 											<fetchquery>CONSTRUCT {?x?x?x} WHERE {?x?x?x}</fetchquery>
@@ -901,7 +905,6 @@
 										<cgraph><xsl:value-of select="container/version-url"/></cgraph> <!-- Version-url is same as url for normal containers -->
 										<pgraph><xsl:value-of select="container/url"/></pgraph>
 										<tgraph><xsl:value-of select="container/target-graph"/></tgraph>
-										<!--<postquery><xsl:value-of select="container/postquery"/></postquery>-->
 									</config>
 								</p:input>
 								<p:input name="data" href="#rdffilelist"/>
@@ -959,8 +962,8 @@
 									</p:processor>
 									<!-- Execute postquery, if any -->
 									<p:processor name="oxf:xforms-submission">
-										<p:input name="submission" transform="oxf:xslt" href="#context">
-											<xforms:submission method="get" xsl:version="2.0" action="{context/local-endpoint}">
+										<p:input name="submission" transform="oxf:xslt" href="#containercontext">
+											<xforms:submission method="get" xsl:version="2.0" action="{container/postquery/@endpoint}">
 												<xforms:header>
 													<xforms:name>Accept</xforms:name>
 													<xforms:value>application/sparql-results+xml</xforms:value>
