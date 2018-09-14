@@ -317,7 +317,7 @@
 		<p:input name="validity" href="#context#xpointer(context/querycache/validity)"/>
 		<p:output name="data" id="defquerycache"/>
 	</p:processor>
-	
+
 	<!-- Query from graph representation -->
 	<p:processor name="oxf:xslt">
 		<p:input name="data" href="aggregate('root',#defquerycache,#context)"/>
@@ -746,7 +746,7 @@
 		<p:input name="validity" href="#context#xpointer(context/cache/validity)"/>
 		<p:output name="data" id="cache"/>
 	</p:processor>
-	
+
 	<p:choose href="aggregate('root',#context,#cache)">
 		<!-- Check for errors -->
 		<p:when test="exists(root/results/parameters/error)">
@@ -1371,7 +1371,7 @@
 				<p:when test="context/format='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'">
 					<!-- Transform -->
 					<p:processor name="oxf:xslt">
-						<p:input name="data" href="#cache"/>
+						<p:input name="data" href="aggregate('root',#querytext,#cache)"/>
 						<p:input name="config" href="../transformations/rdf2xls.xsl"/>
 						<p:output name="data" id="xlsxml"/>
 					</p:processor>
@@ -1454,7 +1454,7 @@
 						<p:output name="data" id="fo"/>
 					</p:processor>
 					<!-- Create pdf -->
-					<p:processor name="oxf:xmlfo-processor">    
+					<p:processor name="oxf:xmlfo-processor">
 						<p:input name="config">
 							<config>
 								<content-type>application/pdf</content-type>

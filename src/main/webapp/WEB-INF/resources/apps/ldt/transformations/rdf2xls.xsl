@@ -25,7 +25,7 @@
 <!--
     DESCRIPTION
 	Transformation of rDF document to xlsx, using ExcelSerializer
-	
+
 -->
 <xsl:stylesheet version="2.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -36,11 +36,14 @@
 
 <xsl:template match="/">
 	<xsl:choose>
-		<xsl:when test="exists(results/rdf:RDF[1]/rdf:Description/@rdf:about)">
-			<xsl:apply-templates select="results/rdf:RDF[1]" mode="construct"/>
+		<xsl:when test="root/view/representation[1]/@appearance='http://bp4mc2.org/elmo/def#TableAppearance' and exists(root/results/rdf:RDF[1]/rdf:Description/@rdf:about)">
+			<xsl:apply-templates select="root/results/rdf:RDF[1]" mode="construct-table"/>
+		</xsl:when>
+		<xsl:when test="exists(root/results/rdf:RDF[1]/rdf:Description/@rdf:about)">
+			<xsl:apply-templates select="root/results/rdf:RDF[1]" mode="construct"/>
 		</xsl:when>
 		<xsl:otherwise>
-			<xsl:apply-templates select="results/rdf:RDF[1]" mode="select"/>
+			<xsl:apply-templates select="root/results/rdf:RDF[1]" mode="select"/>
 		</xsl:otherwise>
 	</xsl:choose>
 </xsl:template>
@@ -143,6 +146,37 @@
 				</xsl:for-each>
 			</sheet>
 		</xsl:for-each-group>
+	</workbook>
+</xsl:template>
+
+<!-- Construct query met een TableAppearance-->
+<xsl:template match="rdf:RDF" mode="construct-table">
+	<workbook>
+			<sheet name="results">
+				<xsl:variable name="columns">
+					<xsl:for-each-group select="rdf:Description[exists(@rdf:about)]/*" group-by="local-name()">
+						<xsl:variable name="label">
+							<xsl:value-of select="local-name()"/>
+						</xsl:variable>
+						<column name="{local-name()}" label="{$label}"/>
+					</xsl:for-each-group>
+				</xsl:variable>
+				<row>
+					<xsl:for-each select="$columns/column">
+						<column><xsl:value-of select="@label"/></column>
+					</xsl:for-each>
+				</row>
+				<xsl:for-each-group select="rdf:Description" group-by="@rdf:about">
+					<row>
+						<xsl:variable name="group" select="current-group()"/>
+						<xsl:for-each select="$columns/column">
+							<xsl:variable name="column" select="@name"/>
+							<xsl:variable name="cellnodes" select="$group/*[local-name()=$column]"/>
+							<column><xsl:value-of select="$group/*[local-name()=$column]"/></column>
+						</xsl:for-each>
+					</row>
+				</xsl:for-each-group>
+			</sheet>
 	</workbook>
 </xsl:template>
 
