@@ -27,7 +27,7 @@
     Templating: replaces @..@ in the query with the values of parameters from the URL (context)
 
 	This stylesheet is used by query.xpl, container.xpl (for postquery and assertions) and production.xpl
-	
+
 -->
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="no"/>
@@ -61,6 +61,13 @@
 					<xsl:value-of select="/root/assert"/> <!-- In case of assertion -->
 				</xsl:if>
 			</xsl:variable>
+			<!-- Find out the type of query: SPARUL update or SPARQL query -->
+			<xsl:variable name="querytype">
+				<xsl:choose>
+					<xsl:when test="/root/container/postquery!=''">update</xsl:when>
+					<xsl:otherwise>query</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
 			<xsl:variable name="query2" select="replace($query1,'@LANGUAGE@',/root/context/language)"/>
 			<xsl:variable name="query3" select="replace($query2,'@USER@',/root/context/user)"/>
 			<xsl:variable name="query4" select="replace($query3,'@CURRENTMOMENT@',string(current-dateTime()))"/>
@@ -70,9 +77,11 @@
 			<xsl:variable name="query8" select="replace($query7,'@DATE@',/root/context/date)"/>
 			<xsl:variable name="query9" select="replace($query8,'@DOCSUBJECT@',/root/context/docsubject)"/>
 			<xsl:variable name="query10" select="replace($query9,'@IDSUBJECT@',/root/context/idsubject)"/>
-			<query><xsl:value-of select="replace($query10,'@SUBJECT@',/root/context/subject)"/></query>
+			<xsl:element name="{$querytype}">
+				<xsl:value-of select="replace($query10,'@SUBJECT@',/root/context/subject)"/>
+			</xsl:element>
 			<default-graph-uri />
-			<error type=""/>
+			<error type="" status=""/>
 		</parameters>
 	</xsl:template>
 </xsl:stylesheet>

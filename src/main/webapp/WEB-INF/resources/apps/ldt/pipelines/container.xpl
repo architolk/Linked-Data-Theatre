@@ -963,12 +963,13 @@
 									<!-- Execute postquery, if any -->
 									<p:processor name="oxf:xforms-submission">
 										<p:input name="submission" transform="oxf:xslt" href="#containercontext">
-											<xforms:submission method="get" xsl:version="2.0" action="{container/postquery/@endpoint}">
+											<xforms:submission method="post" xsl:version="2.0" action="{container/postquery/@endpoint}" serialization="application/x-www-form-urlencoded">
 												<xforms:header>
 													<xforms:name>Accept</xforms:name>
 													<xforms:value>application/sparql-results+xml</xforms:value>
 												</xforms:header>
 												<xforms:setvalue ev:event="xforms-submit-error" ref="error" value="event('response-body')"/>
+                        <xforms:setvalue ev:event="xforms-submit-error" ref="error/@status" value="event('response-status-code')"/>
 												<xforms:setvalue ev:event="xforms-submit-error" ref="error/@type" value="event('error-type')"/>
 											</xforms:submission>
 										</p:input>
@@ -983,8 +984,8 @@
 												<xsl:for-each select="root/sparql:sparql/sparql:results/sparql:result">
 													<scene><xsl:value-of select="sparql:binding/sparql:literal"/></scene>
 												</xsl:for-each>
-												<xsl:if test="exists(root/response/error) or exists(root/parameters/error)">
-													<error>
+												<xsl:if test="exists(root/response/error) or (exists(root/parameters/error) and not(root/parameters/error/@status='200'))">
+													<error status="{root/parameters/error/@status}">
 														<xsl:value-of select="root/response/error"/>
 														<xsl:value-of select="root/parameters/error"/>
 													</error>
