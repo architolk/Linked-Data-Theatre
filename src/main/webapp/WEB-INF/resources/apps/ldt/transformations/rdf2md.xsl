@@ -25,7 +25,7 @@
 <!--
     DESCRIPTION
     Transformation of RDF document to md format
-	
+
 -->
 <xsl:stylesheet version="2.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -49,19 +49,27 @@
 </xsl:template>
 
 <xsl:template match="rdf:Description" mode="iteratelist">
+	<xsl:param name="level">0</xsl:param>
+
 	<xsl:if test="rdf:first/text()!=''">
 		<xsl:value-of select="rdf:first/text()"/><xsl:text>
 
 </xsl:text>
 	</xsl:if>
-	<xsl:for-each select="rdf:first/rdf:Description">
+	<xsl:variable name="firsturi" select="rdf:first/@rdf:resource"/>
+	<xsl:for-each select="rdf:first/rdf:Description|/results/rdf:RDF[1]/rdf:Description[@rdf:about=$firsturi]">
 		<xsl:if test="exists(elmo:md)">
 			<xsl:value-of select="elmo:md"/><xsl:text>
 
 </xsl:text>
 		</xsl:if>
-		<xsl:if test="html:img">
+		<xsl:if test="html:img!=''">
 			<xsl:text>![](</xsl:text><xsl:value-of select="html:img"/><xsl:text>)
+
+</xsl:text>
+		</xsl:if>
+		<xsl:if test="html:heading!=''">
+			<xsl:value-of select="substring('#####',1,1+$level)"/><xsl:value-of select="html:heading"/><xsl:text>
 
 </xsl:text>
 		</xsl:if>
@@ -70,7 +78,14 @@
 			<xsl:apply-templates select="/results/rdf:RDF[@elmo:query=$query]" mode="present"/>
 		</xsl:if>
 	</xsl:for-each>
-	<xsl:apply-templates select="rdf:rest/rdf:Description" mode="iteratelist"/>
+	<xsl:apply-templates select="rdf:rest/rdf:Description" mode="iteratelist">
+		<xsl:with-param name="level">
+			<xsl:choose>
+				<xsl:when test="exists(rdf:first/rdf:Description/html:heading)"><xsl:value-of select="1+$level"/></xsl:when>
+				<xsl:otherwise><xsl:value-of select="$level"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:with-param>
+	</xsl:apply-templates>
 </xsl:template>
 
 <!--
@@ -138,11 +153,11 @@
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#ModelAppearance'">
 			<xsl:apply-templates select="." mode="ModelAppearance"/>
 		</xsl:when>
-		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#MarkdownAppearance'">		
-			<xsl:apply-templates select="." mode="MarkdownAppearance"/>		
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#MarkdownAppearance'">
+			<xsl:apply-templates select="." mode="MarkdownAppearance"/>
 		</xsl:when>
-		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#TurtleAppearance'">		
-			<xsl:apply-templates select="." mode="TurtleAppearance"/>		
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#TurtleAppearance'">
+			<xsl:apply-templates select="." mode="TurtleAppearance"/>
 		</xsl:when>
 		<xsl:otherwise>
 			<!-- No, or an unknown appearance, use the data to select a suitable appearance -->
@@ -310,7 +325,7 @@
 		<xsl:text>
 
 </xsl:text>
-	</xsl:if>	
+	</xsl:if>
 	<!--Text -->
 	<!-- HTML as part of a construct query -->
 	<xsl:for-each select="rdf:Description/elmo:md">
