@@ -245,6 +245,7 @@
 	<xsl:variable name="all-metadata">
 		<xsl:for-each-group select="rdf:Description[rdf:type/@rdf:resource='http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement']" group-by="@rdf:about">
 			<statement subject="{rdf:subject/@rdf:resource}" predicate="{rdf:predicate/@rdf:resource}" object="{rdf:object/@rdf:resource}">
+				<xsl:copy-of select="current-group()/(* except (rdf:subject|rdf:predicate|rdf:object|rdf:type))"/>
 			</statement>
 		</xsl:for-each-group>
 		<xsl:for-each-group select="rdf:Description[exists(yed:path)]" group-by="@rdf:about">

@@ -208,7 +208,7 @@
 			<xsl:variable name="linestyle">
 				<xsl:choose>
 						<xsl:when test="exists(../statement)">
-							<color>#FF0000</color>
+							<color><xsl:value-of select="../statement/yed:color"/></color>
 							<width>3.0</width>
 						</xsl:when>
 						<xsl:otherwise>
