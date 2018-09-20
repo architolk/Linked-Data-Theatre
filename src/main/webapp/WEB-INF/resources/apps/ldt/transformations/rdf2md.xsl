@@ -69,7 +69,8 @@
 </xsl:text>
 		</xsl:if>
 		<xsl:if test="html:heading!=''">
-			<xsl:value-of select="substring('#####',1,1+$level)"/><xsl:value-of select="html:heading"/><xsl:text>
+			<xsl:value-of select="substring('#####',1,1+$level)"/><xsl:text> </xsl:text>
+			<xsl:value-of select="html:heading"/><xsl:text>
 
 </xsl:text>
 		</xsl:if>
@@ -352,15 +353,6 @@
 </xsl:template>
 
 <xsl:template match="rdf:Description" mode="PropertyTable">
-	<!-- Titel -->
-	<xsl:text># </xsl:text>
-	<xsl:value-of select="../@elmo:label"/>
-	<xsl:choose>
-		<xsl:when test="exists(rdfs:label)"><xsl:value-of select="rdfs:label"/></xsl:when>
-		<xsl:otherwise><xsl:value-of select="@rdf:about"/></xsl:otherwise>
-	</xsl:choose><xsl:text>
-
-</xsl:text>
 	<!-- Content -->
 	<xsl:text>|Eigenschap|Waarde
 </xsl:text>
@@ -376,14 +368,16 @@
 				<xsl:otherwise>
 					<!-- Nested resources sorteren -->
 					<xsl:for-each select="current-group()"><xsl:sort select="rdf:Description/@rdf:about"/>
-						<xsl:apply-templates select="." mode="object"/><xsl:text>
-</xsl:text>
+						<xsl:if test="position()!=1">, </xsl:if>
+						<xsl:apply-templates select="." mode="object"/>
 					</xsl:for-each>
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:if><xsl:text>
 </xsl:text>
 	</xsl:for-each-group>
+	<xsl:text>
+</xsl:text>
 </xsl:template>
 
 <xsl:template match="*" mode="object">
@@ -395,10 +389,12 @@
 		</xsl:when>
 		<!-- Reference to another resource, without a label -->
 		<xsl:when test="exists(@rdf:resource)">
+			<xsl:text>[</xsl:text>
 			<xsl:choose>
 				<xsl:when test="@rdfs:label!=''"><xsl:value-of select="@rdfs:label"/></xsl:when>
 				<xsl:otherwise><xsl:value-of select="@rdf:resource"/></xsl:otherwise>
 			</xsl:choose>
+			<xsl:text>](</xsl:text><xsl:value-of select="@rdf:resource"/><xsl:text>)</xsl:text>
 		</xsl:when>
 		<!-- Reference to another resource, nested -->
 		<xsl:when test="exists(rdf:Description/@rdf:about) and @elmo:appearance='http://bp4mc2.org/elmo/def#NestedAppearance'">
@@ -420,10 +416,12 @@
 		</xsl:when>
 		<!-- Reference to another resource, with a label -->
 		<xsl:when test="exists(rdf:Description/@rdf:about)">
+			<xsl:text>[</xsl:text>
 			<xsl:choose>
 				<xsl:when test="rdf:Description/rdfs:label!=''"><xsl:value-of select="rdf:Description/rdfs:label"/></xsl:when>
 				<xsl:otherwise><xsl:value-of select="rdf:Description/@rdf:about"/></xsl:otherwise>
 			</xsl:choose>
+			<xsl:text>](</xsl:text><xsl:value-of select="rdf:Description/@rdf:about"/><xsl:text>)</xsl:text>
 		</xsl:when>
 		<!-- Blank node (list) -->
 		<xsl:when test="exists(rdf:Description/rdf:first)">
