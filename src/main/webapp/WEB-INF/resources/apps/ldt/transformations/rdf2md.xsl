@@ -76,7 +76,13 @@
 		</xsl:if>
 		<xsl:if test="exists(elmo:contains)">
 			<xsl:variable name="query" select="elmo:contains/@rdf:resource"/>
-			<xsl:apply-templates select="/results/rdf:RDF[@elmo:query=$query]" mode="present"/>
+			<xsl:variable name="subject">
+					<xsl:value-of select="elmo:subject/@rdf:resource"/>
+					<xsl:value-of select="elmo:subject/rdf:Description/@rdf:about"/>
+			</xsl:variable>
+			<xsl:apply-templates select="/results/rdf:RDF[@elmo:query=$query]" mode="present">
+					<xsl:with-param name="subject" select="$subject"/>
+			</xsl:apply-templates>
 		</xsl:if>
 	</xsl:for-each>
 	<xsl:apply-templates select="rdf:rest/rdf:Description" mode="iteratelist">
@@ -100,6 +106,7 @@
 -->
 
 <xsl:template match="rdf:RDF" mode="present">
+	<xsl:param name="subject"/>
 	<xsl:choose>
 		<!-- Appearances that should not be in a md serialization -->
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance'"/>
@@ -162,7 +169,9 @@
 		</xsl:when>
 		<xsl:otherwise>
 			<!-- No, or an unknown appearance, use the data to select a suitable appearance -->
-			<xsl:apply-templates select="." mode="ContentAppearance"/>
+			<xsl:apply-templates select="." mode="ContentAppearance">
+				<xsl:with-param name="subject" select="$subject"/>
+			</xsl:apply-templates>
 		</xsl:otherwise>
 	</xsl:choose><xsl:text>
 </xsl:text>
@@ -341,12 +350,16 @@
 </xsl:template>
 
 <xsl:template match="rdf:RDF" mode="ContentAppearance">
+	<xsl:param name="subject"/>
 	<!-- A construct query will have @rdf:about elements -->
 	<xsl:if test="exists(rdf:Description/@rdf:about)">
 		<xsl:for-each select="rdf:Description">
-			<!-- Don't show already nested resources -->
-			<xsl:if test="not(exists(key('nested',@rdf:about)))">
-				<xsl:apply-templates select="." mode="PropertyTable"/>
+			<!-- Only show resources that are subject -->
+			<xsl:if test="not($subject!='') or elmo:subject/@rdf:resource=$subject or elmo:subject/rdf:Description/@rdf:about=$subject">
+				<!-- Don't show already nested resources -->
+				<xsl:if test="not(exists(key('nested',@rdf:about)))">
+					<xsl:apply-templates select="." mode="PropertyTable"/>
+				</xsl:if>
 			</xsl:if>
 		</xsl:for-each>
 	</xsl:if>
@@ -372,9 +385,9 @@
 						<xsl:apply-templates select="." mode="object"/>
 					</xsl:for-each>
 				</xsl:otherwise>
-			</xsl:choose>
-		</xsl:if><xsl:text>
+			</xsl:choose><xsl:text>
 </xsl:text>
+		</xsl:if>
 	</xsl:for-each-group>
 	<xsl:text>
 </xsl:text>
