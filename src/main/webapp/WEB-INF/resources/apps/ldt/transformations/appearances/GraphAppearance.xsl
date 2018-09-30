@@ -82,11 +82,19 @@
 			}
 		</xsl:for-each>
 	</style>
+	<xsl:variable name="link"><xsl:value-of select="rdf:Description[elmo:applies-to='http://bp4mc2.org/elmo/def#Appearance']/html:link[1]"/></xsl:variable>
+	<xsl:variable name="jsonApiCall">
+		<xsl:choose>
+			<xsl:when test="$link!='' and substring($link,1,1)='/'"><xsl:value-of select="$link"/>?</xsl:when>
+			<xsl:when test="$link!='' and not(substring($link,1,1)='/')"><xsl:value-of select="$subdomain"/><xsl:value-of select="$link"/>?</xsl:when>
+			<xsl:otherwise><xsl:value-of select="$subdomain"/>/resource?representation=<xsl:value-of select="encode-for-uri(@elmo:query)"/>&amp;</xsl:otherwise>
+		</xsl:choose>
+	</xsl:variable>
 	<xsl:variable name="jsonParams"><xsl:for-each select="/results/context/parameters/parameter"><xsl:value-of select="name"/>=<xsl:value-of select="encode-for-uri(value)"/>&amp;</xsl:for-each></xsl:variable>
 	<!-- TODO: jsonApiCall is changed to resource? instead of resource.d3json? -> This means that de javascript should use regular JSON-LD! -->
 	<script type="text/javascript">
 		var jsonApiSubject = "<xsl:value-of select="/results/context/subject"/>";
-		var jsonApiCall = "<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource?representation=<xsl:value-of select="encode-for-uri(@elmo:query)"/>&amp;date=<xsl:value-of select="/results/context/date"/>&amp;<xsl:value-of select="$jsonParams"/>subject=";
+		var jsonApiCall = "<xsl:value-of select="$docroot"/><xsl:value-of select="$jsonApiCall"/>date=<xsl:value-of select="/results/context/date"/>&amp;<xsl:value-of select="$jsonParams"/>subject=";
 		var uriEndpoint = "<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource?<xsl:value-of select="$jsonParams"/>subject=";
 	</script>
 	<script src="{$staticroot}/js/jsonld.min.js" type="text/javascript"/>
