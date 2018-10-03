@@ -26,20 +26,20 @@
     DESCRIPTION
 	Generic translator for excel files.
 	Translates a excel file to the W3C recommendation for tabular data on the web (http://www.w3.org/TR/csv2rdf)
-	
+
 -->
-<xsl:stylesheet version="2.0" 
+<xsl:stylesheet version="2.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 	xmlns:csvw="http://www.w3.org/ns/csvw#"
-	
+
 	xmlns:fn="fn" exclude-result-prefixes="fn"
 >
-	
+
 	<xsl:function name="fn:qname">
 		<xsl:param name="name"/>
 		<xsl:param name="alt"/>
-		
+
 		<xsl:variable name="uname">
 			<xsl:choose>
 				<xsl:when test="$name!=''"><xsl:value-of select="$name"/></xsl:when>
@@ -58,16 +58,17 @@
 			<xsl:for-each select="root/workbook">
 				<csvw:TableGroup rdf:about="{$container}/workbook">
 					<xsl:for-each select="sheet">
+						<xsl:variable name="sheetnr" select="position()"/>
 						<csvw:table>
 							<csvw:Table rdf:about="{$container}/s{fn:qname(@name,concat('',position()))}">
 								<xsl:variable name="head" select="row[1]"/>
 								<xsl:for-each select="row[position()&gt;1]">
 									<xsl:variable name="pos" select="@id"/>
 									<csvw:row>
-										<csvw:Row rdf:about="{$container}/r{$pos}">
+										<csvw:Row rdf:about="{$container}/r{$sheetnr}-{$pos}">
 											<csvw:rownum rdf:datatype="http://www.w3.org/2001/XMLSchema#integer"><xsl:value-of select="$pos"/></csvw:rownum>
 											<csvw:describes>
-												<rdf:Description rdf:about="{$container}/r{$pos}s">
+												<rdf:Description rdf:about="{$container}/r{$sheetnr}-{$pos}s">
 													<xsl:for-each select="column">
 														<xsl:variable name="id" select="@id"/>
 														<xsl:if test=".!=''">

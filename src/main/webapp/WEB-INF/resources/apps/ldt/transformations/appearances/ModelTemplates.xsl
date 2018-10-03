@@ -494,8 +494,15 @@
 					</xsl:choose>
 				</xsl:attribute>
 				<!-- Check if the shape is actually a enumeration -->
-				<xsl:variable name="property" select="current-group()/sh:property[1]/(@rdf:resource|@rdf:nodeID)"/>
-				<xsl:variable name="predicate" select="$all-property-shapes/propertyShape[@uri=$property]"/>
+				<xsl:variable name="predicate">
+					<xsl:for-each select="current-group()/sh:property">
+						<xsl:variable name="property1" select="(@rdf:resource|@rdf:nodeID)"/>
+						<xsl:variable name="predicate1" select="$all-property-shapes/propertyShape[@uri=$property1]"/>
+						<xsl:if test="exists($predicate1/enumeration)">
+							<xsl:copy-of select="$predicate1/*"/>
+						</xsl:if>
+					</xsl:for-each>
+				</xsl:variable>
 				<xsl:choose>
 					<xsl:when test="$predicate/enumeration/@uri!=''">
 						<xsl:variable name="enumeration" select="$predicate/enumeration/@uri"/>
@@ -508,6 +515,21 @@
 							<xsl:for-each select="../../rdf:Description[@rdf:about=$member]"><xsl:sort select="rdfs:label"/>
 								<enumvalue name="{rdfs:label}" uri="{@rdf:about}"/>
 							</xsl:for-each>
+						</xsl:for-each>
+						<!-- Enumeration might have properties, but only roles for now! -->
+						<xsl:for-each select="current-group()/sh:property">
+							<xsl:variable name="property" select="@rdf:resource|@rdf:nodeID"/>
+							<xsl:variable name="predicate" select="$all-property-shapes/propertyShape[@uri=$property]"/>
+							<xsl:if test="exists($predicate/role)">
+								<xsl:apply-templates select="current-group()/sh:property" mode="parse-property">
+									<xsl:with-param name="class" select="$class"/>
+									<xsl:with-param name="real-class" select="$real-class"/>
+									<xsl:with-param name="shape" select="$shape"/>
+									<xsl:with-param name="roles" select="$roles"/>
+									<xsl:with-param name="all-property-shapes" select="$all-property-shapes"/>
+									<xsl:with-param name="all-metadata" select="$all-metadata"/>
+								</xsl:apply-templates>
+							</xsl:if>
 						</xsl:for-each>
 					</xsl:when>
 					<xsl:when test="$predicate/enumeration/item[1]/@uri!=''">
