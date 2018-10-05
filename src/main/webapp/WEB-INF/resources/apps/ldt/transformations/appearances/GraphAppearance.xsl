@@ -96,6 +96,12 @@
 		var jsonApiSubject = "<xsl:value-of select="/results/context/subject"/>";
 		var jsonApiCall = "<xsl:value-of select="$docroot"/><xsl:value-of select="$jsonApiCall"/>date=<xsl:value-of select="/results/context/date"/>&amp;<xsl:value-of select="$jsonParams"/>subject=";
 		var uriEndpoint = "<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource?<xsl:value-of select="$jsonParams"/>subject=";
+		var fragments = {
+			<xsl:for-each select="rdf:Description[elmo:applies-to!='' and (rdfs:label!='' or elmo:appearance/@rdf:resource!='')]">
+				<xsl:if test="position()!=1">,</xsl:if>
+				"<xsl:value-of select="elmo:applies-to"/>": {"label": "<xsl:value-of select="rdfs:label"/>", "index": "<xsl:value-of select="elmo:index"/>"}
+			</xsl:for-each>
+		}
 	</script>
 	<script src="{$staticroot}/js/jsonld.min.js" type="text/javascript"/>
 	<script src="{$staticroot}/js/d3graphs-inner.min.js" type="text/javascript"/>
