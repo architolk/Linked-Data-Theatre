@@ -253,7 +253,6 @@ function addNode(resource,x,y) {
         ,"elementType": "rect"
         };
     if (resource[htmlImage]) {
-      node.label = "";
       node.img = resource[htmlImage][0]["@value"];
       node.elementType = "image";
     }
@@ -501,14 +500,19 @@ function update() {
 		.on("mouseout",mouseoutNode)
 		.call(node_drag);
 
-	newNodes.append("text")
+  newNodes.append("text")
 		.attr("dx", 0)
-		.attr("dy", 0)
+		.attr("dy", function(d) {return d.elementType==="image" ? 40 : 0})
 		.attr("text-anchor", "middle")
 		.attr("class","node-text")
 		.text(function(d) { return d.aggregateNode ? d.count : d.label })
-		.each(function(d) {d.rect = this.getBBox();	});
+		.each(function(d) {d.rect = this.getBBox();	d.rect.y = d.rect.y - (d.elementType==="image" ? 40 : 0);});
 
+  newNodes.filter(function(d) {return d.elementType==="image"}).append("circle")
+    .attr("cx", function(d) { return d.rect.x+d.rect.width/2})
+    .attr("cy", function(d) { return d.rect.y+d.rect.height/2+4})
+    .attr("r", function(d) { return 30 })
+    .attr("class", function(d) { return (d["class"] ? "s"+d["class"] : "default") });
   newNodes.filter(function(d) {return d.elementType==="image"}).append("defs").append("pattern")
     .attr("id", function(d) { return "image"})
     .attr("x", "0%")
@@ -523,8 +527,8 @@ function update() {
       .attr("height","100")
       .attr("xlink:href", function(d) { return d.img});
   newNodes.filter(function(d) {return d.elementType==="image"}).append("circle")
-    .attr("cx", function(d) { return d.rect.x})
-    .attr("cy", function(d) { return d.rect.y})
+    .attr("cx", function(d) { return d.rect.x+d.rect.width/2})
+    .attr("cy", function(d) { return d.rect.y+d.rect.height/2+4})
     .attr("r", function(d) { return 25 })
     .attr("fill", "url(#image)")
     .each(function(d) {d.arect = this;});
@@ -649,13 +653,13 @@ function tick(e) {
 
       if (d.target.elementType==="image") {
           var pl = Math.sqrt((ddx*ddx)+(ddy*ddy)),
-          rad = 25;
+          rad = 30;
           xt = d.target.x+((ddx*rad)/pl);
           yt = d.target.y+((ddy*rad)/pl);
       }
       if (d.source.elementType==="image") {
           var pl = Math.sqrt((ddx*ddx)+(ddy*ddy)),
-          rad = 25;
+          rad = 30;
           xs = d.source.x-((ddx*rad)/pl);
           ys = d.source.y-((ddy*rad)/pl);
       }
