@@ -514,7 +514,7 @@ function update() {
     .attr("r", function(d) { return 30 })
     .attr("class", function(d) { return (d["class"] ? "s"+d["class"] : "default") });
   newNodes.filter(function(d) {return d.elementType==="image"}).append("defs").append("pattern")
-    .attr("id", function(d) { return "image"})
+    .attr("id", function(d) { return "pattern_" + d["@id"]})
     .attr("x", "0%")
     .attr("y", "0%")
     .attr("viewBox","0 0 100 100")
@@ -530,7 +530,7 @@ function update() {
     .attr("cx", function(d) { return d.rect.x+d.rect.width/2})
     .attr("cy", function(d) { return d.rect.y+d.rect.height/2+4})
     .attr("r", function(d) { return 25 })
-    .attr("fill", "url(#image)")
+    .attr("fill", function(d) {return "url(#pattern_"+d["@id"]+")"})
     .each(function(d) {d.arect = this;});
 
 	newNodes.filter(function(d) {return d.elementType==="rect"}).append("rect")
