@@ -84,6 +84,9 @@
 					<xsl:with-param name="subject" select="$subject"/>
 			</xsl:apply-templates>
 		</xsl:if>
+		<xsl:apply-templates select="dcterms:hasPart/rdf:Description" mode="iteratelist">
+			<xsl:with-param name="level" select="$level"/>
+		</xsl:apply-templates>
 	</xsl:for-each>
 	<xsl:apply-templates select="rdf:rest/rdf:Description" mode="iteratelist">
 		<xsl:with-param name="level">
