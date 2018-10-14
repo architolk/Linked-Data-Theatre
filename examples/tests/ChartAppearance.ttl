@@ -27,6 +27,14 @@ stage:LineChartAppearance a elmo:Representation;
 	elmo:appearance elmo:LineChartAppearance;
 	elmo:query stage:chartAppearanceQuery
 .
+stage:ScatterPlotChartAppearance a elmo:Representation;
+	elmo:url-pattern "/query/ScatterPlotChartAppearance";
+	elmo:index "1";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:ScatterPlotChartAppearance;
+	elmo:query stage:chartAppearanceQuery
+.
 
 stage:chartAppearanceQuery a elmo:Query;
 	rdfs:label "Max 30 classes with number of instances";

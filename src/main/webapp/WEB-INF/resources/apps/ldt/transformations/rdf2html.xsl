@@ -518,7 +518,7 @@
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#ImageAppearance'">
 			<xsl:apply-templates select="." mode="GeoAppearance"><xsl:with-param name="backmap">image</xsl:with-param><xsl:with-param name="appearance">ImageAppearance</xsl:with-param></xsl:apply-templates>
 		</xsl:when>
-		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#ChartAppearance' or @elmo:appearance='http://bp4mc2.org/elmo/def#BarChartAppearance' or @elmo:appearance='http://bp4mc2.org/elmo/def#LineChartAppearance'">
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#ChartAppearance' or @elmo:appearance='http://bp4mc2.org/elmo/def#BarChartAppearance' or @elmo:appearance='http://bp4mc2.org/elmo/def#LineChartAppearance' or @elmo:appearance='http://bp4mc2.org/elmo/def#ScatterPlotChartAppearance'">
 			<xsl:apply-templates select="." mode="ChartAppearance"/>
 		</xsl:when>
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#CesiumAppearance'">
