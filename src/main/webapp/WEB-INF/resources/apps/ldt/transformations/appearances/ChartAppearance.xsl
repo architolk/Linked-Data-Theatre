@@ -25,11 +25,11 @@
 <!--
     DESCRIPTION
 	ChartAppearance, add-on of rdf2html.xsl
-	
+
 	Show linked data as a Chart.
-	
+
 	TODO: Chart appearance now uses rdfs:label (X axes) and rdf:value (Y axes). Should probably use datacube ontology.
-	
+
 -->
 <xsl:stylesheet version="2.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -77,7 +77,7 @@
 
 		x.domain(data.map(function (d) {return d.name;}));
 		y.domain([0,d3.max(data, function (d) {return d.value;})]);
-			
+
 		  chart.append("g")
 			  .attr("class", "x axis")
 			  .attr("transform", "translate(0," + height + ")")
@@ -86,15 +86,35 @@
 		  chart.append("g")
 			  .attr("class", "y axis")
 			  .call(yAxis);
+		<xsl:choose>
+			<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#LineChartAppearance'">
+				var line = d3.svg.line()
+											.x(function(d) {return x(d.name) + x.rangeBand()/2; })
+											.y(function(d) {return y(d.value)})
+											.interpolate("cardinal");
+				chart.append("path")
+					.attr("d", line(data))
+					.attr("class","line")
 
-		  chart.selectAll(".bar")
-			  .data(data)
-			.enter().append("rect")
-			  .attr("class", "bar")
-			  .attr("x", function(d) { return x(d.name); })
-			  .attr("y", function(d) { return y(d.value); })
-			  .attr("height", function(d) { return height - y(d.value); })
-			  .attr("width", x.rangeBand());
+				chart.selectAll(".bar")
+					.data(data)
+					.enter().append("circle")
+						.attr("class", "bar")
+						.attr("cx", function(d) { return x(d.name) + x.rangeBand()/2; })
+						.attr("cy", function(d) { return y(d.value); })
+						.attr("r", 5);
+			</xsl:when>
+			<xsl:otherwise>
+			  chart.selectAll(".bar")
+				  .data(data)
+				.enter().append("rect")
+				  .attr("class", "bar")
+				  .attr("x", function(d) { return x(d.name); })
+				  .attr("y", function(d) { return y(d.value); })
+				  .attr("height", function(d) { return height - y(d.value); })
+				  .attr("width", x.rangeBand());
+			</xsl:otherwise>
+		</xsl:choose>
 	</script>
 </xsl:template>
 

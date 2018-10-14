@@ -21,7 +21,7 @@
  * along with the Linked Data Theatre.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * DESCRIPTION 
+ * DESCRIPTION
  * CSS with styling for the Linked Data Theatre
  *
  **/
@@ -237,6 +237,11 @@ body {
 /*ChartAppearance styling*/
 #chart .bar {
   fill: steelblue;
+}
+#chart .line {
+  stroke-width: 2;
+  stroke: steelblue;
+  fill: none;
 }
 
 #chart .axis text {

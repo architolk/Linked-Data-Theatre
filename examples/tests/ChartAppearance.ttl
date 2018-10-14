@@ -11,6 +11,23 @@ stage:ChartAppearance a elmo:Representation;
 	elmo:appearance elmo:ChartAppearance;
 	elmo:query stage:chartAppearanceQuery
 .
+stage:BarChartAppearance a elmo:Representation;
+	elmo:url-pattern "/query/BarChartAppearance";
+	elmo:index "1";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:BarChartAppearance;
+	elmo:query stage:chartAppearanceQuery
+.
+stage:LineChartAppearance a elmo:Representation;
+	elmo:url-pattern "/query/LineChartAppearance";
+	elmo:index "1";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:LineChartAppearance;
+	elmo:query stage:chartAppearanceQuery
+.
+
 stage:chartAppearanceQuery a elmo:Query;
 	rdfs:label "Max 30 classes with number of instances";
 	elmo:query '''

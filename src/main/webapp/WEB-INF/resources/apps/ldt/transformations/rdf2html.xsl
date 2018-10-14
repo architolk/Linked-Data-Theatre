@@ -518,7 +518,7 @@
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#ImageAppearance'">
 			<xsl:apply-templates select="." mode="GeoAppearance"><xsl:with-param name="backmap">image</xsl:with-param><xsl:with-param name="appearance">ImageAppearance</xsl:with-param></xsl:apply-templates>
 		</xsl:when>
-		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#ChartAppearance'">
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#ChartAppearance' or @elmo:appearance='http://bp4mc2.org/elmo/def#BarChartAppearance' or @elmo:appearance='http://bp4mc2.org/elmo/def#LineChartAppearance'">
 			<xsl:apply-templates select="." mode="ChartAppearance"/>
 		</xsl:when>
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#CesiumAppearance'">
@@ -533,14 +533,14 @@
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#ModelAppearance'">
 			<xsl:apply-templates select="." mode="ModelAppearance"/>
 		</xsl:when>
-		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#MarkdownAppearance'">		
-			<xsl:apply-templates select="." mode="MarkdownAppearance"/>		
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#MarkdownAppearance'">
+			<xsl:apply-templates select="." mode="MarkdownAppearance"/>
 		</xsl:when>
-		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#TurtleAppearance'">		
-			<xsl:apply-templates select="." mode="TurtleAppearance"/>		
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#TurtleAppearance'">
+			<xsl:apply-templates select="." mode="TurtleAppearance"/>
 		</xsl:when>
-		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#EditorAppearance'">		
-			<xsl:apply-templates select="." mode="EditorAppearance"/>		
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#EditorAppearance'">
+			<xsl:apply-templates select="." mode="EditorAppearance"/>
 		</xsl:when>
 		<xsl:otherwise>
 			<!-- No, or an unknown appearance, use the data to select a suitable appearance -->
@@ -734,7 +734,7 @@
 		<xsl:if test="../context/subject!=''">&amp;subject=<xsl:value-of select="encode-for-uri(../context/subject)"/></xsl:if>
 		<xsl:text>&amp;format=</xsl:text>
 	</xsl:variable>
-	<!-- Unique number for this datatable -->		
+	<!-- Unique number for this datatable -->
 	<xsl:variable name="table-id" select="@elmo:index"/>
 	<!-- A select query will have @rdf:nodeID elements, with id 'rset' -->
 	<xsl:for-each select="rdf:Description[@rdf:nodeID='rset']">
@@ -987,7 +987,7 @@
 
 <xsl:template match="rdf:RDF" mode="NavbarSearchAppearance">
 	<xsl:param name="search"/>
-	
+
 	<nav class="navbar navbar-default">
 		<xsl:variable name="rootid"><xsl:apply-templates select="rdf:Description[1]" mode="findroot"/></xsl:variable>
 		<xsl:variable name="root" select="key('nav-bnode',$rootid)"/>
