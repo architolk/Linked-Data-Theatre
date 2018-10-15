@@ -75,23 +75,34 @@
 								<rdf:subject rdf:resource="{$subject-uri}"/>
 								<rdf:object rdf:resource="{$object-uri}"/>
 								<xsl:if test="$uri!=''"><rdf:predicate rdf:resource="{$uri}"/></xsl:if>
-								<xsl:for-each select="graphml:data/y:PolyLineEdge/y:Path">
-									<yed:path>
-										<rdf:Description>
-											<yed:sx><xsl:value-of select="@sx"/></yed:sx>
-											<yed:sy><xsl:value-of select="@sy"/></yed:sy>
-											<yed:tx><xsl:value-of select="@tx"/></yed:tx>
-											<yed:ty><xsl:value-of select="@ty"/></yed:ty>
-											<xsl:if test="exists(y:Point)">
-												<yed:wkt>
-													<xsl:for-each select="y:Point">
-														<xsl:if test="position()!=1">,</xsl:if>
-														<xsl:value-of select="@x"/><xsl:text> </xsl:text><xsl:value-of select="@y"/>
-													</xsl:for-each>
-												</yed:wkt>
-											</xsl:if>
-										</rdf:Description>
-									</yed:path>
+								<xsl:for-each select="graphml:data/y:PolyLineEdge">
+									<xsl:for-each select="y:EdgeLabel[exists(@x)]/y:ModelParameter/y:SmartEdgeLabelModelParameter">
+										<yed:label>
+											<rdf:Description>
+												<yed:distance><xsl:value-of select="@distance"/></yed:distance>
+												<yed:ratio><xsl:value-of select="@ratio"/></yed:ratio>
+												<yed:segment><xsl:value-of select="@segment"/></yed:segment>
+											</rdf:Description>
+										</yed:label>
+									</xsl:for-each>
+									<xsl:for-each select="y:Path">
+										<yed:path>
+											<rdf:Description>
+												<yed:sx><xsl:value-of select="@sx"/></yed:sx>
+												<yed:sy><xsl:value-of select="@sy"/></yed:sy>
+												<yed:tx><xsl:value-of select="@tx"/></yed:tx>
+												<yed:ty><xsl:value-of select="@ty"/></yed:ty>
+												<xsl:if test="exists(y:Point)">
+													<yed:wkt>
+														<xsl:for-each select="y:Point">
+															<xsl:if test="position()!=1">,</xsl:if>
+															<xsl:value-of select="@x"/><xsl:text> </xsl:text><xsl:value-of select="@y"/>
+														</xsl:for-each>
+													</yed:wkt>
+												</xsl:if>
+											</rdf:Description>
+										</yed:path>
+									</xsl:for-each>
 								</xsl:for-each>
 							</rdf:Description>
 						</xsl:if>

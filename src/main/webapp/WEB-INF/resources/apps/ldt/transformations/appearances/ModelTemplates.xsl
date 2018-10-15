@@ -214,7 +214,7 @@
 						<xsl:if test="exists(@type)"><xsl:attribute name="type"><xsl:value-of select="@type"/></xsl:attribute></xsl:if>
 						<!-- Geometry -->
 						<xsl:variable name="refshape-uri" select="@uri"/>
-						<xsl:copy-of select="$all-metadata/geometry[@subject=$shape and @predicate=$predicate/@predicate and @object=$refshape-uri]/path"/>
+						<xsl:copy-of select="$all-metadata/geometry[@subject=$shape and @predicate=$predicate/@predicate and @object=$refshape-uri]/*"/>
 					</refshape>
 				</xsl:if>
 			</xsl:for-each-group>
@@ -226,12 +226,12 @@
 						<xsl:variable name="itemuri" select="@uri"/>
 						<item uri="{$itemuri}">
 							<!-- Geometry of item path -->
-							<xsl:copy-of select="$all-metadata/geometry[@subject=$logicuri and @object=$itemuri]/path"/>
+							<xsl:copy-of select="$all-metadata/geometry[@subject=$logicuri and @object=$itemuri]/*"/>
 						</item>
 					</xsl:for-each>
 					<xsl:copy-of select="geometry"/>
 					<!-- Geometry of path -->
-					<xsl:copy-of select="$all-metadata/geometry[@subject=$shape and @predicate=$predicate/@predicate and @object=$logicuri]/path"/>
+					<xsl:copy-of select="$all-metadata/geometry[@subject=$shape and @predicate=$predicate/@predicate and @object=$logicuri]/*"/>
 				</ref-nodes>
 			</xsl:for-each>
 			<!-- Metadata -->
@@ -250,6 +250,10 @@
 		</xsl:for-each-group>
 		<xsl:for-each-group select="rdf:Description[exists(yed:path)]" group-by="@rdf:about">
 			<geometry subject="{rdf:subject/@rdf:resource}" predicate="{rdf:predicate/@rdf:resource}" object="{rdf:object/@rdf:resource}">
+				<xsl:variable name="labelid" select="yed:label/@rdf:nodeID"/>
+				<xsl:for-each select="../rdf:Description[@rdf:nodeID=$labelid]">
+					<labelpos distance="{yed:distance}" ratio="{yed:ratio}" segment="{yed:segment}"/>
+				</xsl:for-each>
 				<xsl:variable name="pathid" select="yed:path/@rdf:nodeID"/>
 				<xsl:for-each select="../rdf:Description[@rdf:nodeID=$pathid]">
 					<path sx="{yed:sx}" sy="{yed:sy}" tx="{yed:tx}" ty="{yed:ty}">

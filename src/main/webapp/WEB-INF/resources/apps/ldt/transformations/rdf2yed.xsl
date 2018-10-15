@@ -252,7 +252,19 @@
 										<y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
 									</y:LabelModel>
 									<y:ModelParameter>
-										<y:SmartEdgeLabelModelParameter angle="0.0" distance="30.0" distanceToCenter="true" position="center" ratio="0.5" segment="0"/>
+										<xsl:variable name="label-distance">
+											<xsl:value-of select="labelpos/@distance"/>
+											<xsl:if test="not(labelpos/@distance!='')">30.0</xsl:if>
+										</xsl:variable>
+										<xsl:variable name="label-ratio">
+											<xsl:value-of select="labelpos/@ratio"/>
+											<xsl:if test="not(labelpos/@ratio!='')">0.5</xsl:if>
+										</xsl:variable>
+										<xsl:variable name="label-segment">
+											<xsl:value-of select="labelpos/@segment"/>
+											<xsl:if test="not(labelpos/@segment!='')">0</xsl:if>
+										</xsl:variable>
+										<y:SmartEdgeLabelModelParameter angle="0.0" distance="{$label-distance}" distanceToCenter="true" position="center" ratio="{$label-ratio}" segment="{$label-segment}"/>
 									</y:ModelParameter>
 									<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
 								</y:EdgeLabel>
