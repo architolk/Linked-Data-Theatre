@@ -132,6 +132,7 @@
 								<jsSourceFile>linkedmodel.js</jsSourceFile>
 								<jsSourceFile>rdfmap.js</jsSourceFile>
 								<jsSourceFile>ldt.js</jsSourceFile>
+								<jsSourceFile>chart.js</jsSourceFile>
 								<jsSourceFile>chosen.ajax.js</jsSourceFile>
 								<jsSourceFile>slick.ldt-grid.js</jsSourceFile>
 								<jsSourceFile>slick.ldt-remotemodel.js</jsSourceFile>
