@@ -25,9 +25,9 @@
 <!--
     DESCRIPTION
     Transformation of RDF document to a RDF document with mark-up annotations
-	
+
 	TODO: Transfer functionality to sparql2rdfa
-	
+
 -->
 <xsl:stylesheet version="2.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -46,14 +46,30 @@
 
 <xsl:template match="*" mode="property">
 	<xsl:param name="fragments"/>
-	
+
 	<xsl:element name="{name()}" namespace="{namespace-uri()}">
 		<!-- full uri of the property -->
 		<xsl:variable name="uri"><xsl:value-of select="namespace-uri()"/><xsl:value-of select="local-name()"/></xsl:variable>
 		<!-- Default fragment -->
 		<xsl:variable name="defaultFragment" select="$fragments[@applies-to='http://bp4mc2.org/elmo/def#Fragment']"/>
 		<!-- Find an applicable fragment -->
-		<xsl:variable name="fragment" select="$fragments[@applies-to=$uri]"/>
+		<xsl:variable name="keyfragments" select="$fragments[@applies-to=$uri]"/>
+		<xsl:variable name="nodeID" select="@rdf:nodeID"/>
+		<xsl:variable name="subfragment">
+			<xsl:for-each select="$keyfragments[exists(@filter-property)]">
+				<xsl:variable name="filter-property" select="@filter-property"/>
+				<xsl:variable name="filter-value" select="key('bnodes',$nodeID)/*[concat(namespace-uri(),local-name())=$filter-property]/(text()|@rdf:resource)"/>
+				<xsl:if test="@filter-value=$filter-value">
+					<xsl:copy-of select="*"/>
+				</xsl:if>
+			</xsl:for-each>
+		</xsl:variable>
+		<xsl:variable name="fragment">
+			<xsl:choose>
+				<xsl:when test="exists($subfragment/*)"><xsl:copy-of select="$subfragment[1]/*"/></xsl:when>
+				<xsl:otherwise><xsl:copy-of select="$keyfragments[not(exists(@filter-property))][1]/*"/></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
 		<!-- If the label of the property exists, include it (priority for a fragment, then the property-label in the query result -->
 		<xsl:variable name="plabels">
 			<xsl:choose>
@@ -86,6 +102,7 @@
 			<xsl:when test="exists($fragment)"/> <!-- Don't use default appearance if a fragment exists -->
 			<xsl:when test="$defaultFragment/elmo:appearance[1]/@rdf:resource!=''"><xsl:attribute name="elmo:appearance"><xsl:value-of select="$defaultFragment/elmo:appearance[1]/@rdf:resource"/></xsl:attribute></xsl:when>
 		</xsl:choose>
+		<xsl:if test="$fragment/elmo:select/@rdf:resource!=''"><xsl:attribute name="elmo:select"><xsl:value-of select="$fragment/elmo:select/@rdf:resource"/></xsl:attribute></xsl:if>
 		<xsl:if test="$fragment/elmo:appearance[1]/@rdf:resource!=''"><xsl:attribute name="elmo:appearance"><xsl:value-of select="$fragment/elmo:appearance[1]/@rdf:resource"/></xsl:attribute></xsl:if>
 		<xsl:if test="$fragment/html:link[1]!=''"><xsl:attribute name="elmo:link"><xsl:value-of select="$fragment/html:link[1]"/></xsl:attribute></xsl:if>
 		<xsl:if test="$fragment/elmo:index[1]!=''"><xsl:attribute name="elmo:index"><xsl:value-of select="$fragment/elmo:index[1]"/></xsl:attribute></xsl:if>
@@ -146,7 +163,7 @@
 				<xsl:choose>
 					<xsl:when test="exists(key('bnodes',@rdf:nodeID)/*)">
 						<rdf:Description rdf:nodeID="{@rdf:nodeID}">
-							<xsl:apply-templates select="key('bnodes',@rdf:nodeID)/*" mode="property">
+							<xsl:apply-templates select="key('bnodes',@rdf:nodeID)[1]/*" mode="property">
 								<xsl:with-param name="fragments" select="$fragments"/>
 							</xsl:apply-templates>
 						</rdf:Description>
@@ -165,7 +182,7 @@
 
 <xsl:template match="scene" mode="scene">
 	<xsl:param name="index"/>
-	
+
 	<rdf:Description rdf:about="{@uri}">
 		<elmo:index elmo:label="Step"><xsl:value-of select="$index"/></elmo:index>
 		<xsl:if test="exists(@label)"><rdfs:label elmo:label="Description"><xsl:value-of select="@label"/></rdfs:label></xsl:if>

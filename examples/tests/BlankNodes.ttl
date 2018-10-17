@@ -2,6 +2,7 @@
 @prefix elmo: <http://bp4mc2.org/elmo/def#>.
 @prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dbo: <http://dbpedia.org/ontology/>.
 
 stage:BlankNodes a elmo:Representation;
 	elmo:url-pattern "/query/BlankNodes$";
@@ -55,6 +56,12 @@ stage:BlankNodes_tab elmo:index "1";
 
 stage:BlankNodes_content a elmo:Part;
 	elmo:index "2";
+	elmo:fragment [
+		elmo:applies-to dbo:populationTotal;
+		elmo:select rdf:value;
+		rdfs:label "Populatie"@nl;
+		rdfs:label "Population"@en;
+	];
 	elmo:query '''
 		prefix testo: <http://localhost:8080/def/test#>
 		prefix dbo: <http://dbpedia.org/ontology/>

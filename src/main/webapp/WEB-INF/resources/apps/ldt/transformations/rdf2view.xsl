@@ -43,14 +43,20 @@
 
 <xsl:template match="elmo:fragment">
 	<xsl:if test="exists(@rdf:nodeID)">
-		<xsl:variable name="appliesTo" select="key('bnodes',@rdf:nodeID)/elmo:applies-to"/>
+		<xsl:variable name="fragment" select="key('bnodes',@rdf:nodeID)"/>
+		<xsl:variable name="appliesTo" select="$fragment/elmo:applies-to[not(exists(@rdf:nodeID))]"/>
 		<xsl:variable name="satisfied">
-			<xsl:for-each select="key('resources',key('bnodes',@rdf:nodeID)/elmo:valuesFrom/@rdf:resource)[elmo:with-parameter!=$appliesTo]">
+			<xsl:for-each select="key('resources',$fragment/elmo:valuesFrom/@rdf:resource)[elmo:with-parameter!=$appliesTo]">
 				<xsl:if test="not(exists(key('parameters',elmo:with-parameter)))">N</xsl:if>
 			</xsl:for-each>
 		</xsl:variable>
 		<fragment applies-to="{$appliesTo/@rdf:resource}{$appliesTo}" satisfied="{$satisfied}">
-			<xsl:copy-of select="key('bnodes',@rdf:nodeID)/(* except elmo:applies-to)"/>
+			<xsl:if test="$fragment/elmo:applies-to/@rdf:nodeID!=''">
+				<xsl:variable name="subfragment" select="key('bnodes',$fragment/elmo:applies-to/@rdf:nodeID)"/>
+				<xsl:attribute name="filter-property" select="concat($subfragment/*/namespace-uri(),$subfragment/*/local-name())"/>
+				<xsl:attribute name="filter-value" select="$subfragment/*[1]/(text()|@rdf:resource)"/>
+			</xsl:if>
+			<xsl:copy-of select="$fragment/(* except elmo:applies-to)"/>
 		</fragment>
 	</xsl:if>
 	<xsl:if test="exists(@rdf:resource)">

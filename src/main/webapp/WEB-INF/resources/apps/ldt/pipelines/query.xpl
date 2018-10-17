@@ -248,6 +248,7 @@
 										?repchild elmo:query ?querychild.
 										?formfragment ?formfragmentp ?formfragmento.
 										?form ?formp ?formo.
+                    ?fragmentblank ?fragmentblankp ?fragmentblanko.
 									}
 									WHERE {
 										GRAPH <]]><xsl:value-of select="root/context/representation-graph/@uri"/><![CDATA[>{
@@ -269,6 +270,7 @@
 												]]><xsl:value-of select="."/><![CDATA[ elmo:contains ?repchild.
 												?repchild ?repchildp ?repchildo.
 												OPTIONAL { ?repchild elmo:fragment ?fragmentchild. ?fragmentchild ?fragmentchildp ?fragmentchildo }
+                        OPTIONAL { ?repchild elmo:fragment/elmo:applies-to ?fragmentblank. ?fragmentblank ?fragmentblankp ?fragmentblanko}
 												OPTIONAL { ?repchild elmo:query/elmo:query ?querychild }
 											}
 											UNION

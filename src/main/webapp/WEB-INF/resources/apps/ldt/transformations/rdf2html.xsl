@@ -271,7 +271,14 @@
 				<xsl:apply-templates select="rdf:Description/rdf:rest" mode="object"/>
 			</xsl:if>
 		</xsl:when>
-		<!-- Blank node -->
+		<!-- Blank node, selection -->
+		<xsl:when test="exists(rdf:Description/@rdf:nodeID) and exists(@elmo:select)">
+			<xsl:variable name="select" select="@elmo:select"/>
+			<xsl:for-each select="rdf:Description/*[concat(namespace-uri(),local-name())=$select]">
+				<xsl:apply-templates select="." mode="object"/>
+			</xsl:for-each>
+		</xsl:when>
+		<!-- Blank node, no selection -->
 		<xsl:when test="exists(rdf:Description/@rdf:nodeID)">
 			<table>
 				<xsl:for-each-group select="rdf:Description/*" group-by="name()">
@@ -337,7 +344,7 @@
 		<div class="panel-body">
 			<table class="table table-striped table-bordered">
 				<tbody>
-				<xsl:for-each-group select="*" group-by="name()"><xsl:sort select="concat(@elmo:index,'~')"/><xsl:sort select="local-name()"/>
+				<xsl:for-each-group select="*" group-by="concat(name(),@elmo:index)"><xsl:sort select="concat(@elmo:index,'~')"/><xsl:sort select="local-name()"/>
 					<xsl:if test="not(@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance')">
 						<tr>
 							<td><xsl:apply-templates select="." mode="predicate"/></td>
