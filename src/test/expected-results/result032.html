@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><html lang="">
+<?xml version="1.0" encoding="utf-8"?><html lang="nl">
 <head>
 <meta charset="utf-8"></meta>
 <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
@@ -20,7 +20,9 @@
         src="/js/locales/bootstrap-datepicker.nl.min.js?version=0.0.0"></script>
 <script type="text/javascript" src="/js/d3.v3.min.js?version=0.0.0"></script>
 <script type="text/javascript" src="/js/ldt.min.js?version=0.0.0"></script>
-<script type="text/javascript">var elmo_language = {};</script>
+<script type="text/javascript">var elmo_language = {language:{info:"_START_ tot _END_ van _TOTAL_ resultaten",search:"Filter:",lengthMenu:"Toon _MENU_ rijen",zeroRecords:"Niets
+gevonden",infoEmpty: "Geen resultaten",paginate:{first:"Eerste",previous:"Vorige",next:"Volgende",last:"Laatste"}},paging:true,searching:true,info:true}
+</script>
 </head>
 <body>
 <div id="page">
@@ -63,6 +65,7 @@ soort. De andere twee velden zijn alleen voor dit voorbeeld en worden niet gebru
 <option value="http://localhost:8080/def/lotr#Hobbit" data-rdfvalue="">Hobbit</option>
 <option value="http://localhost:8080/def/lotr#Human" data-rdfvalue="">Human</option>
 <option value="http://localhost:8080/def/lotr#Mortal" data-rdfvalue="">Mortal</option>
+<option value="http://localhost:8080/def/lotr#Person" data-rdfvalue="">Persoon</option>
 <option value="http://localhost:8080/def/lotr#Wizard" data-rdfvalue="">Wizard</option>
 <option value="http://localhost:8080/def/test#UserStory" data-rdfvalue="">user story</option>
 </select>
@@ -90,7 +93,7 @@ soort. De andere twee velden zijn alleen voor dit voorbeeld en worden niet gebru
 <button id="btn1" type="submit" class="btn btn-primary pull-right">Zoeken</button>
 </div>
 </div>
-<script>$('.datepicker').datepicker({format: 'yyyy-mm-dd', todayHighlight: true, autoclose: true, language: ''});</script>
+<script>$('.datepicker').datepicker({format: 'yyyy-mm-dd', todayHighlight: true, autoclose: true, language: 'nl'});</script>
 </form>
 </div>
 </div>

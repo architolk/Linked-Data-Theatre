@@ -29,7 +29,7 @@
 	<!-- Set context for rdf4j server -->
 	<New id="context-rdf4j" class="org.eclipse.jetty.maven.plugin.JettyWebAppContext">
 		<Set name="contextPath">/</Set>
-		<Set name="war">rdf4j\rdf4j-server</Set>
+		<Set name="war">rdf4j/rdf4j-server</Set>
 		<Set name="virtualHosts">
 			<Array type="java.lang.String">
 				<Item>@rdf4j</Item>
@@ -52,5 +52,5 @@
 			</Set>
 		</New>
 	</Set>
- 
+
 </Configure>

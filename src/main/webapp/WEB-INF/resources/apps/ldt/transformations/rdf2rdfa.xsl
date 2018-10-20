@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2rdfa.xsl
-    VERSION  1.22.0
-    DATE     2018-06-13
+    VERSION  1.23.0
+    DATE     2018-10-20
 
     Copyright 2012-2018
 
@@ -48,6 +48,7 @@
 	<xsl:param name="fragments"/>
 
 	<xsl:element name="{name()}" namespace="{namespace-uri()}">
+		<xsl:if test="@xml:lang!=''"><xsl:attribute name="xml:lang" select="@xml:lang"/></xsl:if>
 		<!-- full uri of the property -->
 		<xsl:variable name="uri"><xsl:value-of select="namespace-uri()"/><xsl:value-of select="local-name()"/></xsl:variable>
 		<!-- Default fragment -->

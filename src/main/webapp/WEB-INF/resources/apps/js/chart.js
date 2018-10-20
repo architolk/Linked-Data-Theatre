@@ -1,7 +1,7 @@
 /*
  * NAME     chart.js
- * VERSION  1.22.1-SNAPSHOT
- * DATE     2018-10-15
+ * VERSION  1.23.0
+ * DATE     2018-10-20
  *
  * Copyright 2012-2018
  *

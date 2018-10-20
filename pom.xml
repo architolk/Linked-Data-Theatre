@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>nl.architolk.ldt</groupId>
 	<artifactId>ldt</artifactId>
-	<version>1.22.1-SNAPSHOT</version>
+	<version>1.23.0</version>
 	<name>ldt</name>
 	<packaging>war</packaging>
 	<properties>
@@ -11,8 +11,8 @@
 		<buildTimestamp>${maven.build.timestamp}</buildTimestamp>
 		<license-maven-plugin.version>2.11</license-maven-plugin.version>
 		<license.failIfMissing>false</license.failIfMissing>
-		<release.version>1.22.0</release.version>
-		<release.date>2018-06-13</release.date>
+		<release.version>1.23.0</release.version>
+		<release.date>2018-10-20</release.date>
 		<patch.date>2018-06-13</patch.date>
 	</properties>
 	<dependencies>

@@ -3,30 +3,25 @@
 	,"graph":"@graph"
 	,"rdf":"http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 	,"rdfs":"http://www.w3.org/2000/01/rdf-schema#"
-	,"ns4":"http://localhost:8080/def/test#"
-	,"ns2":"http://dbpedia.org/ontology/"
 	,"dbpprop":"http://dbpedia.org/property/"
+	,"ns3":"http://dbpedia.org/ontology/"
+	,"ns4":"http://localhost:8080/def/test#"
 	,"rdf:type":{"@type":"@id"}
-	,"ns2:isPartOf":{"@type":"@id"}
 	,"dbpprop:east":{"@type":"@id"}
+	,"ns3:isPartOf":{"@type":"@id"}
 	,"rdf:rest":{"@type":"@id"}
 	}
 ,"graph":
 [
-    {"id":"http://dbpedia.org/resource/Amsterdam"
-    ,"rdf:type": "http://dbpedia.org/ontology/City"
-    ,"rdfs:label": "Amsterdam"
-    ,"ns4:capitalCity": true
-    },
     {"id":"http://dbpedia.org/resource/Amersfoort"
     ,"rdf:type": "http://dbpedia.org/ontology/City"
     ,"rdfs:label": "Amersfoort"
-    ,"ns2:isPartOf": "http://dbpedia.org/resource/Utrecht_(province)"
     ,"dbpprop:east": "http://dbpedia.org/resource/Amsterdam"
-    ,"ns2:abstract": "Amersfoort is een stad en gemeente in het oosten van de Nederlandse provincie Utrecht.\nHet is in bevolkingsaantal de tweede stad van de provincie Utrecht en de veertiende van Nederland. Amersfoort is een groeistad en vervult economisch een regiofunctie met een sterk gegroeid bedrijfsleven, heeft een van de grootste spoorwegknooppunten van Nederland en is een belangrijke garnizoensstad. De binnenstad bezit een middeleeuws karakter met grachten"
-    ,"ns2:altitude": 2.9
-    ,"ns2:population": 153773
-    ,"ns2:populationAsOf": "2016-04-01"
+    ,"ns3:abstract": "Amersfoort is een stad en gemeente in het oosten van de Nederlandse provincie Utrecht.\nHet is in bevolkingsaantal de tweede stad van de provincie Utrecht en de veertiende van Nederland. Amersfoort is een groeistad en vervult economisch een regiofunctie met een sterk gegroeid bedrijfsleven, heeft een van de grootste spoorwegknooppunten van Nederland en is een belangrijke garnizoensstad. De binnenstad bezit een middeleeuws karakter met grachten"
+    ,"ns3:altitude": 2.9
+    ,"ns3:isPartOf": "http://dbpedia.org/resource/Utrecht_(province)"
+    ,"ns3:population": 153773
+    ,"ns3:populationAsOf": "2016-04-01"
     ,"ns4:capitalCity": false
     ,"ns4:districtNames": 
        {"rdf:first": "stadskern"
@@ -81,15 +76,20 @@
            }
        }
     },
-    {"id":"http://localhost:8080/def/test#capitalCity"
-    ,"rdfs:label": ["capital city","hoofdstad"]
-    ,"rdfs:comment": "De hoofdstad van een land"
+    {"id":"http://dbpedia.org/resource/Amsterdam"
+    ,"rdf:type": "http://dbpedia.org/ontology/City"
+    ,"rdfs:label": "Amsterdam"
+    ,"ns4:capitalCity": true
     },
     {"id":"http://dbpedia.org/resource/Utrecht"
     ,"rdf:type": "http://dbpedia.org/ontology/City"
     ,"rdfs:label": "Utrecht"
-    ,"ns2:isPartOf": "http://dbpedia.org/resource/Utrecht_(province)"
+    ,"ns3:isPartOf": "http://dbpedia.org/resource/Utrecht_(province)"
     ,"ns4:capitalCity": false
+    },
+    {"id":"http://localhost:8080/def/test#capitalCity"
+    ,"rdfs:label": ["hoofdstad","capital city"]
+    ,"rdfs:comment": "De hoofdstad van een land"
     }
 ]
 }

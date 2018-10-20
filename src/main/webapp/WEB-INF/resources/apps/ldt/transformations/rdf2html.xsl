@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2html.xsl
-    VERSION  1.22.0
-    DATE     2018-06-13
+    VERSION  1.23.0
+    DATE     2018-10-20
 
     Copyright 2012-2018
 
@@ -335,7 +335,9 @@
 				<span><xsl:value-of select="../@elmo:label"/></span>
 				<a href="{@rdf:about}">
 					<xsl:choose>
-						<xsl:when test="exists(rdfs:label)"><xsl:value-of select="rdfs:label"/></xsl:when>
+						<xsl:when test="exists(rdfs:label)">
+							<xsl:call-template name="normalize-language"><xsl:with-param name="text" select="rdfs:label"/></xsl:call-template>
+						</xsl:when>
 						<xsl:otherwise><xsl:value-of select="@rdf:about"/></xsl:otherwise>
 					</xsl:choose>
 				</a>
@@ -354,8 +356,8 @@
 										<xsl:apply-templates select="." mode="object"/>
 									</xsl:when>
 									<xsl:otherwise>
-												<!-- Nested resources sorteren -->
-										<xsl:for-each select="current-group()"><xsl:sort select="rdf:Description/@rdf:about"/>
+												<!-- Nested resources sorteren, literals op language tag -->
+										<xsl:for-each select="current-group()"><xsl:sort select="rdf:Description/@rdf:about"/><xsl:sort select="@xml:lang"/>
 											<p><xsl:apply-templates select="." mode="object"/></p>
 										</xsl:for-each>
 									</xsl:otherwise>

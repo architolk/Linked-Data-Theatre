@@ -1,7 +1,7 @@
 #
 # NAME     build.sh
-# VERSION  1.22.0
-# DATE     2018-06-13
+# VERSION  1.23.0
+# DATE     2018-10-20
 #
 # Copyright 2012-2018
 #

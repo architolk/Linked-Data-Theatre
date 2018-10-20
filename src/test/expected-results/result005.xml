@@ -24,6 +24,10 @@
     <value>0</value>
    </header>
    <header>
+    <name>accept-language</name>
+    <value>nl</value>
+   </header>
+   <header>
     <name>host</name>
     <value>localhost:8888</value>
    </header>
@@ -43,7 +47,7 @@
   <attributes>
    <attribute>
     <name>org.orbeon.lifecycle.request-id</name>
-    <value>5</value>
+    <value>155</value>
    </attribute>
   </attributes>
   <method>GET</method>

@@ -50,6 +50,7 @@ stage:TableAppearanceQuery_classes a elmo:Query;
 				OPTIONAL {?class rdfs:label ?class_label}
 			}
 		}
+		order by ?class
 	''';
 .
 stage:TableAppearanceQuery_properties a elmo:Query;
@@ -62,6 +63,7 @@ stage:TableAppearanceQuery_properties a elmo:Query;
 				OPTIONAL {?property rdfs:label ?property_label}
 			}
 		}
+		order by ?property
 	''';
 .
 stage:TableAppearanceQuery_properties_per_class a elmo:Query;
@@ -93,6 +95,7 @@ stage:TableAppearance2_table_classes a elmo:Part;
 				)
 			}
 		}
+		order by ?class
 	''';
 .
 stage:TableAppearance2_table_properties a elmo:Part;
@@ -104,11 +107,13 @@ stage:TableAppearance2_table_properties a elmo:Part;
 			graph <@STAGE@> {
 				?property rdf:type ?type.
 				?property rdfs:label ?property_label
+				FILTER (lang(?property_label)="" || lang(?property_label)="@LANGUAGE@")
 				FILTER (?type = rdf:Property
 					||	?type = owl:DatatypeProperty
 					||	?type = owl:ObjectProperty
 				)
 			}
 		}
+		order by ?property
 	''';
 .
