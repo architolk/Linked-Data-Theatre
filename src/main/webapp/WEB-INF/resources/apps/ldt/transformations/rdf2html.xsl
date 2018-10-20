@@ -679,7 +679,7 @@
 			<xsl:variable name="otherparas"> <!-- pass all parameters to the href, except para1 -->
 				<xsl:for-each select="/results/context/parameters/parameter">
 					<xsl:if test="name!=$para1">
-						&amp;<xsl:value-of select="name"/>=<xsl:value-of select="value"/>
+						<xsl:text>&amp;</xsl:text><xsl:value-of select="name"/>=<xsl:value-of select="value"/>
 					</xsl:if>
 			  </xsl:for-each>
 			</xsl:variable>
@@ -714,7 +714,7 @@
 			<xsl:variable name="otherparas"> <!-- pass all parameters to the href, except para1 -->
 				<xsl:for-each select="/results/context/parameters/parameter">
 					<xsl:if test="name!=$para1">
-						&amp;<xsl:value-of select="name"/>=<xsl:value-of select="value"/>
+						<xsl:text>&amp;</xsl:text><xsl:value-of select="name"/>=<xsl:value-of select="value"/>
 					</xsl:if>
 			  </xsl:for-each>
 			</xsl:variable>
