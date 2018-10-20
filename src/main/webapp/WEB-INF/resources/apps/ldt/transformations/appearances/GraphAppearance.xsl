@@ -91,9 +91,9 @@
 		</xsl:choose>
 	</xsl:variable>
 	<xsl:variable name="jsonParams"><xsl:for-each select="/results/context/parameters/parameter"><xsl:value-of select="name"/>=<xsl:value-of select="encode-for-uri(value)"/>&amp;</xsl:for-each></xsl:variable>
-	<!-- TODO: jsonApiCall is changed to resource? instead of resource.d3json? -> This means that de javascript should use regular JSON-LD! -->
 	<script type="text/javascript">
 		var jsonApiSubject = "<xsl:value-of select="/results/context/subject"/>";
+		var jsonApiIDSubject = "<xsl:value-of select="/results/context/idsubject"/>";
 		var jsonApiCall = "<xsl:value-of select="$docroot"/><xsl:value-of select="$jsonApiCall"/>date=<xsl:value-of select="/results/context/date"/>&amp;<xsl:value-of select="$jsonParams"/>subject=";
 		var uriEndpoint = "<xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource?<xsl:value-of select="$jsonParams"/>subject=";
 		var fragments = {
