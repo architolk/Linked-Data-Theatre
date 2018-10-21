@@ -36,12 +36,17 @@ stage:ScatterPlotChartAppearance a elmo:Representation;
 	elmo:query stage:chartAppearanceQuery
 .
 
+# rdfs:label and rdf:value are used by default, and support multi-language for rdfs:label
+# other dimensions (rdfs:label) and measures (rdf:value) can be used by annotating such property as qb:DimensionProperty or qb:MeasureProperty
 stage:chartAppearanceQuery a elmo:Query;
 	rdfs:label "Max 30 classes with number of instances";
 	elmo:query '''
+		prefix qb: <http://purl.org/linked-data/cube#>
 		construct {
 			?class rdfs:label ?label.
-			?class rdf:value ?cnt
+			?class rdf:value ?cnt.
+#			rdfs:label a qb:DimensionProperty.
+#			rdf:value a qb:MeasureProperty.
 		}
 		where {
 			?class rdfs:label ?label
