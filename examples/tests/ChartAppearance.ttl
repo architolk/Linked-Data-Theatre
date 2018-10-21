@@ -65,7 +65,7 @@ stage:scatterplotAppearanceQuery a elmo:Query;
 	elmo:query '''
 		prefix qb: <http://purl.org/linked-data/cube#>
 		construct {
-			?observation ?dimensionprop ?dimension.
+			?observation ?dimensionprop ?dimensionc.
 			?dimensionprop a qb:DimensionProperty.
 			?observation ?measureprop ?measure.
 			?measureprop a qb:MeasureProperty.
@@ -76,8 +76,7 @@ stage:scatterplotAppearanceQuery a elmo:Query;
 			?dimensionprop a qb:DimensionProperty.
 			?observation ?measureprop ?measure.
 			?measureprop a qb:MeasureProperty.
-			BIND (substr(?dimension,1,4) as ?year)
-			FILTER (?year="1979" || ?year="1980")
+			BIND (xsd:dateTime(?dimension) as ?dimensionc)
 		}
 	'''
 .

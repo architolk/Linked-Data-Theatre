@@ -109,17 +109,33 @@ function calcLinear(data, x, y, maxX, maxY){
 
 }
 
-function plotChart(data, appearance) {
+function plotChart(data, appearance, xtype, ytype) {
+
+ function getX(d) {return xtype==="dateTime" ? x(new Date(d.d)) : (typeof x.rangeBand)!= "undefined" ? x(d.d)+x.rangeBand()/2 : x(d.d)};
+ function getY(d) {return ytype==="dateTime" ? x(new Date(d.m)) : (typeof y.rangeBand)!= "undefined" ? y(d.m)+y.rangeBand()/2 : y(d.m)};
 
  var margin = {top: 20, right: 30, bottom: 30, left: 40},
    width = 800 - margin.left - margin.right,
-   height = 200 - margin.top - margin.bottom;
+   height = 400 - margin.top - margin.bottom;
 
- var x = d3.scale.ordinal()
-   .rangeRoundBands([0, width], 0.1);
+ var x;
+ if (xtype==="decimal" || xtype==="integer") {
+   x = d3.scale.linear()
+     .domain([d3.min(data, function (d) {return d.d;}),d3.max(data, function (d) {return d.d;})])
+     .range([0, width]);
+ } else if (xtype==="dateTime") {
+   x = d3.time.scale()
+     .domain([new Date('1978-01-01T00:00:00'), new Date('2018-12-01T00:00:00')])
+     .range([0, width]);
+ } else {
+   x = d3.scale.ordinal()
+     .domain(data.map(function (d) {return d.d;}))
+     .rangeRoundBands([0, width], 0.1);
+ }
 
  var y = d3.scale.linear()
-   .range([height, 0])
+   .domain([d3.min(data, function (d) {return d.m;}),d3.max(data, function (d) {return d.m;})])
+   .range([height, 0]);
 
  var xAxis = d3.svg.axis()
    .scale(x)
@@ -135,9 +151,6 @@ function plotChart(data, appearance) {
    .append("g")
    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
- x.domain(data.map(function (d) {return d.name;}));
- y.domain([d3.min(data, function (d) {return d.value;}),d3.max(data, function (d) {return d.value;})]);
-
  chart.append("g")
    .attr("class", "x axis")
    .attr("transform", "translate(0," + height + ")")
@@ -148,7 +161,7 @@ function plotChart(data, appearance) {
    .call(yAxis);
 
  if (appearance==="ScatterPlotChartAppearance") {
-   var lg = calcLinear(data, function(d) {return x(d.name) + x.rangeBand()/2;}, function(d) {return y(d.value)}, width, height);
+   var lg = calcLinear(data, getX, getY, width, height);
 
    chart.append("line")
        .attr("class","line")
@@ -161,13 +174,13 @@ function plotChart(data, appearance) {
      .data(data)
      .enter().append("circle")
        .attr("class", "bar")
-       .attr("cx", function(d) { return x(d.name) + x.rangeBand()/2; })
-       .attr("cy", function(d) { return y(d.value); })
+       .attr("cx", getX)
+       .attr("cy", function(d) { return y(d.m)})
        .attr("r", 5);
  } else if (appearance==="LineChartAppearance") {
    var line = d3.svg.line()
-                 .x(function(d) {return x(d.name) + x.rangeBand()/2; })
-                 .y(function(d) {return y(d.value)})
+                 .x(getX)
+                 .y(getY)
                  .interpolate("cardinal");
    chart.append("path")
      .attr("d", line(data))
@@ -177,17 +190,17 @@ function plotChart(data, appearance) {
      .data(data)
      .enter().append("circle")
        .attr("class", "bar")
-       .attr("cx", function(d) { return x(d.name) + x.rangeBand()/2; })
-       .attr("cy", function(d) { return y(d.value); })
+       .attr("cx", getX)
+       .attr("cy", getY)
        .attr("r", 5);
  } else {
    chart.selectAll(".bar")
      .data(data)
    .enter().append("rect")
      .attr("class", "bar")
-     .attr("x", function(d) { return x(d.name); })
-     .attr("y", function(d) { return y(d.value); })
-     .attr("height", function(d) { return height - y(d.value); })
+     .attr("x", function(d) { return x(d.d)})
+     .attr("y", function(d) { return y(d.m)})
+     .attr("height", function(d) { return height - y(d.m); })
      .attr("width", x.rangeBand());
  }
 }

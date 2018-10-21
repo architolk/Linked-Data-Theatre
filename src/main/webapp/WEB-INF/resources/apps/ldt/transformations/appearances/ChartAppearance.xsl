@@ -62,8 +62,10 @@
 			<xsl:choose>
 				<!-- Using dimensions and measures -->
 				<xsl:when test="exists($filters/dimension) and exists($filters/measure)">
-					<observation dimension="{*[$filters/dimension[1]=concat(namespace-uri(),local-name())][1]}">
-						<xsl:value-of select="*[$filters/measure[1]=concat(namespace-uri(),local-name())][1]"/>
+					<xsl:variable name="dimension" select="*[$filters/dimension[1]=concat(namespace-uri(),local-name())][1]"/>
+					<xsl:variable name="measure" select="*[$filters/measure[1]=concat(namespace-uri(),local-name())][1]"/>
+					<observation dimension="{$dimension}" dimension-datatype="{$dimension/@rdf:datatype}" measure-datatype="{$measure/@rdf:datatype}">
+						<xsl:value-of select="$measure"/>
 					</observation>
 				</xsl:when>
 				<!-- Fallback: using rdfs:label for dimension and rdf:value for measure -->
@@ -72,7 +74,7 @@
 						<xsl:variable name="label">
 							<xsl:call-template name="normalize-language"><xsl:with-param name="text" select="rdfs:label"/></xsl:call-template>
 						</xsl:variable>
-						<observation dimension="{$label}"><xsl:value-of select="rdf:value[1]"/></observation>
+						<observation dimension="{$label}" dimension-datatype="string" measure-datatype="{rdf:value[1]/@rdf:datatype}"><xsl:value-of select="rdf:value[1]"/></observation>
 					</xsl:if>
 				</xsl:otherwise>
 			</xsl:choose>
@@ -88,13 +90,16 @@
 		<xsl:text>var data=[</xsl:text>
 		<xsl:for-each select="$observations/observation">
 			<xsl:if test="position()!=1">,</xsl:if>
-			<xsl:text>{name:"</xsl:text><xsl:value-of select="@dimension"/>
-			<xsl:text>",value:</xsl:text><xsl:value-of select="."/>
+			<xsl:text>{d:</xsl:text>
+			<xsl:if test="@dimension-datatype!='http://www.w3.org/2001/XMLSchema#decimal' and @dimension-datatype!='http://www.w3.org/2001/XMLSchema#integer'">"</xsl:if>
+			<xsl:value-of select="@dimension"/>
+			<xsl:if test="@dimension-datatype!='http://www.w3.org/2001/XMLSchema#decimal' and @dimension-datatype!='http://www.w3.org/2001/XMLSchema#integer'">"</xsl:if>
+			<xsl:text>,m:</xsl:text><xsl:value-of select="."/>
 			<xsl:text>}</xsl:text>
 		</xsl:for-each>
 		<xsl:text>];</xsl:text>
 
-		plotChart(data,"<xsl:value-of select="substring-after(@elmo:appearance,'#')"/>")
+		plotChart(data,"<xsl:value-of select="substring-after(@elmo:appearance,'#')"/>","<xsl:value-of select="substring-after($observations/observation[1]/@dimension-datatype,'#')"/>","<xsl:value-of select="substring-after($observations/observation[1]/@measure-datatype,'#')"/>")
 
 	</script>
 </xsl:template>
