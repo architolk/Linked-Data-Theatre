@@ -33,7 +33,7 @@ stage:ScatterPlotChartAppearance a elmo:Representation;
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:appearance elmo:ScatterPlotChartAppearance;
-	elmo:query stage:chartAppearanceQuery
+	elmo:query stage:scatterplotAppearanceQuery
 .
 
 # rdfs:label and rdf:value are used by default, and support multi-language for rdfs:label
@@ -58,6 +58,26 @@ stage:chartAppearanceQuery a elmo:Query;
 				group by ?class
 				limit 10
 			}
+		}
+	'''
+.
+stage:scatterplotAppearanceQuery a elmo:Query;
+	elmo:query '''
+		prefix qb: <http://purl.org/linked-data/cube#>
+		construct {
+			?observation ?dimensionprop ?dimension.
+			?dimensionprop a qb:DimensionProperty.
+			?observation ?measureprop ?measure.
+			?measureprop a qb:MeasureProperty.
+		}
+		where {
+			?observation a qb:Observation.
+			?observation ?dimensionprop ?dimension.
+			?dimensionprop a qb:DimensionProperty.
+			?observation ?measureprop ?measure.
+			?measureprop a qb:MeasureProperty.
+			BIND (substr(?dimension,1,4) as ?year)
+			FILTER (?year="1979" || ?year="1980")
 		}
 	'''
 .

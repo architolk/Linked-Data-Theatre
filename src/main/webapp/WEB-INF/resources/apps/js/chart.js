@@ -116,7 +116,7 @@ function plotChart(data, appearance) {
    height = 200 - margin.top - margin.bottom;
 
  var x = d3.scale.ordinal()
-   .rangeRoundBands([0, width], .1);
+   .rangeRoundBands([0, width], 0.1);
 
  var y = d3.scale.linear()
    .range([height, 0])
@@ -136,7 +136,7 @@ function plotChart(data, appearance) {
    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
  x.domain(data.map(function (d) {return d.name;}));
- y.domain([0,d3.max(data, function (d) {return d.value;})]);
+ y.domain([d3.min(data, function (d) {return d.value;}),d3.max(data, function (d) {return d.value;})]);
 
  chart.append("g")
    .attr("class", "x axis")

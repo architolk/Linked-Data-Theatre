@@ -1,0 +1,1936 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix skos: <http://www.w3.org/2004/02/skos/core#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix testo: <http://localhost:8080/def/test#>.
+@prefix story: <http://localhost:8080/id/user-story/>.
+@prefix storystatus: <http://localhost:8080/id/status/>.
+@prefix lotro: <http://localhost:8080/def/lotr#>.
+@prefix lotrs: <http://localhost:8080/def/lotr/>.
+@prefix lotrc: <http://localhost:8080/id/character/>.
+@prefix lotrg: <http://localhost:8080/id/group/>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix dbo: <http://dbpedia.org/ontology/>.
+@prefix dbpedia: <http://dbpedia.org/resource/>.
+@prefix dbp: <http://dbpedia.org/property/>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
+@prefix shacl: <http://www.w3.org/ns/shacl#>.
+@prefix dc: <http://purl.org/dc/elements/1.1/>.
+@prefix dctype: <http://purl.org/dc/dcmitype/>.
+@prefix skos: <http://www.w3.org/2004/02/skos/core#>.
+
+@prefix observation: <http://localhost:8080/id/observation>.
+@prefix obs: <http://localhost:8080/def/obs#>.
+@prefix qb: <http://purl.org/linked-data/cube#>.
+
+obs:period a qb:DimensionProperty.
+obs:anomaly a qb:MeasureProperty.
+
+observation:1979-01 a qb:Observation;
+	obs:period "1979-01";
+	obs:anomaly -0.2241
+.
+observation:1979-02 a qb:Observation;
+  obs:period "1979-02";
+  obs:anomaly -0.2103
+.
+observation:1979-03 a qb:Observation;
+  obs:period "1979-03";
+  obs:anomaly -0.2055
+.
+observation:1979-04 a qb:Observation;
+  obs:period "1979-04";
+  obs:anomaly -0.2813
+.
+observation:1979-05 a qb:Observation;
+  obs:period "1979-05";
+  obs:anomaly -0.2673
+.
+observation:1979-06 a qb:Observation;
+  obs:period "1979-06";
+  obs:anomaly -0.2213
+.
+observation:1979-07 a qb:Observation;
+  obs:period "1979-07";
+  obs:anomaly -0.0646
+.
+observation:1979-08 a qb:Observation;
+  obs:period "1979-08";
+  obs:anomaly -0.1853
+.
+observation:1979-09 a qb:Observation;
+  obs:period "1979-09";
+  obs:anomaly -0.0565
+.
+observation:1979-10 a qb:Observation;
+  obs:period "1979-10";
+  obs:anomaly 0.0874
+.
+observation:1979-11 a qb:Observation;
+  obs:period "1979-11";
+  obs:anomaly -0.0640
+.
+observation:1979-12 a qb:Observation;
+  obs:period "1979-12";
+  obs:anomaly -0.0109
+.
+observation:1980-01 a qb:Observation;
+  obs:period "1980-01";
+  obs:anomaly -0.0087
+.
+observation:1980-02 a qb:Observation;
+  obs:period "1980-02";
+  obs:anomaly 0.0913
+.
+observation:1980-03 a qb:Observation;
+  obs:period "1980-03";
+  obs:anomaly -0.0117
+.
+observation:1980-04 a qb:Observation;
+  obs:period "1980-04";
+  obs:anomaly 0.0399
+.
+observation:1980-05 a qb:Observation;
+  obs:period "1980-05";
+  obs:anomaly 0.0887
+.
+observation:1980-06 a qb:Observation;
+  obs:period "1980-06";
+  obs:anomaly 0.1005
+.
+observation:1980-07 a qb:Observation;
+  obs:period "1980-07";
+  obs:anomaly -0.0271
+.
+observation:1980-08 a qb:Observation;
+  obs:period "1980-08";
+  obs:anomaly -0.0012
+.
+observation:1980-09 a qb:Observation;
+  obs:period "1980-09";
+  obs:anomaly 0.0161
+.
+observation:1980-10 a qb:Observation;
+  obs:period "1980-10";
+  obs:anomaly 0.0036
+.
+observation:1980-11 a qb:Observation;
+  obs:period "1980-11";
+  obs:anomaly -0.0121
+.
+observation:1980-12 a qb:Observation;
+  obs:period "1980-12";
+  obs:anomaly -0.1366
+.
+observation:1981-01 a qb:Observation;
+  obs:period "1981-01";
+  obs:anomaly 0.0917
+.
+observation:1981-02 a qb:Observation;
+  obs:period "1981-02";
+  obs:anomaly 0.1702
+.
+observation:1981-03 a qb:Observation;
+  obs:period "1981-03";
+  obs:anomaly 0.0122
+.
+observation:1981-04 a qb:Observation;
+  obs:period "1981-04";
+  obs:anomaly 0.0410
+.
+observation:1981-05 a qb:Observation;
+  obs:period "1981-05";
+  obs:anomaly -0.0340
+.
+observation:1981-06 a qb:Observation;
+  obs:period "1981-06";
+  obs:anomaly -0.0886
+.
+observation:1981-07 a qb:Observation;
+  obs:period "1981-07";
+  obs:anomaly -0.0326
+.
+observation:1981-08 a qb:Observation;
+  obs:period "1981-08";
+  obs:anomaly -0.0107
+.
+observation:1981-09 a qb:Observation;
+  obs:period "1981-09";
+  obs:anomaly -0.0820
+.
+observation:1981-10 a qb:Observation;
+  obs:period "1981-10";
+  obs:anomaly -0.1106
+.
+observation:1981-11 a qb:Observation;
+  obs:period "1981-11";
+  obs:anomaly -0.0498
+.
+observation:1981-12 a qb:Observation;
+  obs:period "1981-12";
+  obs:anomaly 0.0719
+.
+observation:1982-01 a qb:Observation;
+  obs:period "1982-01";
+  obs:anomaly -0.1628
+.
+observation:1982-02 a qb:Observation;
+  obs:period "1982-02";
+  obs:anomaly -0.1269
+.
+observation:1982-03 a qb:Observation;
+  obs:period "1982-03";
+  obs:anomaly -0.2216
+.
+observation:1982-04 a qb:Observation;
+  obs:period "1982-04";
+  obs:anomaly -0.1830
+.
+observation:1982-05 a qb:Observation;
+  obs:period "1982-05";
+  obs:anomaly -0.2383
+.
+observation:1982-06 a qb:Observation;
+  obs:period "1982-06";
+  obs:anomaly -0.1718
+.
+observation:1982-07 a qb:Observation;
+  obs:period "1982-07";
+  obs:anomaly -0.3104
+.
+observation:1982-08 a qb:Observation;
+  obs:period "1982-08";
+  obs:anomaly -0.2353
+.
+observation:1982-09 a qb:Observation;
+  obs:period "1982-09";
+  obs:anomaly -0.1762
+.
+observation:1982-10 a qb:Observation;
+  obs:period "1982-10";
+  obs:anomaly -0.2829
+.
+observation:1982-11 a qb:Observation;
+  obs:period "1982-11";
+  obs:anomaly -0.2257
+.
+observation:1982-12 a qb:Observation;
+  obs:period "1982-12";
+  obs:anomaly -0.1196
+.
+observation:1983-01 a qb:Observation;
+  obs:period "1983-01";
+  obs:anomaly 0.0978
+.
+observation:1983-02 a qb:Observation;
+  obs:period "1983-02";
+  obs:anomaly -0.0277
+.
+observation:1983-03 a qb:Observation;
+  obs:period "1983-03";
+  obs:anomaly 0.2473
+.
+observation:1983-04 a qb:Observation;
+  obs:period "1983-04";
+  obs:anomaly 0.0993
+.
+observation:1983-05 a qb:Observation;
+  obs:period "1983-05";
+  obs:anomaly 0.0994
+.
+observation:1983-06 a qb:Observation;
+  obs:period "1983-06";
+  obs:anomaly -0.1325
+.
+observation:1983-07 a qb:Observation;
+  obs:period "1983-07";
+  obs:anomaly 0.0862
+.
+observation:1983-08 a qb:Observation;
+  obs:period "1983-08";
+  obs:anomaly 0.0623
+.
+observation:1983-09 a qb:Observation;
+  obs:period "1983-09";
+  obs:anomaly 0.0236
+.
+observation:1983-10 a qb:Observation;
+  obs:period "1983-10";
+  obs:anomaly -0.0534
+.
+observation:1983-11 a qb:Observation;
+  obs:period "1983-11";
+  obs:anomaly 0.0064
+.
+observation:1983-12 a qb:Observation;
+  obs:period "1983-12";
+  obs:anomaly -0.2472
+.
+observation:1984-01 a qb:Observation;
+  obs:period "1984-01";
+  obs:anomaly -0.3106
+.
+observation:1984-02 a qb:Observation;
+  obs:period "1984-02";
+  obs:anomaly -0.1701
+.
+observation:1984-03 a qb:Observation;
+  obs:period "1984-03";
+  obs:anomaly -0.1168
+.
+observation:1984-04 a qb:Observation;
+  obs:period "1984-04";
+  obs:anomaly -0.2269
+.
+observation:1984-05 a qb:Observation;
+  obs:period "1984-05";
+  obs:anomaly -0.0924
+.
+observation:1984-06 a qb:Observation;
+  obs:period "1984-06";
+  obs:anomaly -0.2169
+.
+observation:1984-07 a qb:Observation;
+  obs:period "1984-07";
+  obs:anomaly -0.2194
+.
+observation:1984-08 a qb:Observation;
+  obs:period "1984-08";
+  obs:anomaly -0.1748
+.
+observation:1984-09 a qb:Observation;
+  obs:period "1984-09";
+  obs:anomaly -0.4666
+.
+observation:1984-10 a qb:Observation;
+  obs:period "1984-10";
+  obs:anomaly -0.1372
+.
+observation:1984-11 a qb:Observation;
+  obs:period "1984-11";
+  obs:anomaly -0.3142
+.
+observation:1984-12 a qb:Observation;
+  obs:period "1984-12";
+  obs:anomaly -0.3633
+.
+observation:1985-01 a qb:Observation;
+  obs:period "1985-01";
+  obs:anomaly -0.1830
+.
+observation:1985-02 a qb:Observation;
+  obs:period "1985-02";
+  obs:anomaly -0.2974
+.
+observation:1985-03 a qb:Observation;
+  obs:period "1985-03";
+  obs:anomaly -0.2688
+.
+observation:1985-04 a qb:Observation;
+  obs:period "1985-04";
+  obs:anomaly -0.3516
+.
+observation:1985-05 a qb:Observation;
+  obs:period "1985-05";
+  obs:anomaly -0.3684
+.
+observation:1985-06 a qb:Observation;
+  obs:period "1985-06";
+  obs:anomaly -0.3761
+.
+observation:1985-07 a qb:Observation;
+  obs:period "1985-07";
+  obs:anomaly -0.4415
+.
+observation:1985-08 a qb:Observation;
+  obs:period "1985-08";
+  obs:anomaly -0.2584
+.
+observation:1985-09 a qb:Observation;
+  obs:period "1985-09";
+  obs:anomaly -0.2461
+.
+observation:1985-10 a qb:Observation;
+  obs:period "1985-10";
+  obs:anomaly -0.3360
+.
+observation:1985-11 a qb:Observation;
+  obs:period "1985-11";
+  obs:anomaly -0.1889
+.
+observation:1985-12 a qb:Observation;
+  obs:period "1985-12";
+  obs:anomaly -0.1704
+.
+observation:1986-01 a qb:Observation;
+  obs:period "1986-01";
+  obs:anomaly -0.0730
+.
+observation:1986-02 a qb:Observation;
+  obs:period "1986-02";
+  obs:anomaly -0.2474
+.
+observation:1986-03 a qb:Observation;
+  obs:period "1986-03";
+  obs:anomaly -0.1857
+.
+observation:1986-04 a qb:Observation;
+  obs:period "1986-04";
+  obs:anomaly -0.0924
+.
+observation:1986-05 a qb:Observation;
+  obs:period "1986-05";
+  obs:anomaly -0.1431
+.
+observation:1986-06 a qb:Observation;
+  obs:period "1986-06";
+  obs:anomaly -0.2022
+.
+observation:1986-07 a qb:Observation;
+  obs:period "1986-07";
+  obs:anomaly -0.2566
+.
+observation:1986-08 a qb:Observation;
+  obs:period "1986-08";
+  obs:anomaly -0.2440
+.
+observation:1986-09 a qb:Observation;
+  obs:period "1986-09";
+  obs:anomaly -0.2412
+.
+observation:1986-10 a qb:Observation;
+  obs:period "1986-10";
+  obs:anomaly -0.2820
+.
+observation:1986-11 a qb:Observation;
+  obs:period "1986-11";
+  obs:anomaly -0.0880
+.
+observation:1986-12 a qb:Observation;
+  obs:period "1986-12";
+  obs:anomaly -0.0618
+.
+observation:1987-01 a qb:Observation;
+  obs:period "1987-01";
+  obs:anomaly 0.1666
+.
+observation:1987-02 a qb:Observation;
+  obs:period "1987-02";
+  obs:anomaly 0.2267
+.
+observation:1987-03 a qb:Observation;
+  obs:period "1987-03";
+  obs:anomaly -0.0886
+.
+observation:1987-04 a qb:Observation;
+  obs:period "1987-04";
+  obs:anomaly 0.1506
+.
+observation:1987-05 a qb:Observation;
+  obs:period "1987-05";
+  obs:anomaly -0.0147
+.
+observation:1987-06 a qb:Observation;
+  obs:period "1987-06";
+  obs:anomaly 0.1371
+.
+observation:1987-07 a qb:Observation;
+  obs:period "1987-07";
+  obs:anomaly 0.0799
+.
+observation:1987-08 a qb:Observation;
+  obs:period "1987-08";
+  obs:anomaly 0.0180
+.
+observation:1987-09 a qb:Observation;
+  obs:period "1987-09";
+  obs:anomaly 0.0308
+.
+observation:1987-10 a qb:Observation;
+  obs:period "1987-10";
+  obs:anomaly 0.2048
+.
+observation:1987-11 a qb:Observation;
+  obs:period "1987-11";
+  obs:anomaly 0.1612
+.
+observation:1987-12 a qb:Observation;
+  obs:period "1987-12";
+  obs:anomaly 0.4225
+.
+observation:1988-01 a qb:Observation;
+  obs:period "1988-01";
+  obs:anomaly 0.2675
+.
+observation:1988-02 a qb:Observation;
+  obs:period "1988-02";
+  obs:anomaly 0.0281
+.
+observation:1988-03 a qb:Observation;
+  obs:period "1988-03";
+  obs:anomaly 0.1936
+.
+observation:1988-04 a qb:Observation;
+  obs:period "1988-04";
+  obs:anomaly 0.0883
+.
+observation:1988-05 a qb:Observation;
+  obs:period "1988-05";
+  obs:anomaly 0.1395
+.
+observation:1988-06 a qb:Observation;
+  obs:period "1988-06";
+  obs:anomaly 0.1035
+.
+observation:1988-07 a qb:Observation;
+  obs:period "1988-07";
+  obs:anomaly 0.2006
+.
+observation:1988-08 a qb:Observation;
+  obs:period "1988-08";
+  obs:anomaly 0.0527
+.
+observation:1988-09 a qb:Observation;
+  obs:period "1988-09";
+  obs:anomaly 0.2324
+.
+observation:1988-10 a qb:Observation;
+  obs:period "1988-10";
+  obs:anomaly -0.0075
+.
+observation:1988-11 a qb:Observation;
+  obs:period "1988-11";
+  obs:anomaly -0.0201
+.
+observation:1988-12 a qb:Observation;
+  obs:period "1988-12";
+  obs:anomaly -0.1233
+.
+observation:1989-01 a qb:Observation;
+  obs:period "1989-01";
+  obs:anomaly -0.3263
+.
+observation:1989-02 a qb:Observation;
+  obs:period "1989-02";
+  obs:anomaly -0.1763
+.
+observation:1989-03 a qb:Observation;
+  obs:period "1989-03";
+  obs:anomaly -0.2013
+.
+observation:1989-04 a qb:Observation;
+  obs:period "1989-04";
+  obs:anomaly -0.0932
+.
+observation:1989-05 a qb:Observation;
+  obs:period "1989-05";
+  obs:anomaly -0.1612
+.
+observation:1989-06 a qb:Observation;
+  obs:period "1989-06";
+  obs:anomaly -0.1777
+.
+observation:1989-07 a qb:Observation;
+  obs:period "1989-07";
+  obs:anomaly -0.0856
+.
+observation:1989-08 a qb:Observation;
+  obs:period "1989-08";
+  obs:anomaly -0.0883
+.
+observation:1989-09 a qb:Observation;
+  obs:period "1989-09";
+  obs:anomaly 0.0315
+.
+observation:1989-10 a qb:Observation;
+  obs:period "1989-10";
+  obs:anomaly -0.0029
+.
+observation:1989-11 a qb:Observation;
+  obs:period "1989-11";
+  obs:anomaly -0.0739
+.
+observation:1989-12 a qb:Observation;
+  obs:period "1989-12";
+  obs:anomaly 0.0259
+.
+observation:1990-01 a qb:Observation;
+  obs:period "1990-01";
+  obs:anomaly -0.0237
+.
+observation:1990-02 a qb:Observation;
+  obs:period "1990-02";
+  obs:anomaly -0.1200
+.
+observation:1990-03 a qb:Observation;
+  obs:period "1990-03";
+  obs:anomaly 0.1221
+.
+observation:1990-04 a qb:Observation;
+  obs:period "1990-04";
+  obs:anomaly -0.0205
+.
+observation:1990-05 a qb:Observation;
+  obs:period "1990-05";
+  obs:anomaly 0.0826
+.
+observation:1990-06 a qb:Observation;
+  obs:period "1990-06";
+  obs:anomaly 0.1260
+.
+observation:1990-07 a qb:Observation;
+  obs:period "1990-07";
+  obs:anomaly 0.0169
+.
+observation:1990-08 a qb:Observation;
+  obs:period "1990-08";
+  obs:anomaly 0.0152
+.
+observation:1990-09 a qb:Observation;
+  obs:period "1990-09";
+  obs:anomaly -0.0024
+.
+observation:1990-10 a qb:Observation;
+  obs:period "1990-10";
+  obs:anomaly 0.1235
+.
+observation:1990-11 a qb:Observation;
+  obs:period "1990-11";
+  obs:anomaly 0.2864
+.
+observation:1990-12 a qb:Observation;
+  obs:period "1990-12";
+  obs:anomaly 0.1802
+.
+observation:1991-01 a qb:Observation;
+  obs:period "1991-01";
+  obs:anomaly 0.1469
+.
+observation:1991-02 a qb:Observation;
+  obs:period "1991-02";
+  obs:anomaly 0.1817
+.
+observation:1991-03 a qb:Observation;
+  obs:period "1991-03";
+  obs:anomaly 0.3306
+.
+observation:1991-04 a qb:Observation;
+  obs:period "1991-04";
+  obs:anomaly 0.1018
+.
+observation:1991-05 a qb:Observation;
+  obs:period "1991-05";
+  obs:anomaly 0.1828
+.
+observation:1991-06 a qb:Observation;
+  obs:period "1991-06";
+  obs:anomaly 0.3157
+.
+observation:1991-07 a qb:Observation;
+  obs:period "1991-07";
+  obs:anomaly 0.1912
+.
+observation:1991-08 a qb:Observation;
+  obs:period "1991-08";
+  obs:anomaly 0.2030
+.
+observation:1991-09 a qb:Observation;
+  obs:period "1991-09";
+  obs:anomaly 0.0306
+.
+observation:1991-10 a qb:Observation;
+  obs:period "1991-10";
+  obs:anomaly -0.0517
+.
+observation:1991-11 a qb:Observation;
+  obs:period "1991-11";
+  obs:anomaly -0.1128
+.
+observation:1991-12 a qb:Observation;
+  obs:period "1991-12";
+  obs:anomaly -0.1654
+.
+observation:1992-01 a qb:Observation;
+  obs:period "1992-01";
+  obs:anomaly -0.0263
+.
+observation:1992-02 a qb:Observation;
+  obs:period "1992-02";
+  obs:anomaly -0.0964
+.
+observation:1992-03 a qb:Observation;
+  obs:period "1992-03";
+  obs:anomaly 0.0288
+.
+observation:1992-04 a qb:Observation;
+  obs:period "1992-04";
+  obs:anomaly -0.1384
+.
+observation:1992-05 a qb:Observation;
+  obs:period "1992-05";
+  obs:anomaly -0.1499
+.
+observation:1992-06 a qb:Observation;
+  obs:period "1992-06";
+  obs:anomaly -0.1526
+.
+observation:1992-07 a qb:Observation;
+  obs:period "1992-07";
+  obs:anomaly -0.3004
+.
+observation:1992-08 a qb:Observation;
+  obs:period "1992-08";
+  obs:anomaly -0.3504
+.
+observation:1992-09 a qb:Observation;
+  obs:period "1992-09";
+  obs:anomaly -0.2869
+.
+observation:1992-10 a qb:Observation;
+  obs:period "1992-10";
+  obs:anomaly -0.1280
+.
+observation:1992-11 a qb:Observation;
+  obs:period "1992-11";
+  obs:anomaly -0.1379
+.
+observation:1992-12 a qb:Observation;
+  obs:period "1992-12";
+  obs:anomaly -0.2087
+.
+observation:1993-01 a qb:Observation;
+  obs:period "1993-01";
+  obs:anomaly -0.2392
+.
+observation:1993-02 a qb:Observation;
+  obs:period "1993-02";
+  obs:anomaly -0.1576
+.
+observation:1993-03 a qb:Observation;
+  obs:period "1993-03";
+  obs:anomaly -0.3016
+.
+observation:1993-04 a qb:Observation;
+  obs:period "1993-04";
+  obs:anomaly -0.1718
+.
+observation:1993-05 a qb:Observation;
+  obs:period "1993-05";
+  obs:anomaly -0.0823
+.
+observation:1993-06 a qb:Observation;
+  obs:period "1993-06";
+  obs:anomaly -0.0017
+.
+observation:1993-07 a qb:Observation;
+  obs:period "1993-07";
+  obs:anomaly 0.0115
+.
+observation:1993-08 a qb:Observation;
+  obs:period "1993-08";
+  obs:anomaly -0.0987
+.
+observation:1993-09 a qb:Observation;
+  obs:period "1993-09";
+  obs:anomaly -0.2111
+.
+observation:1993-10 a qb:Observation;
+  obs:period "1993-10";
+  obs:anomaly -0.0149
+.
+observation:1993-11 a qb:Observation;
+  obs:period "1993-11";
+  obs:anomaly -0.0270
+.
+observation:1993-12 a qb:Observation;
+  obs:period "1993-12";
+  obs:anomaly 0.1289
+.
+observation:1994-01 a qb:Observation;
+  obs:period "1994-01";
+  obs:anomaly 0.0745
+.
+observation:1994-02 a qb:Observation;
+  obs:period "1994-02";
+  obs:anomaly -0.0505
+.
+observation:1994-03 a qb:Observation;
+  obs:period "1994-03";
+  obs:anomaly -0.0548
+.
+observation:1994-04 a qb:Observation;
+  obs:period "1994-04";
+  obs:anomaly -0.0194
+.
+observation:1994-05 a qb:Observation;
+  obs:period "1994-05";
+  obs:anomaly 0.0272
+.
+observation:1994-06 a qb:Observation;
+  obs:period "1994-06";
+  obs:anomaly 0.1059
+.
+observation:1994-07 a qb:Observation;
+  obs:period "1994-07";
+  obs:anomaly 0.1155
+.
+observation:1994-08 a qb:Observation;
+  obs:period "1994-08";
+  obs:anomaly 0.0660
+.
+observation:1994-09 a qb:Observation;
+  obs:period "1994-09";
+  obs:anomaly 0.0996
+.
+observation:1994-10 a qb:Observation;
+  obs:period "1994-10";
+  obs:anomaly -0.1066
+.
+observation:1994-11 a qb:Observation;
+  obs:period "1994-11";
+  obs:anomaly 0.1016
+.
+observation:1994-12 a qb:Observation;
+  obs:period "1994-12";
+  obs:anomaly 0.1306
+.
+observation:1995-01 a qb:Observation;
+  obs:period "1995-01";
+  obs:anomaly 0.1905
+.
+observation:1995-02 a qb:Observation;
+  obs:period "1995-02";
+  obs:anomaly 0.1280
+.
+observation:1995-03 a qb:Observation;
+  obs:period "1995-03";
+  obs:anomaly 0.0101
+.
+observation:1995-04 a qb:Observation;
+  obs:period "1995-04";
+  obs:anomaly 0.2855
+.
+observation:1995-05 a qb:Observation;
+  obs:period "1995-05";
+  obs:anomaly 0.1708
+.
+observation:1995-06 a qb:Observation;
+  obs:period "1995-06";
+  obs:anomaly 0.2041
+.
+observation:1995-07 a qb:Observation;
+  obs:period "1995-07";
+  obs:anomaly 0.1180
+.
+observation:1995-08 a qb:Observation;
+  obs:period "1995-08";
+  obs:anomaly 0.3392
+.
+observation:1995-09 a qb:Observation;
+  obs:period "1995-09";
+  obs:anomaly 0.3480
+.
+observation:1995-10 a qb:Observation;
+  obs:period "1995-10";
+  obs:anomaly 0.2095
+.
+observation:1995-11 a qb:Observation;
+  obs:period "1995-11";
+  obs:anomaly 0.2097
+.
+observation:1995-12 a qb:Observation;
+  obs:period "1995-12";
+  obs:anomaly -0.0720
+.
+observation:1996-01 a qb:Observation;
+  obs:period "1996-01";
+  obs:anomaly -0.0193
+.
+observation:1996-02 a qb:Observation;
+  obs:period "1996-02";
+  obs:anomaly 0.1017
+.
+observation:1996-03 a qb:Observation;
+  obs:period "1996-03";
+  obs:anomaly 0.1270
+.
+observation:1996-04 a qb:Observation;
+  obs:period "1996-04";
+  obs:anomaly 0.0053
+.
+observation:1996-05 a qb:Observation;
+  obs:period "1996-05";
+  obs:anomaly 0.0211
+.
+observation:1996-06 a qb:Observation;
+  obs:period "1996-06";
+  obs:anomaly -0.0212
+.
+observation:1996-07 a qb:Observation;
+  obs:period "1996-07";
+  obs:anomaly 0.1020
+.
+observation:1996-08 a qb:Observation;
+  obs:period "1996-08";
+  obs:anomaly 0.0872
+.
+observation:1996-09 a qb:Observation;
+  obs:period "1996-09";
+  obs:anomaly 0.2085
+.
+observation:1996-10 a qb:Observation;
+  obs:period "1996-10";
+  obs:anomaly 0.1617
+.
+observation:1996-11 a qb:Observation;
+  obs:period "1996-11";
+  obs:anomaly 0.1251
+.
+observation:1996-12 a qb:Observation;
+  obs:period "1996-12";
+  obs:anomaly 0.0424
+.
+observation:1997-01 a qb:Observation;
+  obs:period "1997-01";
+  obs:anomaly -0.0456
+.
+observation:1997-02 a qb:Observation;
+  obs:period "1997-02";
+  obs:anomaly 0.0292
+.
+observation:1997-03 a qb:Observation;
+  obs:period "1997-03";
+  obs:anomaly -0.0015
+.
+observation:1997-04 a qb:Observation;
+  obs:period "1997-04";
+  obs:anomaly -0.1271
+.
+observation:1997-05 a qb:Observation;
+  obs:period "1997-05";
+  obs:anomaly 0.0424
+.
+observation:1997-06 a qb:Observation;
+  obs:period "1997-06";
+  obs:anomaly 0.0648
+.
+observation:1997-07 a qb:Observation;
+  obs:period "1997-07";
+  obs:anomaly 0.1884
+.
+observation:1997-08 a qb:Observation;
+  obs:period "1997-08";
+  obs:anomaly 0.1937
+.
+observation:1997-09 a qb:Observation;
+  obs:period "1997-09";
+  obs:anomaly 0.2174
+.
+observation:1997-10 a qb:Observation;
+  obs:period "1997-10";
+  obs:anomaly 0.2302
+.
+observation:1997-11 a qb:Observation;
+  obs:period "1997-11";
+  obs:anomaly 0.1884
+.
+observation:1997-12 a qb:Observation;
+  obs:period "1997-12";
+  obs:anomaly 0.3256
+.
+observation:1998-01 a qb:Observation;
+  obs:period "1998-01";
+  obs:anomaly 0.6072
+.
+observation:1998-02 a qb:Observation;
+  obs:period "1998-02";
+  obs:anomaly 0.7237
+.
+observation:1998-03 a qb:Observation;
+  obs:period "1998-03";
+  obs:anomaly 0.5863
+.
+observation:1998-04 a qb:Observation;
+  obs:period "1998-04";
+  obs:anomaly 0.8937
+.
+observation:1998-05 a qb:Observation;
+  obs:period "1998-05";
+  obs:anomaly 0.6971
+.
+observation:1998-06 a qb:Observation;
+  obs:period "1998-06";
+  obs:anomaly 0.6050
+.
+observation:1998-07 a qb:Observation;
+  obs:period "1998-07";
+  obs:anomaly 0.6280
+.
+observation:1998-08 a qb:Observation;
+  obs:period "1998-08";
+  obs:anomaly 0.6098
+.
+observation:1998-09 a qb:Observation;
+  obs:period "1998-09";
+  obs:anomaly 0.5306
+.
+observation:1998-10 a qb:Observation;
+  obs:period "1998-10";
+  obs:anomaly 0.4931
+.
+observation:1998-11 a qb:Observation;
+  obs:period "1998-11";
+  obs:anomaly 0.2356
+.
+observation:1998-12 a qb:Observation;
+  obs:period "1998-12";
+  obs:anomaly 0.3513
+.
+observation:1999-01 a qb:Observation;
+  obs:period "1999-01";
+  obs:anomaly 0.2107
+.
+observation:1999-02 a qb:Observation;
+  obs:period "1999-02";
+  obs:anomaly 0.3445
+.
+observation:1999-03 a qb:Observation;
+  obs:period "1999-03";
+  obs:anomaly 0.0562
+.
+observation:1999-04 a qb:Observation;
+  obs:period "1999-04";
+  obs:anomaly 0.1804
+.
+observation:1999-05 a qb:Observation;
+  obs:period "1999-05";
+  obs:anomaly 0.1108
+.
+observation:1999-06 a qb:Observation;
+  obs:period "1999-06";
+  obs:anomaly -0.0617
+.
+observation:1999-07 a qb:Observation;
+  obs:period "1999-07";
+  obs:anomaly 0.1090
+.
+observation:1999-08 a qb:Observation;
+  obs:period "1999-08";
+  obs:anomaly 0.0633
+.
+observation:1999-09 a qb:Observation;
+  obs:period "1999-09";
+  obs:anomaly 0.1810
+.
+observation:1999-10 a qb:Observation;
+  obs:period "1999-10";
+  obs:anomaly 0.1179
+.
+observation:1999-11 a qb:Observation;
+  obs:period "1999-11";
+  obs:anomaly 0.0544
+.
+observation:1999-12 a qb:Observation;
+  obs:period "1999-12";
+  obs:anomaly 0.1069
+.
+observation:2000-01 a qb:Observation;
+  obs:period "2000-01";
+  obs:anomaly -0.0826
+.
+observation:2000-02 a qb:Observation;
+  obs:period "2000-02";
+  obs:anomaly 0.1138
+.
+observation:2000-03 a qb:Observation;
+  obs:period "2000-03";
+  obs:anomaly 0.1417
+.
+observation:2000-04 a qb:Observation;
+  obs:period "2000-04";
+  obs:anomaly 0.2459
+.
+observation:2000-05 a qb:Observation;
+  obs:period "2000-05";
+  obs:anomaly 0.1903
+.
+observation:2000-06 a qb:Observation;
+  obs:period "2000-06";
+  obs:anomaly 0.1443
+.
+observation:2000-07 a qb:Observation;
+  obs:period "2000-07";
+  obs:anomaly 0.0785
+.
+observation:2000-08 a qb:Observation;
+  obs:period "2000-08";
+  obs:anomaly 0.0420
+.
+observation:2000-09 a qb:Observation;
+  obs:period "2000-09";
+  obs:anomaly 0.1464
+.
+observation:2000-10 a qb:Observation;
+  obs:period "2000-10";
+  obs:anomaly 0.1773
+.
+observation:2000-11 a qb:Observation;
+  obs:period "2000-11";
+  obs:anomaly 0.0866
+.
+observation:2000-12 a qb:Observation;
+  obs:period "2000-12";
+  obs:anomaly 0.0477
+.
+observation:2001-01 a qb:Observation;
+  obs:period "2001-01";
+  obs:anomaly 0.1208
+.
+observation:2001-02 a qb:Observation;
+  obs:period "2001-02";
+  obs:anomaly 0.2161
+.
+observation:2001-03 a qb:Observation;
+  obs:period "2001-03";
+  obs:anomaly 0.2283
+.
+observation:2001-04 a qb:Observation;
+  obs:period "2001-04";
+  obs:anomaly 0.3381
+.
+observation:2001-05 a qb:Observation;
+  obs:period "2001-05";
+  obs:anomaly 0.3068
+.
+observation:2001-06 a qb:Observation;
+  obs:period "2001-06";
+  obs:anomaly 0.1371
+.
+observation:2001-07 a qb:Observation;
+  obs:period "2001-07";
+  obs:anomaly 0.2201
+.
+observation:2001-08 a qb:Observation;
+  obs:period "2001-08";
+  obs:anomaly 0.4697
+.
+observation:2001-09 a qb:Observation;
+  obs:period "2001-09";
+  obs:anomaly 0.2549
+.
+observation:2001-10 a qb:Observation;
+  obs:period "2001-10";
+  obs:anomaly 0.3874
+.
+observation:2001-11 a qb:Observation;
+  obs:period "2001-11";
+  obs:anomaly 0.3496
+.
+observation:2001-12 a qb:Observation;
+  obs:period "2001-12";
+  obs:anomaly 0.3162
+.
+observation:2002-01 a qb:Observation;
+  obs:period "2002-01";
+  obs:anomaly 0.4278
+.
+observation:2002-02 a qb:Observation;
+  obs:period "2002-02";
+  obs:anomaly 0.4925
+.
+observation:2002-03 a qb:Observation;
+  obs:period "2002-03";
+  obs:anomaly 0.4230
+.
+observation:2002-04 a qb:Observation;
+  obs:period "2002-04";
+  obs:anomaly 0.3910
+.
+observation:2002-05 a qb:Observation;
+  obs:period "2002-05";
+  obs:anomaly 0.3573
+.
+observation:2002-06 a qb:Observation;
+  obs:period "2002-06";
+  obs:anomaly 0.4444
+.
+observation:2002-07 a qb:Observation;
+  obs:period "2002-07";
+  obs:anomaly 0.4103
+.
+observation:2002-08 a qb:Observation;
+  obs:period "2002-08";
+  obs:anomaly 0.4011
+.
+observation:2002-09 a qb:Observation;
+  obs:period "2002-09";
+  obs:anomaly 0.3730
+.
+observation:2002-10 a qb:Observation;
+  obs:period "2002-10";
+  obs:anomaly 0.2482
+.
+observation:2002-11 a qb:Observation;
+  obs:period "2002-11";
+  obs:anomaly 0.3667
+.
+observation:2002-12 a qb:Observation;
+  obs:period "2002-12";
+  obs:anomaly 0.2877
+.
+observation:2003-01 a qb:Observation;
+  obs:period "2003-01";
+  obs:anomaly 0.5229
+.
+observation:2003-02 a qb:Observation;
+  obs:period "2003-02";
+  obs:anomaly 0.4029
+.
+observation:2003-03 a qb:Observation;
+  obs:period "2003-03";
+  obs:anomaly 0.3151
+.
+observation:2003-04 a qb:Observation;
+  obs:period "2003-04";
+  obs:anomaly 0.3477
+.
+observation:2003-05 a qb:Observation;
+  obs:period "2003-05";
+  obs:anomaly 0.3997
+.
+observation:2003-06 a qb:Observation;
+  obs:period "2003-06";
+  obs:anomaly 0.2133
+.
+observation:2003-07 a qb:Observation;
+  obs:period "2003-07";
+  obs:anomaly 0.3511
+.
+observation:2003-08 a qb:Observation;
+  obs:period "2003-08";
+  obs:anomaly 0.3533
+.
+observation:2003-09 a qb:Observation;
+  obs:period "2003-09";
+  obs:anomaly 0.3931
+.
+observation:2003-10 a qb:Observation;
+  obs:period "2003-10";
+  obs:anomaly 0.5381
+.
+observation:2003-11 a qb:Observation;
+  obs:period "2003-11";
+  obs:anomaly 0.4107
+.
+observation:2003-12 a qb:Observation;
+  obs:period "2003-12";
+  obs:anomaly 0.5140
+.
+observation:2004-01 a qb:Observation;
+  obs:period "2004-01";
+  obs:anomaly 0.4090
+.
+observation:2004-02 a qb:Observation;
+  obs:period "2004-02";
+  obs:anomaly 0.4258
+.
+observation:2004-03 a qb:Observation;
+  obs:period "2004-03";
+  obs:anomaly 0.5614
+.
+observation:2004-04 a qb:Observation;
+  obs:period "2004-04";
+  obs:anomaly 0.3555
+.
+observation:2004-05 a qb:Observation;
+  obs:period "2004-05";
+  obs:anomaly 0.2493
+.
+observation:2004-06 a qb:Observation;
+  obs:period "2004-06";
+  obs:anomaly 0.2096
+.
+observation:2004-07 a qb:Observation;
+  obs:period "2004-07";
+  obs:anomaly 0.1109
+.
+observation:2004-08 a qb:Observation;
+  obs:period "2004-08";
+  obs:anomaly 0.1983
+.
+observation:2004-09 a qb:Observation;
+  obs:period "2004-09";
+  obs:anomaly 0.3177
+.
+observation:2004-10 a qb:Observation;
+  obs:period "2004-10";
+  obs:anomaly 0.4117
+.
+observation:2004-11 a qb:Observation;
+  obs:period "2004-11";
+  obs:anomaly 0.3141
+.
+observation:2004-12 a qb:Observation;
+  obs:period "2004-12";
+  obs:anomaly 0.2172
+.
+observation:2005-01 a qb:Observation;
+  obs:period "2005-01";
+  obs:anomaly 0.5349
+.
+observation:2005-02 a qb:Observation;
+  obs:period "2005-02";
+  obs:anomaly 0.4479
+.
+observation:2005-03 a qb:Observation;
+  obs:period "2005-03";
+  obs:anomaly 0.4341
+.
+observation:2005-04 a qb:Observation;
+  obs:period "2005-04";
+  obs:anomaly 0.5572
+.
+observation:2005-05 a qb:Observation;
+  obs:period "2005-05";
+  obs:anomaly 0.3712
+.
+observation:2005-06 a qb:Observation;
+  obs:period "2005-06";
+  obs:anomaly 0.3731
+.
+observation:2005-07 a qb:Observation;
+  obs:period "2005-07";
+  obs:anomaly 0.4765
+.
+observation:2005-08 a qb:Observation;
+  obs:period "2005-08";
+  obs:anomaly 0.3765
+.
+observation:2005-09 a qb:Observation;
+  obs:period "2005-09";
+  obs:anomaly 0.5037
+.
+observation:2005-10 a qb:Observation;
+  obs:period "2005-10";
+  obs:anomaly 0.5139
+.
+observation:2005-11 a qb:Observation;
+  obs:period "2005-11";
+  obs:anomaly 0.4365
+.
+observation:2005-12 a qb:Observation;
+  obs:period "2005-12";
+  obs:anomaly 0.2687
+.
+observation:2006-01 a qb:Observation;
+  obs:period "2006-01";
+  obs:anomaly 0.3662
+.
+observation:2006-02 a qb:Observation;
+  obs:period "2006-02";
+  obs:anomaly 0.4004
+.
+observation:2006-03 a qb:Observation;
+  obs:period "2006-03";
+  obs:anomaly 0.3875
+.
+observation:2006-04 a qb:Observation;
+  obs:period "2006-04";
+  obs:anomaly 0.3220
+.
+observation:2006-05 a qb:Observation;
+  obs:period "2006-05";
+  obs:anomaly 0.1732
+.
+observation:2006-06 a qb:Observation;
+  obs:period "2006-06";
+  obs:anomaly 0.2925
+.
+observation:2006-07 a qb:Observation;
+  obs:period "2006-07";
+  obs:anomaly 0.3683
+.
+observation:2006-08 a qb:Observation;
+  obs:period "2006-08";
+  obs:anomaly 0.3693
+.
+observation:2006-09 a qb:Observation;
+  obs:period "2006-09";
+  obs:anomaly 0.4326
+.
+observation:2006-10 a qb:Observation;
+  obs:period "2006-10";
+  obs:anomaly 0.4562
+.
+observation:2006-11 a qb:Observation;
+  obs:period "2006-11";
+  obs:anomaly 0.3265
+.
+observation:2006-12 a qb:Observation;
+  obs:period "2006-12";
+  obs:anomaly 0.4104
+.
+observation:2007-01 a qb:Observation;
+  obs:period "2007-01";
+  obs:anomaly 0.6761
+.
+observation:2007-02 a qb:Observation;
+  obs:period "2007-02";
+  obs:anomaly 0.4813
+.
+observation:2007-03 a qb:Observation;
+  obs:period "2007-03";
+  obs:anomaly 0.4900
+.
+observation:2007-04 a qb:Observation;
+  obs:period "2007-04";
+  obs:anomaly 0.4075
+.
+observation:2007-05 a qb:Observation;
+  obs:period "2007-05";
+  obs:anomaly 0.3046
+.
+observation:2007-06 a qb:Observation;
+  obs:period "2007-06";
+  obs:anomaly 0.3183
+.
+observation:2007-07 a qb:Observation;
+  obs:period "2007-07";
+  obs:anomaly 0.3912
+.
+observation:2007-08 a qb:Observation;
+  obs:period "2007-08";
+  obs:anomaly 0.4523
+.
+observation:2007-09 a qb:Observation;
+  obs:period "2007-09";
+  obs:anomaly 0.3781
+.
+observation:2007-10 a qb:Observation;
+  obs:period "2007-10";
+  obs:anomaly 0.3754
+.
+observation:2007-11 a qb:Observation;
+  obs:period "2007-11";
+  obs:anomaly 0.2543
+.
+observation:2007-12 a qb:Observation;
+  obs:period "2007-12";
+  obs:anomaly 0.1797
+.
+observation:2008-01 a qb:Observation;
+  obs:period "2008-01";
+  obs:anomaly 0.0205
+.
+observation:2008-02 a qb:Observation;
+  obs:period "2008-02";
+  obs:anomaly 0.0737
+.
+observation:2008-03 a qb:Observation;
+  obs:period "2008-03";
+  obs:anomaly 0.1796
+.
+observation:2008-04 a qb:Observation;
+  obs:period "2008-04";
+  obs:anomaly 0.1448
+.
+observation:2008-05 a qb:Observation;
+  obs:period "2008-05";
+  obs:anomaly -0.0061
+.
+observation:2008-06 a qb:Observation;
+  obs:period "2008-06";
+  obs:anomaly 0.1063
+.
+observation:2008-07 a qb:Observation;
+  obs:period "2008-07";
+  obs:anomaly 0.2138
+.
+observation:2008-08 a qb:Observation;
+  obs:period "2008-08";
+  obs:anomaly 0.1924
+.
+observation:2008-09 a qb:Observation;
+  obs:period "2008-09";
+  obs:anomaly 0.3069
+.
+observation:2008-10 a qb:Observation;
+  obs:period "2008-10";
+  obs:anomaly 0.3290
+.
+observation:2008-11 a qb:Observation;
+  obs:period "2008-11";
+  obs:anomaly 0.3355
+.
+observation:2008-12 a qb:Observation;
+  obs:period "2008-12";
+  obs:anomaly 0.2617
+.
+observation:2009-01 a qb:Observation;
+  obs:period "2009-01";
+  obs:anomaly 0.3837
+.
+observation:2009-02 a qb:Observation;
+  obs:period "2009-02";
+  obs:anomaly 0.3393
+.
+observation:2009-03 a qb:Observation;
+  obs:period "2009-03";
+  obs:anomaly 0.2937
+.
+observation:2009-04 a qb:Observation;
+  obs:period "2009-04";
+  obs:anomaly 0.2850
+.
+observation:2009-05 a qb:Observation;
+  obs:period "2009-05";
+  obs:anomaly 0.1734
+.
+observation:2009-06 a qb:Observation;
+  obs:period "2009-06";
+  obs:anomaly 0.1389
+.
+observation:2009-07 a qb:Observation;
+  obs:period "2009-07";
+  obs:anomaly 0.4592
+.
+observation:2009-08 a qb:Observation;
+  obs:period "2009-08";
+  obs:anomaly 0.3684
+.
+observation:2009-09 a qb:Observation;
+  obs:period "2009-09";
+  obs:anomaly 0.5907
+.
+observation:2009-10 a qb:Observation;
+  obs:period "2009-10";
+  obs:anomaly 0.4481
+.
+observation:2009-11 a qb:Observation;
+  obs:period "2009-11";
+  obs:anomaly 0.4591
+.
+observation:2009-12 a qb:Observation;
+  obs:period "2009-12";
+  obs:anomaly 0.3101
+.
+observation:2010-01 a qb:Observation;
+  obs:period "2010-01";
+  obs:anomaly 0.7163
+.
+observation:2010-02 a qb:Observation;
+  obs:period "2010-02";
+  obs:anomaly 0.6569
+.
+observation:2010-03 a qb:Observation;
+  obs:period "2010-03";
+  obs:anomaly 0.7465
+.
+observation:2010-04 a qb:Observation;
+  obs:period "2010-04";
+  obs:anomaly 0.6153
+.
+observation:2010-05 a qb:Observation;
+  obs:period "2010-05";
+  obs:anomaly 0.6434
+.
+observation:2010-06 a qb:Observation;
+  obs:period "2010-06";
+  obs:anomaly 0.6139
+.
+observation:2010-07 a qb:Observation;
+  obs:period "2010-07";
+  obs:anomaly 0.6851
+.
+observation:2010-08 a qb:Observation;
+  obs:period "2010-08";
+  obs:anomaly 0.6726
+.
+observation:2010-09 a qb:Observation;
+  obs:period "2010-09";
+  obs:anomaly 0.6334
+.
+observation:2010-10 a qb:Observation;
+  obs:period "2010-10";
+  obs:anomaly 0.4528
+.
+observation:2010-11 a qb:Observation;
+  obs:period "2010-11";
+  obs:anomaly 0.4421
+.
+observation:2010-12 a qb:Observation;
+  obs:period "2010-12";
+  obs:anomaly 0.3288
+.
+observation:2011-01 a qb:Observation;
+  obs:period "2011-01";
+  obs:anomaly 0.1889
+.
+observation:2011-02 a qb:Observation;
+  obs:period "2011-02";
+  obs:anomaly 0.1840
+.
+observation:2011-03 a qb:Observation;
+  obs:period "2011-03";
+  obs:anomaly 0.1053
+.
+observation:2011-04 a qb:Observation;
+  obs:period "2011-04";
+  obs:anomaly 0.2085
+.
+observation:2011-05 a qb:Observation;
+  obs:period "2011-05";
+  obs:anomaly 0.2379
+.
+observation:2011-06 a qb:Observation;
+  obs:period "2011-06";
+  obs:anomaly 0.4051
+.
+observation:2011-07 a qb:Observation;
+  obs:period "2011-07";
+  obs:anomaly 0.4608
+.
+observation:2011-08 a qb:Observation;
+  obs:period "2011-08";
+  obs:anomaly 0.4241
+.
+observation:2011-09 a qb:Observation;
+  obs:period "2011-09";
+  obs:anomaly 0.4165
+.
+observation:2011-10 a qb:Observation;
+  obs:period "2011-10";
+  obs:anomaly 0.2323
+.
+observation:2011-11 a qb:Observation;
+  obs:period "2011-11";
+  obs:anomaly 0.1546
+.
+observation:2011-12 a qb:Observation;
+  obs:period "2011-12";
+  obs:anomaly 0.2167
+.
+observation:2012-01 a qb:Observation;
+  obs:period "2012-01";
+  obs:anomaly 0.0342
+.
+observation:2012-02 a qb:Observation;
+  obs:period "2012-02";
+  obs:anomaly -0.0143
+.
+observation:2012-03 a qb:Observation;
+  obs:period "2012-03";
+  obs:anomaly 0.1791
+.
+observation:2012-04 a qb:Observation;
+  obs:period "2012-04";
+  obs:anomaly 0.4230
+.
+observation:2012-05 a qb:Observation;
+  obs:period "2012-05";
+  obs:anomaly 0.3246
+.
+observation:2012-06 a qb:Observation;
+  obs:period "2012-06";
+  obs:anomaly 0.4521
+.
+observation:2012-07 a qb:Observation;
+  obs:period "2012-07";
+  obs:anomaly 0.4002
+.
+observation:2012-08 a qb:Observation;
+  obs:period "2012-08";
+  obs:anomaly 0.4110
+.
+observation:2012-09 a qb:Observation;
+  obs:period "2012-09";
+  obs:anomaly 0.5551
+.
+observation:2012-10 a qb:Observation;
+  obs:period "2012-10";
+  obs:anomaly 0.4970
+.
+observation:2012-11 a qb:Observation;
+  obs:period "2012-11";
+  obs:anomaly 0.3776
+.
+observation:2012-12 a qb:Observation;
+  obs:period "2012-12";
+  obs:anomaly 0.2394
+.
+observation:2013-01 a qb:Observation;
+  obs:period "2013-01";
+  obs:anomaly 0.5840
+.
+observation:2013-02 a qb:Observation;
+  obs:period "2013-02";
+  obs:anomaly 0.3800
+.
+observation:2013-03 a qb:Observation;
+  obs:period "2013-03";
+  obs:anomaly 0.3972
+.
+observation:2013-04 a qb:Observation;
+  obs:period "2013-04";
+  obs:anomaly 0.3704
+.
+observation:2013-05 a qb:Observation;
+  obs:period "2013-05";
+  obs:anomaly 0.2798
+.
+observation:2013-06 a qb:Observation;
+  obs:period "2013-06";
+  obs:anomaly 0.4663
+.
+observation:2013-07 a qb:Observation;
+  obs:period "2013-07";
+  obs:anomaly 0.3876
+.
+observation:2013-08 a qb:Observation;
+  obs:period "2013-08";
+  obs:anomaly 0.3401
+.
+observation:2013-09 a qb:Observation;
+  obs:period "2013-09";
+  obs:anomaly 0.4394
+.
+observation:2013-10 a qb:Observation;
+  obs:period "2013-10";
+  obs:anomaly 0.4401
+.
+observation:2013-11 a qb:Observation;
+  obs:period "2013-11";
+  obs:anomaly 0.3279
+.
+observation:2013-12 a qb:Observation;
+  obs:period "2013-12";
+  obs:anomaly 0.3226
+.
+observation:2014-01 a qb:Observation;
+  obs:period "2014-01";
+  obs:anomaly 0.4429
+.
+observation:2014-02 a qb:Observation;
+  obs:period "2014-02";
+  obs:anomaly 0.3705
+.
+observation:2014-03 a qb:Observation;
+  obs:period "2014-03";
+  obs:anomaly 0.4142
+.
+observation:2014-04 a qb:Observation;
+  obs:period "2014-04";
+  obs:anomaly 0.4239
+.
+observation:2014-05 a qb:Observation;
+  obs:period "2014-05";
+  obs:anomaly 0.4517
+.
+observation:2014-06 a qb:Observation;
+  obs:period "2014-06";
+  obs:anomaly 0.5201
+.
+observation:2014-07 a qb:Observation;
+  obs:period "2014-07";
+  obs:anomaly 0.5220
+.
+observation:2014-08 a qb:Observation;
+  obs:period "2014-08";
+  obs:anomaly 0.3789
+.
+observation:2014-09 a qb:Observation;
+  obs:period "2014-09";
+  obs:anomaly 0.3929
+.
+observation:2014-10 a qb:Observation;
+  obs:period "2014-10";
+  obs:anomaly 0.5198
+.
+observation:2014-11 a qb:Observation;
+  obs:period "2014-11";
+  obs:anomaly 0.4437
+.
+observation:2014-12 a qb:Observation;
+  obs:period "2014-12";
+  obs:anomaly 0.4655
+.
+observation:2015-01 a qb:Observation;
+  obs:period "2015-01";
+  obs:anomaly 0.5560
+.
+observation:2015-02 a qb:Observation;
+  obs:period "2015-02";
+  obs:anomaly 0.5347
+.
+observation:2015-03 a qb:Observation;
+  obs:period "2015-03";
+  obs:anomaly 0.4855
+.
+observation:2015-04 a qb:Observation;
+  obs:period "2015-04";
+  obs:anomaly 0.3628
+.
+observation:2015-05 a qb:Observation;
+  obs:period "2015-05";
+  obs:anomaly 0.4886
+.
+observation:2015-06 a qb:Observation;
+  obs:period "2015-06";
+  obs:anomaly 0.5595
+.
+observation:2015-07 a qb:Observation;
+  obs:period "2015-07";
+  obs:anomaly 0.4723
+.
+observation:2015-08 a qb:Observation;
+  obs:period "2015-08";
+  obs:anomaly 0.5873
+.
+observation:2015-09 a qb:Observation;
+  obs:period "2015-09";
+  obs:anomaly 0.6157
+.
+observation:2015-10 a qb:Observation;
+  obs:period "2015-10";
+  obs:anomaly 0.7568
+.
+observation:2015-11 a qb:Observation;
+  obs:period "2015-11";
+  obs:anomaly 0.6702
+.
+observation:2015-12 a qb:Observation;
+  obs:period "2015-12";
+  obs:anomaly 0.7485
+.
+observation:2016-01 a qb:Observation;
+  obs:period "2016-01";
+  obs:anomaly 0.8667
+.
+observation:2016-02 a qb:Observation;
+  obs:period "2016-02";
+  obs:anomaly 1.1972
+.
+observation:2016-03 a qb:Observation;
+  obs:period "2016-03";
+  obs:anomaly 1.0751
+.
+observation:2016-04 a qb:Observation;
+  obs:period "2016-04";
+  obs:anomaly 0.9685
+.
+observation:2016-05 a qb:Observation;
+  obs:period "2016-05";
+  obs:anomaly 0.7023
+.
+observation:2016-06 a qb:Observation;
+  obs:period "2016-06";
+  obs:anomaly 0.6489
+.
+observation:2016-07 a qb:Observation;
+  obs:period "2016-07";
+  obs:anomaly 0.6658
+.
+observation:2016-08 a qb:Observation;
+  obs:period "2016-08";
+  obs:anomaly 0.6569
+.
+observation:2016-09 a qb:Observation;
+  obs:period "2016-09";
+  obs:anomaly 0.7769
+.
+observation:2016-10 a qb:Observation;
+  obs:period "2016-10";
+  obs:anomaly 0.6246
+.
+observation:2016-11 a qb:Observation;
+  obs:period "2016-11";
+  obs:anomaly 0.6031
+.
+observation:2016-12 a qb:Observation;
+  obs:period "2016-12";
+  obs:anomaly 0.4394
+.
+observation:2017-01 a qb:Observation;
+  obs:period "2017-01";
+  obs:anomaly 0.6094
+.
+observation:2017-02 a qb:Observation;
+  obs:period "2017-02";
+  obs:anomaly 0.7065
+.
+observation:2017-03 a qb:Observation;
+  obs:period "2017-03";
+  obs:anomaly 0.5862
+.
+observation:2017-04 a qb:Observation;
+  obs:period "2017-04";
+  obs:anomaly 0.5667
+.
+observation:2017-05 a qb:Observation;
+  obs:period "2017-05";
+  obs:anomaly 0.6417
+.
+observation:2017-06 a qb:Observation;
+  obs:period "2017-06";
+  obs:anomaly 0.4978
+.
+observation:2017-07 a qb:Observation;
+  obs:period "2017-07";
+  obs:anomaly 0.6156
+.
+observation:2017-08 a qb:Observation;
+  obs:period "2017-08";
+  obs:anomaly 0.7269
+.
+observation:2017-09 a qb:Observation;
+  obs:period "2017-09";
+  obs:anomaly 0.8575
+.
+observation:2017-10 a qb:Observation;
+  obs:period "2017-10";
+  obs:anomaly 0.8229
+.
+observation:2017-11 a qb:Observation;
+  obs:period "2017-11";
+  obs:anomaly 0.5637
+.
+observation:2017-12 a qb:Observation;
+  obs:period "2017-12";
+  obs:anomaly 0.6138
+.
+observation:2018-01 a qb:Observation;
+  obs:period "2018-01";
+  obs:anomaly 0.5656
+.
+observation:2018-02 a qb:Observation;
+  obs:period "2018-02";
+  obs:anomaly 0.5059
+.
+observation:2018-03 a qb:Observation;
+  obs:period "2018-03";
+  obs:anomaly 0.5587
+.
+observation:2018-04 a qb:Observation;
+  obs:period "2018-04";
+  obs:anomaly 0.4651
+.
+observation:2018-05 a qb:Observation;
+  obs:period "2018-05";
+  obs:anomaly 0.4176
+.
+observation:2018-06 a qb:Observation;
+  obs:period "2018-06";
+  obs:anomaly 0.4684
+.
+observation:2018-07 a qb:Observation;
+  obs:period "2018-07";
+  obs:anomaly 0.6334
+.
+observation:2018-08 a qb:Observation;
+  obs:period "2018-08";
+  obs:anomaly 0.5052
+.
+observation:2018-09 a qb:Observation;
+  obs:period "2018-09";
+  obs:anomaly 0.4884
+.
