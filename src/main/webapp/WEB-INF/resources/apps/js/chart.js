@@ -1,7 +1,7 @@
 /*
  * NAME     chart.js
- * VERSION  1.23.0
- * DATE     2018-10-20
+ * VERSION  1.23.1-SNAPSHOT
+ * DATE     2018-10-21
  *
  * Copyright 2012-2018
  *
@@ -32,12 +32,14 @@
 // (1) Your data
 // (2) A function that calculates the x position of an element in your data
 // (3) A function that calculates the y position of an element in your data
-// (4) The minimum value of your x-axis
-// (5) The minimum value of your y-axis
+// (4) The maximum value of your x-axis
+// (5) The maximum value of your y-axis
 
 // Returns an object with two points, where each point is an object with an x and y coordinate
 
-function calcLinear(data, x, y, minX, minY){
+function calcLinear(data, x, y, maxX, maxY){
+ var minX = 0;
+ var minY = 0;
  /////////
  //SLOPE//
  /////////
@@ -100,8 +102,8 @@ function calcLinear(data, x, y, minX, minY){
      y: m * minX + b
    },
    ptB : {
-     y: minY,
-     x: (minY - b) / m
+     x: maxX,
+     y: m * maxX + b
    }
  }
 
@@ -146,7 +148,7 @@ function plotChart(data, appearance) {
    .call(yAxis);
 
  if (appearance==="ScatterPlotChartAppearance") {
-   var lg = calcLinear(data, function(d) {return x(d.name) + x.rangeBand()/2;}, function(d) {return y(d.value)}, 10, height);
+   var lg = calcLinear(data, function(d) {return x(d.name) + x.rangeBand()/2;}, function(d) {return y(d.value)}, width, height);
 
    chart.append("line")
        .attr("class","line")
