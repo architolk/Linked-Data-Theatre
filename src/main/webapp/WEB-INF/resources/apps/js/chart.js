@@ -1,7 +1,7 @@
 /*
  * NAME     chart.js
  * VERSION  1.23.1-SNAPSHOT
- * DATE     2018-10-21
+ * DATE     2018-10-22
  *
  * Copyright 2012-2018
  *
@@ -111,8 +111,8 @@ function calcLinear(data, x, y, maxX, maxY){
 
 function plotChart(data, appearance, xtype, ytype) {
 
- function getX(d) {return xtype==="dateTime" ? x(new Date(d.d)) : (typeof x.rangeBand)!= "undefined" ? x(d.d)+x.rangeBand()/2 : x(d.d)};
- function getY(d) {return ytype==="dateTime" ? x(new Date(d.m)) : (typeof y.rangeBand)!= "undefined" ? y(d.m)+y.rangeBand()/2 : y(d.m)};
+ function getX(d) {return (typeof x.rangeBand)!= "undefined" ? x(d.d)+x.rangeBand()/2 : x(d.d)};
+ function getY(d) {return (typeof y.rangeBand)!= "undefined" ? y(d.m)+y.rangeBand()/2 : y(d.m)};
 
  var margin = {top: 20, right: 30, bottom: 30, left: 40},
    width = 800 - margin.left - margin.right,
@@ -125,7 +125,7 @@ function plotChart(data, appearance, xtype, ytype) {
      .range([0, width]);
  } else if (xtype==="dateTime") {
    x = d3.time.scale()
-     .domain([new Date('1978-01-01T00:00:00'), new Date('2018-12-01T00:00:00')])
+     .domain([d3.min(data, function (d) {return d.d;}),d3.max(data, function (d) {return d.d;})])
      .range([0, width]);
  } else {
    x = d3.scale.ordinal()

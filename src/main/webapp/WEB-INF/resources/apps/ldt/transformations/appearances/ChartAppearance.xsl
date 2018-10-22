@@ -2,7 +2,7 @@
 
     NAME     ChartAppearance.xsl
     VERSION  1.23.1-SNAPSHOT
-    DATE     2018-10-21
+    DATE     2018-10-22
 
     Copyright 2012-2018
 
@@ -91,9 +91,11 @@
 		<xsl:for-each select="$observations/observation">
 			<xsl:if test="position()!=1">,</xsl:if>
 			<xsl:text>{d:</xsl:text>
+			<xsl:if test="@dimension-datatype='http://www.w3.org/2001/XMLSchema#dateTime'">new Date(</xsl:if>
 			<xsl:if test="@dimension-datatype!='http://www.w3.org/2001/XMLSchema#decimal' and @dimension-datatype!='http://www.w3.org/2001/XMLSchema#integer'">"</xsl:if>
 			<xsl:value-of select="@dimension"/>
 			<xsl:if test="@dimension-datatype!='http://www.w3.org/2001/XMLSchema#decimal' and @dimension-datatype!='http://www.w3.org/2001/XMLSchema#integer'">"</xsl:if>
+			<xsl:if test="@dimension-datatype='http://www.w3.org/2001/XMLSchema#dateTime'">)</xsl:if>
 			<xsl:text>,m:</xsl:text><xsl:value-of select="."/>
 			<xsl:text>}</xsl:text>
 		</xsl:for-each>
