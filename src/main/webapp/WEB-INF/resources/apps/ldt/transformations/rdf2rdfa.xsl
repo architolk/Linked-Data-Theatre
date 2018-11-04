@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2rdfa.xsl
-    VERSION  1.23.0
-    DATE     2018-10-20
+    VERSION  1.23.1-SNAPSHOT
+    DATE     2018-11-04
 
     Copyright 2012-2018
 
@@ -43,6 +43,17 @@
 <!-- bnodes and resources from all queries, this is not perfectly right, because it should be local to the specific query (more than one rdf:RDF is possible) -->
 <xsl:key name="resource" match="/root/results/rdf:RDF/rdf:Description" use="@rdf:about"/>
 <xsl:key name="bnodes" match="/root/results/rdf:RDF/rdf:Description" use="@rdf:nodeID"/>
+
+<xsl:template match="*" mode="normalize-language">
+	<xsl:variable name="language" select="/root/context/language"/>
+	<xsl:choose>
+		<xsl:when test="rdfs:label[@xml:lang=$language]!=''"><xsl:copy-of select="rdfs:label[@xml:lang=$language][1]"/></xsl:when> <!-- First choice: language of browser -->
+		<xsl:when test="rdfs:label[not(exists(@xml:lang))]!=''"><xsl:copy-of select="rdfs:label[not(exists(@xml:lang))][1]"/></xsl:when> <!-- Second choice: no language -->
+		<xsl:when test="rdfs:label[@xml:lang='nl']!=''"><xsl:copy-of select="rdfs:label[@xml:lang='nl'][1]"/></xsl:when> <!-- Third choice: dutch -->
+		<xsl:when test="rdfs:label[@xml:lang='en']!=''"><xsl:copy-of select="rdfs:label[@xml:lang='en'][1]"/></xsl:when> <!-- Fourth choice: english -->
+		<xsl:otherwise><xsl:copy-of select="rdfs:label[1]"/></xsl:otherwise> <!-- If all fails, the first label -->
+	</xsl:choose>
+</xsl:template>
 
 <xsl:template match="*" mode="property">
 	<xsl:param name="fragments"/>
@@ -236,6 +247,54 @@
 					<xsl:variable name="about" select="@rdf:about"/>
 					<xsl:if test="exists(current-group()/*[name()!='rdfs:label']) and not(exists($properties/property[.=$about]))"> <!-- Groups with only labels should be ignored -->
 						<rdf:Description rdf:about="{$about}">
+							<xsl:variable name="propertyfragment" select="$fragments[@applies-to='http://bp4mc2.org/elmo/def#PropertyLabel']/elmo:select/@rdf:resource"/>
+							<xsl:variable name="propertylabelsel" select="*[@rdf:about=$propertyfragment]"/>
+							<xsl:variable name="propertylabel">
+								<labels>
+									<xsl:choose>
+										<xsl:when test="$propertylabelsel!=''">
+											<xsl:for-each select="$propertylabelsel"><rdfs:label>
+												<xsl:if test="@xml:lang!=''"><xsl:attribute name="xml:lang" select="@xml:lang"/></xsl:if>
+												<xsl:value-of select="."/></rdfs:label>
+											</xsl:for-each>
+										</xsl:when>
+										<xsl:when test="$fragments[@applies-to='http://bp4mc2.org/elmo/def#PropertyLabel']/rdf:value!=''">
+											<xsl:for-each select="$fragments[@applies-to='http://bp4mc2.org/elmo/def#PropertyLabel']/rdf:value"><rdfs:label>
+												<xsl:if test="@xml:lang!=''"><xsl:attribute name="xml:lang" select="@xml:lang"/></xsl:if>
+												<xsl:value-of select="."/></rdfs:label>
+											</xsl:for-each>
+										</xsl:when>
+										<xsl:otherwise></xsl:otherwise>
+									</xsl:choose>
+								</labels>
+							</xsl:variable>
+							<xsl:variable name="valuefragment" select="$fragments[@applies-to='http://bp4mc2.org/elmo/def#ValueLabel']/elmo:select/@rdf:resource"/>
+							<xsl:variable name="valuelabelsel" select="*[concat(namespace-uri(),local-name())=$valuefragment]"/>
+							<xsl:variable name="valuelabel">
+								<labels>
+									<xsl:choose>
+										<xsl:when test="$valuelabelsel!=''">
+											<xsl:for-each select="$valuelabelsel"><rdfs:label>
+												<xsl:if test="@xml:lang!=''"><xsl:attribute name="xml:lang" select="@xml:lang"/></xsl:if>
+												<xsl:value-of select="."/></rdfs:label>
+											</xsl:for-each>
+										</xsl:when>
+										<xsl:when test="$fragments[@applies-to='http://bp4mc2.org/elmo/def#ValueLabel']/rdf:value!=''">
+											<xsl:for-each select="$fragments[@applies-to='http://bp4mc2.org/elmo/def#ValueLabel']/rdf:value"><rdfs:label>
+												<xsl:if test="@xml:lang!=''"><xsl:attribute name="xml:lang" select="@xml:lang"/></xsl:if>
+												<xsl:value-of select="."/></rdfs:label>
+											</xsl:for-each>
+										</xsl:when>
+										<xsl:otherwise></xsl:otherwise>
+									</xsl:choose>
+								</labels>
+							</xsl:variable>
+							<xsl:if test="$propertylabel!=''">
+								<xsl:attribute name="elmo:propertyLabel"><xsl:apply-templates select="$propertylabel" mode="normalize-language"/></xsl:attribute>
+							</xsl:if>
+							<xsl:if test="$valuelabel!=''">
+								<xsl:attribute name="elmo:valueLabel"><xsl:apply-templates select="$valuelabel" mode="normalize-language"/></xsl:attribute>
+							</xsl:if>
 							<xsl:apply-templates select="current-group()/*" mode="property">
 								<xsl:with-param name="fragments" select="$fragments"/>
 							</xsl:apply-templates>

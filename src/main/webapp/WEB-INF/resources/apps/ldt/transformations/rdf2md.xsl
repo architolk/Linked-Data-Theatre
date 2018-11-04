@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2md.xsl
-    VERSION  1.23.0
-    DATE     2018-10-20
+    VERSION  1.23.1-SNAPSHOT
+    DATE     2018-11-04
 
     Copyright 2012-2018
 
@@ -370,7 +370,19 @@
 
 <xsl:template match="rdf:Description" mode="PropertyTable">
 	<!-- Content -->
-	<xsl:text>|Eigenschap|Waarde
+	<xsl:variable name="propertylabel">
+		<xsl:choose>
+			<xsl:when test="@elmo:propertyLabel!=''"><xsl:value-of select="@elmo:propertyLabel"/></xsl:when>
+			<xsl:otherwise>Eigenschap</xsl:otherwise>
+		</xsl:choose>
+	</xsl:variable>
+	<xsl:variable name="valuelabel">
+		<xsl:choose>
+			<xsl:when test="@elmo:valueLabel!=''"><xsl:value-of select="@elmo:valueLabel"/></xsl:when>
+			<xsl:otherwise>Waarde</xsl:otherwise>
+		</xsl:choose>
+	</xsl:variable>
+	<xsl:text>|</xsl:text><xsl:value-of select="$propertylabel"/>|<xsl:value-of select="$valuelabel"/><xsl:text>
 </xsl:text>
 	<xsl:text>|----------|------
 </xsl:text>
