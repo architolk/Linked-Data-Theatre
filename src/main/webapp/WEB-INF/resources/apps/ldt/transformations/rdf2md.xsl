@@ -2,7 +2,7 @@
 
     NAME     rdf2md.xsl
     VERSION  1.23.1-SNAPSHOT
-    DATE     2018-11-04
+    DATE     2018-11-10
 
     Copyright 2012-2018
 
@@ -444,12 +444,19 @@
 		</xsl:when>
 		<!-- Reference to another resource, with a label -->
 		<xsl:when test="exists(rdf:Description/@rdf:about)">
+			<xsl:variable name="prefix" select="replace(rdf:Description/@rdf:about,'(/|#|\\)[0-9A-Za-z-._~()@]+$','$1')"/>
+			<xsl:variable name="resourceuri">
+				<xsl:choose>
+					<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#LocalLink'">#<xsl:value-of select="substring-after(rdf:Description/@rdf:about,$prefix)"/></xsl:when>
+					<xsl:otherwise><xsl:value-of select="rdf:Description/@rdf:about"/></xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
 			<xsl:text>[</xsl:text>
 			<xsl:choose>
 				<xsl:when test="rdf:Description/rdfs:label!=''"><xsl:value-of select="rdf:Description/rdfs:label"/></xsl:when>
 				<xsl:otherwise><xsl:value-of select="rdf:Description/@rdf:about"/></xsl:otherwise>
 			</xsl:choose>
-			<xsl:text>](</xsl:text><xsl:value-of select="rdf:Description/@rdf:about"/><xsl:text>)</xsl:text>
+			<xsl:text>](</xsl:text><xsl:value-of select="$resourceuri"/><xsl:text>)</xsl:text>
 		</xsl:when>
 		<!-- Blank node (list) -->
 		<xsl:when test="exists(rdf:Description/rdf:first)">
