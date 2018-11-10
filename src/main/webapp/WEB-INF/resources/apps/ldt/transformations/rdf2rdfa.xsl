@@ -2,7 +2,7 @@
 
     NAME     rdf2rdfa.xsl
     VERSION  1.23.1-SNAPSHOT
-    DATE     2018-11-04
+    DATE     2018-11-10
 
     Copyright 2012-2018
 
@@ -248,7 +248,7 @@
 					<xsl:if test="exists(current-group()/*[name()!='rdfs:label']) and not(exists($properties/property[.=$about]))"> <!-- Groups with only labels should be ignored -->
 						<rdf:Description rdf:about="{$about}">
 							<xsl:variable name="propertyfragment" select="$fragments[@applies-to='http://bp4mc2.org/elmo/def#PropertyLabel']/elmo:select/@rdf:resource"/>
-							<xsl:variable name="propertylabelsel" select="*[@rdf:about=$propertyfragment]"/>
+							<xsl:variable name="propertylabelsel" select="*[concat(namespace-uri(),local-name())=$propertyfragment]"/>
 							<xsl:variable name="propertylabel">
 								<labels>
 									<xsl:choose>
