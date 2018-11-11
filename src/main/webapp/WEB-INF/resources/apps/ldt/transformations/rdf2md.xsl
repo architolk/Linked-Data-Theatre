@@ -2,7 +2,7 @@
 
     NAME     rdf2md.xsl
     VERSION  1.23.1-SNAPSHOT
-    DATE     2018-11-10
+    DATE     2018-11-11
 
     Copyright 2012-2018
 
@@ -409,6 +409,8 @@
 </xsl:template>
 
 <xsl:template match="*" mode="object">
+	<xsl:param name="appearance" select="@elmo:appearance"/>
+
 	<xsl:choose>
 		<!-- Image -->
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#ImageAppearance'">
@@ -447,7 +449,7 @@
 			<xsl:variable name="prefix" select="replace(rdf:Description/@rdf:about,'(/|#|\\)[0-9A-Za-z-._~()@]+$','$1')"/>
 			<xsl:variable name="resourceuri">
 				<xsl:choose>
-					<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#LocalLink'">#<xsl:value-of select="substring-after(rdf:Description/@rdf:about,$prefix)"/></xsl:when>
+					<xsl:when test="$appearance='http://bp4mc2.org/elmo/def#LocalLink'">#<xsl:value-of select="substring-after(rdf:Description/@rdf:about,$prefix)"/></xsl:when>
 					<xsl:otherwise><xsl:value-of select="rdf:Description/@rdf:about"/></xsl:otherwise>
 				</xsl:choose>
 			</xsl:variable>
@@ -469,8 +471,11 @@
 		<!-- Blank node, selection -->
 		<xsl:when test="exists(rdf:Description/@rdf:nodeID) and exists(@elmo:select)">
 			<xsl:variable name="select" select="@elmo:select"/>
+			<xsl:variable name="appearance" select="@elmo:appearance"/>
 			<xsl:for-each select="rdf:Description/*[concat(namespace-uri(),local-name())=$select]">
-				<xsl:apply-templates select="." mode="object"/>
+				<xsl:apply-templates select="." mode="object">
+					<xsl:with-param name="appearance" select="$appearance"/>
+				</xsl:apply-templates>
 			</xsl:for-each>
 		</xsl:when>
 		<!-- Blank node, no selection -->
