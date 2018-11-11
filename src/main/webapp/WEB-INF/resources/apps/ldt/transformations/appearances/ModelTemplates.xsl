@@ -1,8 +1,8 @@
 <!--
 
     NAME     ModelTemplates.xsl
-    VERSION  1.23.0
-    DATE     2018-10-20
+    VERSION  1.23.1-SNAPSHOT
+    DATE     2018-11-11
 
     Copyright 2012-2018
 
@@ -107,7 +107,7 @@
 		<xsl:variable name="refclass" select="$predicate/ref-class/@uri"/>
 		<xsl:variable name="refnode" select="$predicate/ref-node/@uri"/>
 		<xsl:variable name="roleclass" select="$predicate/role[@uri!=$real-class]/@uri"/>
-		<property name="{$predicate/@name}" uri="{$predicate/@predicate}" shape-uri="{$predicate/@uri}">
+		<property name="{$predicate/@name}" uri="{$predicate/@predicate}" shape-uri="{$predicate/@uri}" order="{$predicate/@order}">
 			<xsl:if test="$refclass!=''">
 				<xsl:attribute name="refclass"><xsl:value-of select="$refclass"/></xsl:attribute>
 			</xsl:if>
@@ -282,7 +282,13 @@
 			<xsl:variable name="path-uri" select="sh:path/@rdf:nodeID"/>
 			<xsl:variable name="inverse-predicate"><xsl:value-of select="../rdf:Description[@rdf:nodeID=$path-uri]/sh:inversePath/@rdf:resource"/></xsl:variable>
 			<xsl:variable name="property-shape-uri" select="@rdf:about|@rdf:nodeID"/>
-			<propertyShape name="{sh:name[1]}" uri="{$property-shape-uri}">
+			<xsl:variable name="property-order">
+				<xsl:choose>
+					<xsl:when test="exists(sh:order)"><xsl:value-of select="sh:order"/></xsl:when>
+					<xsl:otherwise>99999</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
+			<propertyShape name="{sh:name[1]}" uri="{$property-shape-uri}" order="{$property-order}">
 				<xsl:if test="$predicate!=''"><xsl:attribute name="predicate" select="$predicate"/></xsl:if>
 				<xsl:if test="$inverse-predicate!=''"><xsl:attribute name="inversePredicate" select="$inverse-predicate"/></xsl:if>
 				<xsl:if test="$inverse-predicate='http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate'"><xsl:attribute name="reified">yes</xsl:attribute></xsl:if>

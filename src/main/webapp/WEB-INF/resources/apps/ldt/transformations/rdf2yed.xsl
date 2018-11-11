@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2yed.xsl
-    VERSION  1.23.0
-    DATE     2018-10-20
+    VERSION  1.23.1-SNAPSHOT
+    DATE     2018-11-11
 
     Copyright 2012-2018
 
@@ -111,7 +111,7 @@
 					</y:NodeLabel>
 					<y:NodeLabel alignment="left" autoSizePolicy="node_width" fontFamily="Dialog" fontSize="10" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" modelName="custom" textColor="#000000" visible="true">
 						<!--Properties-->
-						<xsl:for-each select="property[not(exists(refshape[@type='role']) or exists(ref-nodes/item) or exists(refshape[@empty='false']))]">
+						<xsl:for-each select="property[not(exists(refshape[@type='role']) or exists(ref-nodes/item) or exists(refshape[@empty='false']))]"><xsl:sort select="@order" data-type="number"/>
 							<xsl:if test="position()!=1"><xsl:text>
 </xsl:text></xsl:if><xsl:apply-templates select="." mode="property-placement"/>
 						</xsl:for-each>
