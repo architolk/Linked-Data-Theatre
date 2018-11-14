@@ -9,9 +9,9 @@ Go to the https website and export the certificate (most browsers have the optio
 
 Import the certificate into a newly created keystore (you will be prompted to specify the password for the keystore):
 
-	"%JAVA_HOME%/bin/keytool" -import -alias ldt -keystore ldt.jks -file {CERTIFICATE-FILENAME}
+	"%JAVA_HOME%/bin/keytool" -import -alias {CERTIFICATE-ALIAS} -keystore ldt.jks -file {CERTIFICATE-FILENAME}
 
-Replace `{CERTIFICATE-FILENAME}` with the name of the exported certificate file. Move the keystore file `ldt.jks` to the `\WEB-INF\resources\config` directory.
+Replace `{CERTIFICATE-FILENAME}` with the name of the exported certificate file. Choose a name for `{CERTIFICATE-ALIAS`} that is unique in this keystore for the certificate. Move the keystore file `ldt.jks` to the `\WEB-INF\resources\config` directory.
 
 Create the file `properties-local.xml` in the directory `\WEB-INF\resources\config`. This file should look something like:
 
