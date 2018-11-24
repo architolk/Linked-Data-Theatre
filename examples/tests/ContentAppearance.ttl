@@ -9,14 +9,21 @@
 stage:ContentAppearance a elmo:Representation;
   elmo:fragment [
     elmo:applies-to rdf:type;
+    html:meta rdf:nil;
     elmo:index "3";
   ];
   elmo:fragment [
     elmo:applies-to rdfs:label;
+    html:meta <https://www.w3.org/TR/rdf-schema/#ch_label>;
     elmo:index "1";
   ];
   elmo:fragment [
     elmo:applies-to dbp:east;
+    rdfs:label "Oost"@nl;
+    rdfs:label "East"@en;
+    rdfs:comment "Cities to the east of this city"@en;
+    rdfs:comment "Steden ten oosten van deze stad"@nl;
+    html:meta "/vocabulary";
     elmo:index "2";
   ];
 	elmo:url-pattern "/query/ContentAppearance";
@@ -49,4 +56,4 @@ stage:ContentAppearanceQuery a elmo:Query;
 			}
 		}
 	''';
-.	
+.

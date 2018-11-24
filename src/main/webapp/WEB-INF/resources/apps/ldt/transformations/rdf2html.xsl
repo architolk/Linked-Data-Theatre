@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2html.xsl
-    VERSION  1.23.0
-    DATE     2018-10-20
+    VERSION  1.23.1-SNAPSHOT
+    DATE     2018-11-24
 
     Copyright 2012-2018
 
@@ -52,6 +52,8 @@
 	xmlns:html="http://www.w3.org/1999/xhtml/vocab#"
 	xmlns:dcterms="http://purl.org/dc/terms/"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+
+	exclude-result-prefixes="rdf rdfs res elmo html dcterms xs"
 >
 
 <xsl:output method="xml" indent="yes"/>
@@ -78,7 +80,8 @@
 <xsl:template match="*" mode="predicate">
 	<xsl:variable name="predicate">
 		<xsl:choose>
-			<xsl:when test="@html:meta!='' and @html:meta!='http://www.w3.org/1999/02/22-rdf-syntax-ns#nil'"><xsl:value-of select="@html:meta"/></xsl:when>
+			<xsl:when test="substring(@html:meta,1,4)='http' and @html:meta!='http://www.w3.org/1999/02/22-rdf-syntax-ns#nil'"><xsl:value-of select="@html:meta"/></xsl:when>
+			<xsl:when test="@html:meta!='' and @html:meta!='http://www.w3.org/1999/02/22-rdf-syntax-ns#nil'"><xsl:value-of select="@html:meta"/>#<xsl:value-of select="local-name()"/></xsl:when>
 			<xsl:otherwise><xsl:value-of select="namespace-uri()"/><xsl:value-of select="local-name()"/></xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>
@@ -837,7 +840,9 @@
 					</tr>
 				</thead>
 				<tbody>
-					<xsl:for-each-group select="rdf:Description" group-by="@rdf:about">
+					<!-- CONSTRUCT queries cannot be sorted, a default sorting is provided to mitigate random result order -->
+					<!-- (random result order is nasty for regression tests) -->
+					<xsl:for-each-group select="rdf:Description" group-by="@rdf:about"><xsl:sort select="@rdf:about"/>
 						<tr>
 							<xsl:variable name="group" select="current-group()"/>
 							<xsl:for-each select="$columns/column">

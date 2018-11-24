@@ -103,7 +103,11 @@
 		<!-- Same for comments -->
 		<xsl:variable name="pcomment">
 			<xsl:choose>
-				<xsl:when test="exists($fragment/rdfs:comment)"><xsl:copy-of select="$fragment/rdfs:comment"/></xsl:when>
+				<xsl:when test="exists($fragment/rdfs:comment[@xml:lang=$language])"><xsl:copy-of select="$fragment/rdfs:comment[@xml:lang=$language]"/></xsl:when>
+				<xsl:when test="exists($fragment/rdfs:comment[not(exists(@xml:lang))])"><xsl:copy-of select="$fragment/rdfs:comment[not(exists(@xml:lang))]"/></xsl:when>
+				<xsl:when test="exists($fragment/rdfs:comment[@xml:lang='nl'])"><xsl:copy-of select="$fragment/rdfs:comment[@xml:lang='nl']"/></xsl:when>
+				<xsl:when test="exists($fragment/rdfs:comment[@xml:lang='en'])"><xsl:copy-of select="$fragment/rdfs:comment[@xml:lang='en']"/></xsl:when>
+				<xsl:when test="exists($fragment/rdfs:comment[1])"><xsl:copy-of select="$fragment/rdfs:comment[1]"/></xsl:when>
 				<xsl:otherwise><xsl:copy-of select="key('resource',$uri)/rdfs:comment"/></xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
@@ -121,7 +125,9 @@
 		<xsl:if test="$fragment/html:glossary[1]/@rdf:resource!=''"><xsl:attribute name="html:glossary"><xsl:value-of select="$fragment/html:glossary[1]/@rdf:resource"/></xsl:attribute></xsl:if>
 		<xsl:choose>
 			<xsl:when test="$fragment/html:meta[1]/@rdf:resource!=''"><xsl:attribute name="html:meta"><xsl:value-of select="$fragment/html:meta[1]/@rdf:resource"/></xsl:attribute></xsl:when>
+			<xsl:when test="$fragment/html:meta[1]!=''"><xsl:attribute name="html:meta"><xsl:value-of select="$fragment/html:meta[1]"/></xsl:attribute></xsl:when>
 			<xsl:when test="$defaultFragment/html:meta[1]/@rdf:resource!=''"><xsl:attribute name="html:meta"><xsl:value-of select="$defaultFragment/html:meta[1]/@rdf:resource"/></xsl:attribute></xsl:when>
+			<xsl:when test="$defaultFragment/html:meta[1]!=''"><xsl:attribute name="html:meta"><xsl:value-of select="$defaultFragment/html:meta[1]"/></xsl:attribute></xsl:when>
 			<xsl:otherwise />
 		</xsl:choose>
 		<xsl:choose>
