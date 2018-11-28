@@ -1,7 +1,7 @@
 /*
  * NAME     slick.ldt-remotemodel.js
- * VERSION  1.23.0
- * DATE     2018-10-20
+ * VERSION  1.23.1-SNAPSHOT
+ * DATE     2018-10-28
  *
  * Copyright 2012-2018
  *
@@ -45,6 +45,107 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
   return img;
 }
 
+function checkFormatter(row, cell, value, columnDef, dataContent) {
+  var img = "";
+  if (value === true) { //Checked
+    img = "<img src='"+staticroot+"/css/images/tick.png'>";
+  }
+  return img;
+}
+
+function isoDateEditor(args) {
+    var $input;
+    var defaultValue;
+    var scope = this;
+    var calendarOpen = false;
+
+    this.init = function () {
+      $input = $("<INPUT type=text class='editor-text' />");
+      $input.appendTo(args.container);
+      $input.focus().select();
+      $input.datepicker({
+        showOn: "button",
+        dateFormat: "yy-mm-dd",
+        buttonImageOnly: true,
+         beforeShow: function () {
+          calendarOpen = true
+        },
+        onClose: function () {
+          calendarOpen = false
+        }
+      });
+      $input.width($input.width() - 18);
+    };
+
+    this.destroy = function () {
+      $.datepicker.dpDiv.stop(true, true);
+      $input.datepicker("hide");
+      $input.datepicker("destroy");
+      $input.remove();
+    };
+
+    this.show = function () {
+      if (calendarOpen) {
+        $.datepicker.dpDiv.stop(true, true).show();
+      }
+    };
+
+    this.hide = function () {
+      if (calendarOpen) {
+        $.datepicker.dpDiv.stop(true, true).hide();
+      }
+    };
+
+    this.position = function (position) {
+      if (!calendarOpen) {
+        return;
+      }
+      $.datepicker.dpDiv
+          .css("top", position.top + 30)
+          .css("left", position.left);
+    };
+
+    this.focus = function () {
+      $input.focus();
+    };
+
+    this.loadValue = function (item) {
+      defaultValue = item[args.column.field];
+      $input.val(defaultValue);
+      $input[0].defaultValue = defaultValue;
+      $input.select();
+    };
+
+    this.serializeValue = function () {
+      return $input.val();
+    };
+
+    this.applyValue = function (item, state) {
+      item[args.column.field] = state;
+    };
+
+    this.isValueChanged = function () {
+      return (!($input.val() == "" && defaultValue == null)) && ($input.val() != defaultValue);
+    };
+
+    this.validate = function () {
+      if (args.column.validator) {
+        var validationResults = args.column.validator($input.val());
+        if (!validationResults.valid) {
+          return validationResults;
+        }
+      }
+
+      return {
+        valid: true,
+        msg: null
+      };
+    };
+
+    this.init();
+  }
+
+
 (function ($) {
   /***
    * A sample AJAX data store implementation.
@@ -67,7 +168,7 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
     if (pSubjectUri!=="") {
       url = url + "?subject=" + encodeURIComponent(pSubjectUri);
     }
-    
+
     // events
     var onDataLoading = new Slick.Event();
     var onDataLoaded = new Slick.Event();
@@ -93,7 +194,7 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
         alert("Connection lost - please try again");
       }
     }
-    
+
 
     function isDataLoaded(from, to) {
       for (var i = from; i <= to; i++) {
@@ -247,7 +348,7 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
               }
             }
           }
-          
+
           data[from + i] = item;
           data[from + i].index = from + i;
           data[from + i]['#'] = 0; // Keep track of changes in the data
@@ -281,7 +382,7 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
             }
           }
         }
-        
+
         data[from] = item;
         data[from].index = from;
         data[from]['#'] = 0; // Keep track of changes in the data
@@ -330,7 +431,7 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
               }
             }
           }
-          
+
           data[from + i] = item;
           data[from + i].index = from + i;
           data[from + i]['#'] = 0; // Keep track of changes in the data
@@ -338,7 +439,7 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
       } else {
         to = from;
       }
-      
+
       req = null
 
       onDataLoaded.notify({from: from, to: to});
@@ -407,7 +508,7 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
         }
       }
     }
-    
+
     function saveData(url,context) {
 
       var mergedContext = {};
@@ -425,14 +526,14 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
           mergedContext[item]={'@type': '@id'};
         }
       }
-    
+
       var body = {
         '@context': mergedContext,
         graph: data
       };
 
       onDataSaving.notify();
-      
+
       $.ajax({
         type: "PUT",
         contentType: "application/ld+json",
@@ -453,7 +554,7 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
         }
       })
     }
-    
+
     function saveChangedData(url,context) {
 
       function onlyInsertedItems(value) {
@@ -475,7 +576,7 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
           onDataSaved.notify();
         }
       }
-    
+
       var mergedContext = {};
       for (var item in context) {
         if (context.hasOwnProperty(item)) {
@@ -491,7 +592,7 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
           mergedContext[item]={'@type': '@id'};
         }
       }
-    
+
       var bodyInserted = {
         '@context': mergedContext,
         graph: data.filter(onlyInsertedItems)
@@ -509,9 +610,9 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
       if (bodyDeleted.graph.length > 0) {callCount++}
       if (bodyInserted.graph.length > 0) {callCount++}
       if (bodyChanged.graph.length > 0) {callCount++}
-      
+
       if (callCount > 0) {onDataSaving.notify();}
-      
+
       if (bodyDeleted.graph.length > 0) {
         $.ajax({
           type: "DELETE",
@@ -555,7 +656,7 @@ function statusFormatter(row, cell, value, columnDef, dataContent) {
         })
       }
     }
-    
+
     init();
 
     return {

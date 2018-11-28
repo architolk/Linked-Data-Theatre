@@ -1,8 +1,8 @@
 <!--
 
     NAME     EditorAppearance.xsl
-    VERSION  1.23.0
-    DATE     2018-10-20
+    VERSION  1.23.1-SNAPSHOT
+    DATE     2018-11-28
 
     Copyright 2012-2018
 
@@ -44,8 +44,8 @@
 
 <xsl:template match="rdf:RDF" mode="EditorAppearance">
 	<xsl:variable name="container" select="@elmo:container"/>
-	<link rel="stylesheet" href="{$staticroot}/css/slick.grid.pkg.min.css" type="text/css"/> 
-	<link rel="stylesheet" href="{$staticroot}/css/slickgrid-ldt.min.css" type="text/css"/> 
+	<link rel="stylesheet" href="{$staticroot}/css/slick.grid.pkg.min.css" type="text/css"/>
+	<link rel="stylesheet" href="{$staticroot}/css/slickgrid-ldt.min.css" type="text/css"/>
 	<xsl:if test="$container!=''">
 		<xsl:for-each select="rdf:Description[exists(@rdf:nodeID) and (elmo:appearance/@rdf:resource='http://bp4mc2.org/elmo/def#SubmitAppearance' or elmo:appearance/@rdf:resource='http://bp4mc2.org/elmo/def#ChangeSubmitAppearance')]">
 			<div class="form-group">
@@ -126,10 +126,25 @@
 			<xsl:variable name="editor">
 				<xsl:choose>
 					<xsl:when test="elmo:valueDatatype/@rdf:resource='http://www.w3.org/2001/XMLSchema#String'">Slick.Editors.LongText</xsl:when>
+					<xsl:when test="elmo:valueDatatype/@rdf:resource='http://www.w3.org/2001/XMLSchema#boolean'">Slick.Editors.Checkbox</xsl:when>
+					<xsl:when test="elmo:valueDatatype/@rdf:resource='http://www.w3.org/2001/XMLSchema#date'">isoDateEditor</xsl:when>
 					<xsl:otherwise>Slick.Editors.Text</xsl:otherwise>
 				</xsl:choose>
 			</xsl:variable>
-			,{width: 200, id: "<xsl:value-of select="@rdf:nodeID"/>", name: "<xsl:value-of select="$label"/>", field: "<xsl:value-of select="elmo:applies-to"/>", editor: <xsl:value-of select="$editor"/>}
+			<xsl:variable name="formatter">
+				<xsl:choose>
+					<xsl:when test="elmo:valueDatatype/@rdf:resource='http://www.w3.org/2001/XMLSchema#boolean'">checkFormatter</xsl:when>
+					<xsl:otherwise></xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
+			<xsl:variable name="width">
+				<xsl:choose>
+					<xsl:when test="elmo:valueDatatype/@rdf:resource='http://www.w3.org/2001/XMLSchema#boolean'">50</xsl:when>
+					<xsl:when test="elmo:valueDatatype/@rdf:resource='http://www.w3.org/2001/XMLSchema#date'">100</xsl:when>
+					<xsl:otherwise>200</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
+			,{width: <xsl:value-of select="$width"/>, id: "<xsl:value-of select="@rdf:nodeID"/>", name: "<xsl:value-of select="$label"/>", field: "<xsl:value-of select="elmo:applies-to"/>", editor: <xsl:value-of select="$editor"/><xsl:if test="$formatter!=''">, formatter: <xsl:value-of select="$formatter"/></xsl:if>}
 		</xsl:for-each>
 		];
 	</script>

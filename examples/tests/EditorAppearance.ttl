@@ -8,6 +8,7 @@
 @prefix container: <http://localhost:8080/container/>.
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
 @prefix skos: <http://www.w3.org/2004/02/skos/core#>.
+@prefix dct: <http://purl.org/dc/terms/>.
 
 stage:EditorAppearance	a	elmo:Representation;
 	elmo:url-pattern	"/query/EditorAppearance$";
@@ -21,6 +22,14 @@ stage:EditorAppearance	a	elmo:Representation;
     rdfs:label "URI";
     elmo:valueTemplate "http://concept/id/{name}"
   ];
+	elmo:fragment [
+    elmo:index "0";
+    elmo:name "check";
+		elmo:applies-to elmo:check;
+		rdfs:label "Check"@nl;
+		rdfs:label "Vink"@en;
+		elmo:valueDatatype xsd:boolean;
+	];
 	elmo:fragment [
     elmo:index "1";
     elmo:name "name";
@@ -49,6 +58,14 @@ stage:EditorAppearance	a	elmo:Representation;
     rdfs:label "BrederURI"@nl;
     elmo:valueTemplate "http://concept/id/{broader}";
     elmo:valueDatatype rdfs:Resource;
+    elmo:appearance elmo:HiddenAppearance;
+  ];
+	elmo:fragment [
+    elmo:index "5";
+    elmo:applies-to dct:created;
+    rdfs:label "Created"@en;
+    rdfs:label "Aangemaakt"@nl;
+    elmo:valueDatatype xsd:date;
     elmo:appearance elmo:HiddenAppearance;
   ];
   elmo:fragment [
