@@ -18,6 +18,8 @@ stage:Search a elmo:Representation;
 	elmo:fragment [
 		elmo:applies-to "type";
 		rdfs:label "Type";
+		elmo:name "type";
+		html:link "/type";
 	];
 	elmo:query '''
 		select ?type ?s ?s_label ("@TERM@" as ?search)
