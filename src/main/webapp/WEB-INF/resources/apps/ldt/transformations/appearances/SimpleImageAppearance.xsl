@@ -40,30 +40,42 @@
 
 <xsl:output method="xml" indent="yes"/>
 
+<xsl:template match="rdf:RDF" mode="theimage">
+	<xsl:for-each select="*/html:img[1]">
+		<img src="{.}" usemap="#imgmap"/>
+	</xsl:for-each>
+	<map name="imgmap">
+		<xsl:for-each select="*[exists(html:link)]">
+			<xsl:variable name="subject" select="@rdf:about"/>
+			<xsl:variable name="left" select="html:left"/>
+			<xsl:variable name="top" select="html:top"/>
+			<xsl:variable name="width" select="html:width"/>
+			<xsl:variable name="height" select="html:height"/>
+			<xsl:variable name="label"><xsl:call-template name="normalize-language"><xsl:with-param name="text" select="rdfs:label"/></xsl:call-template></xsl:variable>
+				<area shape="rect" coords="{$left},{$top},{$left+$width},{$top+$height}" href="{html:link}?subject={encode-for-uri($subject)}" alt="{$label}"/>
+		</xsl:for-each>
+	</map>
+</xsl:template>
+
 <xsl:template match="rdf:RDF" mode="SimpleImageAppearance">
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h3 class="panel-title">
-				<xsl:variable name="label"><xsl:call-template name="normalize-language"><xsl:with-param name="text" select="rdf:Description[exists(html:img)][1]/rdfs:label"/></xsl:call-template></xsl:variable>
-				<xsl:value-of select="$label"/>
-			</h3>
-		</div>
-		<div class="panel-body">
-			<xsl:for-each select="*/html:img[1]">
-				<img src="{.}" usemap="#imgmap"/>
-			</xsl:for-each>
-			<xsl:for-each select="*[exists(html:link)]">
-				<xsl:variable name="left" select="html:left"/>
-				<xsl:variable name="top" select="html:top"/>
-				<xsl:variable name="width" select="html:width"/>
-				<xsl:variable name="height" select="html:height"/>
-				<xsl:variable name="label"><xsl:call-template name="normalize-language"><xsl:with-param name="text" select="rdfs:label"/></xsl:call-template></xsl:variable>
-				<map name="imgmap">
-					<area shape="rect" coords="{$left},{$top},{$left+$width},{$top+$height}" href="{html:link}" alt="{$label}"/>
-				</map>
-			</xsl:for-each>
-		</div>
-	</div>
+	<xsl:choose>
+		<xsl:when test="exists(rdf:Description[exists(html:img)][1]/rdfs:label)">
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						<xsl:variable name="label"><xsl:call-template name="normalize-language"><xsl:with-param name="text" select="rdf:Description[exists(html:img)][1]/rdfs:label"/></xsl:call-template></xsl:variable>
+						<xsl:value-of select="$label"/>
+					</h3>
+				</div>
+				<div class="panel-body">
+					<xsl:apply-templates select="." mode="theimage"/>
+				</div>
+			</div>
+		</xsl:when>
+		<xsl:otherwise>
+			<xsl:apply-templates select="." mode="theimage"/>
+		</xsl:otherwise>
+	</xsl:choose>
 </xsl:template>
 
 </xsl:stylesheet>
