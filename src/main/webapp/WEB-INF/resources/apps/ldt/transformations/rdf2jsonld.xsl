@@ -2,7 +2,7 @@
 
     NAME     rdf2jsonld.xsl
     VERSION  1.23.1-SNAPSHOT
-    DATE     2018-11-28
+    DATE     2018-12-11
 
     Copyright 2012-2018
 
@@ -77,6 +77,7 @@
 <xsl:template match="*" mode="constructliteral">
 	<xsl:choose>
 		<xsl:when test="exists(@rdf:resource)">"<xsl:value-of select="@rdf:resource"/>"</xsl:when>
+		<xsl:when test="exists(*/@rdf:about)">"<xsl:value-of select="*/@rdf:about"/>"</xsl:when>
 		<xsl:when test="@rdf:datatype='http://www.w3.org/2001/XMLSchema#integer'"><xsl:value-of select="."/></xsl:when>
 		<xsl:when test="@rdf:datatype='http://www.w3.org/2001/XMLSchema#decimal'"><xsl:value-of select="."/></xsl:when>
 		<xsl:when test="@rdf:datatype='http://www.w3.org/2001/XMLSchema#boolean'"><xsl:value-of select="."/></xsl:when>
@@ -149,12 +150,17 @@
 	{"id":"@id"
 	,"graph":"@graph"<xsl:for-each-group select="$prefix/prefix" group-by="@name"><xsl:if test="count(current-group())=1">
 	,"<xsl:value-of select="@name"/>":"<xsl:value-of select="."/>"</xsl:if></xsl:for-each-group>
-	<xsl:for-each-group select="*[exists(@rdf:about)]/*[exists(@rdf:resource)]" group-by="name()">
+	<xsl:for-each-group select="*[exists(@rdf:about)]/*[exists(*/@rdf:about|@rdf:resource)]" group-by="name()">
 	,"<xsl:apply-templates select="." mode="property"/>":{"@type":"@id"}</xsl:for-each-group>
 	}
 <xsl:choose>
-	<xsl:when test="count(*/@rdf:about)!=1">,"graph":
+	<xsl:when test="count(*/@rdf:about|*/*/*/@rdf:about)!=1">,"graph":
 [<xsl:for-each-group select="*[exists(@rdf:about)]" group-by="@rdf:about"><xsl:if test="position()!=1">,</xsl:if>
+    {"id":"<xsl:value-of select="@rdf:about"/>"<xsl:apply-templates select="current-group()" mode="type"/><xsl:for-each-group select="current-group()/* except rdf:type" group-by="name()">
+    ,<xsl:apply-templates select="current-group()" mode="triple"><xsl:with-param name="tab" select="8"/><xsl:with-param name="cnt" select="count(current-group())"/></xsl:apply-templates></xsl:for-each-group>
+    }</xsl:for-each-group>
+<!-- Add resources in nested part -->
+<xsl:for-each-group select="*/*/*[exists(@rdf:about)]" group-by="@rdf:about"><xsl:text>,</xsl:text>
     {"id":"<xsl:value-of select="@rdf:about"/>"<xsl:apply-templates select="current-group()" mode="type"/><xsl:for-each-group select="current-group()/* except rdf:type" group-by="name()">
     ,<xsl:apply-templates select="current-group()" mode="triple"><xsl:with-param name="tab" select="8"/><xsl:with-param name="cnt" select="count(current-group())"/></xsl:apply-templates></xsl:for-each-group>
     }</xsl:for-each-group>
