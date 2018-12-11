@@ -1,0 +1,33 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+@prefix void: <http://rdfs.org/ns/void#>.
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
+
+stage:SimpleImageAppearance	a	elmo:Representation;
+	elmo:url-pattern	"/query/SimpleImageAppearance$";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:appearance elmo:SimpleImageAppearance;
+	elmo:query '''
+		prefix html: <http://www.w3.org/1999/xhtml/vocab#>
+		prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+		prefix elmo: <http://bp4mc2.org/elmo/def#>
+		prefix testo: <http://localhost:8080/def/test#>
+		construct {
+			<urn:image> html:img "/images/planboard.png".
+			<urn:image> rdfs:label "Simple image".
+			<urn:area1> rdfs:label "Area #1";
+				html:link "/test";
+				html:left 0;
+				html:top 100;
+				html:width 300;
+				html:height 100
+			.
+		}
+		where {
+		}
+	''';
+.

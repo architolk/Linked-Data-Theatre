@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.23.1-SNAPSHOT
-    DATE     2018-11-24
+    DATE     2018-12-11
 
     Copyright 2012-2018
 
@@ -529,6 +529,9 @@
 		</xsl:when>
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#ImageAppearance'">
 			<xsl:apply-templates select="." mode="GeoAppearance"><xsl:with-param name="backmap">image</xsl:with-param><xsl:with-param name="appearance">ImageAppearance</xsl:with-param></xsl:apply-templates>
+		</xsl:when>
+		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#SimpleImageAppearance'">
+			<xsl:apply-templates select="." mode="SimpleImageAppearance"/>
 		</xsl:when>
 		<xsl:when test="@elmo:appearance='http://bp4mc2.org/elmo/def#ChartAppearance' or @elmo:appearance='http://bp4mc2.org/elmo/def#BarChartAppearance' or @elmo:appearance='http://bp4mc2.org/elmo/def#LineChartAppearance' or @elmo:appearance='http://bp4mc2.org/elmo/def#ScatterPlotChartAppearance'">
 			<xsl:apply-templates select="." mode="ChartAppearance"/>
@@ -1081,5 +1084,6 @@
 <xsl:include href="appearances/VocabularyAppearance.xsl"/>
 <xsl:include href="appearances/TurtleAppearance.xsl"/>
 <xsl:include href="appearances/EditorAppearance.xsl"/>
+<xsl:include href="appearances/SimpleImageAppearance.xsl"/>
 
 </xsl:stylesheet>
