@@ -27,7 +27,7 @@
     Transformation of a RDF document or SPARQL resultset to a RDF document
 
 	TODO: Transfer functionality from sparql2rdfa
-	
+
 -->
 <xsl:stylesheet version="2.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -69,8 +69,14 @@
 				<xsl:if test="local-name()!='Description'">
 					<rdf:type rdf:resource="{namespace-uri()}{local-name()}"/>
 				</xsl:if>
-				<xsl:copy-of select="current-group()/*"/>
+				<xsl:copy-of select="current-group()/*[not(exists(rdf:Description/@rdf:about))]"/>
+				<xsl:for-each select="current-group()/*/rdf:Description">
+					<xsl:element name="{../name()}" namespace="{../namespace-uri()}">
+						<xsl:attribute name="rdf:resource"><xsl:value-of select="@rdf:about"/></xsl:attribute>
+					</xsl:element>
+				</xsl:for-each>
 			</rdf:Description>
+			<xsl:copy-of select="current-group()/*/rdf:Description[exists(@rdf:about)]"/>
 		</xsl:for-each-group>
 		<xsl:apply-templates select="*[not(exists(@rdf:nodeID|@rdf:about))]" mode="flatten"/>
 	</rdf:RDF>
