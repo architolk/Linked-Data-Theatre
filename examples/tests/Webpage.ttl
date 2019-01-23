@@ -11,3 +11,11 @@ stage:Webpage a elmo:Representation;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:webpage "http://www.w3.org/2000/01/rdf-schema";
 .
+
+stage:Webpage2 a elmo:Representation;
+	elmo:url-pattern "/query/webpage2$";
+	elmo:index "1";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+	elmo:webpage "https://bag.basisregistraties.overheid.nl/doc/begrip/Pand?format=ttl"
+.

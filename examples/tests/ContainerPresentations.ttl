@@ -33,6 +33,7 @@ stage:ContainerPresentations a elmo:Representation;
 			<p><a class="btn btn-default" href="/ldt/query/simple-container-concept">Show simple container concepts</a></p>
 			<p><a class="btn btn-default" href="/ldt/query/simple-container-content">Show simple container content</a></p>
 			<p><a class="btn btn-default" href="/ldt/query/simple-container-total-graph">Show simple container total graph</a></p>
+			<p><a class="btn btn-default" href="/ldt/query/simple-container-geo">Show simple container geo</a></p>
 		''';
 	]
 .
@@ -188,4 +189,26 @@ stage:SimpleContainerTotalGraph a elmo:Representation;
         }
     }
   ''';
+.
+
+stage:SimpleContainerGeo a elmo:Representation;
+	elmo:url-pattern "/query/simple-container-geo$";
+	elmo:appearance elmo:GeoAppearance;
+	elmo:query '''
+		prefix geosparql: <http://www.opengis.net/ont/geosparql#>
+		prefix brt: <http://brt.basisregistraties.overheid.nl/def/top10nl#>
+		prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+		prefix elmo: <http://bp4mc2.org/elmo/def#>
+		prefix vcard: <http://www.w3.org/2006/vcard/ns#>
+		construct {
+			?p rdfs:label ?label.
+			?p geo:geometry ?wkt
+		}
+		where {
+			graph <http://localhost:8080/container/simple> {
+				?p rdfs:label ?label.
+				?p vcard:hasAddress/geosparql:hasWKT ?wkt
+			}
+		}
+	'''
 .

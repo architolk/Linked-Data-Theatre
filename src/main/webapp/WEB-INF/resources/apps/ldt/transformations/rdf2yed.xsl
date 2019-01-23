@@ -2,9 +2,9 @@
 
     NAME     rdf2yed.xsl
     VERSION  1.23.1-SNAPSHOT
-    DATE     2018-11-11
+    DATE     2019-01-23
 
-    Copyright 2012-2018
+    Copyright 2012-2019
 
     This file is part of the Linked Data Theatre.
 
@@ -38,7 +38,7 @@
 	xmlns:y="http://www.yworks.com/xml/graphml"
 >
 
-<xsl:key name="nodes" match="/root/results/rdf:RDF[1]/rdf:Description" use="@rdf:about"/>
+<xsl:key name="nodes" match="/root/results/rdf:RDF[1]/rdf:Description[exists(rdf:type)]" use="@rdf:about"/>
 <xsl:key name="blanks" match="/root/results/rdf:RDF[1]/rdf:Description" use="@rdf:nodeID"/>
 <xsl:key name="fragments" match="/root/view/representation[1]/fragment" use="@applies-to"/>
 
@@ -332,13 +332,22 @@
 			</xsl:choose>
 		</xsl:variable>
 		<node id="{@rdf:about}{@rdf:nodeID}"> <!-- URI nodes and blank nodes -->
+			<data key="d3"><xsl:value-of select="@rdf:about"/><xsl:value-of select="@rdf:nodeID"/></data>
 			<data key="d6">
 				<xsl:variable name="nodeType">
 					<xsl:value-of select="$fragment/yed:nodeType"/>
 					<xsl:if test="not(exists($fragment/yed:nodeType))">com.yworks.entityRelationship.big_entity</xsl:if>
 				</xsl:variable>
+				<xsl:variable name="geometry" select="key('blanks',yed:geometry/@rdf:nodeID)"/>
 				<y:GenericNode configuration="{$nodeType}">
-					<y:Geometry height="100.0" width="200.0" x="0.5" y="0"/>
+					<xsl:choose>
+						<xsl:when test="exists($geometry)">
+							<y:Geometry height="{$geometry/yed:height}" width="{$geometry/yed:width}" x="{$geometry/yed:x}" y="{$geometry/yed:y}"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<y:Geometry height="100.0" width="200.0" x="0.5" y="0"/>
+						</xsl:otherwise>
+					</xsl:choose>
 					<y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
 					<y:BorderStyle color="#000000" type="line" width="1.0"/>
 					<y:NodeLabel alignment="center" autoSizePolicy="node_width" configuration="CroppingLabel" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" modelName="internal" modelPosition="{$modelposition}" textColor="#000000" visible="true">
@@ -417,7 +426,7 @@
 		</edge>
 	</xsl:for-each>
 	<!-- Edges for blank nodes -->
-	<xsl:for-each select="rdf:Description/*[exists(key('blanks',@rdf:nodeID))]">
+	<xsl:for-each select="rdf:Description/*[exists(key('blanks',@rdf:nodeID)/rdf:type)]">
 		<edge source="{../@rdf:about}" target="{@rdf:nodeID}">-
 			<data key="d10">
 				<y:PolyLineEdge>
