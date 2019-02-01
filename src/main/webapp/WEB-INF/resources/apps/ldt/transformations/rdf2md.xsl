@@ -40,6 +40,8 @@
 
 <xsl:key name="nested" match="rdf:Description/*[@elmo:appearance='http://bp4mc2.org/elmo/def#NestedAppearance']/rdf:Description" use="@rdf:about"/>
 
+<xsl:variable name="formatter"><xsl:value-of select="doc('input:params')/formatter"/></xsl:variable>
+
 <xsl:variable name="language"><xsl:value-of select="/results/context/language"/></xsl:variable>
 
 <xsl:template match="/">
@@ -185,17 +187,25 @@
 	<xsl:for-each select="rdf:Description[@rdf:nodeID='rset']">
 		<xsl:if test="exists(res:solution)">
 			<xsl:for-each select="res:resultVariable[not(@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance' or matches(.,'[^_]*_(label|details|count|uri)'))]">
-				<xsl:text>|</xsl:text>
+				<xsl:if test="position()=1 or $formatter='wiki'">
+					<xsl:text>|</xsl:text>
+					<xsl:if test="position()=1 and $formatter='wiki'"><xsl:text>|</xsl:text></xsl:if>
+				</xsl:if>
 				<xsl:choose>
 					<xsl:when test="exists(@elmo:label)"><xsl:value-of select="@elmo:label"/></xsl:when>
 					<xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
 				</xsl:choose>
-			</xsl:for-each><xsl:text>
+				<xsl:text>|</xsl:text>
+			</xsl:for-each>
+			<xsl:if test="$formatter='wiki'"><xsl:text>|</xsl:text></xsl:if><xsl:text>
 </xsl:text>
-			<xsl:for-each select="res:resultVariable[not(@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance' or matches(.,'[^_]*_(label|details|count|uri)'))]">
-				<xsl:text>|---</xsl:text>
-			</xsl:for-each><xsl:text>
+			<xsl:if test="$formatter!='wiki'">
+				<xsl:for-each select="res:resultVariable[not(@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance' or matches(.,'[^_]*_(label|details|count|uri)'))]">
+					<xsl:if test="position()=1"><xsl:text>|</xsl:text></xsl:if>
+					<xsl:text>---|</xsl:text>
+				</xsl:for-each><xsl:text>
 </xsl:text>
+			</xsl:if>
 			<xsl:choose>
 				<xsl:when test="exists(res:resultVariable[@elmo:name='SUBJECT'])">
 					<xsl:variable name="key" select="res:resultVariable[@elmo:name='SUBJECT'][1]"/>
@@ -203,12 +213,13 @@
 						<xsl:variable name="group" select="current-group()"/>
 						<xsl:for-each select="../res:resultVariable[not(@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance' or matches(.,'[^_]*_(label|details|count|uri)'))]">
 							<xsl:variable name="var" select="."/>
-							<xsl:text>|</xsl:text>
+							<xsl:if test="position()=1"><xsl:text>|</xsl:text></xsl:if>
 							<!-- Remove duplicates, so still a for-each-group -->
 							<xsl:for-each-group select="$group/res:binding[res:variable=$var]" group-by="concat(res:value,res:value/@rdf:resource)">
 								<xsl:if test="position()!=1">, </xsl:if>
 								<xsl:apply-templates select="." mode="tableobject"/>
 							</xsl:for-each-group>
+							<xsl:text>|</xsl:text>
 						</xsl:for-each><xsl:text>
 </xsl:text>
 					</xsl:for-each-group>
@@ -218,8 +229,9 @@
 						<xsl:variable name="binding" select="res:binding"/>
 						<xsl:for-each select="../res:resultVariable[not(@elmo:appearance='http://bp4mc2.org/elmo/def#HiddenAppearance' or matches(.,'[^_]*_(label|details|count|uri)'))]">
 							<xsl:variable name="var" select="."/>
-							<xsl:text>|</xsl:text>
+							<xsl:if test="position()=1"><xsl:text>|</xsl:text></xsl:if>
 							<xsl:apply-templates select="$binding[res:variable=$var]" mode="tableobject"/>
+							<xsl:text>|</xsl:text>
 						</xsl:for-each><xsl:text>
 </xsl:text>
 					</xsl:for-each>
@@ -312,8 +324,16 @@
 			<xsl:variable name="count"><xsl:value-of select="../res:binding[res:variable=$countvar]/res:value"/></xsl:variable>
 			<xsl:variable name="detailsvar"><xsl:value-of select="res:variable"/>_details</xsl:variable>
 			<xsl:variable name="details"><xsl:value-of select="../res:binding[res:variable=$detailsvar]/res:value"/></xsl:variable>
-			<xsl:text>[</xsl:text><xsl:value-of select="$label"/><xsl:text>](</xsl:text>
-			<xsl:value-of select="res:value/@rdf:resource"/><xsl:text>)</xsl:text>
+			<xsl:text>[</xsl:text><xsl:value-of select="$label"/>
+			<xsl:choose>
+				<xsl:when test="$formatter='wiki'">|</xsl:when>
+				<xsl:otherwise><xsl:text>](</xsl:text></xsl:otherwise>
+			</xsl:choose>
+			<xsl:value-of select="res:value/@rdf:resource"/>
+			<xsl:choose>
+				<xsl:when test="$formatter='wiki'"><xsl:text>]</xsl:text></xsl:when>
+				<xsl:otherwise><xsl:text>)</xsl:text></xsl:otherwise>
+			</xsl:choose>
 			<xsl:if test="$count!=''">
 				<xsl:text> (</xsl:text><xsl:value-of select="$count"/><xsl:text>)</xsl:text>
 			</xsl:if>
@@ -424,7 +444,14 @@
 				<xsl:when test="@rdfs:label!=''"><xsl:value-of select="@rdfs:label"/></xsl:when>
 				<xsl:otherwise><xsl:value-of select="@rdf:resource"/></xsl:otherwise>
 			</xsl:choose>
-			<xsl:text>](</xsl:text><xsl:value-of select="@rdf:resource"/><xsl:text>)</xsl:text>
+			<xsl:choose>
+				<xsl:when test="$formatter='wiki'">
+					<xsl:text>]</xsl:text>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:text>](</xsl:text><xsl:value-of select="@rdf:resource"/><xsl:text>)</xsl:text>
+				</xsl:otherwise>
+			</xsl:choose>
 		</xsl:when>
 		<!-- Reference to another resource, nested -->
 		<xsl:when test="exists(rdf:Description/@rdf:about) and @elmo:appearance='http://bp4mc2.org/elmo/def#NestedAppearance'">
@@ -458,7 +485,14 @@
 				<xsl:when test="rdf:Description/rdfs:label!=''"><xsl:value-of select="rdf:Description/rdfs:label"/></xsl:when>
 				<xsl:otherwise><xsl:value-of select="rdf:Description/@rdf:about"/></xsl:otherwise>
 			</xsl:choose>
-			<xsl:text>](</xsl:text><xsl:value-of select="$resourceuri"/><xsl:text>)</xsl:text>
+			<xsl:choose>
+				<xsl:when test="$formatter='wiki'">
+					<xsl:text>|</xsl:text><xsl:value-of select="$resourceuri"/><xsl:text>]</xsl:text>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:text>](</xsl:text><xsl:value-of select="$resourceuri"/><xsl:text>)</xsl:text>
+				</xsl:otherwise>
+			</xsl:choose>
 		</xsl:when>
 		<!-- Blank node (list) -->
 		<xsl:when test="exists(rdf:Description/rdf:first)">

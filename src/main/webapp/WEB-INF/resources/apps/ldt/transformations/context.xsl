@@ -139,7 +139,7 @@
 				<xsl:otherwise><xsl:value-of select="version/number"/></xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
-		
+
 		<context env="{theatre/@env}" docroot="{$docroot}" staticroot="{$staticroot}" version="{$version}" timestamp="{version/timestamp}" sparql="{theatre/@sparql}" linkstrategy="{theatre/@linkstrategy}">
 			<configuration-endpoint><xsl:value-of select="theatre/@configuration-endpoint"/></configuration-endpoint>
 			<local-endpoint>
@@ -209,6 +209,7 @@
 					<xsl:when test="theatre/format='docx'">application/vnd.openxmlformats-officedocument.wordprocessingml.document</xsl:when>
 					<xsl:when test="theatre/format='pdf'">application/pdf</xsl:when>
 					<xsl:when test="theatre/format='md'">text/markdown</xsl:when>
+					<xsl:when test="theatre/format='wiki'">text/x.elmo.wiki</xsl:when>
 					<xsl:when test="theatre/format='xmi'">application/vnd.xmi+xml</xsl:when>
 					<xsl:when test="theatre/format='svgi'">application/x.elmo.svg+xml</xsl:when> <!-- Application specific mime-type -->
 					<xsl:when test="theatre/format='d3json'">application/x.elmo.d3+json</xsl:when> <!-- Application specific mime-type -->

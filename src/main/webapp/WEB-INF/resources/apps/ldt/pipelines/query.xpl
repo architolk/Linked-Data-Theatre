@@ -1424,6 +1424,46 @@
 					<!-- Transform -->
 					<p:processor name="oxf:xslt">
 						<p:input name="data" href="#rdfa"/>
+            <p:input name="params">
+              <formatter>githubmarkdown</formatter>
+            </p:input>
+						<p:input name="config" href="../transformations/rdf2md.xsl"/>
+						<p:output name="data" id="md"/>
+					</p:processor>
+					<!-- Convert XML result to plain text -->
+					<p:processor name="oxf:text-converter">
+						<p:input name="config">
+							<config>
+								<encoding>utf-8</encoding>
+							</config>
+						</p:input>
+						<p:input name="data" href="#md" />
+						<p:output name="data" id="converted" />
+					</p:processor>
+					<!-- Serialize -->
+					<p:processor name="oxf:http-serializer">
+						<p:input name="config">
+							<config>
+								<cache-control><use-local-cache>false</use-local-cache></cache-control>
+							</config>
+						</p:input>
+						<p:input name="data" href="#converted"/>
+					</p:processor>
+				</p:when>
+        <!-- WIKI (MD variant) -->
+				<p:when test="context/format='text/x.elmo.wiki'">
+					<!-- Transform to annotated rdf -->
+					<p:processor name="oxf:xslt">
+						<p:input name="data" href="aggregate('root',#context,#querytext,#cache)"/>
+						<p:input name="config" href="../transformations/rdf2rdfa.xsl"/>
+						<p:output name="data" id="rdfa"/>
+					</p:processor>
+					<!-- Transform -->
+					<p:processor name="oxf:xslt">
+						<p:input name="data" href="#rdfa"/>
+            <p:input name="params">
+              <formatter>wiki</formatter>
+            </p:input>
 						<p:input name="config" href="../transformations/rdf2md.xsl"/>
 						<p:output name="data" id="md"/>
 					</p:processor>
