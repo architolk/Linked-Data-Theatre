@@ -2,7 +2,7 @@
 
     NAME     rdf2jsonld.xsl
     VERSION  1.23.1-SNAPSHOT
-    DATE     2018-12-11
+    DATE     2019-02-18
 
     Copyright 2012-2018
 
@@ -61,7 +61,8 @@
 		</xsl:if>
 	</xsl:for-each-group>
 	<!-- Prefixes used in local xlmns properties -->
-	<xsl:for-each-group select="results/rdf:RDF[1]/*/*[substring-before(name(),':')='']" group-by="namespace-uri()">
+	<!-- Only two levels deep: a recursive solution would be better -->
+	<xsl:for-each-group select="results/rdf:RDF[1]/(*|*/*/*)/*[substring-before(name(),':')='']" group-by="namespace-uri()">
 		<xsl:variable name="prefix" select="replace(namespace-uri(),'.*/([^/]*)(#|/)','$1')"/>
 		<xsl:choose>
 			<xsl:when test="$prefix!=''"><prefix name="{$prefix}"><xsl:value-of select="namespace-uri()"/></prefix></xsl:when>
