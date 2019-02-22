@@ -2,7 +2,7 @@
 
     NAME     rdf2jsonld.xsl
     VERSION  1.23.1-SNAPSHOT
-    DATE     2019-02-18
+    DATE     2019-02-22
 
     Copyright 2012-2018
 
@@ -54,15 +54,15 @@
 
 <xsl:variable name="prefix">
 	<!-- Prefixes used in properties -->
-	<xsl:for-each-group select="results/rdf:RDF[1]/*/*" group-by="substring-before(name(),':')">
+	<xsl:for-each-group select="results/rdf:RDF[1]/(*|*/*/*|*/*/*/*/*|*/*/*/*/*/*/*)/*" group-by="substring-before(name(),':')">
 		<xsl:variable name="prefix" select="substring-before(name(),':')"/>
 		<xsl:if test="$prefix!=''">
 			<prefix name="{$prefix}"><xsl:value-of select="namespace-uri()"/></prefix>
 		</xsl:if>
 	</xsl:for-each-group>
 	<!-- Prefixes used in local xlmns properties -->
-	<!-- Only two levels deep: a recursive solution would be better -->
-	<xsl:for-each-group select="results/rdf:RDF[1]/(*|*/*/*)/*[substring-before(name(),':')='']" group-by="namespace-uri()">
+	<!-- Only three levels deep: a recursive solution would be better -->
+	<xsl:for-each-group select="results/rdf:RDF[1]/(*|*/*/*|*/*/*/*/*|*/*/*/*/*/*/*)/*[substring-before(name(),':')='']" group-by="namespace-uri()">
 		<xsl:variable name="prefix" select="replace(namespace-uri(),'.*/([^/]*)(#|/)','$1')"/>
 		<xsl:choose>
 			<xsl:when test="$prefix!=''"><prefix name="{$prefix}"><xsl:value-of select="namespace-uri()"/></prefix></xsl:when>
@@ -151,25 +151,15 @@
 	{"id":"@id"
 	,"graph":"@graph"<xsl:for-each-group select="$prefix/prefix" group-by="@name"><xsl:if test="count(current-group())=1">
 	,"<xsl:value-of select="@name"/>":"<xsl:value-of select="."/>"</xsl:if></xsl:for-each-group>
-	<xsl:for-each-group select="*[exists(@rdf:about)]/(*[exists(*/@rdf:about|@rdf:resource)]|*/*/*[exists(*/@rdf:about|@rdf:resource)])" group-by="name()">
+	<xsl:for-each-group select="*[exists(@rdf:about)]/(*|*/*/*|*/*/*/*/*)[exists(*/@rdf:about|@rdf:resource)]" group-by="name()">
 	,"<xsl:apply-templates select="." mode="property"/>":{"@type":"@id"}</xsl:for-each-group>
 	}
 <xsl:choose>
 	<xsl:when test="count(*/@rdf:about|*/*/*/@rdf:about)!=1">,"graph":
-[<xsl:for-each-group select="*[exists(@rdf:about)]" group-by="@rdf:about"><xsl:if test="position()!=1">,</xsl:if>
+[<xsl:for-each-group select="(*|*/*/*|*/*/*/*/*|*/*/*/*/*/*/*)[exists(@rdf:about)]" group-by="@rdf:about"><xsl:if test="position()!=1">,</xsl:if>
     {"id":"<xsl:value-of select="@rdf:about"/>"<xsl:apply-templates select="current-group()" mode="type"/><xsl:for-each-group select="current-group()/* except rdf:type" group-by="name()">
     ,<xsl:apply-templates select="current-group()" mode="triple"><xsl:with-param name="tab" select="8"/><xsl:with-param name="cnt" select="count(current-group())"/></xsl:apply-templates></xsl:for-each-group>
     }</xsl:for-each-group>
-<!-- Add resources in nested part -->
-<xsl:for-each-group select="*/*/*[exists(@rdf:about)]" group-by="@rdf:about"><xsl:text>,</xsl:text>
-    {"id":"<xsl:value-of select="@rdf:about"/>"<xsl:apply-templates select="current-group()" mode="type"/><xsl:for-each-group select="current-group()/* except rdf:type" group-by="name()">
-    ,<xsl:apply-templates select="current-group()" mode="triple"><xsl:with-param name="tab" select="8"/><xsl:with-param name="cnt" select="count(current-group())"/></xsl:apply-templates></xsl:for-each-group>
-    }</xsl:for-each-group>
-		<!-- Add resources in double nested part -->
-		<xsl:for-each-group select="*/*/*/*/*[exists(@rdf:about)]" group-by="@rdf:about"><xsl:text>,</xsl:text>
-		    {"id":"<xsl:value-of select="@rdf:about"/>"<xsl:apply-templates select="current-group()" mode="type"/><xsl:for-each-group select="current-group()/* except rdf:type" group-by="name()">
-		    ,<xsl:apply-templates select="current-group()" mode="triple"><xsl:with-param name="tab" select="8"/><xsl:with-param name="cnt" select="count(current-group())"/></xsl:apply-templates></xsl:for-each-group>
-		    }</xsl:for-each-group>
 ]
 }</xsl:when>
 	<xsl:otherwise>
