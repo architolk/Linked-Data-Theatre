@@ -1,0 +1,593 @@
+@prefix localupdatestage: <http://localhost:8080/data2model/update/>.
+@prefix updatestage: <http://linkeddata.ordina.nl/data2model/update/>.
+@prefix stage: <http://localhost:8080/data2model/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+#Production for local installations
+localupdatestage:data2model a elmo:Production;
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:Menu;
+	elmo:contains stage:ShapeProduction_scene1;
+#	elmo:contains stage:ShapeProduction_scene2;
+#	elmo:contains stage:ShapeProduction_scene3;
+	elmo:contains stage:ShapeProduction_scene4;
+	elmo:contains stage:ShapeProduction_scene5;
+	elmo:contains stage:ShapeProduction_scene6;
+	elmo:contains stage:ShapeProduction_scene7;
+	elmo:contains stage:ShapeProduction_scene8;
+	elmo:contains stage:ShapeProduction_scene9;
+	elmo:contains stage:ShapeProduction_scene10;
+	elmo:contains stage:ShapeProduction_scene11;
+	elmo:contains stage:ShapeProduction_scene12;
+	elmo:contains stage:ShapeProduction_scene13;
+	elmo:contains stage:ShapeProduction_scene14;
+	elmo:contains stage:ShapeProduction_scene15;
+	elmo:contains stage:ShapeProduction_scene16;
+	elmo:contains stage:ShapeProduction_scene17;
+	elmo:contains stage:ShapeProduction_scene90;
+	elmo:contains stage:ShapeProduction_scene91;
+.
+
+#Production for server installations
+updatestage:data2model a elmo:Production;
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:Menu;
+	elmo:contains stage:ShapeProduction_scene1;
+#	elmo:contains stage:ShapeProduction_scene2;
+#	elmo:contains stage:ShapeProduction_scene3;
+	elmo:contains stage:ShapeProduction_scene4;
+	elmo:contains stage:ShapeProduction_scene5;
+	elmo:contains stage:ShapeProduction_scene6;
+	elmo:contains stage:ShapeProduction_scene7;
+	elmo:contains stage:ShapeProduction_scene8;
+	elmo:contains stage:ShapeProduction_scene9;
+	elmo:contains stage:ShapeProduction_scene10;
+	elmo:contains stage:ShapeProduction_scene11;
+	elmo:contains stage:ShapeProduction_scene12;
+	elmo:contains stage:ShapeProduction_scene13;
+	elmo:contains stage:ShapeProduction_scene14;
+	elmo:contains stage:ShapeProduction_scene15;
+	elmo:contains stage:ShapeProduction_scene16;
+	elmo:contains stage:ShapeProduction_scene17;
+	elmo:contains stage:ShapeProduction_scene90;
+	elmo:contains stage:ShapeProduction_scene91;
+  # Extra for copy of result
+  elmo:contains stage:ShapeProduction_clearservergraph;
+  elmo:contains stage:ShapeProduction_copytoservergraph;
+.
+
+stage:ShapeProduction_clearservergraph a elmo:Scene;
+  elmo:index "98";
+  rdfs:label "Clear server graph";
+  elmo:query "clear graph <http://linkeddata.ordina.nl/data2model/container/model>";
+.
+stage:ShapeProduction_copytoservergraph a elmo:Scene;
+  elmo:index "99";
+  rdfs:label "Copy result to server graph";
+  elmo:query '''
+    insert into <http://linkeddata.ordina.nl/data2model/container/model> {
+      ?s ?p ?o
+    }
+    where {
+      graph <http://localhost:8080/data2model/container/model> {
+        ?s ?p ?o
+      }
+    }
+  '''
+.
+
+stage:ShapeProduction_scene1 a elmo:Scene;
+	elmo:index "01";
+	rdfs:label "Clear target graph";
+	elmo:query "clear graph <http://localhost:8080/data2model/container/model>";
+.
+stage:ShapeProduction_scene2 a elmo:Scene;
+	elmo:index "02";
+	rdfs:label "Copy classes";
+	elmo:query '''
+    insert into <http://localhost:8080/data2model/container/model> {
+      ?class rdf:type owl:Class.
+      ?class rdfs:label ?classlabel.
+    }
+    where {
+      graph <http://localhost:8080/data2model/container/data> {
+        ?class rdf:type ?type
+        OPTIONAL {
+          ?class rdfs:label ?classlabel
+        }
+        FILTER (?type = rdfs:Class
+            ||  ?type = owl:Class
+        )
+      }
+    }
+  ''';
+.
+stage:ShapeProduction_scene3 a elmo:Scene;
+	elmo:index "03";
+	rdfs:label "Copy properties";
+	elmo:query '''
+    insert into <http://localhost:8080/data2model/container/model> {
+      ?property rdf:type ?type.
+      ?property rdfs:label ?propertylabel
+    }
+    where {
+      graph <http://localhost:8080/data2model/container/data> {
+        ?property rdf:type ?type
+        OPTIONAL {
+          ?property rdfs:label ?propertylabel
+        }
+        FILTER (?type = rdf:Property
+            ||  ?type = owl:DatatypeProperty
+            ||  ?type = owl:ObjectProperty
+        )
+      }
+    }
+  ''';
+.
+stage:ShapeProduction_scene4 a elmo:Scene;
+  elmo:index "04";
+  rdfs:label "Add subclasses and infer class";
+  elmo:query '''
+    insert into <http://localhost:8080/data2model/container/model> {
+      ?class rdf:type owl:Class.
+      ?class rdfs:subClassOf ?superclass.
+      ?superclass rdf:type owl:Class.
+    }
+    where {
+      graph <http://localhost:8080/data2model/container/data> {
+        ?class rdfs:subClassOf ?superclass.
+        FILTER EXISTS {
+          ?s rdf:type ?class
+        }
+      }
+    }
+  ''';
+.
+stage:ShapeProduction_scene5 a elmo:Scene;
+	elmo:index "05";
+	rdfs:label "Infer classes from data";
+	elmo:query '''
+    insert into <http://localhost:8080/data2model/container/model> {
+      ?class rdf:type owl:Class.
+    }
+    where {
+      graph <http://localhost:8080/data2model/container/data> {
+        select distinct ?class
+        where {
+          ?item rdf:type ?class
+        }
+      }
+    }
+  ''';
+.
+stage:ShapeProduction_scene6 a elmo:Scene;
+	elmo:index "06";
+	rdfs:label "Infer datatype properties from data";
+	elmo:query '''
+    insert into <http://localhost:8080/data2model/container/model> {
+      ?property rdf:type owl:DatatypeProperty.
+    }
+    where {
+      graph <http://localhost:8080/data2model/container/data> {
+        select distinct ?property
+        where {
+          ?item ?property ?value.
+          FILTER (isLiteral(?value))
+        }
+      }
+    }
+  ''';
+.
+stage:ShapeProduction_scene7 a elmo:Scene;
+	elmo:index "07";
+	rdfs:label "Infer object properties from data";
+	elmo:query '''
+    insert into <http://localhost:8080/data2model/container/model> {
+      ?property rdf:type owl:ObjectProperty.
+    }
+    where {
+      graph <http://localhost:8080/data2model/container/data> {
+        select distinct ?property
+        where {
+          ?item ?property ?value.
+          FILTER (isIRI(?value) || isBlank(?value))
+        }
+      }
+    }
+  ''';
+.
+stage:ShapeProduction_scene8 a elmo:Scene;
+	elmo:index "08";
+	rdfs:label "Add missing labels";
+	elmo:query '''
+    insert into <http://localhost:8080/data2model/container/model> {
+      ?item rdfs:label ?label
+    }
+    where {
+      graph <http://localhost:8080/data2model/container/model> {
+        select ?item (replace(str(?item),"(.+)[:/#]([^:/#]+)","$2") as ?label)
+        where {
+          ?item rdf:type ?type.
+          FILTER NOT EXISTS {
+            ?item rdfs:label ?originallabel
+          }
+        }
+      }
+    }
+  ''';
+.
+stage:ShapeProduction_scene9 a elmo:Scene;
+	elmo:index "09";
+	rdfs:label "Create skeleton NodeShapes";
+	elmo:query '''
+		prefix sh: <http://www.w3.org/ns/shacl#>
+    insert into <http://localhost:8080/data2model/container/model> {
+      ?shape rdf:type sh:NodeShape.
+      ?shape sh:targetClass ?class
+    }
+    where {
+      graph <http://localhost:8080/data2model/container/model> {
+        select ?class (IRI(concat("urn:class",md5(str(?class)))) as ?shape)
+        where {
+          ?class rdf:type owl:Class
+        }
+      }
+    }
+  ''';
+.
+stage:ShapeProduction_scene10 a elmo:Scene;
+	elmo:index "10";
+	rdfs:label "Create datatype properties";
+	elmo:query '''
+		prefix sh: <http://www.w3.org/ns/shacl#>
+    insert into <http://localhost:8080/data2model/container/model> {
+      ?nodeshape sh:property ?propertyshape.
+      ?propertyshape rdf:type sh:PropertyShape;
+        sh:path ?property;
+        sh:datatype ?datatype
+      .
+    }
+    where {
+      graph <http://localhost:8080/data2model/container/data> {
+        select distinct
+            ?class (IRI(concat("urn:class",md5(str(?class)))) as ?nodeshape)
+            ?property (IRI(concat("urn:dtproperty:",md5(str(?class)),".",md5(str(?property)))) as ?propertyshape)
+            (datatype(?value) as ?datatype)
+        where {
+          ?item rdf:type ?class.
+          ?item ?property ?value.
+          FILTER (isLiteral(?value))
+        }
+      }
+    }
+  ''';
+.
+stage:ShapeProduction_scene11 a elmo:Scene;
+	elmo:index "11";
+	rdfs:label "Create IRI-object properties";
+	elmo:query '''
+		prefix sh: <http://www.w3.org/ns/shacl#>
+    insert into <http://localhost:8080/data2model/container/model> {
+      ?nodeshape sh:property ?propertyshape.
+      ?propertyshape rdf:type sh:PropertyShape;
+        sh:path ?property;
+        sh:class ?valueclass;
+        sh:nodeKind sh:IRI
+      .
+    }
+    where {
+      graph <http://localhost:8080/data2model/container/data> {
+        select distinct
+            ?class (IRI(concat("urn:class",md5(str(?class)))) as ?nodeshape)
+            ?property (IRI(concat("urn:objproperty:",md5(str(?class)),".",md5(str(?property)))) as ?propertyshape)
+            ?valueclass
+        where {
+          ?item rdf:type ?class.
+          ?item ?property ?value.
+          OPTIONAL {
+            ?value rdf:type ?valueclass
+          }
+          FILTER (isIRI(?value) && !(isBlank(?value)))
+        }
+      }
+    }
+  ''';
+.
+stage:ShapeProduction_scene12 a elmo:Scene;
+	elmo:index "12";
+	rdfs:label "Create Blank object properties";
+	elmo:query '''
+		prefix sh: <http://www.w3.org/ns/shacl#>
+    insert into <http://localhost:8080/data2model/container/model> {
+      ?nodeshape sh:property ?propertyshape.
+      ?propertyshape rdf:type sh:PropertyShape;
+        sh:path ?property;
+        sh:class ?valueclass;
+        sh:nodeKind sh:BlankNode
+      .
+    }
+    where {
+      graph <http://localhost:8080/data2model/container/data> {
+        select distinct
+            ?class (IRI(concat("urn:class",md5(str(?class)))) as ?nodeshape)
+            ?property (IRI(concat("urn:objproperty:",md5(str(?class)),".",md5(str(?property)))) as ?propertyshape)
+            ?valueclass
+        where {
+          ?item rdf:type ?class.
+          ?item ?property ?value.
+          OPTIONAL {
+            ?value rdf:type ?valueclass
+          }
+          FILTER (isBlank(?value))
+        }
+      }
+    }
+  ''';
+.
+stage:ShapeProduction_scene13 a elmo:Scene;
+	elmo:index "13";
+	rdfs:label "Create Blank object nodes";
+	elmo:query '''
+		prefix sh: <http://www.w3.org/ns/shacl#>
+    insert into <http://localhost:8080/data2model/container/model> {
+      ?propertyshape rdf:type sh:PropertyShape;
+        sh:path ?property;
+        sh:nodeKind sh:BlankNode;
+        sh:node ?propertynode
+      .
+      ?propertynode a sh:NodeShape;
+        sh:name ?propertynodename;
+        sh:property ?propertynodeproperty
+      .
+      ?propertynodeproperty a sh:PropertyShape;
+        sh:path ?valueproperty;
+				sh:class ?valuepropertyclass
+      .
+    }
+    where {
+      graph <http://localhost:8080/data2model/container/data> {
+        select distinct
+            ?property (IRI(concat("urn:objproperty:",md5(str(?class)),".",md5(str(?property)))) as ?propertyshape)
+            (IRI(concat("urn:propertynode:",md5(str(?class)),md5(str(?property)))) as ?propertynode)
+            ("<>" as ?propertynodename)
+            ?valueproperty (IRI(concat("urn:valueproperty",md5(concat(str(?class),str(?property),str(?valueproperty))))) as ?propertynodeproperty)
+						?valuepropertyclass
+        where {
+          ?item rdf:type ?class.
+          ?item ?property ?value.
+          ?value ?valueproperty ?valuepropertyvalue.
+          FILTER (isBlank(?value))
+          FILTER NOT EXISTS {
+            ?value rdf:type ?valueclass
+          }
+					OPTIONAL {
+						?valuepropertyvalue rdf:type ?valuepropertyclass
+					}
+        }
+      }
+    }
+  ''';
+.
+
+stage:ShapeProduction_scene14 a elmo:Scene;
+	elmo:index "14";
+	rdfs:label "Add object cardinality for targetclass nodes";
+	elmo:query '''
+		prefix sh: <http://www.w3.org/ns/shacl#>
+		insert into <http://localhost:8080/data2model/container/model> {
+			?propertyshape sh:minCount ?mincount.
+			?propertyshape sh:maxCount ?maxcount
+		}
+		where {
+			graph <http://localhost:8080/data2model/container/data> {
+				select distinct
+						(IRI(concat("urn:objproperty:",md5(str(?class)),".",md5(str(?property)))) as ?propertyshape)
+						?mincount ?maxcount
+				where {
+					select ?class ?property (min(?cnt) as ?mincount) (max(?cnt) as ?maxcount)
+					where {
+						{
+							select ?class ?s ?property (count(?o) as ?cnt)
+						  where {
+					      ?s a ?class.
+					      ?s ?property ?o.
+								FILTER (isIRI(?o) || isBlank(?o))
+						  }
+						  group by ?class ?s ?property
+						}
+						UNION
+						{
+							select ?class ?s1 ?property (0 as ?cnt) where {
+								?s a ?class.
+								?s ?property ?o.
+								?s1 a ?class
+								FILTER (isIRI(?o) || isBlank(?o))
+								FILTER NOT EXISTS {
+									?s1 ?property ?o1
+									FILTER (isIRI(?o) || isBlank(?o))
+								}
+							}
+						}
+					}
+					group by ?class ?property
+				}
+			}
+		}
+	''';
+.
+
+stage:ShapeProduction_scene15 a elmo:Scene;
+	elmo:index "15";
+	rdfs:label "Add datatype cardinality for targetclass nodes";
+	elmo:query '''
+		prefix sh: <http://www.w3.org/ns/shacl#>
+		insert into <http://localhost:8080/data2model/container/model> {
+			?propertyshape sh:minCount ?mincount.
+			?propertyshape sh:maxCount ?maxcount
+		}
+		where {
+			graph <http://localhost:8080/data2model/container/data> {
+				select distinct
+						(IRI(concat("urn:dtproperty:",md5(str(?class)),".",md5(str(?property)))) as ?propertyshape)
+						?mincount ?maxcount
+				where {
+					select ?class ?property (min(?cnt) as ?mincount) (max(?cnt) as ?maxcount)
+					where {
+						{
+							select ?class ?s ?property (count(?o) as ?cnt)
+						  where {
+					      ?s a ?class.
+					      ?s ?property ?o.
+								FILTER (isLiteral(?o))
+						  }
+						  group by ?class ?s ?property
+						}
+						UNION
+						{
+							select ?class ?s1 ?property (0 as ?cnt) where {
+								?s a ?class.
+								?s ?property ?o.
+								?s1 a ?class
+								FILTER (isLiteral(?o))
+								FILTER NOT EXISTS {
+									?s1 ?property ?o1
+									FILTER (isLiteral(?o))
+								}
+							}
+						}
+					}
+					group by ?class ?property
+				}
+			}
+		}
+	''';
+.
+
+stage:ShapeProduction_scene16 a elmo:Scene;
+	elmo:index "16";
+	rdfs:label "Add cardinality for blank node properties";
+	elmo:query '''
+		prefix sh: <http://www.w3.org/ns/shacl#>
+    insert into <http://localhost:8080/data2model/container/model> {
+			?propertynodeproperty sh:minCount ?mincount.
+			?propertynodeproperty sh:maxCount ?maxcount
+    }
+    where {
+      graph <http://localhost:8080/data2model/container/data> {
+        select distinct
+            (IRI(concat("urn:valueproperty",md5(concat(str(?class),str(?property),str(?valueproperty))))) as ?propertynodeproperty)
+						?mincount ?maxcount
+        where {
+					select ?class ?property ?valueproperty (min(?cnt) as ?mincount) (max(?cnt) as ?maxcount)
+					where {
+						{
+							select ?class ?property ?value ?valueproperty (count(?o) as ?cnt)
+						  where {
+								?item rdf:type ?class.
+								?item ?property ?value.
+								FILTER (isBlank(?value))
+								?value ?valueproperty ?o
+								FILTER NOT EXISTS {
+			            ?value rdf:type ?valueclass
+			          }
+						  }
+						  group by ?class ?property ?value ?valueproperty
+						}
+						UNION
+						{
+							select ?class ?property ?value ?valueproperty (0 as ?cnt) where {
+								?item rdf:type ?class.
+								?item ?property ?value.
+								FILTER (isBlank(?value))
+								?value ?valueproperty ?o.
+								FILTER NOT EXISTS {
+			            ?value rdf:type ?valueclass
+			          }
+								?item ?property ?value1.
+								FILTER (isBlank(?value1))
+								FILTER NOT EXISTS {
+			            ?value1 rdf:type ?valueclass1.
+								}
+								FILTER NOT EXISTS {
+									?value1 ?valueproperty ?o1.
+								}
+							}
+						}
+					}
+					group by ?class ?property ?valueproperty
+
+        }
+      }
+    }
+  ''';
+.
+stage:ShapeProduction_scene17 a elmo:Scene;
+	elmo:index "17";
+	rdfs:label "Create roles (double typing)";
+	elmo:query '''
+		prefix sh: <http://www.w3.org/ns/shacl#>
+    insert into <http://localhost:8080/data2model/container/model> {
+      ?shape sh:property ?role.
+			?role sh:path rdf:type.
+			?role sh:hasValue ?roleclass.
+    }
+    where {
+      graph <http://localhost:8080/data2model/container/data> {
+        select (IRI(concat("urn:class",md5(str(?class)))) as ?shape)
+							 ?roleclass (IRI(concat("urn:role",md5(concat(str(?class),str(?roleclass))))) as ?role)
+        where {
+          ?s rdf:type ?class.
+					?s rdf:type ?roleclass.
+					FILTER (?class != ?roleclass)
+					FILTER NOT EXISTS {
+						?s1 rdf:type ?class.
+						FILTER NOT EXISTS {
+							?s1 rdf:type ?roleclass
+						}
+					}
+        }
+      }
+    }
+  ''';
+.
+
+stage:ShapeProduction_scene90 a elmo:Scene;
+	elmo:index "90";
+	rdfs:label "Add names to NodeShapes";
+	elmo:query '''
+		prefix sh: <http://www.w3.org/ns/shacl#>
+    insert into <http://localhost:8080/data2model/container/model> {
+      ?nodeshape sh:name ?name
+    }
+    where {
+      graph <http://localhost:8080/data2model/container/model> {
+        select ?nodeshape (?classlabel as ?name)
+        where {
+          ?nodeshape sh:targetClass ?class.
+          ?class rdfs:label ?classlabel
+        }
+      }
+    }
+  ''';
+.
+stage:ShapeProduction_scene91 a elmo:Scene;
+	elmo:index "91";
+	rdfs:label "Add names to PropertyShapes";
+	elmo:query '''
+		prefix sh: <http://www.w3.org/ns/shacl#>
+    insert into <http://localhost:8080/data2model/container/model> {
+      ?propertyshape sh:name ?name
+    }
+    where {
+      graph <http://localhost:8080/data2model/container/model> {
+        select ?propertyshape (?propertylabel as ?name)
+        where {
+          ?propertyshape sh:path ?property.
+          ?property rdfs:label ?propertylabel
+        }
+      }
+    }
+  ''';
+.

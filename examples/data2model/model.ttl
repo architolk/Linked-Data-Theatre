@@ -1,0 +1,38 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+@prefix void: <http://rdfs.org/ns/void#>.
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
+@prefix stage: <http://localhost:8080/data2model/stage#>.
+
+stage:Model a elmo:Representation;
+  elmo:url-pattern "/query/model(|.ttl)$";
+  elmo:contains stage:Menu;
+  elmo:appearance elmo:VocabularyAppearance;
+  elmo:query '''
+    construct {
+			?s ?p ?o.
+		}
+    where {
+      { graph <http://localhost:8080/data2model/container/model> {?s ?p ?o}}
+    }
+  ''';
+.
+
+stage:ModelYed a elmo:Representation;
+  elmo:url-pattern "/query/model.yed$";
+  elmo:contains stage:Menu;
+  elmo:appearance elmo:VocabularyAppearance;
+  elmo:query '''
+    construct {
+			?s ?p ?o.
+			?ds ?dp ?do.
+		}
+    where {
+      { graph <http://localhost:8080/data2model/container/model> {?s ?p ?o}}
+			UNION
+		  { graph <http://localhost:8080/data2model/container/diagram> {?ds ?dp ?do}}
+    }
+  ''';
+.

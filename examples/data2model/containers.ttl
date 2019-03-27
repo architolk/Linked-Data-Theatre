@@ -1,0 +1,46 @@
+@prefix stage: <http://localhost:8080/data2model/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix container: <http://linkeddata.ordina.nl/data2model/container/>.
+@prefix containerlocal: <http://localhost:8080/data2model/container/>.
+
+#Container for upload data
+containerlocal:data a elmo:Container;
+  rdfs:label "Upload data";
+  elmo:contains stage:Menu;
+  elmo:representation elmo:UploadRepresentation;
+.
+container:data a elmo:Container;
+  rdfs:label "Upload data";
+	elmo:contains stage:Menu;
+	elmo:representation elmo:UploadRepresentation;
+  elmo:replaces containerlocal:data;
+.
+
+# Container for upload model (and generation target)
+containerlocal:model a elmo:Container;
+  rdfs:label "Upload model";
+	elmo:contains stage:Menu;
+.
+container:model a elmo:Container;
+  rdfs:label "Upload model";
+	elmo:contains stage:Menu;
+  elmo:replaces containerlocal:model;
+.
+
+# Container for upload diagram (placement of diagram elements)
+containerlocal:diagram a elmo:Container;
+  rdfs:label "Upload diagram (graphml)";
+  elmo:contains stage:Menu;
+  elmo:representation elmo:UploadRepresentation;
+  elmo:translator elmo:GraphmlTranslator;
+.
+
+containerlocal:diagram a elmo:Container;
+  rdfs:label "Upload diagram (graphml)";
+  elmo:contains stage:Menu;
+  elmo:representation elmo:UploadRepresentation;
+  elmo:translator elmo:GraphmlTranslator;
+  elmo:replaces containerlocal:diagram;
+.

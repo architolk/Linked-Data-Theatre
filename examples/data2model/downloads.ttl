@@ -1,0 +1,26 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+@prefix void: <http://rdfs.org/ns/void#>.
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
+@prefix stage: <http://localhost:8080/data2model/stage#>.
+
+stage:Downloads a elmo:Representation;
+  elmo:url-pattern "/query/downloads$";
+  elmo:contains stage:Menu;
+	elmo:appearance elmo:HtmlAppearance;
+	elmo:data [
+		rdfs:label "Downloads"@en;
+    rdfs:label "Downloads"@nl;
+		elmo:html '''
+			<div>
+				<ul>
+        <li><a href="query/model">Het model in een webpagina</a></li>
+          <li><a href="query/model.ttl">SHACL turtle specificatie</a></li>
+          <li><a href="query/model.yed">Grafische weergave</a></li>
+        </ul>
+        <p>De grafische weergave vereist het gebruik van het yEd open source tool. Dat kunt u <a href="https://www.yworks.com/downloads#yEd">hier</a> vinden</p>
+ 			</div>''';
+	]
+.

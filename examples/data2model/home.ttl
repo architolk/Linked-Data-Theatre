@@ -1,0 +1,63 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+@prefix void: <http://rdfs.org/ns/void#>.
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
+@prefix stage: <http://localhost:8080/data2model/stage#>.
+
+stage:Home	a	elmo:Representation;
+	elmo:url-pattern	"/data2model(|/|\\..+)$";
+	elmo:contains	stage:Menu;
+	elmo:contains	stage:Welkom;
+.
+
+stage:Menu elmo:appearance elmo:NavbarSearchAppearance;
+  elmo:index "~";
+  elmo:data [
+    rdfs:label "Modeling"@en;
+    rdfs:label "Modelleren"@nl;
+    html:link "/modeling";
+    elmo:data [
+      elmo:index "1";
+      rdfs:label "RDF upload";
+      html:link "container/data"
+    ];
+    elmo:data [
+      elmo:index "2";
+      rdfs:label "Data2Model";
+      elmo:data [elmo:index "1"; rdfs:label "Start model generation"; html:link "update/data2model"];
+      elmo:data [elmo:index "2"; rdfs:label "Upload graphml diagram"; html:link "container/diagram"];
+    ];
+    elmo:data [
+      elmo:index "3";
+      rdfs:label "Downloads";
+      html:link "query/downloads";
+    ];
+    elmo:data [
+      elmo:index "4";
+      rdfs:label "Edit model";
+      html:link "container/model"
+    ]
+  ]
+.
+
+stage:Welkom a elmo:Part;
+	elmo:appearance elmo:HtmlAppearance;
+	elmo:data [
+		rdfs:label "Welcome"@en;
+    rdfs:label "Welkom"@nl;
+		elmo:html '''
+			<div>
+				<p>Welkom op de site voor het ontdekken van het model achter RDF data. U kunt een willekeurige verzameling van triples (RDF data) uploaden. Deze kan vervolgens worden omgezet naar het overeenkomstige model: welke klassen worden gebruikt, welke eigenschappen, hoe liggen de relaties, etc, etc.</p>
+        <p>De volgende acties kunt u uitvoeren:</p>
+        <ul>
+          <li>Upload van een RDF bestand met Linked Data</li>
+          <li>Analyseren van dit bestand en omzetten naar een Linked Data model</li>
+          <li>Download van het resultaat in verschillende formaten (turtle, markdown document, grafisch)</li>
+					<li>Upload het aangepast diagram (voor plaatsing van de elementen) opnieuw</li>
+          <li>Edit the model yourself</li>
+        </ul>
+ 			</div>''';
+	]
+.
