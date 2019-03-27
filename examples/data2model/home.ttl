@@ -28,6 +28,7 @@ stage:Menu elmo:appearance elmo:NavbarSearchAppearance;
       rdfs:label "Data2Model";
       elmo:data [elmo:index "1"; rdfs:label "Start model generation"; html:link "update/data2model"];
       elmo:data [elmo:index "2"; rdfs:label "Upload graphml diagram"; html:link "container/diagram"];
+			elmo:data [elmo:index "3"; rdfs:label "Clean all data"; html:link "update/clean"];
     ];
     elmo:data [
       elmo:index "3";
