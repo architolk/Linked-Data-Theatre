@@ -9,6 +9,7 @@
 stage:Home	a	elmo:Representation;
 	elmo:url-pattern	"/data2model(|/|\\..+)$";
 	elmo:contains	stage:Menu;
+	elmo:contains stage:datatabs;
 	elmo:contains	stage:Welkom;
 .
 
@@ -17,7 +18,7 @@ stage:Menu elmo:appearance elmo:NavbarSearchAppearance;
   elmo:data [
     rdfs:label "Modeling"@en;
     rdfs:label "Modelleren"@nl;
-    html:link "/modeling";
+    html:link "/data2model";
     elmo:data [
       elmo:index "1";
       rdfs:label "RDF upload";
