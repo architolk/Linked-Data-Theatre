@@ -2,7 +2,7 @@
 
     NAME     rdf2html.xsl
     VERSION  1.23.1-SNAPSHOT
-    DATE     2018-12-11
+    DATE     2019-04-08
 
     Copyright 2012-2018
 
@@ -698,8 +698,38 @@
 			</xsl:for-each>
 		</ul>
 	</xsl:for-each>
-	<!-- IndexAppearance with static data -->
-	<xsl:for-each select="rdf:Description[exists(rdfs:label)][1]">
+	<!-- IndexAppearance with static data, menu -->
+	<xsl:for-each select="rdf:Description[exists(elmo:data)][1]">
+		<ul class="nav nav-tabs">
+			<xsl:variable name="toplevel" select="."/>
+			<xsl:for-each select="../rdf:Description"><xsl:sort select="elmo:index"/>
+				<xsl:variable name="nodeID" select="@rdf:nodeID"/>
+				<xsl:if test="exists($toplevel/elmo:data[@rdf:nodeID=$nodeID])">
+					<xsl:variable name="label"><xsl:call-template name="normalize-language"><xsl:with-param name="text" select="rdfs:label"/></xsl:call-template></xsl:variable>
+					<!-- This sets the menu to the active menu, but is not full proof! -->
+					<xsl:variable name="url" select="/results/context/url"/>
+					<xsl:variable name="url-domain" select="replace($url,'^([^/]+//[^/]+).*','$1')"/>
+					<xsl:variable name="active">
+						<xsl:if test="($url=html:link) or ($url=concat($url-domain,html:link))">active</xsl:if>
+					</xsl:variable>
+					<xsl:variable name="link">
+						<!-- If a link is a relative link (not absolute and not starting with a slash), prefix with docroot and subdomain -->
+						<xsl:if test="not(matches(html:link,'^(/|[a-zA-Z0-9]+:)'))">
+							<xsl:if test="$docroot!=''"><xsl:value-of select="$docroot"/></xsl:if>
+							<xsl:if test="$subdomain!=''"><xsl:value-of select="$subdomain"/></xsl:if>
+							<xsl:text>/</xsl:text>
+						</xsl:if>
+						<xsl:value-of select="html:link"/>
+					</xsl:variable>
+					<li class="{$active}">
+						<a href="{$link}"><xsl:value-of select="$label"/></a>
+					</li>
+				</xsl:if>
+			</xsl:for-each>
+		</ul>
+	</xsl:for-each>
+	<!-- IndexAppearance with static data, parameters -->
+	<xsl:for-each select="rdf:Description[exists(rdf:value)][1]">
 		<ul class="nav nav-tabs">
 			<xsl:variable name="value" select="tokenize(rdf:value,'\|')"/>
 			<xsl:variable name="link"><xsl:value-of select="html:link"/></xsl:variable>

@@ -1,8 +1,8 @@
 <!--
 
     NAME     ttl2rdfaform.xsl
-    VERSION  1.23.0
-    DATE     2018-10-20
+    VERSION  1.23.1-SNAPSHOT
+    DATE     2019-04-08
 
     Copyright 2012-2018
 
@@ -65,7 +65,13 @@
 		</context>
 		-->
 		<xsl:for-each select="root/rdf:RDF/*[exists(elmo:appearance)]">
-			<rdf:RDF elmo:appearance="{elmo:appearance/@rdf:resource}" elmo:query="{@rdf:about}" elmo:index="{position()}">
+			<xsl:variable name="position">
+				<xsl:choose>
+					<xsl:when test="elmo:index!=''"><xsl:value-of select="elmo:index"/></xsl:when>
+					<xsl:otherwise><xsl:value-of select="position()"/></xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
+			<rdf:RDF elmo:appearance="{elmo:appearance/@rdf:resource}" elmo:query="{@rdf:about}" elmo:index="{$position}">
 				<xsl:apply-templates select="key('bnode',elmo:data/@rdf:nodeID)" mode="data"/>
 				<xsl:apply-templates select="key('node',elmo:data/@rdf:resource)" mode="data"/>
 				<xsl:apply-templates select="elmo:data[@rdf:parseType='Resource']" mode="data"/>
