@@ -9,18 +9,21 @@
 stage:Downloads a elmo:Representation;
   elmo:url-pattern "/query/downloads$";
   elmo:contains stage:Menu;
-	elmo:appearance elmo:HtmlAppearance;
-	elmo:data [
-		rdfs:label "Downloads"@en;
+  elmo:appearance elmo:HtmlAppearance;
+  elmo:data [
+    rdfs:label "Downloads"@en;
     rdfs:label "Downloads"@nl;
-		elmo:html '''
-			<div>
-				<ul>
-        <li><a href="query/model">Het model in een webpagina</a></li>
+    elmo:html '''
+      <div>
+        <ul>
+          <li><a href="query/model">Het model in een webpagina</a></li>
+          <li><a href="query/tabel">Het model in een tabel</a></li>
           <li><a href="query/model.ttl">SHACL turtle specificatie</a></li>
           <li><a href="query/model.yed">Grafische weergave</a></li>
+          <li><a href="query/namespaces">Namespaces gebruik</a></li>
         </ul>
         <p>De grafische weergave vereist het gebruik van het yEd open source tool. Dat kunt u <a href="https://www.yworks.com/downloads#yEd">hier</a> vinden</p>
- 			</div>''';
-	]
+      </div>
+    ''';
+  ]
 .

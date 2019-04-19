@@ -1,0 +1,89 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+@prefix void: <http://rdfs.org/ns/void#>.
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
+@prefix stage: <http://localhost:8080/data2model/stage#>.
+
+stage:Tabel a elmo:Representation;
+  elmo:url-pattern "/query/tabel$";
+  elmo:contains stage:Menu;
+  elmo:fragment [
+    elmo:applies-to "type";
+    rdfs:label "Type";
+  ];
+  elmo:fragment [
+    elmo:applies-to "subject";
+    elmo:name "SUBJECT";
+    elmo:appearance elmo:GlobalLink;
+  ];
+  elmo:fragment [
+    elmo:applies-to "name";
+    rdfs:label "Name"
+  ];
+  elmo:fragment [
+    elmo:applies-to "label";
+    rdfs:label "Label"
+  ];
+  elmo:fragment [
+    elmo:applies-to "labelen";
+    rdfs:label "Label (en)"
+  ];
+  elmo:fragment [
+    elmo:applies-to "labelnl";
+    rdfs:label "Label (nl)"
+  ];
+  elmo:fragment [
+    elmo:applies-to "comment";
+    rdfs:label "Comment"
+  ];
+  elmo:fragment [
+    elmo:applies-to "commentnl";
+    rdfs:label "Comment (nl)"
+  ];
+  elmo:query '''
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    SELECT ?type ?subject ?name ?label ?labelen ?labelnl ?comment ?commentnl
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/model> {
+        ?subject a ?type
+        OPTIONAL {
+          ?subject rdfs:label ?labelen.
+          FILTER (lang(?labelen)="en")
+        }
+        OPTIONAL {
+          ?subject rdfs:label ?labelnl.
+          FILTER (lang(?labelnl)="nl")
+        }
+        OPTIONAL {
+          {
+            ?subject rdfs:label ?label
+            FILTER (lang(?label)="")
+          }
+          UNION
+          {
+            ?subject rdfs:label ?label
+            FILTER (lang(?label)="en")
+            FILTER NOT EXISTS {
+              ?subject rdfs:label ?labelen
+              FILTER (lang(?labeldef)="")
+            }
+          }
+        }
+      }
+      OPTIONAL {
+        ?subject sh:name ?name
+      }
+      OPTIONAL {
+        ?subject rdfs:comment ?comment
+        FILTER (lang(?comment)="" or lang(?comment)="en")
+      }
+      OPTIONAL {
+        ?subject rdfs:comment ?commentnl
+        FILTER (lang(?commentnl)="nl")
+      }
+    }
+    ORDER BY ?type ?subject
+  '''
+.

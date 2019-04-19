@@ -1,0 +1,81 @@
+@prefix localupdatestage: <http://localhost:8080/data2model/update/>.
+@prefix updatestage: <http://linkeddata.ordina.nl/data2model/update/>.
+@prefix stage: <http://localhost:8080/data2model/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+localupdatestage:clean a elmo:Production;
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:Menu;
+	elmo:contains stage:Clean_local_data;
+  elmo:contains stage:Clean_local_model;
+  elmo:contains stage:Clean_local_diagram;
+.
+
+updatestage:clean a elmo:Production;
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:Menu;
+	elmo:contains stage:Clean_local_data;
+  elmo:contains stage:Clean_server_data;
+  elmo:contains stage:Clean_local_model;
+  elmo:contains stage:Clean_server_model;
+  elmo:contains stage:Clean_local_diagram;
+  elmo:contains stage:Clean_server_diagram;
+.
+
+localupdatestage:copy a elmo:Production;
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:Menu;
+	elmo:contains stage:Copy_local_data;
+.
+
+updatestage:copy a elmo:Production;
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:Menu;
+	elmo:contains stage:Copy_server_data;
+.
+
+stage:Clean_local_data a elmo:Scene;
+  elmo:index "01";
+  rdfs:label "Clear local data graph";
+  elmo:query "clear graph <http://localhost:8080/data2model/container/data>";
+.
+stage:Clean_server_data a elmo:Scene;
+  elmo:index "02";
+  rdfs:label "Clear server data graph";
+  elmo:query "clear graph <http://linkeddata.ordina.nl/data2model/container/data>";
+.
+
+stage:Clean_local_model a elmo:Scene;
+  elmo:index "03";
+  rdfs:label "Clear local model graph";
+  elmo:query "clear graph <http://localhost:8080/data2model/container/model>";
+.
+stage:Clean_server_model a elmo:Scene;
+  elmo:index "04";
+  rdfs:label "Clear server model graph";
+  elmo:query "clear graph <http://linkeddata.ordina.nl/data2model/container/model>";
+.
+
+stage:Clean_local_diagram a elmo:Scene;
+  elmo:index "05";
+  rdfs:label "Clear local diagram graph";
+  elmo:query "clear graph <http://localhost:8080/data2model/container/diagram>";
+.
+stage:Clean_server_diagram a elmo:Scene;
+  elmo:index "06";
+  rdfs:label "Clear server diagram graph";
+  elmo:query "clear graph <http://linkeddata.ordina.nl/data2model/container/diagram>";
+.
+
+stage:Copy_local_data a elmo:Scene;
+	elmo:index "07";
+	rdfs:label "Copy local data";
+	elmo:query "copy graph <http://localhost:8080/data2model/container/data> to <http://localhost:8080/data2model/container/model>"
+.
+stage:Copy_server_data a elmo:Scene;
+	elmo:index "07";
+	rdfs:label "Copy local data";
+	elmo:query "copy graph <http://linkeddata.ordina.nl/data2model/container/data> to <http://localhost:8080/data2model/container/model>"
+.

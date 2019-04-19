@@ -1,0 +1,58 @@
+@prefix localupdatestage: <http://localhost:8080/data2model/update/>.
+@prefix updatestage: <http://linkeddata.ordina.nl/data2model/update/>.
+@prefix stage: <http://localhost:8080/data2model/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+#Production for local installations
+localupdatestage:model2model a elmo:Production;
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:Menu;
+	elmo:contains stage:model2model_scene1;
+	elmo:contains stage:model2model_scene2;
+.
+
+#Production for server installations
+updatestage:model2model a elmo:Production;
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:Menu;
+	elmo:contains stage:model2model_scene1;
+	elmo:contains stage:model2model_scene2;
+.
+
+stage:model2model_scene1 a elmo:Scene;
+	elmo:index "01";
+	rdfs:label "Add datatype properties";
+	elmo:query '''
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		insert into <http://localhost:8080/data2model/container/model> {
+			?property a owl:DatatypeProperty.
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/model> {
+				?ps sh:path ?property.
+				?ps sh:datatype ?datatype.
+				FILTER (isIri(?property))
+			}
+		}
+	''';
+.
+
+stage:model2model_scene2 a elmo:Scene;
+	elmo:index "02";
+	rdfs:label "Add object properties";
+	elmo:query '''
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		insert into <http://localhost:8080/data2model/container/model> {
+			?property a owl:ObjectProperty.
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/model> {
+				?ps sh:path ?property.
+				?ps sh:class ?class.
+				FILTER (isIri(?property))
+			}
+		}
+	''';
+.

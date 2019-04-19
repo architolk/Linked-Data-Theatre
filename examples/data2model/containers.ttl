@@ -12,6 +12,7 @@ stage:datatabs a elmo:Part;
   elmo:data [
     elmo:data [elmo:index "1"; rdfs:label "file upload"; html:link "/data2model/container/data"];
     elmo:data [elmo:index "2"; rdfs:label "data entry"; html:link "/data2model/container/editdata"];
+    elmo:data [elmo:index "3"; rdfs:label "file append"; html:link "/data2model/container/appenddata"];
 	];
 .
 
@@ -42,6 +43,31 @@ container:editdata a elmo:Container;
   elmo:contains stage:Menu;
   elmo:contains stage:datatabs;
   elmo:replaces containerlocal:data;
+.
+
+#Container for upload data
+containerlocal:appenddata a elmo:Container;
+  rdfs:label "Append data";
+  elmo:contains stage:Menu;
+  elmo:contains stage:datatabs;
+  elmo:representation elmo:UploadRepresentation;
+  elmo:query '''
+    prefix containerlocal: <http://localhost:8080/data2model/container/>
+    insert { graph containerlocal:data {?s?p?o} }
+    where { graph containerlocal:appenddata {?s?p?o} }
+  '''
+.
+container:appenddata a elmo:Container;
+  rdfs:label "Append data";
+	elmo:contains stage:Menu;
+  elmo:contains stage:datatabs;
+	elmo:representation elmo:UploadRepresentation;
+  elmo:query '''
+    prefix container: <http://linkeddata.ordina.nl/data2model/container/>
+    prefix containerlocal: <http://localhost:8080/data2model/container/>
+    insert { graph containerlocal:data {?s?p?o} }
+    where { graph container:appenddata {?s?p?o} }
+  '''
 .
 
 # Container for upload model (and generation target)

@@ -9,7 +9,6 @@
 stage:Home	a	elmo:Representation;
 	elmo:url-pattern	"/data2model(|/|\\..+)$";
 	elmo:contains	stage:Menu;
-	elmo:contains stage:datatabs;
 	elmo:contains	stage:Welkom;
 .
 
@@ -30,6 +29,8 @@ stage:Menu elmo:appearance elmo:NavbarSearchAppearance;
       elmo:data [elmo:index "1"; rdfs:label "Start model generation"; html:link "update/data2model"];
       elmo:data [elmo:index "2"; rdfs:label "Upload graphml diagram"; html:link "container/diagram"];
 			elmo:data [elmo:index "3"; rdfs:label "Clean all data"; html:link "update/clean"];
+			elmo:data [elmo:index "4"; rdfs:label "Copy data as model"; html:link "update/copy"];
+			elmo:data [elmo:index "5"; rdfs:label "Enhance model"; html:link "update/model2model"];
     ];
     elmo:data [
       elmo:index "3";

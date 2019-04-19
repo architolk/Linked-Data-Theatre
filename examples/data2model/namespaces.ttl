@@ -1,0 +1,65 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+@prefix void: <http://rdfs.org/ns/void#>.
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
+@prefix stage: <http://localhost:8080/data2model/stage#>.
+
+stage:Namespaces a elmo:Representation;
+  elmo:url-pattern "/query/namespaces$";
+  elmo:contains stage:Menu;
+  elmo:contains stage:Namespaces_tree;
+  elmo:contains stage:Namespaces_tabel
+.
+
+stage:Namespaces_tree a elmo:Part;
+  elmo:appearance elmo:TreeAppearance;
+  elmo:query '''
+    CONSTRUCT {
+      ?ns rdfs:label ?ns_label.
+      ?s rdfs:isDefinedBy ?ns.
+      ?s rdfs:label ?s_label
+    }
+    WHERE {
+      SELECT distinct (iri(?ns_label) as ?ns) ?ns_label ?s ?s_label
+      WHERE {
+        GRAPH <http://localhost:8080/data2model/container/model> {
+          ?s ?p ?o
+          FILTER (isIRI(?s))
+          BIND (replace(str(?s),"(^.*[/|#])([^(/|#)]+)$","$1") as ?ns_label)
+          BIND (replace(str(?s),"(^.*[/|#])([^(/|#)]+)$","$2") as ?s_label)
+          FILTER (isIRI(?s) && ?s_label!=?ns_label)
+        }
+      }
+    }
+  ''';
+.
+
+stage:Namespaces_tabel a elmo:Part;
+  elmo:fragment [
+    elmo:applies-to "ns";
+    rdfs:label "Namespace";
+  ];
+  elmo:fragment [
+    elmo:applies-to "s";
+    rdfs:label "Resource";
+    elmo:name "SUBJECT"
+  ];
+  elmo:fragment [
+    elmo:applies-to "type";
+    rdfs:label "Type";
+  ];
+  elmo:query '''
+    SELECT distinct (iri(?ns_label) as ?ns) ?ns_label ?s ?s_label ?type
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/model> {
+        ?s ?p ?o
+        OPTIONAL {?s a ?type}
+        BIND (replace(str(?s),"(^.*[/|#])([^(/|#)]+)$","$1") as ?ns_label)
+        BIND (replace(str(?s),"(^.*[/|#])([^(/|#)]+)$","$2") as ?s_label)
+        FILTER (isIRI(?s) && ?s_label!=?ns_label)
+      }
+    }
+  ''';
+.
