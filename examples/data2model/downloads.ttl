@@ -21,6 +21,7 @@ stage:Downloads a elmo:Representation;
           <li><a href="query/model.ttl">SHACL turtle specificatie</a></li>
           <li><a href="query/model.yed">Grafische weergave</a></li>
           <li><a href="query/namespaces">Namespaces gebruik</a></li>
+          <li><a href="query/vocabularies">Vocabularies gebruik</a></li>
         </ul>
         <p>De grafische weergave vereist het gebruik van het yEd open source tool. Dat kunt u <a href="https://www.yworks.com/downloads#yEd">hier</a> vinden</p>
       </div>

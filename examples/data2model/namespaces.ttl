@@ -26,7 +26,6 @@ stage:Namespaces_tree a elmo:Part;
       WHERE {
         GRAPH <http://localhost:8080/data2model/container/model> {
           ?s ?p ?o
-          FILTER (isIRI(?s))
           BIND (replace(str(?s),"(^.*[/|#])([^(/|#)]+)$","$1") as ?ns_label)
           BIND (replace(str(?s),"(^.*[/|#])([^(/|#)]+)$","$2") as ?s_label)
           FILTER (isIRI(?s) && ?s_label!=?ns_label)

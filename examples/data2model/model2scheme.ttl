@@ -1,0 +1,203 @@
+@prefix localupdatestage: <http://localhost:8080/data2model/update/>.
+@prefix updatestage: <http://linkeddata.ordina.nl/data2model/update/>.
+@prefix stage: <http://localhost:8080/data2model/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+#Production for local installations
+localupdatestage:model2scheme a elmo:Production;
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:Menu;
+	elmo:contains stage:model2scheme_scene0;
+	elmo:contains stage:model2scheme_scene1;
+	elmo:contains stage:model2scheme_scene2;
+	elmo:contains stage:model2scheme_scene3;
+	elmo:contains stage:model2scheme_scene4;
+	elmo:contains stage:model2scheme_scene5;
+.
+
+#Production for server installations
+updatestage:model2scheme a elmo:Production;
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:Menu;
+	elmo:contains stage:model2scheme_scene0;
+	elmo:contains stage:model2scheme_scene1;
+	elmo:contains stage:model2scheme_scene2;
+	elmo:contains stage:model2scheme_scene3;
+	elmo:contains stage:model2scheme_scene4;
+	elmo:contains stage:model2scheme_scene5;
+	# Extra for copy of result
+  elmo:contains stage:model2scheme_clearservergraph;
+  elmo:contains stage:model2scheme_copytoservergraph;
+.
+
+stage:model2scheme_clearservergraph a elmo:Scene;
+  elmo:index "98";
+  rdfs:label "Clear server graph";
+  elmo:query "clear graph <http://linkeddata.ordina.nl/data2model/container/scheme>";
+.
+stage:model2scheme_copytoservergraph a elmo:Scene;
+  elmo:index "99";
+  rdfs:label "Copy result to server graph";
+  elmo:query '''
+    insert into <http://linkeddata.ordina.nl/data2model/container/scheme> {
+      ?s ?p ?o
+    }
+    where {
+      graph <http://localhost:8080/data2model/container/scheme> {
+        ?s ?p ?o
+      }
+    }
+  '''
+.
+stage:model2scheme_scene0 a elmo:Scene;
+	elmo:index "00";
+	rdfs:label "Clear target graph";
+	elmo:query "clear graph <http://localhost:8080/data2model/container/scheme>";
+.
+
+stage:model2scheme_scene1 a elmo:Scene;
+	elmo:index "01";
+	rdfs:label "Clear old references to concepts";
+	elmo:query '''
+		PREFIX dct: <http://purl.org/dc/terms/>
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		delete {
+			graph <http://localhost:8080/data2model/container/model> {
+				?shape dct:subject ?concept
+			}
+		}
+		where {
+			graph <http://localhost:8080/data2model/container/model> {
+				{
+					?shape a ?t.
+					?shape dct:subject ?concept.
+					FILTER (?t = sh:NodeShape || ?t = sh:PropertyShape)
+				}
+				UNION
+				{
+					?shape ?p ?o.
+					?shape dct:subject ?concept.
+					FILTER (?p = sh:targetClass || ?t = sh:path)
+				}
+			}
+		}
+	'''
+.
+
+stage:model2scheme_scene2 a elmo:Scene;
+	elmo:index "02";
+	rdfs:label "Create concept scheme";
+	elmo:query '''
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		insert {
+			graph <http://localhost:8080/data2model/container/scheme> {
+				<urn:conceptscheme> a skos:ConceptScheme;
+					rdfs:label "Concept scheme for data model"
+				.
+			}
+		}
+		WHERE {}
+	''';
+.
+
+stage:model2scheme_scene3 a elmo:Scene;
+	elmo:index "03";
+	rdfs:label "Create a concept for every nodeshape";
+	elmo:query '''
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		PREFIX dct: <http://purl.org/dc/terms/>
+		insert {
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept a skos:Concept.
+				?concept skos:inScheme <urn:conceptscheme>.
+			}
+			graph <http://localhost:8080/data2model/container/model> {
+				?shape dct:subject ?concept.
+			}
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/model> {
+				select ?class ?shape (IRI(concat("urn:classconcept:",md5(str(?shape)))) as ?concept)
+				where {
+					{
+						?shape sh:targetClass ?class
+					}
+					UNION
+					{
+						?shape a sh:NodeShape,owl:Class.
+						BIND (?shape as ?class)
+					}
+					UNION
+					{
+						?shape a sh:NodeShape,rdfs:Class.
+						BIND (?shape as ?class)
+					}
+				}
+			}
+		}
+	''';
+.
+
+stage:model2scheme_scene4 a elmo:Scene;
+	elmo:index "04";
+	rdfs:label "Create a concept for every propertyshape";
+	elmo:query '''
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		PREFIX dct: <http://purl.org/dc/terms/>
+		insert {
+		 	graph <http://localhost:8080/data2model/container/scheme> {
+				?concept a skos:Concept.
+				?concept skos:inScheme <urn:conceptscheme>.
+			}
+			graph <http://localhost:8080/data2model/container/model> {
+				?shape dct:subject ?concept.
+			}
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/model> {
+				select ?property ?shape (IRI(concat("urn:propertyconcept:",md5(str(?shape)))) as ?concept)
+				where {
+					?shape sh:path ?property
+					FILTER (isIRI(?property))
+				}
+			}
+		}
+	''';
+.
+
+stage:model2scheme_scene5 a elmo:Scene;
+	elmo:index "05";
+	rdfs:label "Create labels";
+	elmo:query '''
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		PREFIX dct: <http://purl.org/dc/terms/>
+		insert {
+		 	graph <http://localhost:8080/data2model/container/scheme> {
+				?concept rdfs:label ?label
+			}
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept a skos:Concept.
+			}
+			graph <http://localhost:8080/data2model/container/model> {
+				{
+					?shape dct:subject ?concept.
+					?shape (sh:targetClass|sh:path) ?term.
+					?term rdfs:label ?label
+				}
+				UNION
+				{
+					?shape dct:subject ?concept.
+					?shape rdfs:label ?label
+					FILTER NOT EXISTS {
+						?shape (sh:targetClass|sh:path) ?term.
+						?term rdfs:label ?label
+					}
+				}
+			}
+		}
+	''';
+.

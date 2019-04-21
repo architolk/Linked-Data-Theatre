@@ -1,0 +1,62 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+@prefix void: <http://rdfs.org/ns/void#>.
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
+@prefix stage: <http://localhost:8080/data2model/stage#>.
+
+stage:Vocabularies a elmo:Representation;
+  elmo:url-pattern "/query/vocabularies$";
+  elmo:contains stage:Menu;
+  elmo:contains stage:Vocabularies_tree;
+  elmo:contains stage:Vocabularies_tabel
+.
+
+stage:Vocabularies_tree a elmo:Part;
+  elmo:appearance elmo:TreeAppearance;
+  elmo:query '''
+    CONSTRUCT {
+      ?voc rdfs:label ?voc_label.
+      ?o rdfs:isDefinedBy ?voc.
+      ?o rdfs:label ?o_label
+    }
+    WHERE {
+      SELECT distinct (iri(?voc_label) as ?voc) ?voc_label ?o ?o_label
+      WHERE {
+        GRAPH <http://localhost:8080/data2model/container/model> {
+          ?s ?p ?o
+          BIND (replace(str(?o),"(^.*[/|#])([^(/|#)]+)$","$1") as ?voc_label)
+          BIND (replace(str(?o),"(^.*[/|#])([^(/|#)]+)$","$2") as ?o_label)
+          FILTER (isIRI(?o) && ?o_label!=?voc_label)
+        }
+      }
+    }
+  ''';
+.
+
+stage:Vocabularies_tabel a elmo:Part;
+  elmo:appearance elmo:ShortTableAppearance;
+  elmo:fragment [
+    elmo:applies-to "voc";
+    rdfs:label "Vocabulary";
+    html:link "/data2model/query/vocabulary";
+  ];
+  elmo:query '''
+    SELECT distinct (iri(?voc_label) as ?voc) ?voc_label
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/model> {
+        ?s ?p ?o
+        BIND (replace(str(?o),"(^.*[/|#])([^(/|#)]+)$","$1") as ?voc_label)
+        BIND (replace(str(?o),"(^.*[/|#])([^(/|#)]+)$","$2") as ?o_label)
+        FILTER (isIRI(?o) && ?o_label!=?voc_label)
+      }
+    }
+  ''';
+.
+
+stage:Vocabulary a elmo:Representation;
+  elmo:url-pattern "/query/vocabulary$";
+  elmo:appearance elmo:TurtleAppearance;
+  elmo:webpage "@SUBJECT@"
+.

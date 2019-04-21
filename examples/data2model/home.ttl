@@ -31,6 +31,7 @@ stage:Menu elmo:appearance elmo:NavbarSearchAppearance;
 			elmo:data [elmo:index "3"; rdfs:label "Clean all data"; html:link "update/clean"];
 			elmo:data [elmo:index "4"; rdfs:label "Copy data as model"; html:link "update/copy"];
 			elmo:data [elmo:index "5"; rdfs:label "Enhance model"; html:link "update/model2model"];
+			elmo:data [elmo:index "6"; rdfs:label "Create concept scheme"; html:link "update/model2scheme"];
     ];
     elmo:data [
       elmo:index "3";
@@ -41,6 +42,11 @@ stage:Menu elmo:appearance elmo:NavbarSearchAppearance;
       elmo:index "4";
       rdfs:label "Edit model";
       html:link "container/model"
+    ];
+		elmo:data [
+      elmo:index "5";
+      rdfs:label "Edit scheme";
+      html:link "container/scheme"
     ]
   ]
 .

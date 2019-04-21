@@ -229,7 +229,7 @@ stage:ShapeProduction_scene9 a elmo:Scene;
     }
     where {
       graph <http://localhost:8080/data2model/container/model> {
-        select ?class (IRI(concat("urn:class",md5(str(?class)))) as ?shape)
+        select ?class (IRI(concat("urn:class:",md5(str(?class)))) as ?shape)
         where {
           ?class rdf:type owl:Class
         }
@@ -252,7 +252,7 @@ stage:ShapeProduction_scene10 a elmo:Scene;
     where {
       graph <http://localhost:8080/data2model/container/data> {
         select distinct
-            ?class (IRI(concat("urn:class",md5(str(?class)))) as ?nodeshape)
+            ?class (IRI(concat("urn:class:",md5(str(?class)))) as ?nodeshape)
             ?property (IRI(concat("urn:dtproperty:",md5(str(?class)),".",md5(str(?property)))) as ?propertyshape)
             (datatype(?value) as ?datatype)
         where {
@@ -280,7 +280,7 @@ stage:ShapeProduction_scene11 a elmo:Scene;
     where {
       graph <http://localhost:8080/data2model/container/data> {
         select distinct
-            ?class (IRI(concat("urn:class",md5(str(?class)))) as ?nodeshape)
+            ?class (IRI(concat("urn:class:",md5(str(?class)))) as ?nodeshape)
             ?property (IRI(concat("urn:objproperty:",md5(str(?class)),".",md5(str(?property)))) as ?propertyshape)
             ?valueclass
         where {
@@ -311,7 +311,7 @@ stage:ShapeProduction_scene12 a elmo:Scene;
     where {
       graph <http://localhost:8080/data2model/container/data> {
         select distinct
-            ?class (IRI(concat("urn:class",md5(str(?class)))) as ?nodeshape)
+            ?class (IRI(concat("urn:class:",md5(str(?class)))) as ?nodeshape)
             ?property (IRI(concat("urn:objproperty:",md5(str(?class)),".",md5(str(?property)))) as ?propertyshape)
             ?valueclass
         where {
@@ -352,7 +352,7 @@ stage:ShapeProduction_scene13 a elmo:Scene;
             ?property (IRI(concat("urn:objproperty:",md5(str(?class)),".",md5(str(?property)))) as ?propertyshape)
             (IRI(concat("urn:propertynode:",md5(str(?class)),md5(str(?property)))) as ?propertynode)
             ("<>" as ?propertynodename)
-            ?valueproperty (IRI(concat("urn:valueproperty",md5(concat(str(?class),str(?property),str(?valueproperty))))) as ?propertynodeproperty)
+            ?valueproperty (IRI(concat("urn:valueproperty:",md5(concat(str(?class),str(?property),str(?valueproperty))))) as ?propertynodeproperty)
 						?valuepropertyclass
         where {
           ?item rdf:type ?class.
@@ -477,7 +477,7 @@ stage:ShapeProduction_scene16 a elmo:Scene;
     where {
       graph <http://localhost:8080/data2model/container/data> {
         select distinct
-            (IRI(concat("urn:valueproperty",md5(concat(str(?class),str(?property),str(?valueproperty))))) as ?propertynodeproperty)
+            (IRI(concat("urn:valueproperty:",md5(concat(str(?class),str(?property),str(?valueproperty))))) as ?propertynodeproperty)
 						?mincount ?maxcount
         where {
 					select ?class ?property ?valueproperty (min(?cnt) as ?mincount) (max(?cnt) as ?maxcount)
@@ -535,8 +535,8 @@ stage:ShapeProduction_scene17 a elmo:Scene;
     }
     where {
       graph <http://localhost:8080/data2model/container/data> {
-        select (IRI(concat("urn:class",md5(str(?class)))) as ?shape)
-							 ?roleclass (IRI(concat("urn:role",md5(concat(str(?class),str(?roleclass))))) as ?role)
+        select (IRI(concat("urn:class:",md5(str(?class)))) as ?shape)
+							 ?roleclass (IRI(concat("urn:role:",md5(concat(str(?class),str(?roleclass))))) as ?role)
         where {
           ?s rdf:type ?class.
 					?s rdf:type ?roleclass.

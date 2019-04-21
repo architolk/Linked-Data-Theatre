@@ -81,6 +81,17 @@ container:model a elmo:Container;
   elmo:replaces containerlocal:model;
 .
 
+# Container for edit scheme (and generation target)
+containerlocal:scheme a elmo:Container;
+  rdfs:label "Upload scheme";
+	elmo:contains stage:Menu;
+.
+container:scheme a elmo:Container;
+  rdfs:label "Upload scheme";
+	elmo:contains stage:Menu;
+  elmo:replaces containerlocal:scheme;
+.
+
 # Container for upload diagram (placement of diagram elements)
 containerlocal:diagram a elmo:Container;
   rdfs:label "Upload diagram (graphml)";
