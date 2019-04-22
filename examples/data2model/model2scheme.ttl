@@ -199,8 +199,8 @@ stage:model2scheme_scene5 a elmo:Scene;
 					?shape dct:subject ?concept.
 					?shape rdfs:label ?label
 					FILTER NOT EXISTS {
-						?shape (sh:targetClass|sh:path) ?term.
-						?term rdfs:label ?label
+						?shape (sh:targetClass|sh:path) ?tterm.
+						?tterm rdfs:label ?tlabel
 					}
 				}
 			}
@@ -238,8 +238,8 @@ stage:model2scheme_scene6 a elmo:Scene;
 					?term rdfs:label ?deflabel
 					BIND (strlang(?deflabel,'en') as ?label)
 					FILTER NOT EXISTS {
-						?term rdfs:label ?label
-						FILTER (lang(?label)!='')
+						?term rdfs:label ?tlabel
+						FILTER (lang(?tlabel)!='')
 					}
 				}
 			}

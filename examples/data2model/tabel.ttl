@@ -66,7 +66,7 @@ stage:Tabel a elmo:Representation;
             ?subject rdfs:label ?label
             FILTER (lang(?label)="en")
             FILTER NOT EXISTS {
-              ?subject rdfs:label ?labelen
+              ?subject rdfs:label ?labeldef
               FILTER (lang(?labeldef)="")
             }
           }
@@ -82,6 +82,54 @@ stage:Tabel a elmo:Representation;
       OPTIONAL {
         ?subject rdfs:comment ?commentnl
         FILTER (lang(?commentnl)="nl")
+      }
+    }
+    ORDER BY ?type ?subject
+  '''
+.
+
+stage:TabelScheme a elmo:Representation;
+  elmo:url-pattern "/query/tabelscheme$";
+  elmo:contains stage:Menu;
+  elmo:query '''
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    PREFIX dct: <http://purl.org/dc/terms/>
+    SELECT ?type ?term ?label ?labelnl ?comment ?commentnl
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/model> {
+        ?shape a ?type.
+        ?shape (sh:targetClass|sh:path) ?term.
+        ?shape dct:subject ?subject
+      }
+      GRAPH <http://localhost:8080/data2model/container/scheme> {
+        ?subject a skos:Concept.
+        OPTIONAL {
+          ?subject rdfs:label ?labelnl.
+          FILTER (lang(?labelnl)="nl")
+        }
+        OPTIONAL {
+          {
+            ?subject rdfs:label ?label
+            FILTER (lang(?label)="")
+          }
+          UNION
+          {
+            ?subject rdfs:label ?label
+            FILTER (lang(?label)="en")
+            FILTER NOT EXISTS {
+              ?subject rdfs:label ?labeldef
+              FILTER (lang(?labeldef)="")
+            }
+          }
+        }
+      }
+      OPTIONAL {
+        ?subject skos:definition ?definition
+        FILTER (lang(?definition)="" or lang(?definition)="en")
+      }
+      OPTIONAL {
+        ?subject skos:definition ?definitionnl
+        FILTER (lang(?definitionnl)="nl")
       }
     }
     ORDER BY ?type ?subject
