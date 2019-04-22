@@ -15,6 +15,8 @@ localupdatestage:model2scheme a elmo:Production;
 	elmo:contains stage:model2scheme_scene3;
 	elmo:contains stage:model2scheme_scene4;
 	elmo:contains stage:model2scheme_scene5;
+	elmo:contains stage:model2scheme_scene6;
+	elmo:contains stage:model2scheme_scene7;
 .
 
 #Production for server installations
@@ -27,6 +29,8 @@ updatestage:model2scheme a elmo:Production;
 	elmo:contains stage:model2scheme_scene3;
 	elmo:contains stage:model2scheme_scene4;
 	elmo:contains stage:model2scheme_scene5;
+	elmo:contains stage:model2scheme_scene6;
+	elmo:contains stage:model2scheme_scene7;
 	# Extra for copy of result
   elmo:contains stage:model2scheme_clearservergraph;
   elmo:contains stage:model2scheme_copytoservergraph;
@@ -112,6 +116,7 @@ stage:model2scheme_scene3 a elmo:Scene;
 			graph <http://localhost:8080/data2model/container/scheme> {
 				?concept a skos:Concept.
 				?concept skos:inScheme <urn:conceptscheme>.
+				?concept rdfs:seeAlso ?class #TEMPORARY
 			}
 			graph <http://localhost:8080/data2model/container/model> {
 				?shape dct:subject ?concept.
@@ -150,6 +155,7 @@ stage:model2scheme_scene4 a elmo:Scene;
 		 	graph <http://localhost:8080/data2model/container/scheme> {
 				?concept a skos:Concept.
 				?concept skos:inScheme <urn:conceptscheme>.
+				?concept rdfs:seeAlso ?property #TEMPORARY
 			}
 			graph <http://localhost:8080/data2model/container/model> {
 				?shape dct:subject ?concept.
@@ -196,6 +202,90 @@ stage:model2scheme_scene5 a elmo:Scene;
 						?shape (sh:targetClass|sh:path) ?term.
 						?term rdfs:label ?label
 					}
+				}
+			}
+		}
+	''';
+.
+
+stage:model2scheme_scene6 a elmo:Scene;
+	elmo:index "06";
+	rdfs:label "Import labels";
+	elmo:query '''
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		PREFIX dct: <http://purl.org/dc/terms/>
+		PREFIX localcontainer: <http://localhost:8080/data2model/container/>
+		insert {
+		 	graph localcontainer:scheme {
+				?concept rdfs:label ?label
+			}
+		}
+		WHERE {
+			graph localcontainer:scheme {
+				?concept a skos:Concept.
+			}
+			graph localcontainer:model {
+				?shape dct:subject ?concept.
+				?shape (sh:targetClass|sh:path) ?term.
+			}
+			graph localcontainer:imports {
+				{
+					?term rdfs:label ?label
+					FILTER (lang(?label)!='')
+				}
+				UNION
+				{
+					?term rdfs:label ?deflabel
+					BIND (strlang(?deflabel,'en') as ?label)
+					FILTER NOT EXISTS {
+						?term rdfs:label ?label
+						FILTER (lang(?label)!='')
+					}
+				}
+			}
+		}
+	''';
+.
+
+stage:model2scheme_scene7 a elmo:Scene;
+	elmo:index "07";
+	rdfs:label "Import descriptions";
+	elmo:query '''
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		PREFIX dct: <http://purl.org/dc/terms/>
+		PREFIX localcontainer: <http://localhost:8080/data2model/container/>
+		insert {
+		 	graph localcontainer:scheme {
+				?concept skos:definition ?definition
+			}
+		}
+		WHERE {
+			graph localcontainer:scheme {
+				?concept a skos:Concept.
+			}
+			graph localcontainer:model {
+				?shape dct:subject ?concept.
+				?shape (sh:targetClass|sh:path) ?term.
+			}
+			graph localcontainer:imports {
+				{
+					?term skos:definition ?definition
+				}
+				UNION
+				{
+					?term rdfs:comment ?definition
+					FILTER (lang(?definition)!='')
+					FILTER NOT EXISTS {?term skos:definition ?definition}
+				}
+				UNION
+				{
+					?term rdfs:comment ?defdefinition
+					BIND (strlang(?defdefinition,'en') as ?definition)
+					FILTER NOT EXISTS {
+						?term rdfs:comment ?definition
+						FILTER (lang(?definition)!='')
+					}
+					FILTER NOT EXISTS {?term skos:definition ?definition}
 				}
 			}
 		}

@@ -24,6 +24,22 @@ updatestage:clean a elmo:Production;
   elmo:contains stage:Clean_server_diagram;
 .
 
+localupdatestage:clean-imports a elmo:Production;
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:Menu;
+	elmo:contains stage:Clean-imports_clean;
+.
+updatestage:clean-imports a elmo:Production;
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:Menu;
+	elmo:contains stage:Clean-imports_clean;
+.
+stage:Clean-imports_clean a elmo:Scene;
+	elmo:index "01";
+	rdfs:label "Clear imports";
+	elmo:query "clear graph <http://localhost:8080/data2model/container/imports>"
+.
+
 localupdatestage:copy a elmo:Production;
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:Menu;

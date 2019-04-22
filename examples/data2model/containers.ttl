@@ -99,11 +99,31 @@ containerlocal:diagram a elmo:Container;
   elmo:representation elmo:UploadRepresentation;
   elmo:translator elmo:GraphmlTranslator;
 .
-
-containerlocal:diagram a elmo:Container;
+container:diagram a elmo:Container;
   rdfs:label "Upload diagram (graphml)";
   elmo:contains stage:Menu;
   elmo:representation elmo:UploadRepresentation;
   elmo:translator elmo:GraphmlTranslator;
   elmo:replaces containerlocal:diagram;
+.
+
+# Container for upload reusable vocabularies
+containerlocal:import a elmo:Container;
+  rdfs:label "Import vocabulary";
+  elmo:contains stage:Menu;
+  elmo:query '''
+    prefix containerlocal: <http://localhost:8080/data2model/container/>
+    insert { graph containerlocal:imports {?s?p?o} }
+    where { graph containerlocal:import {?s?p?o} }
+  '''
+.
+container:import a elmo:Container;
+  rdfs:label "Import vocabulary";
+	elmo:contains stage:Menu;
+  elmo:query '''
+    prefix container: <http://linkeddata.ordina.nl/data2model/container/>
+    prefix containerlocal: <http://localhost:8080/data2model/container/>
+    insert { graph containerlocal:imports {?s?p?o} }
+    where { graph container:import {?s?p?o} }
+  '''
 .
