@@ -282,8 +282,8 @@ stage:model2scheme_scene7 a elmo:Scene;
 					?term rdfs:comment ?defdefinition
 					BIND (strlang(?defdefinition,'en') as ?definition)
 					FILTER NOT EXISTS {
-						?term rdfs:comment ?definition
-						FILTER (lang(?definition)!='')
+						?term rdfs:comment ?tdefinition
+						FILTER (lang(?tdefinition)!='')
 					}
 					FILTER NOT EXISTS {?term skos:definition ?definition}
 				}

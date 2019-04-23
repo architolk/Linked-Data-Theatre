@@ -91,10 +91,34 @@ stage:Tabel a elmo:Representation;
 stage:TabelScheme a elmo:Representation;
   elmo:url-pattern "/query/tabelscheme$";
   elmo:contains stage:Menu;
+  elmo:fragment [
+    elmo:applies-to "type";
+    rdfs:label "Type";
+  ];
+  elmo:fragment [
+    elmo:applies-to "term";
+    elmo:appearance elmo:GlobalLink;
+  ];
+  elmo:fragment [
+    elmo:applies-to "label";
+    rdfs:label "Label"
+  ];
+  elmo:fragment [
+    elmo:applies-to "labelnl";
+    rdfs:label "Label (nl)"
+  ];
+  elmo:fragment [
+    elmo:applies-to "definition";
+    rdfs:label "Definition"
+  ];
+  elmo:fragment [
+    elmo:applies-to "definitionnl";
+    rdfs:label "Definition (nl)"
+  ];
   elmo:query '''
     PREFIX sh: <http://www.w3.org/ns/shacl#>
     PREFIX dct: <http://purl.org/dc/terms/>
-    SELECT ?type ?term ?label ?labelnl ?comment ?commentnl
+    SELECT ?type ?term ?label ?labelnl ?definition ?definitionnl
     WHERE {
       GRAPH <http://localhost:8080/data2model/container/model> {
         ?shape a ?type.
@@ -125,7 +149,7 @@ stage:TabelScheme a elmo:Representation;
       }
       OPTIONAL {
         ?subject skos:definition ?definition
-        FILTER (lang(?definition)="" or lang(?definition)="en")
+        FILTER (lang(?definition)="en")
       }
       OPTIONAL {
         ?subject skos:definition ?definitionnl
