@@ -17,6 +17,7 @@ localupdatestage:model2scheme a elmo:Production;
 	elmo:contains stage:model2scheme_scene5;
 	elmo:contains stage:model2scheme_scene6;
 	elmo:contains stage:model2scheme_scene7;
+	elmo:contains stage:model2scheme_scene8;
 .
 
 #Production for server installations
@@ -31,6 +32,7 @@ updatestage:model2scheme a elmo:Production;
 	elmo:contains stage:model2scheme_scene5;
 	elmo:contains stage:model2scheme_scene6;
 	elmo:contains stage:model2scheme_scene7;
+	elmo:contains stage:model2scheme_scene8;
 	# Extra for copy of result
   elmo:contains stage:model2scheme_clearservergraph;
   elmo:contains stage:model2scheme_copytoservergraph;
@@ -210,6 +212,41 @@ stage:model2scheme_scene5 a elmo:Scene;
 
 stage:model2scheme_scene6 a elmo:Scene;
 	elmo:index "06";
+	rdfs:label "Create descriptions";
+	elmo:query '''
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		PREFIX dct: <http://purl.org/dc/terms/>
+		insert {
+		 	graph <http://localhost:8080/data2model/container/scheme> {
+				?concept skos:definition ?definition
+			}
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept a skos:Concept.
+			}
+			graph <http://localhost:8080/data2model/container/model> {
+				{
+					?shape dct:subject ?concept.
+					?shape (sh:targetClass|sh:path) ?term.
+					?term rdfs:comment ?definition
+				}
+				UNION
+				{
+					?shape dct:subject ?concept.
+					?shape rdfs:comment ?definition
+					FILTER NOT EXISTS {
+						?shape (sh:targetClass|sh:path) ?tterm.
+						?tterm rdfs:comment ?definition
+					}
+				}
+			}
+		}
+	''';
+.
+
+stage:model2scheme_scene7 a elmo:Scene;
+	elmo:index "07";
 	rdfs:label "Import labels";
 	elmo:query '''
 		PREFIX sh: <http://www.w3.org/ns/shacl#>
@@ -247,12 +284,13 @@ stage:model2scheme_scene6 a elmo:Scene;
 	''';
 .
 
-stage:model2scheme_scene7 a elmo:Scene;
-	elmo:index "07";
+stage:model2scheme_scene8 a elmo:Scene;
+	elmo:index "08";
 	rdfs:label "Import descriptions";
 	elmo:query '''
 		PREFIX sh: <http://www.w3.org/ns/shacl#>
 		PREFIX dct: <http://purl.org/dc/terms/>
+		PREFIX prov: <http://www.w3.org/ns/prov#>
 		PREFIX localcontainer: <http://localhost:8080/data2model/container/>
 		insert {
 		 	graph localcontainer:scheme {
@@ -286,6 +324,12 @@ stage:model2scheme_scene7 a elmo:Scene;
 						FILTER (lang(?tdefinition)!='')
 					}
 					FILTER NOT EXISTS {?term skos:definition ?definition}
+				}
+				UNION
+				{
+					?term prov:definition ?definition
+					FILTER (lang(?definition)!='')
+					FILTER NOT EXISTS {?term rdfs:comment ?tcomment}
 				}
 			}
 		}

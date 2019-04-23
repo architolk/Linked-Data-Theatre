@@ -115,47 +115,67 @@ stage:TabelScheme a elmo:Representation;
     elmo:applies-to "definitionnl";
     rdfs:label "Definition (nl)"
   ];
+  elmo:fragment [
+    elmo:applies-to "scopenotenl";
+    rdfs:label "Scope note (nl)"
+  ];
+  elmo:fragment [
+    elmo:applies-to "editorialnotenl";
+    rdfs:label "Editorial note (nl)"
+  ];
   elmo:query '''
     PREFIX sh: <http://www.w3.org/ns/shacl#>
     PREFIX dct: <http://purl.org/dc/terms/>
-    SELECT ?type ?term ?label ?labelnl ?definition ?definitionnl
+    SELECT ?type ?term ?label ?labelnl ?definition ?definitionnl ?scopenotenl ?editorialnotenl
     WHERE {
       GRAPH <http://localhost:8080/data2model/container/model> {
         ?shape a ?type.
         ?shape (sh:targetClass|sh:path) ?term.
-        ?shape dct:subject ?subject
       }
-      GRAPH <http://localhost:8080/data2model/container/scheme> {
-        ?subject a skos:Concept.
-        OPTIONAL {
-          ?subject rdfs:label ?labelnl.
-          FILTER (lang(?labelnl)="nl")
+      OPTIONAL {
+        GRAPH <http://localhost:8080/data2model/container/model> {
+          ?shape dct:subject ?subject
         }
-        OPTIONAL {
-          {
-            ?subject rdfs:label ?label
-            FILTER (lang(?label)="")
+        GRAPH <http://localhost:8080/data2model/container/scheme> {
+          ?subject a skos:Concept.
+          OPTIONAL {
+            ?subject rdfs:label ?labelnl.
+            FILTER (lang(?labelnl)="nl")
           }
-          UNION
-          {
-            ?subject rdfs:label ?label
-            FILTER (lang(?label)="en")
-            FILTER NOT EXISTS {
-              ?subject rdfs:label ?labeldef
-              FILTER (lang(?labeldef)="")
+          OPTIONAL {
+            {
+              ?subject rdfs:label ?label
+              FILTER (lang(?label)="")
+            }
+            UNION
+            {
+              ?subject rdfs:label ?label
+              FILTER (lang(?label)="en")
+              FILTER NOT EXISTS {
+                ?subject rdfs:label ?labeldef
+                FILTER (lang(?labeldef)="")
+              }
             }
           }
+          OPTIONAL {
+            ?subject skos:definition ?definition
+            FILTER (lang(?definition)="en")
+          }
+          OPTIONAL {
+            ?subject skos:definition ?definitionnl
+            FILTER (lang(?definitionnl)="nl")
+          }
+          OPTIONAL {
+            ?subject skos:scopeNote ?scopenotenl
+            FILTER (lang(?scopenotenl)="nl")
+          }
+          OPTIONAL {
+            ?subject skos:editorialNote ?editorialnotenl
+            FILTER (lang(?editorialnotenl)="nl")
+          }
         }
       }
-      OPTIONAL {
-        ?subject skos:definition ?definition
-        FILTER (lang(?definition)="en")
-      }
-      OPTIONAL {
-        ?subject skos:definition ?definitionnl
-        FILTER (lang(?definitionnl)="nl")
-      }
     }
-    ORDER BY ?type ?subject
+    ORDER BY ?type ?term
   '''
 .
