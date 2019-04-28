@@ -11,11 +11,79 @@ stage:Model a elmo:Representation;
   elmo:contains stage:Menu;
   elmo:appearance elmo:VocabularyAppearance;
   elmo:query '''
+    prefix dct: <http://purl.org/dc/terms/>
+    prefix sh: <http://www.w3.org/ns/shacl#>
     construct {
 			?s ?p ?o.
+      ?term a ?type.
+      ?term rdfs:comment ?definition
 		}
     where {
-      { graph <http://localhost:8080/data2model/container/model> {?s ?p ?o}}
+      graph <http://localhost:8080/data2model/container/model> {
+        ?s ?p ?o
+      }
+      OPTIONAL {
+        graph <http://localhost:8080/data2model/container/model> {
+          {
+            ?s sh:targetClass ?term.
+            ?s dct:subject ?concept.
+            BIND (rdfs:Class as ?type)
+          }
+          UNION
+          {
+            ?s sh:path ?term.
+            ?s dct:subject ?concept.
+            BIND (rdf:Property as ?type)
+          }
+        }
+        graph <http://localhost:8080/data2model/container/scheme> {
+          ?concept skos:definition ?definition
+        }
+      }
+    }
+  ''';
+.
+
+stage:ModelLanguage a elmo:Representation;
+  elmo:url-pattern "/query/modellang$";
+  elmo:contains stage:Menu;
+  elmo:appearance elmo:VocabularyAppearance;
+  elmo:query '''
+    prefix dct: <http://purl.org/dc/terms/>
+    prefix sh: <http://www.w3.org/ns/shacl#>
+    construct {
+      ?nshape a sh:NodeShape.
+      ?nshape sh:targetClass ?cterm.
+      ?nshape sh:name ?label.
+      ?cterm a rdfs:Class.
+      ?cterm rdfs:subClassOf ?pterm.
+      ?shape sh:property ?pshape.
+      ?pshape a sh:PropertyShape.
+      ?pshape ?pp ?po.
+      ?pshape sh:name ?label.
+    }
+    where {
+      graph <http://localhost:8080/data2model/container/model> {
+        {
+          ?nshape a sh:NodeShape.
+          ?nshape sh:targetClass ?cterm.
+          ?nshape dct:subject ?concept
+          OPTIONAL {
+            ?cterm rdfs:subClassOf ?pterm
+          }
+        }
+        UNION
+        {
+          ?shape sh:property ?pshape.
+          ?pshape ?pp ?po.
+          ?pshape dct:subject ?concept
+          FILTER (?pp!=sh:name)
+        }
+      }
+      graph <http://localhost:8080/data2model/container/scheme> {
+        ?concept rdfs:label ?label.
+        FILTER (lang(?label)="@LANGUAGE@")
+      }
     }
   ''';
 .

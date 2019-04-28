@@ -126,51 +126,69 @@ stage:TabelScheme a elmo:Representation;
   elmo:query '''
     PREFIX sh: <http://www.w3.org/ns/shacl#>
     PREFIX dct: <http://purl.org/dc/terms/>
+    PREFIX localcontainer: <http://localhost:8080/data2model/container/>
     SELECT ?type ?term ?label ?labelnl ?definition ?definitionnl ?scopenotenl ?editorialnotenl
     WHERE {
-      GRAPH <http://localhost:8080/data2model/container/scheme> {
-        ?subject a skos:Concept.
-        OPTIONAL {
-          ?subject rdfs:label ?labelnl.
-          FILTER (lang(?labelnl)="nl")
-        }
-        OPTIONAL {
-          {
-            ?subject rdfs:label ?label
-            FILTER (lang(?label)="")
-          }
-          UNION
-          {
-            ?subject rdfs:label ?label
-            FILTER (lang(?label)="en")
-            FILTER NOT EXISTS {
-              ?subject rdfs:label ?labeldef
-              FILTER (lang(?labeldef)="")
-            }
-          }
-        }
-        OPTIONAL {
-          ?subject skos:definition ?definition
-          FILTER (lang(?definition)="en")
-        }
-        OPTIONAL {
-          ?subject skos:definition ?definitionnl
-          FILTER (lang(?definitionnl)="nl")
-        }
-        OPTIONAL {
-          ?subject skos:scopeNote ?scopenotenl
-          FILTER (lang(?scopenotenl)="nl")
-        }
-        OPTIONAL {
-          ?subject skos:editorialNote ?editorialnotenl
-          FILTER (lang(?editorialnotenl)="nl")
-        }
-      }
-      OPTIONAL {
-        GRAPH <http://localhost:8080/data2model/container/model> {
-          ?shape dct:subject ?subject.
+      {
+        GRAPH localcontainer:model {
           ?shape a ?type.
           ?shape (sh:targetClass|sh:path) ?term.
+        }
+        FILTER NOT EXISTS {
+          GRAPH localcontainer:model {
+            ?shape dct:subject ?tconcept
+          }
+          GRAPH localcontainer:scheme {
+            ?tconcept a skos:Concept
+          }
+        }
+      }
+      UNION
+      {
+        GRAPH localcontainer:scheme {
+          ?subject a skos:Concept.
+          OPTIONAL {
+            ?subject rdfs:label ?labelnl.
+            FILTER (lang(?labelnl)="nl")
+          }
+          OPTIONAL {
+            {
+              ?subject rdfs:label ?label
+              FILTER (lang(?label)="")
+            }
+            UNION
+            {
+              ?subject rdfs:label ?label
+              FILTER (lang(?label)="en")
+              FILTER NOT EXISTS {
+                ?subject rdfs:label ?labeldef
+                FILTER (lang(?labeldef)="")
+              }
+            }
+          }
+          OPTIONAL {
+            ?subject skos:definition ?definition
+            FILTER (lang(?definition)="en")
+          }
+          OPTIONAL {
+            ?subject skos:definition ?definitionnl
+            FILTER (lang(?definitionnl)="nl")
+          }
+          OPTIONAL {
+            ?subject skos:scopeNote ?scopenotenl
+            FILTER (lang(?scopenotenl)="nl")
+          }
+          OPTIONAL {
+            ?subject skos:editorialNote ?editorialnotenl
+            FILTER (lang(?editorialnotenl)="nl")
+          }
+        }
+        OPTIONAL {
+          GRAPH localcontainer:model {
+            ?shape dct:subject ?subject.
+            ?shape a ?type.
+            ?shape (sh:targetClass|sh:path) ?term.
+          }
         }
       }
     }
