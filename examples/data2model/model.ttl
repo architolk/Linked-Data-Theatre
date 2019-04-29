@@ -61,28 +61,37 @@ stage:ModelLanguage a elmo:Representation;
       ?pshape a sh:PropertyShape.
       ?pshape ?pp ?po.
       ?pshape sh:name ?label.
+      ?ds ?dp ?do
     }
     where {
-      graph <http://localhost:8080/data2model/container/model> {
-        {
-          ?nshape a sh:NodeShape.
-          ?nshape sh:targetClass ?cterm.
-          ?nshape dct:subject ?concept
-          OPTIONAL {
-            ?cterm rdfs:subClassOf ?pterm
+      {
+        graph <http://localhost:8080/data2model/container/model> {
+          {
+            ?nshape a sh:NodeShape.
+            ?nshape sh:targetClass ?cterm.
+            ?nshape dct:subject ?concept
+            OPTIONAL {
+              ?cterm rdfs:subClassOf ?pterm
+            }
+          }
+          UNION
+          {
+            ?shape sh:property ?pshape.
+            ?pshape ?pp ?po.
+            ?pshape dct:subject ?concept
+            FILTER (?pp!=sh:name)
           }
         }
-        UNION
-        {
-          ?shape sh:property ?pshape.
-          ?pshape ?pp ?po.
-          ?pshape dct:subject ?concept
-          FILTER (?pp!=sh:name)
+        graph <http://localhost:8080/data2model/container/scheme> {
+          ?concept rdfs:label ?label.
+          FILTER (lang(?label)="@LANGUAGE@")
         }
       }
-      graph <http://localhost:8080/data2model/container/scheme> {
-        ?concept rdfs:label ?label.
-        FILTER (lang(?label)="@LANGUAGE@")
+      UNION
+		  {
+        graph <http://localhost:8080/data2model/container/diagram> {
+          ?ds ?dp ?do
+        }
       }
     }
   ''';

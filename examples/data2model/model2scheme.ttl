@@ -118,7 +118,7 @@ stage:model2scheme_scene3 a elmo:Scene;
 			graph <http://localhost:8080/data2model/container/scheme> {
 				?concept a skos:Concept.
 				?concept skos:inScheme <urn:conceptscheme>.
-				?concept rdfs:seeAlso ?class #TEMPORARY
+				?concept dct:source ?class
 			}
 			graph <http://localhost:8080/data2model/container/model> {
 				?shape dct:subject ?concept.
@@ -157,7 +157,7 @@ stage:model2scheme_scene4 a elmo:Scene;
 		 	graph <http://localhost:8080/data2model/container/scheme> {
 				?concept a skos:Concept.
 				?concept skos:inScheme <urn:conceptscheme>.
-				?concept rdfs:seeAlso ?property #TEMPORARY
+				?concept dct:source ?property
 			}
 			graph <http://localhost:8080/data2model/container/model> {
 				?shape dct:subject ?concept.
