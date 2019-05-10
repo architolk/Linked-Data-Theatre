@@ -191,14 +191,18 @@ stage:TabelScheme a elmo:Representation;
             ?subject skos:editorialNote ?editorialnotenl
             FILTER (lang(?editorialnotenl)="nl")
           }
+          OPTIONAL {
+            ?subject skos:notation ?notation
+          }
         }
         OPTIONAL {
           GRAPH localcontainer:model {
             ?shape dct:subject ?subject.
             ?shape a ?type.
-            ?shape (sh:targetClass|sh:path) ?term.
+            ?shape (sh:targetClass|sh:path) ?shapeterm.
           }
         }
+        BIND (if(bound(?shapeterm),?shapeterm,?notation) as ?term)
       }
     }
     ORDER BY ?type ?term ?subject
