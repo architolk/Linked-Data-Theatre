@@ -68,7 +68,7 @@ stage:ModelLanguage a elmo:Representation;
         graph <http://localhost:8080/data2model/container/model> {
           {
             ?nshape a sh:NodeShape.
-            ?nshape sh:targetClass ?cterm.
+            OPTIONAL {?nshape sh:targetClass ?cterm}
             ?nshape dct:subject ?concept
             OPTIONAL {
               ?cterm rdfs:subClassOf ?pterm
@@ -80,6 +80,13 @@ stage:ModelLanguage a elmo:Representation;
             ?pshape ?pp ?po.
             ?pshape dct:subject ?concept
             FILTER (?pp!=sh:name)
+          }
+          UNION
+          {
+            ?shape sh:property ?pshape.
+            ?pshape ?pp ?po.
+            ?pshape sh:path rdf:type.
+            ?pshape sh:hasValue ?ptype
           }
         }
         graph <http://localhost:8080/data2model/container/scheme> {

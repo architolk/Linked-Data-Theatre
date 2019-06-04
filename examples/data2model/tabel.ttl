@@ -133,7 +133,7 @@ stage:TabelScheme a elmo:Representation;
     PREFIX sh: <http://www.w3.org/ns/shacl#>
     PREFIX dct: <http://purl.org/dc/terms/>
     PREFIX localcontainer: <http://localhost:8080/data2model/container/>
-    SELECT ?type ?term ?label ?labelnl ?source ?definition ?definitionnl ?scopenotenl ?editorialnotenl
+    SELECT DISTINCT ?type ?term ?label ?labelnl ?source ?definition ?definitionnl ?scopenotenl ?editorialnotenl
     WHERE {
       {
         GRAPH localcontainer:model {
