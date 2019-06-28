@@ -1,0 +1,31 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+@prefix void: <http://rdfs.org/ns/void#>.
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
+@prefix stage: <http://localhost:8080/data2model/stage#>.
+
+stage:Scheme a elmo:Representation;
+  elmo:url-pattern "/query/scheme(|.ttl|.yed)$";
+  elmo:contains stage:Menu;
+  elmo:query '''
+    CONSTRUCT {
+      ?begrip rdfs:label ?begriplabel.
+      ?begrip a skos:Concept.
+      ?begrip ?rel ?relbegrip.
+      ?relbegrip a skos:Concept.
+#      ?relbegrip rdfs:label ?relbegriplabel.
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/scheme> {
+        ?begrip a skos:Concept.
+        ?begrip rdfs:label ?begriplabel.
+        ?begrip ?rel ?relbegrip.
+        FILTER (isIRI(?relbegrip))
+#        ?relbegrip a skos:Concept.
+#        ?relbegrip rdfs:label ?relbegriplabel.
+      }
+    }
+  ''';
+.

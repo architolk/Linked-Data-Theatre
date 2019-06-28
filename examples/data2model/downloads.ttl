@@ -24,6 +24,7 @@ stage:Downloads a elmo:Representation;
           <li><a href="query/modellang?format=yed">Grafische weergave (functionele namen)</a></li>
           <li><a href="query/namespaces">Namespaces gebruik</a></li>
           <li><a href="query/vocabularies">Vocabularies gebruik</a></li>
+          <li><a href="query/scheme">Begrippenkader</a></li>
         </ul>
         <p>De grafische weergave vereist het gebruik van het yEd open source tool. Dat kunt u <a href="https://www.yworks.com/downloads#yEd">hier</a> vinden</p>
       </div>
