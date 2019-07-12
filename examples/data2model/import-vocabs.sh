@@ -2,7 +2,6 @@
 for vocab in $(cat vocabs.txt)
 do
   echo $vocab
-#  curl -s -X GET -L -H "Accept: text/turtle,application/rdf+xml" "$vocab" > vocab
   curl -s -X GET -L -H "Accept: text/turtle,application/rdf+xml" "$vocab" > vocab
   if file vocab | grep -qi "XML\|SGML"
   then
