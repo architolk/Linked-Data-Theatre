@@ -11,6 +11,10 @@ localupdatestage:model2model a elmo:Production;
 	elmo:contains stage:Menu;
 	elmo:contains stage:model2model_scene1;
 	elmo:contains stage:model2model_scene2;
+	elmo:contains stage:model2model_scene3;
+	elmo:contains stage:model2model_scene4;
+	elmo:contains stage:model2model_scene5;
+	elmo:contains stage:model2model_scene6;
 .
 
 #Production for server installations
@@ -19,6 +23,10 @@ updatestage:model2model a elmo:Production;
 	elmo:contains stage:Menu;
 	elmo:contains stage:model2model_scene1;
 	elmo:contains stage:model2model_scene2;
+	elmo:conatins stage:model2model_scene3;
+	elmo:contains stage:model2model_scene4;
+	elmo:contains stage:model2model_scene5;
+	elmo:contains stage:model2model_scene6;
 .
 
 stage:model2model_scene1 a elmo:Scene;
@@ -52,6 +60,87 @@ stage:model2model_scene2 a elmo:Scene;
 				?ps sh:path ?property.
 				?ps sh:class ?class.
 				FILTER (isIri(?property))
+			}
+		}
+	''';
+.
+
+stage:model2model_scene3 a elmo:Scene;
+	elmo:index "03";
+	rdfs:label "Add missing labels";
+	elmo:query '''
+		INSERT INTO <http://localhost:8080/data2model/container/model> {
+			?subject rdfs:label ?label
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/model> {
+				?subject a ?type.
+				BIND (replace(str(?subject),"^.*[/|#]([^(/|#)]+)$","$1") as ?label)
+				FILTER (isIri(?subject))
+				FILTER NOT EXISTS {
+					?subject rdfs:label ?slabel
+				}
+			}
+		}
+	''';
+.
+
+stage:model2model_scene4 a elmo:Scene;
+	elmo:index "04";
+	rdfs:label "Add targetClass for punned classes";
+	elmo:query '''
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		INSERT INTO <http://localhost:8080/data2model/container/model> {
+			?classshape sh:targetClass ?classshape
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/model> {
+				?classshape a owl:Class, sh:NodeShape
+				FILTER NOT EXISTS {
+					?classshape sh:targetClass ?class
+				}
+			}
+		}
+	''';
+.
+
+stage:model2model_scene5 a elmo:Scene;
+	elmo:index "05";
+	rdfs:label "Add sh:name for classes";
+	elmo:query '''
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		INSERT INTO <http://localhost:8080/data2model/container/model> {
+			?shape sh:name ?name
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/model> {
+				?shape sh:targetClass ?class
+				BIND (replace(str(?class),"^.*[/|#]([^(/|#)]+)$","$1") as ?name)
+				FILTER NOT EXISTS {
+					?someshape sh:targetClass ?someclass.
+					?someshape sh:name ?somename
+				}
+			}
+		}
+	''';
+.
+
+stage:model2model_scene6 a elmo:Scene;
+	elmo:index "06";
+	rdfs:label "Add sh:name for properties";
+	elmo:query '''
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		INSERT INTO <http://localhost:8080/data2model/container/model> {
+			?shape sh:name ?name
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/model> {
+				?shape sh:path ?property
+				BIND (replace(str(?property),"^.*[/|#]([^(/|#)]+)$","$1") as ?name)
+				FILTER NOT EXISTS {
+					?someshape sh:path ?someproperty.
+					?someshape sh:name ?somename
+				}
 			}
 		}
 	''';
