@@ -1,0 +1,81 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+@prefix void: <http://rdfs.org/ns/void#>.
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
+@prefix stage: <http://localhost:8080/data2model/stage#>.
+
+stage:UriTemplates a elmo:Representation;
+  elmo:url-pattern "/query/uritemplates$";
+  elmo:contains stage:Menu;
+  elmo:contains stage:UriTemplates_table;
+  elmo:contains stage:UriTemplates_notemplate;
+.
+
+stage:UriTemplates_table a elmo:Part;
+  elmo:index "1";
+  elmo:fragment [
+    elmo:applies-to "shape";
+    rdfs:label "Shape"@en;
+  ];
+  elmo:fragment [
+    elmo:applies-to "class";
+    rdfs:label "Class"@en;
+  ];
+  elmo:fragment [
+    elmo:applies-to "uritemplate";
+    rdfs:label "URI template"@en;
+  ];
+  elmo:query '''
+    PREFIX graphql: <http://datashapes.org/graphql#>
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    SELECT ?shape ?shape_label ?class ?class_label ?uritemplate
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/model> {
+        ?shape graphql:uriTemplate ?uritemplate.
+        OPTIONAL {?shape rdfs:label ?shape_label}
+        OPTIONAL {?shape sh:targetClass ?classuri}
+        OPTIONAL {?shape sh:name ?class_label}
+        BIND (if(isIRI(?classuri),?classuri,?class_label) as ?class)
+      }
+    }
+  ''';
+.
+
+stage:UriTemplates_notemplate a elmo:Part;
+  elmo:index "2";
+  elmo:fragment [
+    elmo:applies-to "shape";
+    rdfs:label "Shape without URI template"@en;
+  ];
+  elmo:fragment [
+    elmo:applies-to "class";
+    rdfs:label "Class"@en;
+  ];
+  elmo:query '''
+    PREFIX graphql: <http://datashapes.org/graphql#>
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    SELECT ?shape ?shape_label ?class ?class_label
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/model> {
+        {
+          select distinct ?shape where {
+            {?shape a sh:NodeShape}
+            UNION
+            {?shape sh:targetClass ?class}
+            UNION
+            {?prop sh:node ?shape}
+          }
+        }
+        FILTER NOT EXISTS {
+          ?shape graphql:uriTemplate ?uritemplate.
+        }
+        OPTIONAL {?shape sh:targetClass ?classuri}
+        OPTIONAL {?shape rdfs:label ?shape_label}
+        OPTIONAL {?shape sh:name ?class_label}
+        BIND (if(isIRI(?classuri),?classuri,?class_label) as ?class)
+      }
+    }
+  ''';
+.
