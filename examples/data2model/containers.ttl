@@ -80,6 +80,27 @@ container:model a elmo:Container;
 	elmo:contains stage:Menu;
   elmo:replaces containerlocal:model;
 .
+containerlocal:addmodel a elmo:Container;
+  rdfs:label "Add model";
+	elmo:contains stage:Menu;
+	elmo:representation elmo:UploadRepresentation;
+  elmo:query '''
+    prefix containerlocal: <http://localhost:8080/data2model/container/>
+    insert { graph containerlocal:model {?s?p?o} }
+    where { graph containerlocal:addmodel {?s?p?o} }
+  '''
+.
+container:addmodel a elmo:Container;
+  rdfs:label "Add model";
+	elmo:contains stage:Menu;
+	elmo:representation elmo:UploadRepresentation;
+  elmo:query '''
+    prefix container: <http://linkeddata.ordina.nl/data2model/container/>
+    prefix containerlocal: <http://localhost:8080/data2model/container/>
+    insert { graph containerlocal:model {?s?p?o} }
+    where { graph container:addmodel {?s?p?o} }
+  '''
+.
 
 # Container for edit scheme (and generation target)
 containerlocal:scheme a elmo:Container;
