@@ -1,10 +1,10 @@
 <!--
 
     NAME     sparql2rdfa.xsl
-    VERSION  1.23.0
-    DATE     2018-10-20
+    VERSION  1.23.1-SNAPSHOT
+    DATE     2019-10-19
 
-    Copyright 2012-2018
+    Copyright 2012-2019
 
     This file is part of the Linked Data Theatre.
 
@@ -58,27 +58,32 @@
 	<xsl:apply-templates select="*[@rdf:parseType='Resource']" mode="flatten"/>
 </xsl:template>
 
+<xsl:template match="*" mode="recurse">
+	<xsl:for-each-group select="*[exists(@rdf:nodeID|@rdf:about)]" group-by="(@rdf:nodeID|@rdf:about)"><xsl:sort select="(@rdf:nodeID|@rdf:about)"/>
+		<rdf:Description>
+			<xsl:if test="exists(@rdf:nodeID)"><xsl:attribute name="rdf:nodeID" select="@rdf:nodeID"/></xsl:if>
+			<xsl:if test="exists(@rdf:about)"><xsl:attribute name="rdf:about" select="@rdf:about"/></xsl:if>
+			<xsl:if test="local-name()!='Description'">
+				<rdf:type rdf:resource="{namespace-uri()}{local-name()}"/>
+			</xsl:if>
+			<!-- Copy normal attributes, check on rdf:Description is not enough, because rdf:type can be put into the XML nodename, so everything is possible, check on '*'... -->
+			<xsl:copy-of select="current-group()/*[not(exists(*/@rdf:about))]"/>
+			<xsl:for-each select="current-group()/*/*/@rdf:about">
+				<xsl:element name="{../../name()}" namespace="{../../namespace-uri()}">
+					<xsl:attribute name="rdf:resource"><xsl:value-of select="."/></xsl:attribute>
+				</xsl:element>
+			</xsl:for-each>
+		</rdf:Description>
+		<xsl:apply-templates select="current-group()/*[exists(*/@rdf:about)]" mode="recurse"/>
+	</xsl:for-each-group>
+	<xsl:apply-templates select="*[not(exists(@rdf:nodeID|@rdf:about))]" mode="flatten"/>
+</xsl:template>
+
 <!-- RDF document -->
 <xsl:template match="rdf:RDF">
 	<!-- Order by identifier -->
 	<rdf:RDF>
-		<xsl:for-each-group select="*[exists(@rdf:nodeID|@rdf:about)]" group-by="(@rdf:nodeID|@rdf:about)"><xsl:sort select="(@rdf:nodeID|@rdf:about)"/>
-			<rdf:Description>
-				<xsl:if test="exists(@rdf:nodeID)"><xsl:attribute name="rdf:nodeID" select="@rdf:nodeID"/></xsl:if>
-				<xsl:if test="exists(@rdf:about)"><xsl:attribute name="rdf:about" select="@rdf:about"/></xsl:if>
-				<xsl:if test="local-name()!='Description'">
-					<rdf:type rdf:resource="{namespace-uri()}{local-name()}"/>
-				</xsl:if>
-				<xsl:copy-of select="current-group()/*[not(exists(rdf:Description/@rdf:about))]"/>
-				<xsl:for-each select="current-group()/*/rdf:Description">
-					<xsl:element name="{../name()}" namespace="{../namespace-uri()}">
-						<xsl:attribute name="rdf:resource"><xsl:value-of select="@rdf:about"/></xsl:attribute>
-					</xsl:element>
-				</xsl:for-each>
-			</rdf:Description>
-			<xsl:copy-of select="current-group()/*/rdf:Description[exists(@rdf:about)]"/>
-		</xsl:for-each-group>
-		<xsl:apply-templates select="*[not(exists(@rdf:nodeID|@rdf:about))]" mode="flatten"/>
+		<xsl:apply-templates select="." mode="recurse"/>
 	</rdf:RDF>
 </xsl:template>
 
