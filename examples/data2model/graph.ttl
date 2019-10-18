@@ -1,0 +1,106 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix yed: <http://bp4mc2.org/yed#>.
+@prefix skos: <http://www.w3.org/2004/02/skos/core#>.
+@prefix stage: <http://localhost:8080/data2model/stage#>.
+
+owl:Class elmo:style "CLASS".
+rdfs:Class elmo:style "CLASS".
+skos:Concept elmo:style "CONCEPT".
+rdf:Literal elmo:style "LITERAL".
+
+stage:Graph a elmo:Representation;
+  elmo:url-pattern "/query/graph(|.yed)$";
+  elmo:appearance elmo:TurtleAppearance;
+  elmo:fragment [
+    elmo:applies-to "RESOURCE";
+    yed:fill "#CCE3CA";
+    yed:color "#73A956";
+    yed:nodeType "ellipse";
+  ];
+  elmo:fragment [
+    elmo:applies-to "INDIVIDUAL";
+    yed:fill "#FAE0C1";
+    yed:nodeType "ellipse";
+  ];
+	elmo:fragment [
+		elmo:applies-to "CLASS";
+    yed:fill "#D2E2FB";
+    yed:color "#6E8CBD";
+    yed:nodeType "ellipse";
+	];
+	elmo:fragment [
+		elmo:applies-to "DOC";
+    yed:fill "#FDF0C1";
+    yed:color "#CEAA47";
+    yed:nodeType "ellipse"
+	];
+  elmo:fragment [
+		elmo:applies-to "LITERAL";
+    yed:fill "#FFFFFF";
+    yed:nodeType "roundrectangle"
+	];
+	elmo:fragment [
+		elmo:applies-to "CONCEPT";
+		yed:backgroundColor "#FFFF00";
+	];
+	elmo:query '''
+    prefix elmo: <http://bp4mc2.org/elmo/def#>
+    prefix container: <http://localhost:8080/data2model/container/>
+		construct {
+      ?s?p?o.
+      ?s rdfs:label ?slabel.
+      ?s elmo:style ?style.
+      ?s ?plit ?litres.
+      ?litres rdf:type rdf:Literal.
+      ?litres elmo:style "LITERAL".
+      ?litres rdfs:label ?olitstr.
+    }
+		where {
+			graph container:data {
+        {
+          {
+    				?s?p?o
+            FILTER (?p != elmo:style && IsIri(?o))
+          }
+          UNION
+          {
+            ?s rdfs:label ?slabel
+          }
+          UNION
+          {
+            select ?s ?plit (concat('"',?olit,'"') as ?olitstr) (iri(concat("urn:",md5(concat(str(?s),str(?plit),?olit)))) as ?litres)
+            where {
+              ?s ?plit ?olit
+              FILTER (isLiteral(?olit) && ?plit != rdfs:label && ?plit != elmo:style)
+            }
+          }
+        }
+			}
+      optional {
+        graph container:data {
+          ?s rdf:type ?namedclass
+        }
+        graph <@STAGE@> {
+          ?namedclass elmo:style ?cstyle
+        }
+      }
+      optional {
+        graph container:data {
+          ?s rdf:type ?namedclass.
+          ?namedclass elmo:style ?cstyle
+        }
+      }
+      optional {
+        graph container:data {
+          ?s elmo:style ?cstyle
+          FILTER NOT EXISTS {?s rdf:type owl:Class}
+        }
+      }
+      BIND (IF(BOUND(?cstyle),str(?cstyle),"RESOURCE") as ?style)
+		}
+	''';
+.

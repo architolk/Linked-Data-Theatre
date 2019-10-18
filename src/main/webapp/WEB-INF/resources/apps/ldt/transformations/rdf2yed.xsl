@@ -2,7 +2,7 @@
 
     NAME     rdf2yed.xsl
     VERSION  1.23.1-SNAPSHOT
-    DATE     2019-01-23
+    DATE     2019-10-18
 
     Copyright 2012-2019
 
@@ -39,6 +39,7 @@
 >
 
 <xsl:key name="nodes" match="/root/results/rdf:RDF[1]/rdf:Description[exists(rdf:type)]" use="@rdf:about"/>
+<xsl:key name="items" match="/root/results/rdf:RDF[1]/rdf:Description" use="@rdf:about"/>
 <xsl:key name="blanks" match="/root/results/rdf:RDF[1]/rdf:Description" use="@rdf:nodeID"/>
 <xsl:key name="fragments" match="/root/view/representation[1]/fragment" use="@applies-to"/>
 
@@ -334,22 +335,59 @@
 		<node id="{@rdf:about}{@rdf:nodeID}"> <!-- URI nodes and blank nodes -->
 			<data key="d3"><xsl:value-of select="@rdf:about"/><xsl:value-of select="@rdf:nodeID"/></data>
 			<data key="d6">
-				<xsl:variable name="nodeType">
+				<xsl:variable name="nodeConfiguration">
 					<xsl:value-of select="$fragment/yed:nodeType"/>
 					<xsl:if test="not(exists($fragment/yed:nodeType))">com.yworks.entityRelationship.big_entity</xsl:if>
 				</xsl:variable>
+				<xsl:variable name="nodeType">
+						<xsl:choose>
+							<xsl:when test="$nodeConfiguration='ellipse'">y:ShapeNode</xsl:when>
+							<xsl:when test="$nodeConfiguration='roundrectangle'">y:ShapeNode</xsl:when>
+							<xsl:otherwise>y:GenericNode</xsl:otherwise>
+						</xsl:choose>
+				</xsl:variable>
 				<xsl:variable name="geometry" select="key('blanks',yed:geometry/@rdf:nodeID)"/>
-				<y:GenericNode configuration="{$nodeType}">
+				<xsl:element name="{$nodeType}">
+					<xsl:choose>
+						<xsl:when test="$nodeType='y:GenericNode'">
+							<xsl:attribute name="configuration"><xsl:value-of select="$nodeConfiguration"/></xsl:attribute>
+						</xsl:when>
+						<xsl:otherwise>
+							<y:Shape type="{$nodeConfiguration}"/>
+						</xsl:otherwise>
+					</xsl:choose>
 					<xsl:choose>
 						<xsl:when test="exists($geometry)">
 							<y:Geometry height="{$geometry/yed:height}" width="{$geometry/yed:width}" x="{$geometry/yed:x}" y="{$geometry/yed:y}"/>
 						</xsl:when>
 						<xsl:otherwise>
-							<y:Geometry height="100.0" width="200.0" x="0.5" y="0"/>
+							<xsl:choose>
+									<xsl:when test="$nodeType='y:GenericNode'"><y:Geometry height="100.0" width="200.0" x="0.5" y="0"/></xsl:when>
+									<xsl:otherwise><y:Geometry height="30.0" width="200.0" x="0.5" y="0"/></xsl:otherwise>
+								</xsl:choose>
 						</xsl:otherwise>
 					</xsl:choose>
-					<y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
-					<y:BorderStyle color="#000000" type="line" width="1.0"/>
+					<xsl:choose>
+						<xsl:when test="not(exists($fragment/yed:fill))"><y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/></xsl:when>
+						<xsl:otherwise>
+							<y:Fill color="{$fragment/yed:fill}" transparant="false">
+								<xsl:if test="exists($fragment/yed:fill2)"><xsl:attribute name="color2"><xsl:value-of select="$fragment/yed:fill2"/></xsl:attribute></xsl:if>
+							</y:Fill>
+						</xsl:otherwise>
+					</xsl:choose>
+					<xsl:variable name="borderstyle">
+						<xsl:choose>
+								<xsl:when test="exists($fragment/yed:color)">
+									<color><xsl:value-of select="$fragment/yed:color"/></color>
+									<width>1.0</width>
+								</xsl:when>
+								<xsl:otherwise>
+									<color>#000000</color>
+									<width>1.0</width>
+								</xsl:otherwise>
+						</xsl:choose>
+					</xsl:variable>
+					<y:BorderStyle color="{$borderstyle/color}" type="line" width="{$borderstyle/width}"/>
 					<y:NodeLabel alignment="center" autoSizePolicy="node_width" configuration="CroppingLabel" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" modelName="internal" modelPosition="{$modelposition}" textColor="#000000" visible="true">
 						<xsl:choose>
 							<xsl:when test="$fragment/yed:backgroundColor!=''"><xsl:attribute name="backgroundColor"><xsl:value-of select="$fragment/yed:backgroundColor"/></xsl:attribute></xsl:when>
@@ -372,7 +410,7 @@
 					<y:StyleProperties>
 						<y:Property class="java.lang.Boolean" name="y.view.ShadowNodePainter.SHADOW_PAINTING" value="true"/>
 					</y:StyleProperties>
-				</y:GenericNode>
+				</xsl:element>
 			</data>
 		</node>
 	</xsl:for-each>
@@ -383,7 +421,7 @@
 		<xsl:variable name="label">
 			<xsl:value-of select="$pfragment/rdfs:label"/>
 			<xsl:if test="not(exists($pfragment/rdfs:label))">
-				<xsl:variable name="plabel"><xsl:value-of select="key('nodes',$puri)/rdfs:label"/></xsl:variable>
+				<xsl:variable name="plabel"><xsl:value-of select="key('items',$puri)/rdfs:label"/></xsl:variable>
 				<xsl:value-of select="$plabel"/>
 				<xsl:if test="$plabel=''"><xsl:value-of select="name()"/></xsl:if>
 			</xsl:if>
