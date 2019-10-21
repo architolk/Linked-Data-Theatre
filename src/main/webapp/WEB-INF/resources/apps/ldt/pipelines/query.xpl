@@ -1250,6 +1250,35 @@
 						<p:input name="data" href="#converted"/>
 					</p:processor>
 				</p:when>
+        <!-- QR code -->
+				<p:when test="context/format='application/x.elmo.qrcode'">
+					<!-- Transform -->
+					<p:processor name="oxf:xslt">
+						<p:input name="data" href="#context"/>
+						<p:input name="config" href="../transformations/rdf2qrcode.xsl"/>
+						<p:output name="data" id="html"/>
+					</p:processor>
+          <!-- Convert XML result to HTML -->
+					<p:processor name="oxf:html-converter">
+						<p:input name="config">
+							<config>
+								<encoding>utf-8</encoding>
+								<version>5.0</version>
+							</config>
+						</p:input>
+						<p:input name="data" href="#html" />
+						<p:output name="data" id="converted" />
+					</p:processor>
+					<!-- Serialize -->
+					<p:processor name="oxf:http-serializer">
+						<p:input name="config">
+							<config>
+								<cache-control><use-local-cache>false</use-local-cache></cache-control>
+							</config>
+						</p:input>
+						<p:input name="data" href="#converted"/>
+					</p:processor>
+				</p:when>
 				<!-- XMI -->
 				<p:when test="context/format='application/vnd.xmi+xml'">
 					<!-- Transform -->

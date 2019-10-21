@@ -234,6 +234,17 @@
 						</configuration>
 					</execution>
 					<execution>
+						<id>get-kjua-js</id>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>https://github.com/lrsjng/kjua/raw/v0.6.0/dist/kjua.min.js</url>
+							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
+							<skipCache>true</skipCache>
+						</configuration>
+					</execution>
+					<execution>
 						<id>get-leaflet-js</id>
 						<goals>
 							<goal>wget</goal>
@@ -551,7 +562,7 @@
 						</goals>
 						<phase>package</phase>
 						<configuration>
-							<resources>          
+							<resources>
 								<resource>
 									<directory>zips/Proj4Leaflet-1.0.1/src</directory>
 								</resource>
@@ -603,9 +614,9 @@
 										<include>graphlib.min.js</include>
 									</includes>
 								</resource>
-							</resources>              
+							</resources>
 							<outputDirectory>WEB-INF/resources/apps/js</outputDirectory>
-						</configuration>            
+						</configuration>
 					</execution>
 					<execution>
 						<id>copy-css-resources</id>
@@ -614,7 +625,7 @@
 						</goals>
 						<phase>package</phase>
 						<configuration>
-							<resources>          
+							<resources>
 								<resource>
 									<directory>zips/YASGUI.YASQE-2.8.3/dist</directory>
 									<includes>
@@ -629,9 +640,9 @@
 										<include>chosen-sprite@2x.png</include>
 									</includes>
 								</resource>
-							</resources>              
+							</resources>
 							<outputDirectory>WEB-INF/resources/apps/css</outputDirectory>
-						</configuration>            
+						</configuration>
 					</execution>
 					<execution>
 						<id>copy-css-image-resources</id>
@@ -661,5 +672,5 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 </project>

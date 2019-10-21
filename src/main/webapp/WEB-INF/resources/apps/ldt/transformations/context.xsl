@@ -197,6 +197,7 @@
 				<xsl:choose>
 					<xsl:when test="theatre/format='graphml'">application/graphml+xml</xsl:when> <!-- No specific mime-type is available for graphml, this seems the most logical -->
 					<xsl:when test="theatre/format='yed'">application/x.elmo.yed</xsl:when> <!-- Application specific mime-type -->
+					<xsl:when test="theatre/format='qr'">application/x.elmo.qrcode</xsl:when> <!-- Application specificat mime-type -->
 					<xsl:when test="theatre/format='xml'">application/xml</xsl:when> <!-- Only first resultset, like ttl and json -->
 					<xsl:when test="theatre/format='rdf'">application/rdf+xml</xsl:when>
 					<xsl:when test="theatre/format='sparql'">application/sparql-results+xml</xsl:when>
