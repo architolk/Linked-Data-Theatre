@@ -45,7 +45,9 @@ stage:Graph a elmo:Representation;
 	];
 	elmo:fragment [
 		elmo:applies-to "CONCEPT";
-		yed:backgroundColor "#FFFF00";
+		yed:fill "#FFFF99";
+    yed:color "#C6C600";
+    yed:nodeType "ellipse";
 	];
 	elmo:query '''
     prefix elmo: <http://bp4mc2.org/elmo/def#>
