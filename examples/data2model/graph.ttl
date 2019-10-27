@@ -60,49 +60,58 @@ stage:Graph a elmo:Representation;
       ?litres rdf:type rdf:Literal.
       ?litres elmo:style "LITERAL".
       ?litres rdfs:label ?olitstr.
+      ?ds ?dp ?do.
     }
 		where {
-			graph container:data {
-        {
+      {
+  			graph container:data {
           {
-    				?s?p?o
-            FILTER (?p != elmo:style && IsIri(?o))
-          }
-          UNION
-          {
-            ?s rdfs:label ?slabel
-          }
-          UNION
-          {
-            select ?s ?plit (concat('"',?olit,'"') as ?olitstr) (iri(concat("urn:",md5(concat(str(?s),str(?plit),?olit)))) as ?litres)
-            where {
-              ?s ?plit ?olit
-              FILTER (isLiteral(?olit) && ?plit != rdfs:label && ?plit != elmo:style)
+            {
+      				?s?p?o
+              FILTER (?p != elmo:style && IsIri(?o))
+            }
+            UNION
+            {
+              ?s rdfs:label ?slabel
+            }
+            UNION
+            {
+              select ?s ?plit (concat('"',?olit,'"') as ?olitstr) (iri(concat("urn:",md5(concat(str(?s),str(?plit),?olit)))) as ?litres)
+              where {
+                ?s ?plit ?olit
+                FILTER (isLiteral(?olit) && ?plit != rdfs:label && ?plit != elmo:style)
+              }
             }
           }
+  			}
+        optional {
+          graph container:data {
+            ?s rdf:type ?namedclass
+          }
+          graph <@STAGE@> {
+            ?namedclass elmo:style ?cstyle
+          }
         }
-			}
-      optional {
-        graph container:data {
-          ?s rdf:type ?namedclass
+        optional {
+          graph container:data {
+            ?s rdf:type ?namedclass.
+            ?namedclass elmo:style ?cstyle
+          }
         }
-        graph <@STAGE@> {
-          ?namedclass elmo:style ?cstyle
+        optional {
+          graph container:data {
+            ?s elmo:style ?cstyle
+            FILTER NOT EXISTS {?s rdf:type owl:Class}
+          }
+        }
+        BIND (IF(BOUND(?cstyle),str(?cstyle),"RESOURCE") as ?style)
+      }
+      UNION
+		  {
+        graph <http://localhost:8080/data2model/container/diagram> {
+          ?ds ?dp ?do
         }
       }
-      optional {
-        graph container:data {
-          ?s rdf:type ?namedclass.
-          ?namedclass elmo:style ?cstyle
-        }
-      }
-      optional {
-        graph container:data {
-          ?s elmo:style ?cstyle
-          FILTER NOT EXISTS {?s rdf:type owl:Class}
-        }
-      }
-      BIND (IF(BOUND(?cstyle),str(?cstyle),"RESOURCE") as ?style)
 		}
 	''';
 .
