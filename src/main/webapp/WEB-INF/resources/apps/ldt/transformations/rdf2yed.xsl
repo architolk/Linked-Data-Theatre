@@ -2,7 +2,7 @@
 
     NAME     rdf2yed.xsl
     VERSION  1.23.1-SNAPSHOT
-    DATE     2019-10-18
+    DATE     2019-10-27
 
     Copyright 2012-2019
 
@@ -310,109 +310,124 @@
 	</xsl:for-each>
 </xsl:template>
 
+<xsl:template match="*" mode="yed-default-node">
+	<xsl:param name="geometry"/>
+	<xsl:param name="uripostfix"/>
+
+	<xsl:variable name="slabel"><xsl:value-of select="replace(@rdf:about,'^.*(#|/)([^(#|/)]+)$','$2')"/></xsl:variable>
+	<xsl:variable name="label">
+		<xsl:value-of select="rdfs:label"/>
+		<xsl:if test="not(rdfs:label!='')">
+			<xsl:value-of select="$slabel"/>
+			<xsl:if test="$slabel=''"><xsl:value-of select="@rdf:about"/></xsl:if>
+		</xsl:if>
+	</xsl:variable>
+	<xsl:variable name="fragment" select="key('fragments',elmo:style[1])"/>
+	<xsl:variable name="backgroundColor">
+		<xsl:value-of select="$fragment/yed:backgroundColor"/>
+		<xsl:if test="not(exists($fragment/yed:backgroundColor))">#FFFFFF</xsl:if> <!-- #B7C9E3 -->
+	</xsl:variable>
+	<xsl:variable name="modelposition">
+		<xsl:choose>
+			<xsl:when test="exists(rdfs:comment)">t</xsl:when>
+			<xsl:otherwise>c</xsl:otherwise>
+		</xsl:choose>
+	</xsl:variable>
+	<node id="{@rdf:about}{@rdf:nodeID}{$uripostfix}"> <!-- URI nodes and blank nodes -->
+		<data key="d3"><xsl:value-of select="@rdf:about"/><xsl:value-of select="@rdf:nodeID"/></data>
+		<data key="d6">
+			<xsl:variable name="nodeConfiguration">
+				<xsl:value-of select="$fragment/yed:nodeType"/>
+				<xsl:if test="not(exists($fragment/yed:nodeType))">com.yworks.entityRelationship.big_entity</xsl:if>
+			</xsl:variable>
+			<xsl:variable name="nodeType">
+					<xsl:choose>
+						<xsl:when test="$nodeConfiguration='ellipse'">y:ShapeNode</xsl:when>
+						<xsl:when test="$nodeConfiguration='roundrectangle'">y:ShapeNode</xsl:when>
+						<xsl:otherwise>y:GenericNode</xsl:otherwise>
+					</xsl:choose>
+			</xsl:variable>
+			<xsl:element name="{$nodeType}">
+				<xsl:choose>
+					<xsl:when test="$nodeType='y:GenericNode'">
+						<xsl:attribute name="configuration"><xsl:value-of select="$nodeConfiguration"/></xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise>
+						<y:Shape type="{$nodeConfiguration}"/>
+					</xsl:otherwise>
+				</xsl:choose>
+				<xsl:choose>
+					<xsl:when test="exists($geometry)">
+						<y:Geometry height="{$geometry/yed:height}" width="{$geometry/yed:width}" x="{$geometry/yed:x}" y="{$geometry/yed:y}"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:choose>
+								<xsl:when test="$nodeType='y:GenericNode'"><y:Geometry height="100.0" width="200.0" x="0.5" y="0"/></xsl:when>
+								<xsl:otherwise><y:Geometry height="30.0" width="200.0" x="0.5" y="0"/></xsl:otherwise>
+							</xsl:choose>
+					</xsl:otherwise>
+				</xsl:choose>
+				<xsl:choose>
+					<xsl:when test="not(exists($fragment/yed:fill))"><y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/></xsl:when>
+					<xsl:otherwise>
+						<y:Fill color="{$fragment/yed:fill}" transparant="false">
+							<xsl:if test="exists($fragment/yed:fill2)"><xsl:attribute name="color2"><xsl:value-of select="$fragment/yed:fill2"/></xsl:attribute></xsl:if>
+						</y:Fill>
+					</xsl:otherwise>
+				</xsl:choose>
+				<xsl:variable name="borderstyle">
+					<xsl:choose>
+							<xsl:when test="exists($fragment/yed:color)">
+								<color><xsl:value-of select="$fragment/yed:color"/></color>
+								<width>1.0</width>
+							</xsl:when>
+							<xsl:otherwise>
+								<color>#000000</color>
+								<width>1.0</width>
+							</xsl:otherwise>
+					</xsl:choose>
+				</xsl:variable>
+				<y:BorderStyle color="{$borderstyle/color}" type="line" width="{$borderstyle/width}"/>
+				<y:NodeLabel alignment="center" autoSizePolicy="node_width" configuration="CroppingLabel" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" modelName="internal" modelPosition="{$modelposition}" textColor="#000000" visible="true">
+					<xsl:choose>
+						<xsl:when test="$fragment/yed:backgroundColor!=''"><xsl:attribute name="backgroundColor"><xsl:value-of select="$fragment/yed:backgroundColor"/></xsl:attribute></xsl:when>
+						<xsl:otherwise><xsl:attribute name="hasBackgroundColor">false</xsl:attribute></xsl:otherwise>
+					</xsl:choose>
+					<xsl:value-of select="$label"/>
+				</y:NodeLabel>
+				<y:NodeLabel alignment="left" autoSizePolicy="node_width" configuration="CroppingLabel" fontFamily="Dialog" fontSize="10" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" modelName="custom" textColor="#000000" visible="true">
+					<xsl:for-each select="rdfs:comment">
+						<xsl:if test="position()!=1"><xsl:text>
+</xsl:text></xsl:if><xsl:value-of select="."/>
+					</xsl:for-each>
+					<y:LabelModel>
+						<y:ErdAttributesNodeLabelModel/>
+					</y:LabelModel>
+					<y:ModelParameter>
+						<y:ErdAttributesNodeLabelModelParameter/>
+					</y:ModelParameter>
+				</y:NodeLabel>
+				<y:StyleProperties>
+					<y:Property class="java.lang.Boolean" name="y.view.ShadowNodePainter.SHADOW_PAINTING" value="true"/>
+				</y:StyleProperties>
+			</xsl:element>
+		</data>
+	</node>
+</xsl:template>
+
 <xsl:template match="rdf:RDF" mode="yed-default">
 	<!-- Nodes -->
 	<xsl:for-each select="rdf:Description[exists(rdf:type)]">
-		<xsl:variable name="slabel"><xsl:value-of select="replace(@rdf:about,'^.*(#|/)([^(#|/)]+)$','$2')"/></xsl:variable>
-		<xsl:variable name="label">
-			<xsl:value-of select="rdfs:label"/>
-			<xsl:if test="not(rdfs:label!='')">
-				<xsl:value-of select="$slabel"/>
-				<xsl:if test="$slabel=''"><xsl:value-of select="@rdf:about"/></xsl:if>
-			</xsl:if>
-		</xsl:variable>
-		<xsl:variable name="fragment" select="key('fragments',elmo:style[1])"/>
-		<xsl:variable name="backgroundColor">
-			<xsl:value-of select="$fragment/yed:backgroundColor"/>
-			<xsl:if test="not(exists($fragment/yed:backgroundColor))">#FFFFFF</xsl:if> <!-- #B7C9E3 -->
-		</xsl:variable>
-		<xsl:variable name="modelposition">
-			<xsl:choose>
-				<xsl:when test="exists(rdfs:comment)">t</xsl:when>
-				<xsl:otherwise>c</xsl:otherwise>
-			</xsl:choose>
-		</xsl:variable>
-		<node id="{@rdf:about}{@rdf:nodeID}"> <!-- URI nodes and blank nodes -->
-			<data key="d3"><xsl:value-of select="@rdf:about"/><xsl:value-of select="@rdf:nodeID"/></data>
-			<data key="d6">
-				<xsl:variable name="nodeConfiguration">
-					<xsl:value-of select="$fragment/yed:nodeType"/>
-					<xsl:if test="not(exists($fragment/yed:nodeType))">com.yworks.entityRelationship.big_entity</xsl:if>
-				</xsl:variable>
-				<xsl:variable name="nodeType">
-						<xsl:choose>
-							<xsl:when test="$nodeConfiguration='ellipse'">y:ShapeNode</xsl:when>
-							<xsl:when test="$nodeConfiguration='roundrectangle'">y:ShapeNode</xsl:when>
-							<xsl:otherwise>y:GenericNode</xsl:otherwise>
-						</xsl:choose>
-				</xsl:variable>
-				<xsl:variable name="geometry" select="key('blanks',yed:geometry/@rdf:nodeID)"/>
-				<xsl:element name="{$nodeType}">
-					<xsl:choose>
-						<xsl:when test="$nodeType='y:GenericNode'">
-							<xsl:attribute name="configuration"><xsl:value-of select="$nodeConfiguration"/></xsl:attribute>
-						</xsl:when>
-						<xsl:otherwise>
-							<y:Shape type="{$nodeConfiguration}"/>
-						</xsl:otherwise>
-					</xsl:choose>
-					<xsl:choose>
-						<xsl:when test="exists($geometry)">
-							<y:Geometry height="{$geometry/yed:height}" width="{$geometry/yed:width}" x="{$geometry/yed:x}" y="{$geometry/yed:y}"/>
-						</xsl:when>
-						<xsl:otherwise>
-							<xsl:choose>
-									<xsl:when test="$nodeType='y:GenericNode'"><y:Geometry height="100.0" width="200.0" x="0.5" y="0"/></xsl:when>
-									<xsl:otherwise><y:Geometry height="30.0" width="200.0" x="0.5" y="0"/></xsl:otherwise>
-								</xsl:choose>
-						</xsl:otherwise>
-					</xsl:choose>
-					<xsl:choose>
-						<xsl:when test="not(exists($fragment/yed:fill))"><y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/></xsl:when>
-						<xsl:otherwise>
-							<y:Fill color="{$fragment/yed:fill}" transparant="false">
-								<xsl:if test="exists($fragment/yed:fill2)"><xsl:attribute name="color2"><xsl:value-of select="$fragment/yed:fill2"/></xsl:attribute></xsl:if>
-							</y:Fill>
-						</xsl:otherwise>
-					</xsl:choose>
-					<xsl:variable name="borderstyle">
-						<xsl:choose>
-								<xsl:when test="exists($fragment/yed:color)">
-									<color><xsl:value-of select="$fragment/yed:color"/></color>
-									<width>1.0</width>
-								</xsl:when>
-								<xsl:otherwise>
-									<color>#000000</color>
-									<width>1.0</width>
-								</xsl:otherwise>
-						</xsl:choose>
-					</xsl:variable>
-					<y:BorderStyle color="{$borderstyle/color}" type="line" width="{$borderstyle/width}"/>
-					<y:NodeLabel alignment="center" autoSizePolicy="node_width" configuration="CroppingLabel" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" modelName="internal" modelPosition="{$modelposition}" textColor="#000000" visible="true">
-						<xsl:choose>
-							<xsl:when test="$fragment/yed:backgroundColor!=''"><xsl:attribute name="backgroundColor"><xsl:value-of select="$fragment/yed:backgroundColor"/></xsl:attribute></xsl:when>
-							<xsl:otherwise><xsl:attribute name="hasBackgroundColor">false</xsl:attribute></xsl:otherwise>
-						</xsl:choose>
-						<xsl:value-of select="$label"/>
-					</y:NodeLabel>
-					<y:NodeLabel alignment="left" autoSizePolicy="node_width" configuration="CroppingLabel" fontFamily="Dialog" fontSize="10" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" modelName="custom" textColor="#000000" visible="true">
-						<xsl:for-each select="rdfs:comment">
-							<xsl:if test="position()!=1"><xsl:text>
-</xsl:text></xsl:if><xsl:value-of select="."/>
-						</xsl:for-each>
-						<y:LabelModel>
-							<y:ErdAttributesNodeLabelModel/>
-						</y:LabelModel>
-						<y:ModelParameter>
-							<y:ErdAttributesNodeLabelModelParameter/>
-						</y:ModelParameter>
-					</y:NodeLabel>
-					<y:StyleProperties>
-						<y:Property class="java.lang.Boolean" name="y.view.ShadowNodePainter.SHADOW_PAINTING" value="true"/>
-					</y:StyleProperties>
-				</xsl:element>
-			</data>
-		</node>
+		<xsl:variable name="resource" select="."/>
+		<xsl:apply-templates select="$resource" mode="yed-default-node">
+			<xsl:with-param name="geometry" select="key('blanks',yed:geometry[1]/@rdf:nodeID)"/>
+		</xsl:apply-templates>
+		<xsl:for-each select="yed:geometry[position()!=1]">
+			<xsl:apply-templates select="$resource" mode="yed-default-node">
+				<xsl:with-param name="uripostfix" select="position()"/>
+				<xsl:with-param name="geometry" select="key('blanks',@rdf:nodeID)"/>
+			</xsl:apply-templates>
+		</xsl:for-each>
 	</xsl:for-each>
 	<!-- Edges for URI nodes -->
 	<xsl:for-each select="rdf:Description/*[exists(key('nodes',@rdf:resource))]">
