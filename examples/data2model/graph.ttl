@@ -43,6 +43,11 @@ stage:Graph a elmo:Representation;
     yed:fill "#FFFFFF";
     yed:nodeType "roundrectangle"
 	];
+  elmo:fragment [
+		elmo:applies-to "REF";
+    yed:fill "#FFFFFF";
+    yed:nodeType "ellipse"
+	];
 	elmo:fragment [
 		elmo:applies-to "CONCEPT";
 		yed:fill "#FFFF99";
