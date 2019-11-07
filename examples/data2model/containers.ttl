@@ -148,3 +148,19 @@ container:import a elmo:Container;
     where { graph container:import {?s?p?o} }
   '''
 .
+
+# Container for anchor models
+containerlocal:anchormodel a elmo:Container;
+  rdfs:label "Upload anchor model XMl file";
+  elmo:translator elmo:AnchorTranslator;
+  elmo:contains stage:Menu;
+  elmo:representation elmo:UploadRepresentation;
+  elmo:replaces containerlocal:model;
+.
+container:anchormodel a elmo:Container;
+  rdfs:label "Upload anchor model XMl file";
+  elmo:translator elmo:AnchorTranslator;
+  elmo:contains stage:Menu;
+  elmo:representation elmo:UploadRepresentation;
+  elmo:replaces containerlocal:model;
+.
