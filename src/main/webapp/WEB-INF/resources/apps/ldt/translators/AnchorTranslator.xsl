@@ -2,7 +2,7 @@
 
     NAME     AnchorTranslator.xsl
     VERSION  1.23.1-SNAPSHOT
-    DATE     2019-11-07
+    DATE     2019-11-11
 
     Copyright 2012-2019
 
@@ -56,20 +56,28 @@
 				<anchor:descriptor><xsl:value-of select="@descriptor"/></anchor:descriptor>
 				<xsl:for-each select="description"><anchor:description><xsl:value-of select="."/></anchor:description></xsl:for-each>
 				<xsl:for-each select="attribute">
-					<anchor:attribute>
-						<anchor:Attribute>
-							<anchor:mnemonic><xsl:value-of select="@mnemonic"/></anchor:mnemonic>
-							<anchor:descriptor><xsl:value-of select="@descriptor"/></anchor:descriptor>
-							<xsl:if test="exists(@dataRange)"><anchor:dataRange><xsl:value-of select="@dataRange"/></anchor:dataRange></xsl:if>
-							<xsl:if test="exists(@knotRange)"><anchor:knotRange rdf:resource="{$prefix}knot:{@knotRange}"/></xsl:if>
-							<xsl:for-each select="description"><anchor:description><xsl:value-of select="."/></anchor:description></xsl:for-each>
-						</anchor:Attribute>
-					</anchor:attribute>
+					<anchor:attribute rdf:resource="{$prefix}attribute:{../@mnemonic}_{@mnemonic}"/>
 				</xsl:for-each>
 			</anchor:Anchor>
 		</xsl:for-each>
+		<xsl:for-each select="root/schema/anchor/attribute">
+			<anchor:Attribute rdf:about="{$prefix}attribute:{../@mnemonic}_{@mnemonic}">
+				<anchor:mnemonic><xsl:value-of select="@mnemonic"/></anchor:mnemonic>
+				<anchor:descriptor><xsl:value-of select="@descriptor"/></anchor:descriptor>
+				<xsl:if test="exists(@timeRange)"><anchor:timeRange><xsl:value-of select="@timeRange"/></anchor:timeRange></xsl:if>
+				<xsl:if test="exists(@dataRange)"><anchor:dataRange><xsl:value-of select="@dataRange"/></anchor:dataRange></xsl:if>
+				<xsl:if test="exists(@knotRange)"><anchor:knotRange rdf:resource="{$prefix}knot:{@knotRange}"/></xsl:if>
+				<xsl:for-each select="description"><anchor:description><xsl:value-of select="."/></anchor:description></xsl:for-each>
+			</anchor:Attribute>
+		</xsl:for-each>
 		<xsl:for-each select="root/schema/tie">
-			<anchor:Tie rdf:about="{$prefix}tie:{position()}"> <!-- Not good, but what is the identifier of a tie?? -->
+			<xsl:variable name="localname">
+				<xsl:for-each select="anchorRole">
+					<xsl:if test="position()!=1">_</xsl:if>
+					<xsl:value-of select="@type"/>_<xsl:value-of select="@role"/>
+				</xsl:for-each>
+			</xsl:variable>
+			<anchor:Tie rdf:about="{$prefix}tie:{$localname}">
 				<xsl:for-each select="anchorRole">
 					<anchor:anchorRole>
 						<anchor:AnchorRole>
