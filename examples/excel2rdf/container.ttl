@@ -3,8 +3,16 @@
 @prefix xhtml: <http://www.w3.org/1999/xhtml/vocab#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 @prefix containerlocal: <http://localhost:8080/excel2rdf/container/>.
+@prefix container: <http://some-server-domain/excel2rdf/container/>.
 
 containerlocal:excel-upload a elmo:Container;
+  elmo:replaces containerlocal:upload;
+	elmo:representation elmo:UploadRepresentation;
+  elmo:contains stage:Menu;
+	elmo:translator elmo:GenericExcelTranslator;
+  rdfs:label "Upload an excel file"@en;
+.
+container:excel-upload a elmo:Container;
   elmo:replaces containerlocal:upload;
 	elmo:representation elmo:UploadRepresentation;
   elmo:contains stage:Menu;
@@ -19,6 +27,13 @@ containerlocal:spec-upload a elmo:Container;
 	elmo:translator elmo:TableExcelTranslator;
   rdfs:label "Upload an excel file"@en;
 .
+container:spec-upload a elmo:Container;
+  elmo:replaces containerlocal:upload;
+	elmo:representation elmo:UploadRepresentation;
+  elmo:contains stage:Menu;
+	elmo:translator elmo:TableExcelTranslator;
+  rdfs:label "Upload an excel file"@en;
+.
 
 containerlocal:csv-upload a elmo:Container;
 	elmo:replaces containerlocal:upload;
@@ -27,8 +42,21 @@ containerlocal:csv-upload a elmo:Container;
 	elmo:translator elmo:GenericCSVTranslator;
   rdfs:label "Upload an csv file"@en;
 .
+container:csv-upload a elmo:Container;
+	elmo:replaces containerlocal:upload;
+	elmo:representation elmo:UploadRepresentation;
+  elmo:contains stage:Menu;
+	elmo:translator elmo:GenericCSVTranslator;
+  rdfs:label "Upload an csv file"@en;
+.
 
 containerlocal:rdf-upload a elmo:Container;
+  elmo:replaces containerlocal:upload;
+	elmo:representation elmo:UploadRepresentation;
+  elmo:contains stage:Menu;
+  rdfs:label "Upload RDF"@en;
+.
+container:rdf-upload a elmo:Container;
   elmo:replaces containerlocal:upload;
 	elmo:representation elmo:UploadRepresentation;
   elmo:contains stage:Menu;
