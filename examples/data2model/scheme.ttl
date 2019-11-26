@@ -7,24 +7,68 @@
 @prefix stage: <http://localhost:8080/data2model/stage#>.
 
 stage:Scheme a elmo:Representation;
-  elmo:url-pattern "/query/scheme(|.ttl|.yed)$";
+  elmo:url-pattern "/query/scheme(|.ttl|.json|.xml)$";
   elmo:contains stage:Menu;
   elmo:query '''
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
     CONSTRUCT {
       ?begrip rdfs:label ?begriplabel.
       ?begrip a skos:Concept.
       ?begrip ?rel ?relbegrip.
+      ?begrip skos:inScheme ?scheme.
+      ?begrip ?begripprop ?begripobj.
+      ?scheme a skos:ConceptScheme.
+      ?scheme ?schemeprop ?schemeobj.
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/scheme> {
+        ?begrip a skos:Concept.
+        ?begrip rdfs:label ?begriplabel.
+        OPTIONAL {
+          ?begrip ?rel ?relbegrip.
+          ?relbegrip a skos:Concept.
+        }
+        OPTIONAL {
+          ?begrip skos:inScheme ?scheme.
+          ?scheme ?schemeprop ?schemeobj.
+        }
+        OPTIONAL {
+          ?begrip ?begripprop ?begripobj.
+          FILTER (isLiteral(?begripobj))
+        }
+      }
+    }
+  ''';
+.
+
+stage:YedScheme a elmo:Representation;
+  elmo:url-pattern "/query/scheme.yed$";
+  elmo:contains stage:Menu;
+  elmo:query '''
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    CONSTRUCT {
+      ?begrip rdfs:label ?begriplabel.
+      ?begrip a skos:Concept.
+      ?begrip ?rel ?relbegrip.
+      ?begrip rdfs:comment ?comment.
+      ?begrip rdfs:comment ?definition.
       ?relbegrip a skos:Concept.
-#      ?relbegrip rdfs:label ?relbegriplabel.
+      ?relbegrip rdfs:label ?relbegriplabel.
     }
     WHERE {
       GRAPH <http://localhost:8080/data2model/container/scheme> {
         ?begrip a skos:Concept.
         ?begrip rdfs:label ?begriplabel.
         ?begrip ?rel ?relbegrip.
-        FILTER (isIRI(?relbegrip))
-#        ?relbegrip a skos:Concept.
-#        ?relbegrip rdfs:label ?relbegriplabel.
+        ?relbegrip a skos:Concept.
+        ?relbegrip rdfs:label ?relbegriplabel.
+        OPTIONAL {
+          ?begrip rdfs:comment ?comment
+        }
+        OPTIONAL {
+          ?begrip skos:definition ?definition
+          FILTER NOT EXISTS {?begrip rdfs:comment ?comment}
+        }
       }
     }
   ''';

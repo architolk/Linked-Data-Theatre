@@ -26,6 +26,7 @@ stage:Downloads a elmo:Representation;
           <li><a href="query/uritemplates">URI templates</a></li>
           <li><a href="query/vocabularies">Vocabularies gebruik</a></li>
           <li><a href="query/scheme">Begrippenkader</a></li>
+          <li><a href="query/scheme.yed">Begrippenkader grafisch</a></li>
           <li><a href="query/graph.yed">De data in een grafische weergave</a></li>
         </ul>
         <p>De grafische weergave vereist het gebruik van het yEd open source tool. Dat kunt u <a href="https://www.yworks.com/downloads#yEd">hier</a> vinden</p>
