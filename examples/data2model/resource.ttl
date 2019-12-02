@@ -10,17 +10,31 @@ stage:Resource a elmo:Representation;
   elmo:url-pattern "/resource$";
   elmo:contains stage:Menu;
   elmo:contains stage:Namespaces_tree;
+  elmo:contains stage:WebScheme_tree;
+  elmo:index "1";
   elmo:query '''
     CONSTRUCT {
       <@SUBJECT@>?p?o.
       ?o ?op ?oo.
     }
     WHERE {
-      GRAPH <http://localhost:8080/data2model/container/model> {
-        <@SUBJECT@>?p?o
-        OPTIONAL {
-          ?o ?op ?oo
-          FILTER (isBlank(?o))
+      {
+        GRAPH <http://localhost:8080/data2model/container/model> {
+          <@SUBJECT@>?p?o
+          OPTIONAL {
+            ?o ?op ?oo
+            FILTER (isBlank(?o))
+          }
+        }
+      }
+      UNION
+      {
+        GRAPH <http://localhost:8080/data2model/container/scheme> {
+          <@SUBJECT@>?p?o
+          OPTIONAL {
+            ?o ?op ?oo
+            FILTER (isBlank(?o))
+          }
         }
       }
     }

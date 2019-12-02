@@ -73,3 +73,115 @@ stage:YedScheme a elmo:Representation;
     }
   ''';
 .
+
+stage:WebScheme a elmo:Representation;
+  elmo:url-pattern "/query/webscheme$";
+  elmo:contains stage:Menu;
+  elmo:contains stage:WebScheme_tree;
+  elmo:contains stage:WebScheme_schemas;
+  elmo:contains stage:WebScheme_collections;
+.
+
+stage:WebScheme_tree a elmo:Part;
+  elmo:appearance elmo:TreeAppearance;
+  elmo:query '''
+    CONSTRUCT {
+      ?begrip skos:inScheme ?kader.
+      ?begrip rdfs:label ?blabel.
+      ?kader rdfs:label ?klabel.
+      ?kader rdf:value ?kcount.
+      ?begrip skos:broader ?parent.
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/scheme> {
+        {
+          select ?kader ?klabel (count(?cpt) as ?kcount)
+          where {
+            ?kader a skos:ConceptScheme.
+            ?kader rdfs:label ?klabel.
+            optional {
+              ?cpt skos:inScheme ?kader
+            }
+          }
+        }
+        UNION
+        {
+          select ?begrip ?blabel (<urn:notinscheme> as ?kader) ("???" as ?klabel)
+          where {
+            ?begrip a skos:Concept.
+            ?begrip rdfs:label ?blabel.
+            FILTER NOT EXISTS {
+              ?begrip ?p ?o.
+              FILTER (?p = skos:inScheme || ?p = skos:broader)
+            }
+          }
+        }
+        UNION
+        {
+          ?begrip a skos:Concept.
+          ?begrip rdfs:label ?blabel.
+          ?begrip skos:inScheme ?kader.
+          ?kader a skos:ConceptScheme.
+          FILTER NOT EXISTS {
+            ?begrip skos:broader ?parent.
+          }
+        }
+        UNION
+        {
+          ?begrip a skos:Concept.
+          ?begrip rdfs:label ?blabel.
+          ?begrip skos:broader ?parent.
+          ?parent a skos:Concept.
+        }
+      }
+    }
+  ''';
+.
+
+stage:WebScheme_schemas a elmo:Part;
+  elmo:index "1";
+  elmo:appearance elmo:ShortTableAppearance;
+  elmo:fragment [
+    elmo:applies-to "kader";
+    rdfs:label "Begrippenkader"@nl;
+    rdfs:label "Concept scheme"@en;
+  ];
+  elmo:query '''
+    SELECT ?kader ?kader_label (count(?begrip) as ?kader_count)
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/scheme> {
+        ?kader a skos:ConceptScheme.
+        ?kader rdfs:label ?kader_label.
+        OPTIONAL {
+          ?begrip skos:inScheme ?kader
+        }
+      }
+    }
+    GROUP BY ?kader ?kader_label
+    ORDER BY ucase(?kader_label)
+  ''';
+.
+
+stage:WebScheme_collections a elmo:Part;
+  elmo:index "2";
+  elmo:appearance elmo:ShortTableAppearance;
+  elmo:fragment [
+    elmo:applies-to "collectie";
+    rdfs:label "Collectie"@nl;
+    rdfs:label "Collection"@en;
+  ];
+  elmo:query '''
+    SELECT ?collectie ?collectie_label (count(?begrip) as ?collectie_count)
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/scheme> {
+        ?collectie a skos:Collection.
+        ?collectie rdfs:label ?collectie_label.
+        OPTIONAL {
+          ?collectie skos:member ?begrip
+        }
+      }
+    }
+    GROUP BY ?collectie ?collectie_label
+    ORDER BY ucase(?collectie_label)
+  ''';
+.
