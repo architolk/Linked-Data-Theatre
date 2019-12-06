@@ -164,3 +164,9 @@ container:anchormodel a elmo:Container;
   elmo:representation elmo:UploadRepresentation;
   elmo:replaces containerlocal:model;
 .
+
+# Container for MIM models
+containerlocal:mim a elmo:Container;
+  rdfs:label "Upload MIM model";
+  elmo:contains stage:Menu;
+.
