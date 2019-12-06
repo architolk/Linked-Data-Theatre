@@ -63,7 +63,6 @@ stage:model2mim_scene002 a elmo:Scene;
     }
   }
   WHERE {
-    select * where {
     GRAPH <http://localhost:8080/data2model/container/mim> {
       ?objecttype a mim:Objecttype.
       ?objecttype rdfs:seeAlso ?shape
@@ -88,7 +87,6 @@ stage:model2mim_scene002 a elmo:Scene;
         }
       }
     }
-  }
   }
   '''
 .
