@@ -1,8 +1,8 @@
 <!--
 
     NAME     GenericExcelTranslator.xsl
-    VERSION  1.23.0
-    DATE     2018-10-20
+    VERSION  1.23.1-SNAPSHOT
+    DATE     2019-12-06
 
     Copyright 2012-2018
 
@@ -47,7 +47,7 @@
 				<xsl:otherwise>property</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
-		<xsl:value-of select="translate($uname,' /\','_--')"/>
+		<xsl:value-of select="replace(translate($uname,' /\','_--'),'[^a-zA-Z0-9_-]','')"/>
 	</xsl:function>
 
 	<xsl:template match="/">
