@@ -25,6 +25,7 @@ stage:Namespaces_tree a elmo:Part;
       SELECT distinct (iri(?ns_label) as ?ns) ?ns_label ?s ?s_label
       WHERE {
         GRAPH <http://localhost:8080/data2model/container/model> {
+          <@SUBJECT@> a ?t.
           ?s ?p ?o
           BIND (replace(str(?s),"(^.*[/|#])([^(/|#)]+)$","$1") as ?ns_label)
           BIND (replace(str(?s),"(^.*[/|#])([^(/|#)]+)$","$2") as ?s_label)

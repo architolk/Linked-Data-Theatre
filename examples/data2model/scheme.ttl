@@ -91,8 +91,12 @@ stage:WebScheme_tree a elmo:Part;
       ?kader rdfs:label ?klabel.
       ?kader rdf:value ?kcount.
       ?begrip skos:broader ?parent.
+      ?parent rdfs:label ?plabel.
     }
     WHERE {
+      GRAPH <http://localhost:8080/data2model/container/scheme> {
+        <@SUBJECT@> a ?t.
+      }
       GRAPH <http://localhost:8080/data2model/container/scheme> {
         {
           select ?kader ?klabel (count(?cpt) as ?kcount)
@@ -111,8 +115,11 @@ stage:WebScheme_tree a elmo:Part;
             ?begrip a skos:Concept.
             ?begrip rdfs:label ?blabel.
             FILTER NOT EXISTS {
-              ?begrip ?p ?o.
-              FILTER (?p = skos:inScheme || ?p = skos:broader)
+              ?begrip skos:inScheme ?o.
+            }
+            FILTER NOT EXISTS {
+              ?begrip skos:broader ?parent.
+              ?parent a skos:Concept.
             }
           }
         }
@@ -132,6 +139,7 @@ stage:WebScheme_tree a elmo:Part;
           ?begrip rdfs:label ?blabel.
           ?begrip skos:broader ?parent.
           ?parent a skos:Concept.
+          ?parent rdfs:label ?plabel.
         }
       }
     }

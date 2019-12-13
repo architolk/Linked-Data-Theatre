@@ -12,7 +12,22 @@ localupdatestage:model2mim a elmo:Production;
   elmo:contains stage:model2mim_scene000;
   elmo:contains stage:model2mim_scene001;
   elmo:contains stage:model2mim_scene002;
+  elmo:contains stage:model2mim_scene003;
+  elmo:contains stage:model2mim_scene004;
+  elmo:contains stage:model2mim_scene005;
+  elmo:contains stage:model2mim_scene099;
+  elmo:contains stage:model2mim_scene100;
   elmo:contains stage:model2mim_scene101;
+  elmo:contains stage:model2mim_scene102;
+  elmo:contains stage:model2mim_scene103;
+  elmo:contains stage:model2mim_scene104;
+  elmo:contains stage:model2mim_scene105;
+  elmo:contains stage:model2mim_scene106;
+  elmo:contains stage:model2mim_scene107;
+  elmo:contains stage:model2mim_scene108;
+  elmo:contains stage:model2mim_scene109;
+  elmo:contains stage:model2mim_scene112;
+  elmo:contains stage:model2mim_scene199;
 .
 
 stage:model2mim_scene000 a elmo:Scene;
@@ -37,9 +52,10 @@ stage:model2mim_scene001 a elmo:Scene;
   }
   WHERE {
     GRAPH <http://localhost:8080/data2model/container/model> {
-      SELECT (iri(concat(strbefore(str(?nodeshape),"#"),"-mim#",strafter(str(?nodeshape),"#"))) as ?objecttype) ?nodeshape
+      SELECT (iri(replace(str(?nodeshape),"[#|/]([a-zA-Z0-9_-]+$)","-mim#$1")) as ?objecttype) ?nodeshape
       WHERE {
         ?nodeshape a sh:NodeShape.
+        ?nodeshape sh:targetClass ?class.
         FILTER isIRI(?nodeshape)
       }
     }
@@ -69,26 +85,216 @@ stage:model2mim_scene002 a elmo:Scene;
     }
     GRAPH <http://localhost:8080/data2model/container/model> {
       {
-        select (iri(concat(strbefore(str(?propertyshape),"#"),"-mim#",strafter(str(?propertyshape),"#"))) as ?attribuutsoort) ?shape ?propertyshape
+        select (iri(replace(str(?propertyshape),"[#|/]([a-zA-Z0-9_-]+$)","-mim#$1")) as ?attribuutsoort) ?shape ?propertyshape
         where {
           ?shape a sh:NodeShape.
           ?shape sh:property ?propertyshape.
+          ?propertyshape ?link ?datatype.
           FILTER isIRI(?propertyshape)
+          FILTER (?link = sh:datatype || ?link = sh:node)
         }
       }
       UNION
       {
-        select (iri(concat(strbefore(str(?shape),"#"),"-mim#",strafter(str(?shape),"#"),".",?pname)) as ?attribuutsoort) ?shape ?propertyshape
+        select (iri(concat(replace(str(?shape),"[#|/]([a-zA-Z0-9_-]+$)","-mim#$1"),".",?pname)) as ?attribuutsoort) ?shape ?propertyshape
         where {
           ?shape a sh:NodeShape.
           ?shape sh:property ?propertyshape.
+          ?propertyshape ?link ?datatype.
           ?propertyshape sh:name ?pname.
           FILTER isBlank(?propertyshape)
+          FILTER (?link = sh:datatype || ?link = sh:node)
         }
       }
     }
   }
   '''
+.
+
+stage:model2mim_scene003 a elmo:Scene;
+  elmo:index "003";
+  rdfs:label "Add Relatiesoort";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?relatiesoort a mim:Relatiesoort.
+        ?relatiesoort rdfs:seeAlso ?propertyshape.
+        ?relatiesoort mim:bron ?objecttype.
+      }
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?objecttype a mim:Objecttype.
+        ?objecttype rdfs:seeAlso ?shape
+      }
+      GRAPH <http://localhost:8080/data2model/container/model> {
+        {
+          select (iri(replace(str(?propertyshape),"[#|/]([a-zA-Z0-9_-]+$)","-mim#$1")) as ?relatiesoort) ?shape ?propertyshape
+          where {
+            ?shape a sh:NodeShape.
+            ?shape sh:property ?propertyshape.
+            ?propertyshape sh:class ?class.
+            FILTER isIRI(?propertyshape)
+          }
+        }
+        UNION
+        {
+          select (iri(concat(replace(str(?shape),"[#|/]([a-zA-Z0-9_-]+$)","-mim#$1"),".",?pname)) as ?relatiesoort) ?shape ?propertyshape
+          where {
+            ?shape a sh:NodeShape.
+            ?shape sh:property ?propertyshape.
+            ?propertyshape sh:class ?class.
+            ?propertyshape sh:name ?pname.
+            FILTER isBlank(?propertyshape)
+          }
+        }
+      }
+    }
+  ''';
+.
+
+stage:model2mim_scene004 a elmo:Scene;
+  elmo:index "004";
+  rdfs:label "Add mim:GestructureerdDatatype";
+  elmo:query '''
+  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+  PREFIX owl: <http://www.w3.org/2002/07/owl#>
+  PREFIX sh: <http://www.w3.org/ns/shacl#>
+  PREFIX mim: <http://bp4mc2.org/def/mim#>
+  INSERT {
+    GRAPH <http://localhost:8080/data2model/container/mim> {
+      ?datatype a mim:GestructureerdDatatype.
+      ?datatype rdfs:seeAlso ?nodeshape.
+    }
+  }
+  WHERE {
+    GRAPH <http://localhost:8080/data2model/container/model> {
+      SELECT (iri(replace(str(?nodeshape),"[#|/]([a-zA-Z0-9_-]+$)","-mim#$1")) as ?datatype) ?nodeshape
+      WHERE {
+        ?nodeshape a sh:NodeShape.
+        FILTER NOT EXISTS {?nodeshape sh:targetClass ?class}
+        FILTER NOT EXISTS {
+          ?nodeshape sh:property ?schemeproperty.
+          ?schemeproperty sh:path skos:inScheme.
+          ?schemeproperty sh:hasValue ?scheme.
+        }
+        FILTER NOT EXISTS {
+          ?nodeshape sh:property ?collectionproperty.
+          ?collectionproperty sh:path/sh:inversePath skos:member.
+          ?collectionproperty sh:hasValue ?collection.
+        }
+        FILTER isIRI(?nodeshape)
+      }
+    }
+  }
+  '''
+.
+
+stage:model2mim_scene005 a elmo:Scene;
+  elmo:index "005";
+  rdfs:label "Add mim:Referentielijst";
+  elmo:query '''
+  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+  PREFIX owl: <http://www.w3.org/2002/07/owl#>
+  PREFIX sh: <http://www.w3.org/ns/shacl#>
+  PREFIX mim: <http://bp4mc2.org/def/mim#>
+  INSERT {
+    GRAPH <http://localhost:8080/data2model/container/mim> {
+      ?referentielijst a mim:Referentielijst.
+      ?referentielijst rdfs:seeAlso ?nodeshape.
+    }
+  }
+  WHERE {
+    GRAPH <http://localhost:8080/data2model/container/model> {
+      {
+        SELECT (iri(replace(str(?nodeshape),"[#|/]([a-zA-Z0-9_-]+$)","-mim#$1")) as ?referentielijst) ?nodeshape
+        WHERE {
+          ?nodeshape a sh:NodeShape.
+          FILTER NOT EXISTS {?nodeshape sh:targetClass ?class}
+          ?nodeshape sh:property ?schemeproperty.
+          ?schemeproperty sh:path skos:inScheme.
+          ?schemeproperty sh:hasValue ?scheme.
+          FILTER isIRI(?nodeshape)
+        }
+      }
+      UNION
+      {
+        SELECT (iri(replace(str(?nodeshape),"[#|/]([a-zA-Z0-9_-]+$)","-mim#$1")) as ?referentielijst) ?nodeshape
+        WHERE {
+          ?nodeshape a sh:NodeShape.
+          FILTER NOT EXISTS {?nodeshape sh:targetClass ?class}
+          ?nodeshape sh:property ?collectionproperty.
+          ?collectionproperty sh:path/sh:inversePath skos:member.
+          ?collectionproperty sh:hasValue ?collection.
+          FILTER isIRI(?nodeshape)
+        }
+      }
+    }
+  }
+  '''
+.
+
+stage:model2mim_scene099 a elmo:Scene;
+  elmo:index "006";
+  rdfs:label "Add mim:Generalisatie";
+  elmo:query '''
+  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+  PREFIX owl: <http://www.w3.org/2002/07/owl#>
+  PREFIX sh: <http://www.w3.org/ns/shacl#>
+  PREFIX mim: <http://bp4mc2.org/def/mim#>
+  INSERT {
+    GRAPH <http://localhost:8080/data2model/container/mim> {
+      ?generalisatie a mim:Generalisatie.
+      ?generalisatie mim:subtype ?subtype.
+      ?generalisatie mim:supertype ?supertype.
+    }
+  }
+  WHERE {
+    GRAPH <http://localhost:8080/data2model/container/model> {
+      SELECT (iri(concat(replace(str(?subject),"[#|/]([a-zA-Z0-9_-]+$)","-mim#$1"),"---",replace(str(?object),"^.*[#|/]([a-zA-Z0-9_-]+$)","$1"))) as ?generalisatie) ?subject ?subshape ?objshape
+      WHERE {
+        ?subject rdfs:subClassOf ?object.
+        ?subshape sh:targetClass ?subject.
+        ?objshape sh:targetClass ?object.
+      }
+    }
+    GRAPH <http://localhost:8080/data2model/container/mim> {
+      ?subtype rdfs:seeAlso ?subshape.
+      ?supertype rdfs:seeAlso ?objshape.
+    }
+  }
+  '''
+.
+
+stage:model2mim_scene100 a elmo:Scene;
+  elmo:index "100";
+  rdfs:label "Add default datatypes";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        mim:CharacterString rdfs:seeAlso xsd:string.
+        mim:Integer rdfs:seeAlso xsd:integer.
+        mim:Real rdfs:seeAlso xsd:decimal.
+        mim:Boolean rdfs:seeAlso xsd:boolean.
+        mim:Date rdfs:seeAlso xsd:date.
+        mim:DateTime rdfs:seeAlso xsd:dateTime.
+        mim:Year rdfs:seeAlso xsd:gYear.
+        mim:Day rdfs:seeAlso xsd:gDay.
+        mim:Month rdfs:seeAlso xsd:gMonth.
+        mim:URI rdfs:seeAlso xsd:AnyURI.
+      }
+    }
+    WHERE {}
+  ''';
 .
 
 stage:model2mim_scene101 a elmo:Scene;
@@ -115,7 +321,14 @@ stage:model2mim_scene101 a elmo:Scene;
         UNION
         {
           ?item sh:name ?naam
-          FILTER NOT EXISTS {?item rdfs:label ?naam}
+          FILTER NOT EXISTS {?item rdfs:label ?label}
+        }
+        UNION
+        {
+          ?item (sh:targetClass|sh:path) ?vocterm.
+          ?vocterm rdfs:label ?naam
+          FILTER NOT EXISTS {?item rdfs:label ?label}
+          FILTER NOT EXISTS {?item sh:name ?namelabel}
         }
       }
     }
@@ -145,9 +358,300 @@ stage:model2mim_scene102 a elmo:Scene;
         }
         UNION
         {
-          ?item sh:name ?naam.
+          ?item sh:name ?alias.
           ?item rdfs:label ?naam
         }
+      }
+    }
+  ''';
+.
+
+stage:model2mim_scene103 a elmo:Scene;
+  elmo:index "103";
+  rdfs:label "Add mim:begrip";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    PREFIX dct: <http://purl.org/dc/terms/>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?element mim:begrip ?begrip
+      }
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?element rdfs:seeAlso ?item
+      }
+      GRAPH <http://localhost:8080/data2model/container/model> {
+        {
+          ?item dct:subject ?begrip
+        }
+        UNION
+        {
+          ?item sh:targetClass ?class.
+          ?class dct:subject ?begrip
+        }
+      }
+    }
+  ''';
+.
+
+stage:model2mim_scene104 a elmo:Scene;
+  elmo:index "104";
+  rdfs:label "Add mim:definitie";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    PREFIX dct: <http://purl.org/dc/terms/>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?element mim:definitie ?definitie
+      }
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?element rdfs:seeAlso ?item
+      }
+      GRAPH <http://localhost:8080/data2model/container/model> {
+        {
+          ?item rdfs:comment ?definitie
+        }
+        UNION
+        {
+          ?item sh:targetClass ?class.
+          ?class rdfs:comment ?definitie
+        }
+      }
+    }
+  ''';
+.
+
+stage:model2mim_scene105 a elmo:Scene;
+  elmo:index "105";
+  rdfs:label "Add mim:kardinaliteit";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    PREFIX dct: <http://purl.org/dc/terms/>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?element mim:kardinaliteit ?kardinaliteit
+      }
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?element rdfs:seeAlso ?propertyshape
+      }
+      GRAPH <http://localhost:8080/data2model/container/model> {
+        select ?propertyshape (concat(if(bound(?min),str(?min),if(bound(?max),"0","")),if(bound(?max),if(bound(?min),if(?max=?min,"",concat("..",?max)),concat("..",?max)),if(bound(?min),"..*","*"))) as ?kardinaliteit)
+        where {
+          ?shape sh:property ?propertyshape.
+          OPTIONAL { ?propertyshape sh:minCount ?min }
+          OPTIONAL { ?propertyshape sh:maxCount ?max }
+        }
+      }
+    }
+  ''';
+.
+
+stage:model2mim_scene106 a elmo:Scene;
+  elmo:index "106";
+  rdfs:label "Add simple mim:type";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    PREFIX dct: <http://purl.org/dc/terms/>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?element mim:type ?type
+      }
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?element rdfs:seeAlso ?propertyshape.
+        ?type rdfs:seeAlso ?datatype.
+      }
+      GRAPH <http://localhost:8080/data2model/container/model> {
+        select ?propertyshape ?datatype
+        where {
+          ?propertyshape sh:datatype ?datatype.
+        }
+      }
+    }
+  ''';
+.
+
+stage:model2mim_scene107 a elmo:Scene;
+  elmo:index "107";
+  rdfs:label "Add complex mim:type";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    PREFIX dct: <http://purl.org/dc/terms/>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?element mim:type ?type
+      }
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?element rdfs:seeAlso ?propertyshape.
+        ?type rdfs:seeAlso ?datatype.
+      }
+      GRAPH <http://localhost:8080/data2model/container/model> {
+        select ?propertyshape ?datatype
+        where {
+          ?propertyshape sh:node ?datatype.
+          FILTER NOT EXISTS {
+            ?datatype sh:targetClass ?class
+          }
+        }
+      }
+    }
+  ''';
+.
+
+stage:model2mim_scene108 a elmo:Scene;
+  elmo:index "108";
+  rdfs:label "Add mim:lengte";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    PREFIX dct: <http://purl.org/dc/terms/>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?element mim:lengte ?lengte
+      }
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?element rdfs:seeAlso ?item.
+      }
+      GRAPH <http://localhost:8080/data2model/container/model> {
+        ?item sh:maxLength ?lengte.
+      }
+    }
+  ''';
+.
+
+stage:model2mim_scene109 a elmo:Scene;
+  elmo:index "109";
+  rdfs:label "Add mim:formeelPatroon";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    PREFIX dct: <http://purl.org/dc/terms/>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?element mim:formeelPatroon ?pattern
+      }
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?element rdfs:seeAlso ?item.
+      }
+      GRAPH <http://localhost:8080/data2model/container/model> {
+        ?item sh:pattern ?pattern.
+      }
+    }
+  ''';
+.
+
+stage:model2mim_scene110 a elmo:Scene;
+  elmo:index "110";
+  rdfs:label "Add mim:gegevensgroeptype";
+  rdfs:comment "Nog onduidelijk..";
+.
+
+stage:model2mim_scene111 a elmo:Scene;
+  elmo:index "111";
+  rdfs:label "Add mim:unidirectioneel";
+  rdfs:comment "Nog onduidelijk..";
+.
+
+#
+# mim:bron is al opgenomen bij het maken van mim:Relatiesoort
+#
+
+stage:model2mim_scene112 a elmo:Scene;
+  elmo:index "112";
+  rdfs:label "Add mim:doel";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    PREFIX dct: <http://purl.org/dc/terms/>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?element mim:doel ?doel
+      }
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?element rdfs:seeAlso ?propertyshape.
+        ?doel rdfs:seeAlso ?shape.
+      }
+      GRAPH <http://localhost:8080/data2model/container/model> {
+        ?propertyshape sh:class ?class.
+        ?shape sh:targetClass ?class.
+      }
+    }
+  ''';
+.
+
+stage:model2mim_scene199 a elmo:Scene;
+  elmo:index "199";
+  rdfs:label "Add mim specific properties";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?element ?mimproperty ?mimvalue
+      }
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?element rdfs:seeAlso ?item
+      }
+      GRAPH <http://localhost:8080/data2model/container/model> {
+        ?item ?mimproperty ?mimvalue
+        FILTER (?mimproperty = mim:begripsterm
+          ||  ?mimproperty = mim:toelichting
+          ||  ?mimproperty = mim:herkomst
+          ||  ?mimproperty = mim:herkomstDefinitie
+          ||  ?mimproperty = mim:datumOpname
+          ||  ?mimproperty = mim:authentiek
+          ||  ?mimproperty = mim:indicatieAfleidbaar
+          ||  ?mimproperty = mim:locatie
+          ||  ?mimproperty = mim:patroon
+          ||  ?mimproperty = mim:uniekeAanduiding
+          ||  ?mimproperty = mim:populatie
+          ||  ?mimproperty = mim:kwaliteit
+          ||  ?mimproperty = mim:indicatieAbstractObject
+          ||  ?mimproperty = mim:identificerend
+          ||  ?mimproperty = mim:aggregatietype
+          ||  ?mimproperty = mim:specificatieTekst
+          ||  ?mimproperty = mim:specificatieFormeel
+          ||  ?mimproperty = mim:constraint
+        )
       }
     }
   ''';

@@ -11,6 +11,7 @@ stage:Resource a elmo:Representation;
   elmo:contains stage:Menu;
   elmo:contains stage:Namespaces_tree;
   elmo:contains stage:WebScheme_tree;
+  elmo:contains stage:Resource_graph;
   elmo:index "1";
   elmo:query '''
     CONSTRUCT {
@@ -37,6 +38,47 @@ stage:Resource a elmo:Representation;
           }
         }
       }
+      UNION
+      {
+        GRAPH <http://localhost:8080/data2model/container/mim> {
+          <@SUBJECT@>?p?o
+          OPTIONAL {
+            ?o ?op ?oo
+            FILTER (isBlank(?o))
+          }
+        }
+      }
     }
   '''
+.
+
+stage:Resource_graph a elmo:Part;
+  elmo:appearance elmo:GraphAppearance;
+  elmo:query '''
+    PREFIX elmo: <http://bp4mc2.org/def/elmo#>
+    CONSTRUCT {
+      <@SUBJECT@> rdfs:label ?slabel.
+      <@SUBJECT@> ?p ?o.
+      ?o rdfs:label ?olabel.
+      ?o elmo:style elmo:Style. # Needed in case no label exists
+      ?sr ?pr <@SUBJECT@>.
+      ?sr rdfs:label ?srlabel.
+    }
+    WHERE {
+      {
+        <@SUBJECT@> rdfs:label ?slabel
+      }
+      UNION
+      {
+        <@SUBJECT@> ?p ?o
+        FILTER (isIRI(?o))
+        OPTIONAL {?o rdfs:label ?olabel}
+      }
+      UNION
+      {
+        ?sr ?pr <@SUBJECT@>
+        OPTIONAL {?sr rdfs:label ?srlabel}
+      }
+    }
+  ''';
 .
