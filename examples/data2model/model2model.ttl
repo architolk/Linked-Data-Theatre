@@ -117,8 +117,9 @@ stage:model2model_scene5 a elmo:Scene;
 				?shape sh:targetClass ?class
 				BIND (replace(str(?class),"^.*[/|#]([^(/|#)]+)$","$1") as ?name)
 				FILTER NOT EXISTS {
-					?someshape sh:targetClass ?someclass.
-					?someshape sh:name ?somename
+#					?someshape sh:targetClass ?someclass.
+#					?someshape sh:name ?somename
+					?shape sh:name ?somename
 				}
 			}
 		}
@@ -138,8 +139,9 @@ stage:model2model_scene6 a elmo:Scene;
 				?shape sh:path ?property
 				BIND (replace(str(?property),"^.*[/|#]([^(/|#)]+)$","$1") as ?name)
 				FILTER NOT EXISTS {
-					?someshape sh:path ?someproperty.
-					?someshape sh:name ?somename
+#					?someshape sh:path ?someproperty.
+#					?someshape sh:name ?somename
+					?shape sh:name ?somename
 				}
 			}
 		}

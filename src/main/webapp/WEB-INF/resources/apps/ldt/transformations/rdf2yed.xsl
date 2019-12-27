@@ -2,7 +2,7 @@
 
     NAME     rdf2yed.xsl
     VERSION  1.23.1-SNAPSHOT
-    DATE     2019-10-27
+    DATE     2019-12-27
 
     Copyright 2012-2019
 
@@ -61,83 +61,90 @@
 	</graphml>
 </xsl:template>
 
+<xsl:template match="*" mode ="yed-vocab-node">
+	<xsl:param name="geometry"/>
+
+	<xsl:variable name="slabel">
+		<xsl:choose>
+			<xsl:when test="@class-uri!=''"><xsl:value-of select="replace(@class-uri,'^.*(#|/)([^(#|/)]+)$','$2')"/></xsl:when>
+			<xsl:otherwise><xsl:value-of select="replace(@uri,'^.*(#|/)([^(#|/)]+)$','$2')"/></xsl:otherwise>
+		</xsl:choose>
+	</xsl:variable>
+	<xsl:variable name="label">
+		<xsl:value-of select="@name"/>
+		<xsl:if test="not(@name!='')">
+			<xsl:value-of select="$slabel"/>
+			<xsl:if test="$slabel=''">
+				<xsl:choose>
+					<xsl:when test="@class-uri!=''"><xsl:value-of select="@class-uri"/></xsl:when>
+					<xsl:otherwise><xsl:value-of select="@uri"/></xsl:otherwise>
+				</xsl:choose>
+			</xsl:if>
+		</xsl:if>
+	</xsl:variable>
+	<node id="{@uri}">
+		<data key="d3"><xsl:value-of select="@uri"/></data>
+		<data key="d6">
+			<y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
+				<xsl:variable name="enumerationcnt">
+					<xsl:choose>
+						<xsl:when test="exists(enumvalue|enumeration)"><xsl:value-of select="count(enumvalue|enumeration)+1"/></xsl:when>
+						<xsl:otherwise>0</xsl:otherwise>
+					</xsl:choose>
+				</xsl:variable>
+				<xsl:choose>
+					<xsl:when test="exists($geometry)">
+						<y:Geometry height="{$geometry/@height}" width="{$geometry/@width}" x="{$geometry/@x}" y="{$geometry/@y}"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<y:Geometry height="{40+13*($enumerationcnt+count(property[not(exists(refshape[@type='role']) or exists(ref-nodes/item) or exists(refshape[@empty='false']))]))}" width="200.0" x="0.5" y="0"/>
+					</xsl:otherwise>
+				</xsl:choose>
+				<y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
+				<y:BorderStyle color="#000000" type="line" width="1.0"/>
+				<y:NodeLabel alignment="center" autoSizePolicy="node_width" configuration="CroppingLabel" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" modelName="internal" modelPosition="t" textColor="#000000" visible="true" hasBackgroundColor="false">
+					<xsl:value-of select="$label"/>
+				</y:NodeLabel>
+				<y:NodeLabel alignment="left" autoSizePolicy="node_width" fontFamily="Dialog" fontSize="10" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" modelName="custom" textColor="#000000" visible="true">
+					<!--Properties-->
+					<xsl:for-each select="property[not(exists(refshape[@type='role']) or exists(ref-nodes/item) or exists(refshape[@empty='false']))]"><xsl:sort select="@order" data-type="number"/>
+						<xsl:if test="position()!=1"><xsl:text>
+</xsl:text></xsl:if><xsl:apply-templates select="." mode="property-placement"/>
+					</xsl:for-each>
+					<!--Enumerations-->
+					<xsl:for-each select="enumvalue">
+						<xsl:if test="position()=1">Possible values:</xsl:if><xsl:text>
+&#x221a; </xsl:text><xsl:value-of select="@name"/>
+					</xsl:for-each>
+					<xsl:for-each select="enumeration">
+						<xsl:if test="position()=1">Values from:</xsl:if><xsl:text>
+- </xsl:text><xsl:value-of select="@uri"/>
+					</xsl:for-each>
+					<y:LabelModel>
+						<y:ErdAttributesNodeLabelModel/>
+					</y:LabelModel>
+					<y:ModelParameter>
+						<y:ErdAttributesNodeLabelModelParameter/>
+					</y:ModelParameter>
+				</y:NodeLabel>
+				<y:StyleProperties>
+					<y:Property class="java.lang.Boolean" name="y.view.ShadowNodePainter.SHADOW_PAINTING" value="true"/>
+				</y:StyleProperties>
+			</y:GenericNode>
+		</data>
+	</node>
+</xsl:template>
+
 <xsl:template match="rdf:RDF" mode="yed-vocab">
 	<!-- Parse RDF graph and put result in vocabulary variable -->
 	<xsl:variable name="vocabulary"><xsl:apply-templates select="." mode="VocabularyVariable"/></xsl:variable>
 
-<!--<xsl:copy-of select="$vocabulary"/>-->
-
 	<!-- Nodes -->
 	<xsl:for-each select="$vocabulary/nodeShapes/shape[@empty!='true']">
-		<xsl:variable name="slabel">
-			<xsl:choose>
-				<xsl:when test="@class-uri!=''"><xsl:value-of select="replace(@class-uri,'^.*(#|/)([^(#|/)]+)$','$2')"/></xsl:when>
-				<xsl:otherwise><xsl:value-of select="replace(@uri,'^.*(#|/)([^(#|/)]+)$','$2')"/></xsl:otherwise>
-			</xsl:choose>
-		</xsl:variable>
-		<xsl:variable name="label">
-			<xsl:value-of select="@name"/>
-			<xsl:if test="not(@name!='')">
-				<xsl:value-of select="$slabel"/>
-				<xsl:if test="$slabel=''">
-					<xsl:choose>
-						<xsl:when test="@class-uri!=''"><xsl:value-of select="@class-uri"/></xsl:when>
-						<xsl:otherwise><xsl:value-of select="@uri"/></xsl:otherwise>
-					</xsl:choose>
-				</xsl:if>
-			</xsl:if>
-		</xsl:variable>
-		<node id="{@uri}">
-			<data key="d3"><xsl:value-of select="@uri"/></data>
-			<data key="d6">
-				<y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
-					<xsl:variable name="enumerationcnt">
-						<xsl:choose>
-							<xsl:when test="exists(enumvalue|enumeration)"><xsl:value-of select="count(enumvalue|enumeration)+1"/></xsl:when>
-							<xsl:otherwise>0</xsl:otherwise>
-						</xsl:choose>
-					</xsl:variable>
-					<xsl:choose>
-						<xsl:when test="exists(geometry)">
-							<y:Geometry height="{geometry/@height}" width="{geometry/@width}" x="{geometry/@x}" y="{geometry/@y}"/>
-						</xsl:when>
-						<xsl:otherwise>
-							<y:Geometry height="{40+13*($enumerationcnt+count(property[not(exists(refshape[@type='role']) or exists(ref-nodes/item) or exists(refshape[@empty='false']))]))}" width="200.0" x="0.5" y="0"/>
-						</xsl:otherwise>
-					</xsl:choose>
-					<y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
-					<y:BorderStyle color="#000000" type="line" width="1.0"/>
-					<y:NodeLabel alignment="center" autoSizePolicy="node_width" configuration="CroppingLabel" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" modelName="internal" modelPosition="t" textColor="#000000" visible="true" hasBackgroundColor="false">
-						<xsl:value-of select="$label"/>
-					</y:NodeLabel>
-					<y:NodeLabel alignment="left" autoSizePolicy="node_width" fontFamily="Dialog" fontSize="10" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" modelName="custom" textColor="#000000" visible="true">
-						<!--Properties-->
-						<xsl:for-each select="property[not(exists(refshape[@type='role']) or exists(ref-nodes/item) or exists(refshape[@empty='false']))]"><xsl:sort select="@order" data-type="number"/>
-							<xsl:if test="position()!=1"><xsl:text>
-</xsl:text></xsl:if><xsl:apply-templates select="." mode="property-placement"/>
-						</xsl:for-each>
-						<!--Enumerations-->
-						<xsl:for-each select="enumvalue">
-							<xsl:if test="position()=1">Possible values:</xsl:if><xsl:text>
-&#x221a; </xsl:text><xsl:value-of select="@name"/>
-						</xsl:for-each>
-						<xsl:for-each select="enumeration">
-							<xsl:if test="position()=1">Values from:</xsl:if><xsl:text>
-- </xsl:text><xsl:value-of select="@uri"/>
-						</xsl:for-each>
-						<y:LabelModel>
-							<y:ErdAttributesNodeLabelModel/>
-						</y:LabelModel>
-						<y:ModelParameter>
-							<y:ErdAttributesNodeLabelModelParameter/>
-						</y:ModelParameter>
-					</y:NodeLabel>
-					<y:StyleProperties>
-						<y:Property class="java.lang.Boolean" name="y.view.ShadowNodePainter.SHADOW_PAINTING" value="true"/>
-					</y:StyleProperties>
-				</y:GenericNode>
-			</data>
-		</node>
+		<xsl:variable name="resource" select="."/>
+		<xsl:apply-templates select="$resource" mode="yed-vocab-node">
+			<xsl:with-param name="geometry" select="geometry[1]"/>
+		</xsl:apply-templates>
 	</xsl:for-each>
 	<!-- Logic nodes, with edges -->
 	<xsl:for-each select="$vocabulary/nodeShapes/shape/property/ref-nodes">
@@ -281,12 +288,22 @@
 	<xsl:for-each select="$vocabulary/nodeShapes/shape[@class-uri!='' and @empty!='true']">
 		<xsl:variable name="source" select="@uri"/>
 		<xsl:variable name="class" select="@class-uri"/>
+		<xsl:variable name="supershape" select="supershape"/>
 		<xsl:for-each select="$vocabulary/classes/class[@uri=$class]/super">
 			<xsl:variable name="super" select="@uri"/>
 			<xsl:for-each select="$vocabulary/nodeShapes/shape[@class-uri=$super and @empty!='true']">
 				<edge source="{$source}" target="{@uri}">
+					<data key="d90"><xsl:value-of select="$source"/></data>
+					<data key="d91"><xsl:value-of select="@uri"/></data>
 					<data key="d10">
 						<y:PolyLineEdge>
+							<xsl:for-each select="$supershape/path">
+								<y:Path sx="{@sx}" sy="{@sy}" tx="{@tx}" ty="{@ty}">
+									<xsl:for-each select="point">
+										<y:Point x="{@x}" y="{@y}"/>
+									</xsl:for-each>
+								</y:Path>
+							</xsl:for-each>
 							<y:LineStyle color="#000000" type="line" width="1.0"/>
 							<y:Arrows source="none" target="white_delta"/>
 							<!--

@@ -2,7 +2,7 @@
 
     NAME     ModelTemplates.xsl
     VERSION  1.23.1-SNAPSHOT
-    DATE     2018-11-11
+    DATE     2019-12-27
 
     Copyright 2012-2018
 
@@ -373,8 +373,8 @@
 					<xsl:variable name="refnode" select="@rdf:nodeID|@rdf:resource"/>
 					<xsl:choose>
 						<!-- Logical expression with regard to nodes -->
-						<xsl:when test="exists(../../rdf:Description[@rdf:nodeID=$refnode]/sh:xone)">
-							<xsl:for-each select="../../rdf:Description[@rdf:nodeID=$refnode]/sh:xone">
+						<xsl:when test="exists(../../rdf:Description[@rdf:nodeID=$refnode]/(sh:xone|sh:or))">
+							<xsl:for-each select="../../rdf:Description[@rdf:nodeID=$refnode]/(sh:xone|sh:or)">
 								<xsl:variable name="logicuri" select="concat($predicate,'?shape=',encode-for-uri($property-shape-uri),'&amp;logic=',local-name())"/>
 								<ref-nodes uri="{$logicuri}" logic="{local-name()}">
 									<xsl:variable name="list" select="@rdf:nodeID"/>
@@ -503,6 +503,16 @@
 						<xsl:otherwise>true</xsl:otherwise>
 					</xsl:choose>
 				</xsl:attribute>
+				<!-- superclass refnodes -->
+				<xsl:for-each select="../rdf:Description[@rdf:about=$class]/rdfs:subClassOf">
+					<xsl:variable name="superclass" select="@rdf:resource"/>
+					<xsl:for-each select="../../rdf:Description[sh:targetClass/@rdf:resource=$superclass and @rdf:about!='']">
+						<xsl:variable name="supershape" select="@rdf:about"/>
+						<supershape uri="{$supershape}">
+							<xsl:copy-of select="$all-metadata/geometry[@subject=$shape and @predicate='' and @object=$supershape]/*"/>
+						</supershape>
+					</xsl:for-each>
+				</xsl:for-each>
 				<!-- Check if the shape is actually a enumeration -->
 				<xsl:variable name="predicate">
 					<xsl:for-each select="current-group()/sh:property">
