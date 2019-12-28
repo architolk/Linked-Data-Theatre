@@ -2,7 +2,7 @@
 
     NAME     rdf2yed.xsl
     VERSION  1.23.1-SNAPSHOT
-    DATE     2019-12-27
+    DATE     2019-12-28
 
     Copyright 2012-2019
 
@@ -63,6 +63,7 @@
 
 <xsl:template match="*" mode ="yed-vocab-node">
 	<xsl:param name="geometry"/>
+	<xsl:param name="uripostfix"/>
 
 	<xsl:variable name="slabel">
 		<xsl:choose>
@@ -82,7 +83,7 @@
 			</xsl:if>
 		</xsl:if>
 	</xsl:variable>
-	<node id="{@uri}">
+	<node id="{@uri}{$uripostfix}">
 		<data key="d3"><xsl:value-of select="@uri"/></data>
 		<data key="d6">
 			<y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
@@ -145,6 +146,12 @@
 		<xsl:apply-templates select="$resource" mode="yed-vocab-node">
 			<xsl:with-param name="geometry" select="geometry[1]"/>
 		</xsl:apply-templates>
+		<xsl:for-each select="geometry[position()!=1]">
+			<xsl:apply-templates select="$resource" mode="yed-vocab-node">
+				<xsl:with-param name="uripostfix">___<xsl:value-of select="position()"/></xsl:with-param>
+				<xsl:with-param name="geometry" select="."/>
+			</xsl:apply-templates>
+		</xsl:for-each>
 	</xsl:for-each>
 	<!-- Logic nodes, with edges -->
 	<xsl:for-each select="$vocabulary/nodeShapes/shape/property/ref-nodes">
@@ -441,7 +448,7 @@
 		</xsl:apply-templates>
 		<xsl:for-each select="yed:geometry[position()!=1]">
 			<xsl:apply-templates select="$resource" mode="yed-default-node">
-				<xsl:with-param name="uripostfix" select="position()"/>
+				<xsl:with-param name="uripostfix">___<xsl:value-of select="position()"/></xsl:with-param>
 				<xsl:with-param name="geometry" select="key('blanks',@rdf:nodeID)"/>
 			</xsl:apply-templates>
 		</xsl:for-each>
