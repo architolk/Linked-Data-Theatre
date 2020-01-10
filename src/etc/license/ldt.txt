@@ -2,7 +2,7 @@ NAME     ${file.name}
 VERSION  ${file.version}
 DATE     ${file.date}
 
-Copyright 2012-2018
+Copyright 2012-2020
 
 This file is part of the Linked Data Theatre.
 
