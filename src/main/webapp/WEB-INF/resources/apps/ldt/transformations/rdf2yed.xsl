@@ -1,10 +1,10 @@
 <!--
 
     NAME     rdf2yed.xsl
-    VERSION  1.23.1-SNAPSHOT
-    DATE     2019-12-28
+    VERSION  1.24.0
+    DATE     2020-01-10
 
-    Copyright 2012-2019
+    Copyright 2012-2020
 
     This file is part of the Linked Data Theatre.
 
