@@ -1,5 +1,5 @@
 # Linked Data Theatre
-The Linked Data Theatre (LDT) is a platform for an optimal presentation of Linked Data
+The Linked Data Theatre (LDT) is a platform for an optimal presentation of Linked Data.
 
 ### Installation and usage
 The easiest way to use the LDT is to install the latest release in a Tomcat container, by following the instructions in [DEPLOY.md](docs/DEPLOY.md):
