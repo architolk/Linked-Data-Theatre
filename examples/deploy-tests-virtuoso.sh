@@ -15,3 +15,4 @@ do
 done
 echo Site check
 curl -X PUT -T "SiteWelcome.ttl" "http://localhost:8890/sparql-graph-crud?graph-uri=http://localhost:8080/stagename/substagename/stage"
+curl -X PUT -T "SiteWelcome.ttl" "http://localhost:8890/sparql-graph-crud?graph-uri=http://localhost:8888/stagename/substagename/stage"

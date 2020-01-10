@@ -6,6 +6,6 @@
 	,"rdf:type":{"@type":"@id"}
 	}
 ,"@id":"http://example.org#testcase1"
-,"rdf:type": "http://example.org#Testcase"
+,"@type": "http://example.org#Testcase"
 ,"rdfs:label": "Testcase 1"
 }

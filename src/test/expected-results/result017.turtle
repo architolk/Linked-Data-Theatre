@@ -27,6 +27,6 @@ n2:Utrecht a ns3:City;
     rdfs:label "Utrecht"^^xsd:string
 .
 ns4:capitalCity rdfs:comment "De hoofdstad van een land"@nl;
-    rdfs:label "hoofdstad"@nl;
-    rdfs:label "capital city"@en
+    rdfs:label "capital city"@en;
+    rdfs:label "hoofdstad"@nl
 .

@@ -9,12 +9,11 @@
 	,"rdf:type":{"@type":"@id"}
 	,"dbpprop:east":{"@type":"@id"}
 	,"ns3:isPartOf":{"@type":"@id"}
-	,"rdf:rest":{"@type":"@id"}
 	}
 ,"graph":
 [
     {"id":"http://dbpedia.org/resource/Amersfoort"
-    ,"rdf:type": "http://dbpedia.org/ontology/City"
+,"@type": "http://dbpedia.org/ontology/City"
     ,"rdfs:label": "Amersfoort"
     ,"dbpprop:east": "http://dbpedia.org/resource/Amsterdam"
     ,"ns3:abstract": "Amersfoort is een stad en gemeente in het oosten van de Nederlandse provincie Utrecht.\nHet is in bevolkingsaantal de tweede stad van de provincie Utrecht en de veertiende van Nederland. Amersfoort is een groeistad en vervult economisch een regiofunctie met een sterk gegroeid bedrijfsleven, heeft een van de grootste spoorwegknooppunten van Nederland en is een belangrijke garnizoensstad. De binnenstad bezit een middeleeuws karakter met grachten"
@@ -77,18 +76,18 @@
        }
     },
     {"id":"http://dbpedia.org/resource/Amsterdam"
-    ,"rdf:type": "http://dbpedia.org/ontology/City"
+,"@type": "http://dbpedia.org/ontology/City"
     ,"rdfs:label": "Amsterdam"
     ,"ns4:capitalCity": true
     },
     {"id":"http://dbpedia.org/resource/Utrecht"
-    ,"rdf:type": "http://dbpedia.org/ontology/City"
+,"@type": "http://dbpedia.org/ontology/City"
     ,"rdfs:label": "Utrecht"
     ,"ns3:isPartOf": "http://dbpedia.org/resource/Utrecht_(province)"
     ,"ns4:capitalCity": false
     },
     {"id":"http://localhost:8080/def/test#capitalCity"
-    ,"rdfs:label": ["hoofdstad","capital city"]
+    ,"rdfs:label": ["capital city","hoofdstad"]
     ,"rdfs:comment": "De hoofdstad van een land"
     }
 ]
