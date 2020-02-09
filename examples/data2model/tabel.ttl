@@ -208,3 +208,21 @@ stage:TabelScheme a elmo:Representation;
     ORDER BY ?type ?term ?subject
   '''
 .
+
+stage:TabelShape a elmo:Representation;
+  elmo:url-pattern "/query/tabelshape$";
+  elmo:contains stage:Menu;
+  elmo:query '''
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    PREFIX dct: <http://purl.org/dc/terms/>
+    PREFIX localcontainer: <http://localhost:8080/data2model/container/>
+    SELECT *
+    WHERE {
+      GRAPH localcontainer:model {
+        ?shape a sh:NodeShape.
+        ?shape sh:name ?name.
+        ?shape sh:targetClass ?class.
+      }
+    }
+  '''
+.

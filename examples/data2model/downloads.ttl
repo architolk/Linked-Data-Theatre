@@ -17,7 +17,8 @@ stage:Downloads a elmo:Representation;
       <div>
         <ul>
           <li><a href="query/model">Het model in een webpagina</a></li>
-          <li><a href="query/tabel">Het model in een tabel</a></li>
+          <li><a href="query/tabel">Het model in een tabel (eenvoudig)</a></li>
+          <li><a href="query/tabelshape">Het model en shape in een tabel (samengesteld)</a></li>
           <li><a href="query/tabelscheme">Het model en scheme in een tabel</a></li>
           <li><a href="query/model.ttl">SHACL turtle specificatie</a></li>
           <li><a href="query/model.yed">Grafische weergave (technische namen)</a></li>
