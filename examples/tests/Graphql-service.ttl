@@ -1,0 +1,63 @@
+@prefix stage: <http://localhost:8080/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix shape: <http://localhost:8080/graphql-shape#>.
+@prefix sh: <http://www.w3.org/ns/shacl#>.
+@prefix graphql: <http://datashapes.org/graphql#>.
+
+# Query:
+#
+#{
+#  userOne(filter: { age: 18 }, sort: _ID_ASC) {
+#    name
+#    languages {
+#      language
+#      skill
+#    }
+#    contacts {
+#      email
+#    }
+#    gender
+#    age
+#    salaryDecimal
+#  }
+#}
+
+
+shape:Data a sh:NodeShape;
+  graphql:name "data";
+  sh:property [
+    graphql:name "userOne";
+    sh:node shape:User;
+  ];
+.
+shape:User a sh:NodeShape;
+  graphql:uriTemplate "http://example.org/id/user/{$name}";
+  sh:property [
+    graphql:name "name";
+    sh:path foaf:name;
+  ];
+  sh:property [
+    graphql:name "gender";
+    sh:path foaf:gender;
+  ];
+  sh:property [
+    graphql:name "age";
+    sh:path foaf:age;
+  ]
+.
+
+stage:GraphQLService a elmo:Representation;
+	elmo:url-pattern "/query/graphql-service$";
+	elmo:index "1";
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:NavbarSearchAppearance;
+  elmo:service "http://graphql-compose.herokuapp.com/user/";
+	elmo:accept "application/json";
+  elmo:content "application/json";
+  elmo:translator elmo:GraphQLTranslator;
+  elmo:shape shape:Data;
+  elmo:post '''{"query":" {  userOne(filter: { age: 18 }, sort: _ID_ASC) {    name    languages {      language      skill    }    contacts {      email    }    gender    age    salaryDecimal  } }      "}''';
+.

@@ -255,6 +255,8 @@
 										<xsl:otherwise>jsonld</xsl:otherwise>
 									</xsl:choose>
 								</output>
+								<xsl:if test="elmo:accept[1]!=''"><accept><xsl:value-of select="elmo:accept[1]"/></accept></xsl:if>
+								<xsl:if test="elmo:content[1]!=''"><content><xsl:value-of select="elmo:content[1]"/></content></xsl:if>
 								<xsl:if test="elmo:post[1]!=''"><body><xsl:value-of select="elmo:post[1]"/></body></xsl:if>
 								<xsl:if test="elmo:translator[1]/@rdf:resource!=''"><translator><xsl:value-of select="substring-after(elmo:translator[1]/@rdf:resource,'#')"/></translator></xsl:if>
 							</service>

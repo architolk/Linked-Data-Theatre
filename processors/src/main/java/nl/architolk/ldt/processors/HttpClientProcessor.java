@@ -57,6 +57,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.Header;
+import org.apache.http.HttpHeaders;
 
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.CredentialsProvider;
@@ -114,19 +115,19 @@ public class HttpClientProcessor extends SimpleProcessor {
 	//The ParseHandler is a ContentHandler that doesn't forward the startDocument and endDocument events.
 	//This means that it can be used to insert a parsed document into an existing XML element
 	protected static class ParseHandler implements ContentHandler {
-	
+
 		private ContentHandler myContentHandler;
 		private Logger myLogger;
-	
+
 		public ParseHandler(ContentHandler contentHandler) {
 			super();
 			this.myContentHandler = contentHandler;
 		}
-	
+
 		//Ignore startDocument and endDocument
 		public void startDocument() throws SAXException {};
 		public void endDocument() throws SAXException {};
-		
+
 		//Forward all other events to the real ContentHandler
 		public void startElement(String uri, String localname, String qName, Attributes attributes) throws SAXException {
 			myContentHandler.startElement(uri, localname, qName, attributes);
@@ -155,13 +156,13 @@ public class HttpClientProcessor extends SimpleProcessor {
 		public void skippedEntity(java.lang.String name) throws SAXException {
 			myContentHandler.skippedEntity(name);
 		}
-		
+
 	}
 
     private static final Logger logger = LoggerFactory.createLogger(HttpClientProcessor.class);
-	
+
 	private HttpClientContext httpContext = null;
-	
+
 	// NAMESPACE_URI should be added to the properties (as stated in http://wiki.orbeon.com/forms/doc/developer-guide/api-xpl-processor-api)
 	// Won't do this time: no validation of CONFIG
 	public static final String HTTP_CLIENT_PROCESSOR_CONFIG_NAMESPACE_URI = "http://ldt.architolk.nl/processors/http-client-processor-config";
@@ -176,20 +177,20 @@ public class HttpClientProcessor extends SimpleProcessor {
 
 		try {
 			CloseableHttpClient httpclient = HttpClientProperties.createHttpClient();
-			
+
 			try {
 				// Read content of config pipe
 				Document configDocument = readInputAsDOM4J(context, INPUT_CONFIG);
 				Node configNode = configDocument.selectSingleNode("//config");
 
 				URL theURL = new URL(configNode.valueOf("url"));
-				
+
 				if (configNode.valueOf("auth-method").equals("basic")) {
 					HttpHost targetHost = new HttpHost(theURL.getHost(),theURL.getPort(),theURL.getProtocol());
 					//Authentication support
 					CredentialsProvider credsProvider = new BasicCredentialsProvider();
 					credsProvider.setCredentials(
-						AuthScope.ANY, 
+						AuthScope.ANY,
 						new UsernamePasswordCredentials(configNode.valueOf("username"), configNode.valueOf("password"))
 					);
 					// logger.info("Credentials: "+configNode.valueOf("username")+"/"+configNode.valueOf("password"));
@@ -211,11 +212,21 @@ public class HttpClientProcessor extends SimpleProcessor {
 					CloseableHttpResponse httpResponse = httpclient.execute(authpost);
 					// logger.info("Signin response:"+Integer.toString(httpResponse.getStatusLine().getStatusCode()));
 				}
-				
+
 				CloseableHttpResponse response;
 				if (configNode.valueOf("method").equals("post")) {
 					// POST
 					HttpPost httpRequest = new HttpPost(configNode.valueOf("url"));
+					String acceptHeader = configNode.valueOf("accept");
+					if (!acceptHeader.isEmpty()) {
+						httpRequest.addHeader(HttpHeaders.ACCEPT,acceptHeader);
+						logger.info("Accept: " + acceptHeader);
+					}
+					String contentHeader = configNode.valueOf("content");
+					if (!contentHeader.isEmpty()) {
+						httpRequest.addHeader(HttpHeaders.CONTENT_TYPE,contentHeader);
+						logger.info("Content: " + contentHeader);
+					}
 					setBody(httpRequest,context,configNode);
 					response = executeRequest(httpRequest, httpclient);
 				} else if (configNode.valueOf("method").equals("put")) {
@@ -240,7 +251,7 @@ public class HttpClientProcessor extends SimpleProcessor {
 					HttpGet httpRequest = new HttpGet(configNode.valueOf("url"));
 					String acceptHeader = configNode.valueOf("accept");
 					if (!acceptHeader.isEmpty()) {
-						httpRequest.addHeader("accept",configNode.valueOf("accept"));
+						httpRequest.addHeader(HttpHeaders.ACCEPT,acceptHeader);
 					}
 					//Add proxy route if needed
 					HttpClientProperties.setProxy(httpRequest,theURL.getHost());
@@ -249,7 +260,7 @@ public class HttpClientProcessor extends SimpleProcessor {
 
 				try {
 					contentHandler.startDocument();
-					
+
 					int status = response.getStatusLine().getStatusCode();
 					AttributesImpl statusAttr = new AttributesImpl();
 					statusAttr.addAttribute("", "status", "status", "CDATA", Integer.toString(status));
@@ -261,7 +272,7 @@ public class HttpClientProcessor extends SimpleProcessor {
 							//logger.info("Contenttype: " + contentType.getValue());
 							//Read content into inputstream
 							InputStream inStream = entity.getContent();
-							
+
 							// output-type = json means: response is json, convert to xml
 							if (configNode.valueOf("output-type").equals("json")) {
 								//TODO: net.sf.json.JSONObject might nog be the correct JSONObject. javax.json.JsonObject might be better!!!
@@ -284,7 +295,7 @@ public class HttpClientProcessor extends SimpleProcessor {
 								try {
 									Object jsonObject = JsonUtils.fromInputStream(inStream,"UTF-8"); //TODO: UTF-8 should be read from response!
 									Object nquads = JsonLdProcessor.toRDF(jsonObject,new NQuadTripleCallback());
-									
+
 									Any23 runner = new Any23();
 									DocumentSource source = new StringDocumentSource((String)nquads,configNode.valueOf("url"));
 									ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -305,7 +316,7 @@ public class HttpClientProcessor extends SimpleProcessor {
 							} else if (configNode.valueOf("output-type").equals("rdf")) {
 								try {
 									Any23 runner = new Any23();
-									
+
 									DocumentSource source;
 									//If contentType = text/html than convert from html to xhtml to handle non-xml style html!
 									logger.info("Contenttype: " + contentType.getValue());
@@ -322,7 +333,7 @@ public class HttpClientProcessor extends SimpleProcessor {
 									} else {
 										source = new ByteArrayDocumentSource(inStream,configNode.valueOf("url"),contentType.getValue());
 									}
-									
+
 									ByteArrayOutputStream out = new ByteArrayOutputStream();
 									TripleHandler handler = new RDFXMLWriter(out);
 									try {
@@ -346,7 +357,7 @@ public class HttpClientProcessor extends SimpleProcessor {
 						}
 					}
 					contentHandler.endElement("", "response", "response");
-						
+
 					contentHandler.endDocument();
 				} finally {
 					response.close();
@@ -359,7 +370,7 @@ public class HttpClientProcessor extends SimpleProcessor {
 		}
 
 	}
-    
+
     private CloseableHttpResponse executeRequest(HttpRequestBase httpRequest, CloseableHttpClient httpclient) throws ClientProtocolException, IOException {
     	logger.info("Executing request " + httpRequest.getRequestLine());
 		if (httpContext!=null) {
@@ -369,7 +380,7 @@ public class HttpClientProcessor extends SimpleProcessor {
 			return httpclient.execute(httpRequest);
 		}
     }
-    
+
 	private void setBody(HttpEntityEnclosingRequestBase httpRequest, PipelineContext context, Node configNode) throws IOException {
 		Document dataDocument = readInputAsDOM4J(context, INPUT_DATA);
 		if (configNode.valueOf("input-type").equals("form")) {
@@ -393,9 +404,10 @@ public class HttpClientProcessor extends SimpleProcessor {
 				jsonstr = dataDocument.getRootElement().getText();
 			}
 			httpRequest.setEntity(new StringEntity(jsonstr));
+			logger.info("Body: " + jsonstr);
 		}
 	}
-	
+
 	private void parseJSONObject(ContentHandler contentHandler, JSONObject json) throws SAXException {
 		Object[] names = json.names().toArray();
 		for( int i = 0; i < names.length; i++ ){
@@ -403,7 +415,7 @@ public class HttpClientProcessor extends SimpleProcessor {
 			Object value = json.get(name);
 			String safeName = name.replace('@','_');
 			contentHandler.startElement("", safeName, safeName, new AttributesImpl());
-			
+
 			if ( value instanceof JSONObject ) {
 				parseJSONObject(contentHandler, (JSONObject)value);
 			} else if ( value instanceof JSONArray ) {
@@ -427,11 +439,11 @@ public class HttpClientProcessor extends SimpleProcessor {
 				String textValue = String.valueOf(value);
 				contentHandler.characters(textValue.toCharArray(),0,textValue.length());
 			}
-			
+
 			contentHandler.endElement("", safeName, safeName);
 		}
 	}
-	
+
 	private void populateJSONArray(JSONArray root, Element element) {
 		//At this moment, only simple arrays are possible, not arrays that contain arrays or objects
 		Attribute typeAttr = element.attribute("type");
@@ -449,7 +461,7 @@ public class HttpClientProcessor extends SimpleProcessor {
 			root.add(element.getText());
 		}
 	}
-	
+
 	private void populateJSONObject(JSONObject root, Element element) {
 		Attribute typeAttr = element.attribute("type");
 		String nodeType = (typeAttr!=null) ? typeAttr.getValue() : "";
@@ -487,7 +499,7 @@ public class HttpClientProcessor extends SimpleProcessor {
 			root.put(element.getQName().getName(),json);
 		}
 	}
-	
+
 	private void populateJSONObject(JSONObject root, Document document) {
 		Element rootElement = document.getRootElement();
 		populateJSONObject(root,rootElement);

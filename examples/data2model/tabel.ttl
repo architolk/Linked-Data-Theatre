@@ -212,6 +212,11 @@ stage:TabelScheme a elmo:Representation;
 stage:TabelShape a elmo:Representation;
   elmo:url-pattern "/query/tabelshape$";
   elmo:contains stage:Menu;
+  elmo:contains stage:TabelShape_items;
+  elmo:contains stage:TabelShape_groups;
+.
+stage:TabelShape_items a elmo:Part;
+  elmo:index "1";
   elmo:query '''
     PREFIX sh: <http://www.w3.org/ns/shacl#>
     PREFIX dct: <http://purl.org/dc/terms/>
@@ -219,10 +224,63 @@ stage:TabelShape a elmo:Representation;
     SELECT *
     WHERE {
       GRAPH localcontainer:model {
-        ?shape a sh:NodeShape.
-        ?shape sh:name ?name.
-        ?shape sh:targetClass ?class.
+        {
+          ?shape a ?type.
+          FILTER (?type = sh:NodeShape)
+          ?shape sh:name ?name.
+          ?shape sh:targetClass ?vocterm.
+          OPTIONAL {
+            ?vocterm a ?voctype
+          }
+        }
+        UNION
+        {
+          ?shape a ?type
+          FILTER (?type = sh:PropertyShape)
+          ?shape sh:name ?name.
+          ?shape sh:path ?vocterm.
+          OPTIONAL {
+            ?vocterm a ?voctype
+          }
+        }
+        UNION
+        {
+          ?vocterm a ?voctype
+          FILTER (?voctype = owl:Class || ?voctype = owl:DatatypeProperty || ?voctype = owl:ObjectProperty)
+          FILTER NOT EXISTS {
+            ?noshape ?rel ?vocterm.
+            FILTER (?rel = sh:targetClass || ?rel = sh:path)
+          }
+        }
       }
     }
+  '''
+.
+stage:TabelShape_groups a elmo:Part;
+  elmo:index "2";
+  elmo:query '''
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    PREFIX dct: <http://purl.org/dc/terms/>
+    PREFIX localcontainer: <http://localhost:8080/data2model/container/>
+    SELECT ?metaclass ?class ?class_label ?metagegeven ?property ?property_label ?datatype ?targetclass
+    WHERE {
+      GRAPH localcontainer:model {
+        ?shape a sh:NodeShape.
+        ?shape sh:name ?class_label.
+        ?shape sh:targetClass ?class.
+        ?class rdfs:label ?metaclass.
+        ?shape sh:property ?pshape.
+        ?pshape sh:name ?property_label.
+        ?pshape sh:path ?property.
+        ?property rdfs:label ?metagegeven.
+        OPTIONAL {
+          ?pshape sh:datatype ?datatype
+        }
+        OPTIONAL {
+          ?pshape sh:class ?targetclass
+        }
+      }
+    }
+    ORDER BY ?class_label
   '''
 .

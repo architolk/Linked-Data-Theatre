@@ -1,8 +1,8 @@
 <!--
 
     NAME     query.xpl
-    VERSION  1.24.0
-    DATE     2020-01-10
+    VERSION  1.24.1-SNAPSHOT
+    DATE     2020-03-03
 
     Copyright 2012-2020
 
@@ -420,6 +420,9 @@
 									<xsl:if test="exists(/root/representation/service/accept)">
 										<accept><xsl:value-of select="/root/representation/service/accept"/></accept>
 									</xsl:if>
+                  <xsl:if test="exists(/root/representation/service/content)">
+										<content><xsl:value-of select="/root/representation/service/content"/></content>
+									</xsl:if>
 									<xsl:if test="exists(/root/representation/service/translator)">
 										<translator><xsl:value-of select="/root/representation/service/translator"/></translator>
 									</xsl:if>
@@ -438,6 +441,7 @@
 							<url><xsl:value-of select="service/url"/></url>
 							<method><xsl:value-of select="service/method"/></method>
 							<xsl:if test="service/accept!=''"><accept><xsl:value-of select="service/accept"/></accept></xsl:if>
+              <xsl:if test="service/content!=''"><content><xsl:value-of select="service/content"/></content></xsl:if>
 						</config>
 					</p:input>
 					<p:input name="data" href="#servicecall" transform="oxf:xslt">
