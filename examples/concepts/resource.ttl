@@ -1,0 +1,53 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+@prefix void: <http://rdfs.org/ns/void#>.
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
+@prefix stage: <http://localhost:8080/concepts/stage#>.
+
+stage:Resource a elmo:Representation;
+  elmo:url-pattern "/resource$";
+  elmo:url-pattern "/doc/[^/]+$";
+  elmo:contains stage:Menu;
+  elmo:appearance elmo:GraphAppearance;
+  elmo:index "1";
+  elmo:query '''
+    PREFIX elmo: <http://bp4mc2.org/def/elmo#>
+    PREFIX html: <http://www.w3.org/1999/xhtml/vocab#>
+    CONSTRUCT {
+      <@SUBJECT@> rdfs:label ?slabel.
+      <@SUBJECT@> ?p ?o.
+      <@SUBJECT@> html:img ?img.
+      ?o rdfs:label ?olabel.
+      ?o html:img ?oimg.
+      ?o elmo:style elmo:Style. # Needed in case no label exists
+      ?sr ?pr <@SUBJECT@>.
+      ?sr rdfs:label ?srlabel.
+      ?sr html:img ?srimg.
+      ?p rdfs:label ?plabel.
+      ?pr rdfs:label ?prlabel.
+    }
+    WHERE {
+      {
+        <@SUBJECT@> rdfs:label ?slabel
+        OPTIONAL {<@SUBJECT@> rdf:type/html:img ?img}
+      }
+      UNION
+      {
+        <@SUBJECT@> ?p ?o
+        FILTER (isIRI(?o))
+        OPTIONAL {?o rdfs:label ?olabel}
+        OPTIONAL {?o rdf:type/html:img ?oimg}
+        OPTIONAL {?p rdfs:label ?plabel}
+      }
+      UNION
+      {
+        ?sr ?pr <@SUBJECT@>
+        OPTIONAL {?sr rdfs:label ?srlabel}
+        OPTIONAL {?sr rdf:type/html:img ?srimg}
+        OPTIONAL {?pr rdfs:label ?prlabel}
+      }
+    }
+  '''
+.

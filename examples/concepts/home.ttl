@@ -1,0 +1,42 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+@prefix void: <http://rdfs.org/ns/void#>.
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
+@prefix stage: <http://localhost:8080/concepts/stage#>.
+
+stage:Home	a	elmo:Representation;
+	elmo:url-pattern	"/concepts(|/|\\..+)$";
+	elmo:contains	stage:Menu;
+	elmo:contains	stage:Welkom;
+.
+
+stage:Menu elmo:appearance elmo:NavbarSearchAppearance;
+  elmo:index "~";
+	elmo:data [
+	  elmo:data [
+			elmo:index "1";
+	    rdfs:label "Model"@en;
+	    rdfs:label "Model"@nl;
+	    html:link "/concepts/resource?subject=http%3A%2F%2Flocalhost:8080%2Fconcepts%2Fid%2Fconcept%2FAct";
+	  ];
+		elmo:data [
+			elmo:index "2";
+	    rdfs:label "Morgage"@en;
+	    rdfs:label "Hypotheek"@nl;
+	    html:link "/concepts/resource?subject=http%3A%2F%2Flocalhost:8080%2Fconcepts%2Fid%2Fconcept%2FOpstellenHypotheekakte";
+	  ]
+	]
+.
+
+stage:Welkom a elmo:Part;
+	elmo:appearance elmo:HtmlAppearance;
+	elmo:data [
+		rdfs:label "Welcome"@en;
+    rdfs:label "Welkom"@nl;
+		elmo:html '''
+			<div>
+ 			</div>''';
+	]
+.

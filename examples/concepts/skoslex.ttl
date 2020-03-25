@@ -1,0 +1,12 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix skoslex: <http://bp4mc2.org/def/skos-lex#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix skosthes: <http://purl.org/iso25964/skos-thes#>.
+
+skoslex:Act html:img "/images/skoslex/act.png".
+skoslex:Object html:img "/images/skoslex/object.png".
+skoslex:Actor html:img "/images/skoslex/actor.png".
+skoslex:Agent html:img "/images/skoslex/agent.png".
+skoslex:Record html:img "/images/skoslex/record.png".
+
+skosthes:broaderGeneric rdfs:label "is a".

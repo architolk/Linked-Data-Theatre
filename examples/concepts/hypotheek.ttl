@@ -1,0 +1,52 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix skos: <http://www.w3.org/2004/02/skos/core#>.
+@prefix skosthes: <http://purl.org/iso25964/skos-thes#>.
+@prefix skoslex: <http://bp4mc2.org/def/skos-lex#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+
+@prefix ex: <http://localhost:8080/concepts/id/concept/>.
+
+ex:RechtVanHypotheek a skoslex:Object;
+  rdfs:label "Recht van hypotheek";
+.
+ex:VestigingHypotheek a skoslex:Act;
+  rdfs:label "Vestiging van een hypotheek";
+  skoslex:actor ex:Hypotheeknemer;
+  skoslex:actor ex:Hypotheekgever;
+  skoslex:agent ex:Notaris;
+  skoslex:record ex:Hypotheekakte;
+  skoslex:object ex:OnroerendeZaak;
+  skoslex:object ex:RechtVanHypotheek;
+.
+
+ex:OpstellenHypotheekakte a skoslex:Act;
+  rdfs:label "Opstellen hypotheekakte";
+  skoslex:actor ex:Notaris;
+  skoslex:object ex:Hypotheekakte;
+.
+
+ex:Hypotheeknemer a skoslex:Actor;
+  rdfs:label "Hypotheeknemer";
+.
+
+ex:Hypotheekgever a skoslex:Actor;
+  rdfs:label "Hypotheekgever";
+.
+
+ex:Notaris a skoslex:Agent;
+  rdfs:label "Notaris";
+.
+
+ex:Hypotheekakte a skoslex:Record;
+  rdfs:label "Hypotheekakte";
+  skoslex:about ex:Opslagbedrag;
+.
+
+ex:OnroerendeZaak a skoslex:Object;
+  rdfs:label "Onroerende zaak";
+.
+
+ex:Opslagbedrag a skos:Concept;
+  rdfs:label "Opslagbedrag";
+.

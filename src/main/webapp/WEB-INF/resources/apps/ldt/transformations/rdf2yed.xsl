@@ -403,15 +403,22 @@
 					<xsl:choose>
 							<xsl:when test="exists($fragment/yed:color)">
 								<color><xsl:value-of select="$fragment/yed:color"/></color>
-								<width>1.0</width>
 							</xsl:when>
 							<xsl:otherwise>
 								<color>#000000</color>
-								<width>1.0</width>
 							</xsl:otherwise>
 					</xsl:choose>
+					<xsl:choose>
+						<xsl:when test="exists($fragment/yed:line)">
+							<line><xsl:value-of select="$fragment/yed:line"/></line>
+						</xsl:when>
+						<xsl:otherwise>
+							<line>line</line>
+						</xsl:otherwise>
+					</xsl:choose>
+					<width>1.0</width>
 				</xsl:variable>
-				<y:BorderStyle color="{$borderstyle/color}" type="line" width="{$borderstyle/width}"/>
+				<y:BorderStyle color="{$borderstyle/color}" type="{$borderstyle/line}" width="{$borderstyle/width}"/>
 				<y:NodeLabel alignment="center" autoSizePolicy="node_width" configuration="CroppingLabel" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" modelName="internal" modelPosition="{$modelposition}" textColor="#000000" visible="true">
 					<xsl:choose>
 						<xsl:when test="$fragment/yed:backgroundColor!=''"><xsl:attribute name="backgroundColor"><xsl:value-of select="$fragment/yed:backgroundColor"/></xsl:attribute></xsl:when>
@@ -456,13 +463,13 @@
 	<!-- Edges for URI nodes -->
 	<xsl:for-each select="rdf:Description/*[exists(key('nodes',@rdf:resource))]">
 		<xsl:variable name="puri"><xsl:value-of select="namespace-uri()"/><xsl:value-of select="local-name()"/></xsl:variable>
-		<xsl:variable name="pfragment" select="key('fragments',$puri)"/>
+		<xsl:variable name="pstyle"><xsl:value-of select="key('items',$puri)/elmo:style"/></xsl:variable>
+		<xsl:variable name="pfragment" select="key('fragments',$puri)|key('fragments',$pstyle)"/>
 		<xsl:variable name="label">
 			<xsl:value-of select="$pfragment/rdfs:label"/>
 			<xsl:if test="not(exists($pfragment/rdfs:label))">
-				<xsl:variable name="plabel"><xsl:value-of select="key('items',$puri)/rdfs:label"/></xsl:variable>
-				<xsl:value-of select="$plabel"/>
-				<xsl:if test="$plabel=''"><xsl:value-of select="name()"/></xsl:if>
+				<xsl:value-of select="key('items',$puri)/rdfs:label"/>
+				<xsl:if test="not(exists(key('items',$puri)/rdfs:label))"><xsl:value-of select="name()"/></xsl:if>
 			</xsl:if>
 		</xsl:variable>
 		<xsl:variable name="source">
@@ -477,6 +484,10 @@
 			<xsl:value-of select="$pfragment/yed:line"/>
 			<xsl:if test="not(exists($pfragment/yed:line))">line</xsl:if>
 		</xsl:variable>
+		<xsl:variable name="linecolor">
+			<xsl:value-of select="$pfragment/yed:color"/>
+			<xsl:if test="not(exists($pfragment/yed:color))">#000000</xsl:if>
+		</xsl:variable>
 		<xsl:variable name="edgetype">
 			<xsl:choose>
 				<xsl:when test="$pfragment/yed:edge/@rdf:resource='http://bp4mc2.org/yed#BezierEdge'">y:BezierEdge</xsl:when>
@@ -487,7 +498,7 @@
 		<edge source="{../@rdf:about}" target="{@rdf:resource}">-
 			<data key="d10">
 				<xsl:element name="{$edgetype}">
-					<y:LineStyle color="#000000" type="{$line}" width="1.0"/>
+					<y:LineStyle color="{$linecolor}" type="{$line}" width="1.0"/>
 					<y:Arrows source="{$source}" target="{$target}"/>
 					<y:EdgeLabel alignment="center" backgroundColor="#FFFFFF" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true"><xsl:value-of select="$label"/><y:LabelModel>
 							<y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>

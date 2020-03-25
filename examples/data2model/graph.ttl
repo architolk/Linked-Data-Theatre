@@ -16,9 +16,44 @@ stage:Graph a elmo:Representation;
   elmo:url-pattern "/query/graph(|.yed)$";
   elmo:appearance elmo:TurtleAppearance;
   elmo:fragment [
+    elmo:applies-to "BLUE";
+    yed:fill "#8080FF";
+    yed:color "#0000A0";
+    yed:nodeType "ellipse";
+  ];
+  elmo:fragment [
+    elmo:applies-to "GREY";
+    yed:fill "#A0A0A0";
+    yed:color "#A0A0A0";
+    yed:nodeType "ellipse";
+  ];
+  elmo:fragment [
+    elmo:applies-to "GREEN";
+    yed:fill "#A0FFA0";
+    yed:color "#00A000";
+    yed:nodeType "ellipse";
+  ];
+  elmo:fragment [
+    elmo:applies-to "YELLOW";
+    yed:fill "#FFFF80";
+    yed:color "#A0A000";
+    yed:nodeType "ellipse";
+  ];
+  elmo:fragment [
+    elmo:applies-to "EXTERN";
+    yed:fill "#FFFFFF";
+    yed:line "dashed";
+    yed:nodeType "ellipse";
+  ];
+  elmo:fragment [
+    elmo:applies-to "INFERRED";
+    yed:color "#A0A0A0";
+    yed:nodeType "ellipse";
+  ];
+  elmo:fragment [
     elmo:applies-to "RESOURCE";
     yed:fill "#CCE3CA";
-    yed:color "#73A956";
+    yed:color "#000000";
     yed:nodeType "ellipse";
   ];
   elmo:fragment [
@@ -54,6 +89,10 @@ stage:Graph a elmo:Representation;
     yed:color "#C6C600";
     yed:nodeType "ellipse";
 	];
+  elmo:fragment [
+    elmo:applies-to rdfs:seeAlso;
+    yed:line "dashed";
+  ];
 	elmo:query '''
     prefix elmo: <http://bp4mc2.org/elmo/def#>
     prefix container: <http://localhost:8080/data2model/container/>

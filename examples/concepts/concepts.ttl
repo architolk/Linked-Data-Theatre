@@ -1,0 +1,45 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix skos: <http://www.w3.org/2004/02/skos/core#>.
+@prefix skosthes: <http://purl.org/iso25964/skos-thes#>.
+@prefix skoslex: <http://bp4mc2.org/def/skos-lex#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+
+@prefix ex: <http://localhost:8080/concepts/id/concept/>.
+
+ex:Concept a skos:Concept;
+  rdfs:label "Concept";
+.
+
+ex:Act a skoslex:Act;
+  rdfs:label "Act";
+  skoslex:object ex:Object;
+  skoslex:actor ex:Actor;
+  skoslex:agent ex:Agent;
+  skoslex:record ex:Record;
+  skosthes:broaderGeneric ex:Concept;
+.
+ex:ActOfRecording a skoslex:Act;
+  rdfs:label "Act of recording";
+  skoslex:actor ex:Agent;
+  skoslex:object ex:Act;
+  skoslex:object ex:Record;
+.
+
+ex:Object a skoslex:Object;
+  rdfs:label "Object";
+  skosthes:broaderGeneric ex:Concept;
+.
+ex:Record a skoslex:Record;
+  rdfs:label "Record";
+  skoslex:about ex:Concept;
+  skosthes:broaderGeneric ex:Object;
+.
+ex:Actor a skoslex:Actor;
+  rdfs:label "Actor";
+  skosthes:broaderGeneric ex:Concept;
+.
+ex:Agent a skoslex:Agent;
+  rdfs:label "Agent";
+  skosthes:broaderGeneric ex:Actor;
+.
