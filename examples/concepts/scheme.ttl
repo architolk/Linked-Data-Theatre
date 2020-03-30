@@ -1,0 +1,121 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+@prefix void: <http://rdfs.org/ns/void#>.
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
+@prefix stage: <http://localhost:8080/concepts/stage#>.
+
+stage:Scheme	a	elmo:Representation;
+	elmo:url-pattern	"/query/scheme$";
+	elmo:contains	stage:Menu;
+	elmo:query '''
+		PREFIX container: <http://localhost:8080/concepts/container/data>
+		SELECT ?scheme ?scheme_label (count(?concept) as ?schemecount)
+		WHERE {
+			GRAPH container: {
+				?scheme a skos:ConceptScheme.
+				?scheme rdfs:label ?scheme_label.
+				?concept skos:inScheme ?scheme.
+			}
+		}
+		GROUP BY ?scheme ?scheme_label
+		ORDER BY ?scheme_label
+	''';
+.
+
+stage:SchemeConcepts a elmo:Representation;
+	elmo:url-pattern "/query/schemeconcepts$";
+	elmo:contains stage:Menu;
+	elmo:appearance elmo:TableAppearance;
+	elmo:query '''
+		PREFIX container: <http://localhost:8080/concepts/container/data>
+		CONSTRUCT {
+			?label rdfs:label ?clabel.
+			?label rdf:value ?schemecount.
+			?label ?scheme ?concept.
+			?concept rdfs:label ?clabel.
+			?scheme rdfs:label ?slabel.
+		}
+		WHERE {
+			{
+				SELECT (iri(concat('urn:label:',replace(?clabel,' ','_'))) as ?label) ?scheme ?slabel ?concept ?clabel
+				WHERE {
+					GRAPH container: {
+						?concept rdfs:label ?clabel.
+						?concept skos:inScheme ?scheme.
+						?scheme rdfs:label ?slabel.
+					}
+				}
+			}
+			UNION
+			{
+				SELECT (iri(concat('urn:label:',replace(?clabel,' ','_'))) as ?label) (count(?scheme) as ?schemecount)
+				WHERE {
+					GRAPH container: {
+						?concept rdfs:label ?clabel.
+						?concept skos:inScheme ?scheme.
+					}
+				}
+				GROUP BY ?clabel
+			}
+		}
+	'''
+.
+
+stage:Harmonized a elmo:Representation;
+	elmo:url-pattern "/query/harmonized$";
+	elmo:contains stage:Menu;
+	elmo:appearance elmo:TableAppearance;
+	elmo:query '''
+		PREFIX container: <http://localhost:8080/concepts/container/data>
+		CONSTRUCT {
+			?hconcept rdfs:label ?hlabel.
+			?hconcept ?scheme ?concept.
+			?concept rdfs:label ?clabel.
+			?scheme rdfs:label ?slabel.
+		}
+		WHERE {
+			GRAPH container: {
+				{
+					?hconcept ?rel ?concept.
+					?concept skos:inScheme ?scheme.
+					?scheme rdfs:label ?slabel.
+					?concept rdfs:label ?clabel.
+					?hconcept rdfs:label ?hlabel.
+					FILTER (?rel = skos:closeMatch
+						||		?rel = skos:exactMatch
+						||		?rel = skos:broadMatch
+						||		?rel = skos:narrowMatch
+					)
+				}
+				UNION
+				{
+					SELECT ?concept ?scheme ?clabel ?slabel ("" as ?hlabel) (iri(concat('urn:label:',replace(?clabel,' ','_'))) as ?hconcept)
+					WHERE {
+						?concept skos:inScheme ?scheme.
+						?concept rdfs:label ?clabel.
+						?scheme rdfs:label ?slabel.
+						FILTER NOT EXISTS {
+							?hconcept ?rel ?concept
+							FILTER (?rel = skos:closeMatch
+								||		?rel = skos:exactMatch
+								||		?rel = skos:broadMatch
+								||		?rel = skos:narrowMatch
+							)
+						}
+						FILTER NOT EXISTS {
+							?sconcept skos:inScheme ?scheme.
+							?sconcept ?somerel ?someconcept
+							FILTER (?somerel = skos:closeMatch
+								||		?somerel = skos:exactMatch
+								||		?somerel = skos:broadMatch
+								||		?somerel = skos:narrowMatch
+							)
+						}
+					}
+				}
+			}
+		}
+	'''
+.

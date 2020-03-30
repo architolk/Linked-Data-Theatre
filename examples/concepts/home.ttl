@@ -26,6 +26,12 @@ stage:Menu elmo:appearance elmo:NavbarSearchAppearance;
 	    rdfs:label "Morgage"@en;
 	    rdfs:label "Hypotheek"@nl;
 	    html:link "/concepts/resource?subject=http%3A%2F%2Flocalhost:8080%2Fconcepts%2Fid%2Fconcept%2FOpstellenHypotheekakte";
+	  ];
+		elmo:data [
+			elmo:index "3";
+	    rdfs:label "Scheme"@en;
+	    rdfs:label "Schema"@nl;
+	    html:link "/concepts/query/scheme";
 	  ]
 	]
 .

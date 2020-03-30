@@ -1,0 +1,12 @@
+@prefix stage: <http://localhost:8080/concepts/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix containerlocal: <http://localhost:8080/concepts/container/>.
+
+#Container for upload data
+containerlocal:data a elmo:Container;
+  rdfs:label "Upload data";
+  elmo:contains stage:Menu;
+  elmo:representation elmo:UploadRepresentation;
+.
