@@ -59,9 +59,11 @@ stage:YedScheme a elmo:Representation;
       GRAPH <http://localhost:8080/data2model/container/scheme> {
         ?begrip a skos:Concept.
         ?begrip rdfs:label ?begriplabel.
-        ?begrip ?rel ?relbegrip.
-        ?relbegrip a skos:Concept.
-        ?relbegrip rdfs:label ?relbegriplabel.
+        OPTIONAL {
+          ?begrip ?rel ?relbegrip.
+          ?relbegrip a skos:Concept.
+          ?relbegrip rdfs:label ?relbegriplabel.
+        }
         OPTIONAL {
           ?begrip rdfs:comment ?comment
         }

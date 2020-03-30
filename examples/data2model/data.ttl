@@ -1,0 +1,76 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix yed: <http://bp4mc2.org/yed#>.
+@prefix skos: <http://www.w3.org/2004/02/skos/core#>.
+@prefix stage: <http://localhost:8080/data2model/stage#>.
+
+stage:Data a elmo:Representation;
+  elmo:url-pattern "/query/data$";
+  elmo:appearance elmo:TurtleAppearance;
+	elmo:query '''
+    prefix elmo: <http://bp4mc2.org/elmo/def#>
+    prefix container: <http://localhost:8080/data2model/container/>
+		construct {
+      ?s?p?o.
+    }
+		where {
+			graph container:data {
+				?s?p?o
+      }
+		}
+	''';
+.
+
+stage:XMITabel a elmo:Representation;
+  elmo:url-pattern "/query/xmitabel$";
+  elmo:query '''
+    prefix container: <http://localhost:8080/data2model/container/>
+    prefix uml: <http://schema.omg.org/spec/UML/2.1.1#>
+    prefix ea: <http://www.sparxsystems.com/extender/EA6.5#>
+    select ?package ?package_label ?owner ?type (replace(str(?type),"^.*[/|#]([^(/|#)]+)$","$1") as ?type_label) ?stereotype ?owner_label ?element ?element_label
+    where {
+      graph container:data {
+        {
+          # Class
+          ?element a ?type.
+          ?element rdfs:label ?element_label.
+          ?package uml:packagedElement ?element.
+          ?package rdfs:label ?package_label.
+          OPTIONAL {
+            ?element ea:stereotype ?stereotype
+          }
+        }
+        UNION
+        {
+          # Attribute
+          ?element a ?type.
+          ?element rdfs:label ?element_label.
+          ?owner uml:ownedAttribute ?element.
+          ?owner rdfs:label ?owner_label.
+          ?package uml:packagedElement ?owner.
+          ?package rdfs:label ?package_label.
+          OPTIONAL {
+            ?element ea:stereotype ?stereotype
+          }
+        }
+        UNION
+        {
+          # Enumeration value
+          ?element a ?type.
+          ?element rdfs:label ?element_label.
+          ?owner uml:ownedLiteral ?element.
+          ?owner rdfs:label ?owner_label.
+          ?package uml:packagedElement ?owner.
+          ?package rdfs:label ?package_label.
+          OPTIONAL {
+            ?element ea:stereotype ?stereotype
+          }
+        }
+      }
+    }
+    order by ?package_label ?owner ?type ?element_label
+  ''';
+.

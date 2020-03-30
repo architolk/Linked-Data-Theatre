@@ -68,6 +68,7 @@ stage:Welkom a elmo:Part;
 					<li>Upload het aangepast diagram (voor plaatsing van de elementen) opnieuw</li>
           <li>Edit the model yourself</li>
         </ul>
+				<div align="right"><a href="/data2model/query/advanced">π</a></div>
  			</div>''';
 	]
 .

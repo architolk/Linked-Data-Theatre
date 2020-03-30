@@ -158,7 +158,7 @@ containerlocal:anchormodel a elmo:Container;
   elmo:replaces containerlocal:model;
 .
 container:anchormodel a elmo:Container;
-  rdfs:label "Upload anchor model XMl file";
+  rdfs:label "Upload anchor model XML file";
   elmo:translator elmo:AnchorTranslator;
   elmo:contains stage:Menu;
   elmo:representation elmo:UploadRepresentation;
@@ -169,4 +169,13 @@ container:anchormodel a elmo:Container;
 containerlocal:mim a elmo:Container;
   rdfs:label "Upload MIM model";
   elmo:contains stage:Menu;
+.
+
+# Container for XMI models
+containerlocal:xmidata a elmo:Container;
+  rdfs:label "Upload XMI data";
+  elmo:translator elmo:XMI21Translator;
+  elmo:contains stage:Menu;
+  elmo:representation elmo:UploadRepresentation;
+  elmo:replaces containerlocal:data;
 .
