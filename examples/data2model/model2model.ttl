@@ -74,11 +74,14 @@ stage:model2model_scene3 a elmo:Scene;
 		}
 		WHERE {
 			graph <http://localhost:8080/data2model/container/model> {
-				?subject a ?type.
-				BIND (replace(str(?subject),"^.*[/|#]([^(/|#)]+)$","$1") as ?label)
-				FILTER (isIri(?subject))
-				FILTER NOT EXISTS {
-					?subject rdfs:label ?slabel
+				select  ?subject (replace(str(?subject),"^.*[/|#]([^(/|#)]+)$","$1") as ?label)
+				where {
+					?subject a ?type.
+					FILTER (isIri(?subject))
+					FILTER NOT EXISTS {
+						?subject a ?type.
+						?subject rdfs:label ?slabel
+					}
 				}
 			}
 		}
