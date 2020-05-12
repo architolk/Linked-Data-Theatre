@@ -20,7 +20,15 @@ stage:Model a elmo:Representation;
 		}
     where {
       graph <http://localhost:8080/data2model/container/model> {
-        ?s ?p ?o
+        {
+          ?s ?p ?o
+          FILTER (isLiteral(?o) && (lang(?o)="" || lang(?o)="@LANGUAGE@"))
+        }
+        UNION
+        {
+          ?s ?p ?o
+          FILTER (!(isLiteral(?o)))
+        }
       }
       OPTIONAL {
         graph <http://localhost:8080/data2model/container/model> {

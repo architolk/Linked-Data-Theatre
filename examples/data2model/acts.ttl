@@ -1,0 +1,64 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+@prefix void: <http://rdfs.org/ns/void#>.
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
+@prefix stage: <http://localhost:8080/data2model/stage#>.
+
+stage:YedActs a elmo:Representation;
+  elmo:url-pattern "/query/acts.yed$";
+  elmo:contains stage:Menu;
+  elmo:query '''
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    PREFIX skosthes: <http://purl.org/iso25964/skos-thes#>
+    PREFIX skoslex: <http://bp4mc2.org/def/skos-lex#>
+    CONSTRUCT {
+      ?act rdfs:label ?actlabel.
+      ?act a skoslex:Act.
+      ?act rdfs:comment ?comment.
+      ?act skoslex:record ?record.
+      ?record rdfs:label ?recordlabel.
+      ?record a skoslex:Record.
+      ?record rdfs:comment ?recordcomment.
+      skoslex:record rdfs:label "vastlegging".
+    }
+    WHERE {
+      SELECT ?act ?actlabel ?record ?recordlabel
+          (CONCAT(
+            "betreft: \\n", GROUP_CONCAT(DISTINCT CONCAT("- ",?objectlabel); SEPARATOR = "\\n"),
+            "\\n betrokkenen: \\n", GROUP_CONCAT(DISTINCT CONCAT("- ",?actorlabel); SEPARATOR = "\\n"),
+            "\\n beroepsgroep: \\n", GROUP_CONCAT(DISTINCT CONCAT("- ",?agentlabel); SEPARATOR = "\\n")
+          ) as ?comment)
+          (CONCAT(
+            "gaat over: \\n", GROUP_CONCAT(DISTINCT CONCAT("- ",?aboutlabel); SEPARATOR = "\\n")
+          ) as ?recordcomment)
+      WHERE {
+        GRAPH <http://localhost:8080/data2model/container/data> {
+          ?act a skoslex:Act.
+          ?act rdfs:label ?actlabel.
+          OPTIONAL {
+            ?act skoslex:object ?object.
+            ?object rdfs:label ?objectlabel
+          }
+          OPTIONAL {
+            ?act skoslex:actor ?actor.
+            ?actor rdfs:label ?actorlabel
+          }
+          OPTIONAL {
+            ?act skoslex:agent ?agent.
+            ?agent rdfs:label ?agentlabel
+          }
+          ?act skoslex:record ?record.
+          ?record rdfs:label ?recordlabel
+          OPTIONAL {
+            ?art skosthes:broaderPartitive* ?record.
+            ?art skoslex:isAbout ?about.
+            ?about rdfs:label ?aboutlabel
+          }
+        }
+      }
+      GROUP BY ?act ?actlabel ?record ?recordlabel
+    }
+  ''';
+.

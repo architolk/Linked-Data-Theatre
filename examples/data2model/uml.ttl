@@ -1,0 +1,92 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+@prefix void: <http://rdfs.org/ns/void#>.
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
+@prefix stage: <http://localhost:8080/data2model/stage#>.
+
+stage:UMLAttributes a elmo:Representation;
+  elmo:url-pattern "/query/attributes$";
+  elmo:contains stage:Menu;
+  elmo:fragment [
+    elmo:applies-to "package";
+    rdfs:label "Package";
+  ];
+  elmo:fragment [
+    elmo:applies-to "owner";
+    rdfs:label "Owner";
+  ];
+  elmo:fragment [
+    elmo:applies-to "element";
+    rdfs:label "Element";
+  ];
+  elmo:fragment [
+    elmo:applies-to "profiles";
+    rdfs:label "Profiles";
+  ];
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    prefix uml: <http://schema.omg.org/spec/UML/2.1.1#>
+    prefix ea: <http://www.sparxsystems.com/extender/EA6.5#>
+    select ?package ?package_label ?owner ?owner_label ?stereotype ?element ?element_label ?profiles
+    where {
+      graph <http://localhost:8080/data2model/container/data> {
+        ?package uml:packagedElement ?owner.
+        ?package rdfs:label ?package_label.
+        ?owner uml:ownedAttribute ?element.
+        ?owner rdfs:label ?owner_label.
+        ?owner ea:stereotype ?stereotype.
+        ?element rdf:type ?type.
+        ?element rdfs:label ?element_label.
+        ?owner uml:taggedValue ?tv.
+        ?tv rdfs:label "profiles"^^xsd:string.
+        ?tv rdf:value ?profiles.
+        FILTER (regex(?profiles,"wion","i"))
+      }
+    }
+  '''
+.
+
+stage:UMLClasses a elmo:Representation;
+  elmo:url-pattern "/query/classes$";
+  elmo:contains stage:Menu;
+  elmo:fragment [
+    elmo:applies-to "package";
+    rdfs:label "Package";
+  ];
+  elmo:fragment [
+    elmo:applies-to "element";
+    rdfs:label "Element";
+  ];
+  elmo:fragment [
+    elmo:applies-to "stereotype";
+    rdfs:label "Stereotype";
+  ];
+  elmo:fragment [
+    elmo:applies-to "profiles";
+    rdfs:label "Profiles";
+  ];
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    prefix uml: <http://schema.omg.org/spec/UML/2.1.1#>
+    prefix ea: <http://www.sparxsystems.com/extender/EA6.5#>
+    select ?package ?package_label ?element ?element_label ?alias ?stereotype ?profiles
+    where {
+      graph <http://localhost:8080/data2model/container/data> {
+        ?package uml:packagedElement ?element.
+        ?package rdfs:label ?package_label.
+        ?element rdf:type ?type.
+        ?element rdfs:label ?element_label.
+        ?element ea:stereotype ?stereotype.
+        OPTIONAL {?element ea:alias ?alias}
+        ?element uml:taggedValue ?tv.
+        ?tv rdfs:label "profiles"^^xsd:string.
+        ?tv rdf:value ?profiles.
+        FILTER (regex(?profiles,"wion","i"))
+      }
+    }
+  '''
+.

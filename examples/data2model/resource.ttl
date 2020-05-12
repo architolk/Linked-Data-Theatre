@@ -20,6 +20,16 @@ stage:Resource a elmo:Representation;
     }
     WHERE {
       {
+        GRAPH <http://localhost:8080/data2model/container/data> {
+          <@SUBJECT@>?p?o
+          OPTIONAL {
+            ?o ?op ?oo
+            FILTER (isBlank(?o))
+          }
+        }
+      }
+      UNION
+      {
         GRAPH <http://localhost:8080/data2model/container/model> {
           <@SUBJECT@>?p?o
           OPTIONAL {
