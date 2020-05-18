@@ -1,8 +1,8 @@
 <!--
 
     NAME     TextAppearance.xsl
-    VERSION  1.24.0
-    DATE     2020-01-10
+    VERSION  1.24.1-SNAPSHOT
+    DATE     2020-05-18
 
     Copyright 2012-2020
 
@@ -25,15 +25,15 @@
 <!--
     DESCRIPTION
 	TextAppearance, add-on of rdf2html.xsl
-	
+
 	A TextAppearance creates a textual representation of a linked data document
-	
+
 	The document may contain:
 	- xhtml:section, linked to other sections with xhtml:subsection property
 	- rdf:value, containing the actual text, a rdf:list of text elements is also possible, including references to other sections
 	- dc:title, containing the title of a xhtml:section
 	- geosparql:Feature, containing some features (which will be presented on a map)
-	
+
 -->
 <xsl:stylesheet version="2.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -51,7 +51,7 @@
 
 <xsl:template match="rdf:Description[exists(xhtml:subsection)]" mode="makedoc">
 	<xsl:param name="parent"/>
-	
+
 	<xsl:if test="dc:title!='' and not($parent='root' or $parent='li')">
 		<p class="title"><xsl:value-of select="dc:title"/></p>
 	</xsl:if>
@@ -121,7 +121,11 @@
 		<xsl:when test="$head!=''">
 			<xsl:apply-templates select="../rdf:Description[@rdf:nodeID=$head]" mode="reclist"/>
 		</xsl:when>
-		<xsl:otherwise><xsl:value-of select="rdf:value"/></xsl:otherwise>
+		<xsl:otherwise>
+			<xsl:for-each select="tokenize(rdf:value,'\n')">
+				<xsl:value-of select="."/><br />
+			</xsl:for-each>
+		</xsl:otherwise>
 	</xsl:choose>
 	<p class="break"/>
 </xsl:template>

@@ -1,8 +1,8 @@
 <!--
 
     NAME     TreeAppearance.xsl
-    VERSION  1.24.0
-    DATE     2020-01-10
+    VERSION  1.24.1-SNAPSHOT
+    DATE     2020-05-18
 
     Copyright 2012-2020
 
@@ -61,7 +61,7 @@
 	<li>
 		<xsl:if test="exists($new/uri)"><xsl:attribute name="class">has-child tree-collapsed</xsl:attribute></xsl:if>
 		<p>
-			<a href="{$resource-uri}">
+			<a href="{$resource-uri}" data-uri="{$uri}">
 				<xsl:choose>
 					<xsl:when test="rdfs:label!=''"><xsl:value-of select="rdfs:label"/></xsl:when>
 					<xsl:otherwise><xsl:value-of select="@rdf:about"/></xsl:otherwise>
@@ -116,10 +116,12 @@
 
 		function searchChild(children, subject) {
 			jQuery.each(children, function(index, item) {
-			if(decodeURIComponent(item.href) == subject &amp;&amp; item.localName == 'a' ) {
-				item.className="active";
-				openParentNode(item);
-			}
+				if (item.localName == 'a') {
+					if (item.dataset.uri == subject) {
+						item.className="selected";
+						openParentNode(item);
+					}
+				}
 				if(item.children.length != 0) {
 					searchChild(item.children, subject);
 				}
