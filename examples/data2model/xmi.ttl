@@ -6,8 +6,8 @@
 @prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
 @prefix stage: <http://localhost:8080/data2model/stage#>.
 
-stage:Records a elmo:Representation;
-  elmo:url-pattern "/query/record(|\.xmi)$";
+stage:Xmi a elmo:Representation;
+  elmo:url-pattern "/query/uml(|\.xmi)$";
   elmo:query '''
     PREFIX skosthes: <http://purl.org/iso25964/skos-thes#>
     PREFIX skoslex: <http://bp4mc2.org/def/skos-lex#>
@@ -15,17 +15,59 @@ stage:Records a elmo:Representation;
     CONSTRUCT {
       ?begrip a mim:Objecttype.
       ?begrip rdfs:label ?begrip_label.
-      ?begrip rdfs:comment ?definition.
+      ?begrip mim:definitie ?definition.
+      ?genid a mim:Generalisatie.
+      ?genid mim:objecttype ?special.
+      ?genid mim:gerelateerdObjecttype ?general.
+      ?compid a mim:Relatiesoort.
+      ?compid mim:typeAggregatie mim:Composite.
+      ?compid mim:objecttype ?whole.
+      ?compid mim:gerelateerdObjecttype ?part.
+      ?relid a mim:Relatiesoort.
+      ?relid mim:objecttype ?source.
+      ?relid mim:naam ?relname.
+      ?relid mim:gerelateerdObjecttype ?target.
     }
     WHERE {
       GRAPH <http://localhost:8080/data2model/container/data> {
-        ?record a skoslex:Record.
-        ?record rdfs:label ?record_label.
-        FILTER (?record = <http://mak.zorgeloosvastgoed.nl/id/begrip/Koopovereenkomst>)
-        ?content skosthes:broaderPartitive* ?record.
-        ?content skoslex:isAbout ?begrip.
-        ?begrip rdfs:label ?begrip_label.
-        OPTIONAL {?begrip skos:definition ?definition}
+        {
+          ?begrip a skos:Concept.
+          ?begrip rdfs:label ?begrip_label.
+          OPTIONAL {?begrip skos:definition ?definition}
+        }
+        UNION
+        {
+          SELECT ?source (iri(concat(str(?source),'#REL#',str(?target))) as ?relid) ?target (if(?rel=<http://bp4mc2.org/def/skos-lex#isAbout>,'betreft',strafter(str(?rel),'#')) as ?relname)
+          WHERE {
+            ?source ?rel ?target
+            FILTER (?rel = skoslex:agent || ?rel = skoslex:actor || ?rel = skoslex:object || ?rel = skoslex:record || ?rel = skoslex:isAbout)
+          }
+        }
+        UNION
+        {
+          SELECT ?part (iri(concat(str(?whole),'#COMP#',str(?part))) as ?compid) ?whole
+          WHERE {
+            {
+              ?part skosthes:broaderPartitive ?whole
+            }
+            UNION
+            {
+              ?whole skosthes:narrowerPartitive ?part
+            }
+          }
+        }
+        OPTIONAL {
+          SELECT ?special (iri(concat(str(?special),'#G#',str(?general))) as ?genid) ?general
+          WHERE {
+            {
+              ?special skosthes:broaderGeneric ?general
+            }
+            UNION
+            {
+              ?general skosthes:narrowerGeneric ?special
+            }
+          }
+        }
       }
     }
   ''';
