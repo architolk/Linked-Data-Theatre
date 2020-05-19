@@ -1,10 +1,10 @@
 <!--
 
     NAME     rdf2xmi.xsl
-    VERSION  1.24.0
-    DATE     2020-01-10
+    VERSION  1.24.1-SNAPSHOT
+    DATE     2020-05-19
 
-    Copyright 2012-2020
+    Copyright 2012-2018
 
     This file is part of the Linked Data Theatre.
 
@@ -25,7 +25,7 @@
 <!--
     DESCRIPTION
     Transformation of RDF document into XMI
-	
+
 -->
 <xsl:stylesheet version="2.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -33,6 +33,7 @@
 	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 	xmlns:uml="http://schema.omg.org/spec/UML/2.1"
 	xmlns:xmi="http://schema.omg.org/spec/XMI/2.1"
+	xmlns:mim="http://bp4mc2.org/mim/schema#"
 >
 
 <xsl:key name="nodes" match="rdf:RDF/rdf:Description" use="@rdf:about"/>
@@ -45,10 +46,10 @@
 	<xsl:value-of select="$last"/>
 </xsl:template>
 
-<xsl:template match="/">
-<xsl:for-each select="results/rdf:RDF[1]">
-<xmi:XMI xmi:version="2.1">
-	<xmi:Documentation exporter="Linked Data Platform" exporterVersion="0.1"/>
+<!--
+XMI for rdfs:Class elements
+-->
+<xsl:template match="rdf:RDF" mode="rdfs">
 	<uml:Model xmi:type="uml:Model" name="LDP_Model" visibility="public">
 		<packagedElement xmi:type="uml:Package" xmi:id="LDP_Root_Package" name="Model" visibility="public">
 			<packagedElement xmi:type="uml:Package" xmi:id="LDP_Package.1" name="RDFS Classes" visibility="public">
@@ -92,8 +93,46 @@
 			</packagedElement>
 		</packagedElement>
 	</uml:Model>
-</xmi:XMI>
-</xsl:for-each>
+</xsl:template>
+
+<!--
+XMI for MIM elements
+-->
+<xsl:template match="rdf:RDF" mode="mim">
+	<uml:Model xmi:type="uml:Model" name="LDP_Model" visibility="public">
+		<packagedElement xmi:type="uml:Package" xmi:id="LDP_Root_Package" name="Model" visibility="public">
+			<packagedElement xmi:type="uml:Package" xmi:id="LDP_Package.1" name="MIM Model" visibility="public">
+				<xsl:for-each select="rdf:Description[rdf:type/@rdf:resource='http://bp4mc2.org/def/mim#Objecttype']">
+					<xsl:variable name="name"><xsl:apply-templates select="." mode="name"/></xsl:variable>
+					<xsl:variable name="class-uri" select="@rdf:about"/>
+					<packagedElement xmi:type="uml:Class" xmi:id="{@rdf:about}" name="{$name}" visibility="public">
+					</packagedElement>
+					<xsl:if test="exists(rdfs:comment)">
+						<ownedComment xmi:type="uml:Comment" xmi:id="C{$class-uri}" body="{rdfs:comment}">
+							<annotatedElement xmi:idref="{$class-uri}"/>
+						</ownedComment>
+					</xsl:if>
+				</xsl:for-each>
+			</packagedElement>
+		</packagedElement>
+	</uml:Model>
+	<xsl:for-each select="rdf:Description[rdf:type/@rdf:resource='http://bp4mc2.org/def/mim#Objecttype']">
+		<mim:Objecttype xmi:id="mim:Objecttype" base_Class="{@rdf:about}"/>
+	</xsl:for-each>
+</xsl:template>
+
+<xsl:template match="/">
+	<xsl:for-each select="results/rdf:RDF[1]">
+		<xmi:XMI xmi:version="2.1">
+			<xmi:Documentation exporter="Linked Data Platform" exporterVersion="0.1"/>
+			<xsl:if test="exists(rdf:Description[rdf:type/@rdf:resource='http://www.w3.org/2000/01/rdf-schema#Class'])">
+				<xsl:apply-templates select="." mode="rdfs"/>
+			</xsl:if>
+			<xsl:if test="exists(rdf:Description[rdf:type/@rdf:resource='http://bp4mc2.org/def/mim#Objecttype'])">
+				<xsl:apply-templates select="." mode="mim"/>
+			</xsl:if>
+		</xmi:XMI>
+	</xsl:for-each>
 </xsl:template>
 
 </xsl:stylesheet>

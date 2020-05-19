@@ -6,6 +6,31 @@
 @prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
 @prefix stage: <http://localhost:8080/data2model/stage#>.
 
+stage:Acts a elmo:Representation;
+  elmo:url-pattern "/query/record(|\.xmi)$";
+  elmo:query '''
+    PREFIX skosthes: <http://purl.org/iso25964/skos-thes#>
+    PREFIX skoslex: <http://bp4mc2.org/def/skos-lex#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    CONSTRUCT {
+      ?begrip a mim:Objecttype.
+      ?begrip rdfs:label ?begrip_label.
+      ?begrip rdfs:comment ?definition.
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/data> {
+        ?record a skoslex:Record.
+        ?record rdfs:label ?record_label.
+        FILTER (?record = <http://mak.zorgeloosvastgoed.nl/id/begrip/Koopovereenkomst>)
+        ?content skosthes:broaderPartitive* ?record.
+        ?content skoslex:isAbout ?begrip.
+        ?begrip rdfs:label ?begrip_label.
+        OPTIONAL {?begrip skos:definition ?definition}
+      }
+    }
+  ''';
+.
+
 stage:YedActs a elmo:Representation;
   elmo:url-pattern "/query/acts.yed$";
   elmo:contains stage:Menu;
