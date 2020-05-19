@@ -33,7 +33,7 @@
 	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 	xmlns:uml="http://schema.omg.org/spec/UML/2.1"
 	xmlns:xmi="http://schema.omg.org/spec/XMI/2.1"
-	xmlns:mim="http://bp4mc2.org/mim/schema#"
+	xmlns:mim="http://bp4mc2.org/def/mim#"
 >
 
 <xsl:key name="nodes" match="rdf:RDF/rdf:Description" use="@rdf:about"/>
@@ -106,12 +106,41 @@ XMI for MIM elements
 					<xsl:variable name="name"><xsl:apply-templates select="." mode="name"/></xsl:variable>
 					<xsl:variable name="class-uri" select="@rdf:about"/>
 					<packagedElement xmi:type="uml:Class" xmi:id="{@rdf:about}" name="{$name}" visibility="public">
+						<xsl:for-each select="../rdf:Description[mim:objecttype/@rdf:resource=$class-uri]">
+							<xsl:if test="exists(key('nodes',mim:gerelateerdObjecttype/@rdf:resource))">
+								<xsl:choose>
+									<xsl:when test="rdf:type/@rdf:resource='http://bp4mc2.org/def/mim#Generalisatie'">
+										<generalization xmi:type="uml:Generalization" xmi:id="{@rdf:about}" general="{mim:gerelateerdObjecttype/@rdf:resource}"/>
+									</xsl:when>
+									<xsl:when test="rdf:type/@rdf:resource='http://bp4mc2.org/def/mim#Relatiesoort' and not(mim:typeAggregatie/@rdf:resource='http://bp4mc2.org/def/mim#Composite')">
+										<ownedAttribute xmi:type="uml:Property" xmi:id="S{@rdf:about}" name="{mim:naam}" visibility="public" association="{@rdf:about}" isStatic="false" isReadOnly="false" isDerived="false" isOrdered="false" isUnique="true" isDerivedUnion="false" aggregation="none">
+											<type xmi:idref="{mim:gerelateerdObjecttype/@rdf:resource}"/>
+										</ownedAttribute>
+									</xsl:when>
+									<xsl:otherwise />
+								</xsl:choose>
+							</xsl:if>
+						</xsl:for-each>
 					</packagedElement>
-					<xsl:if test="exists(rdfs:comment)">
-						<ownedComment xmi:type="uml:Comment" xmi:id="C{$class-uri}" body="{rdfs:comment}">
+					<xsl:if test="exists(mim:definitie)">
+						<ownedComment xmi:type="uml:Comment" xmi:id="C{$class-uri}" body="{mim:definitie}">
 							<annotatedElement xmi:idref="{$class-uri}"/>
 						</ownedComment>
 					</xsl:if>
+				</xsl:for-each>
+				<xsl:for-each select="rdf:Description[rdf:type/@rdf:resource='http://bp4mc2.org/def/mim#Relatiesoort' and exists(key('nodes',mim:objecttype/@rdf:resource)) and exists(key('nodes',mim:gerelateerdObjecttype/@rdf:resource))]">
+					<packagedElement xmi:type="uml:Association" xmi:id="{@rdf:about}" name="" visibility="public">
+						<memberEnd xmi:idref="S{@rdf:about}"/>
+						<memberEnd xmi:idref="D{@rdf:about}"/>
+						<xsl:if test="mim:typeAggregatie/@rdf:resource='http://bp4mc2.org/def/mim#Composite'">
+							<ownedEnd xmi:type="uml:Property" xmi:id="S{@rdf:about}" visibility="public" association="{@rdf:about}" isStatic="false" isReadOnly="false" isDerived="false" isOrdered="false" isUnique="true" isDerivedUnion="false" aggregation="composite">
+								<type xmi:idref="{mim:gerelateerdObjecttype/@rdf:resource}"/>
+							</ownedEnd>
+						</xsl:if>
+						<ownedEnd xmi:type="uml:Property" xmi:id="D{@rdf:about}" visibility="public" association="{@rdf:about}" isStatic="false" isReadOnly="true" isDerived="false" isOrdered="false" isUnique="true" isDerivedUnion="false" aggregation="none">
+							<type xmi:idref="{mim:objecttype/@rdf:resource}"/>
+						</ownedEnd>
+					</packagedElement>
 				</xsl:for-each>
 			</packagedElement>
 		</packagedElement>
