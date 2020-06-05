@@ -30,6 +30,8 @@ stage:Downloads a elmo:Representation;
           <li><a href="query/scheme.yed">Begrippenkader grafisch</a></li>
           <li><a href="query/webscheme">Begrippenkader in een webpagina</a></li>
           <li><a href="query/graph.yed">De data in een grafische weergave</a></li>
+          <li><a href="query/graph">De data in turtle</a></li>
+          <li><a href="query/uml.xmi">UML MIM model vanuit de begrippen</a></li>
         </ul>
         <p>De grafische weergave vereist het gebruik van het yEd open source tool. Dat kunt u <a href="https://www.yworks.com/downloads#yEd">hier</a> vinden</p>
       </div>

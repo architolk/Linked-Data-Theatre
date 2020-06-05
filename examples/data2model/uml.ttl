@@ -40,10 +40,10 @@ stage:UMLAttributes a elmo:Representation;
         ?owner ea:stereotype ?stereotype.
         ?element rdf:type ?type.
         ?element rdfs:label ?element_label.
-        ?owner uml:taggedValue ?tv.
-        ?tv rdfs:label "profiles"^^xsd:string.
-        ?tv rdf:value ?profiles.
-        FILTER (regex(?profiles,"wion","i"))
+#        ?owner uml:taggedValue ?tv.
+#        ?tv rdfs:label "profiles"^^xsd:string.
+#        ?tv rdf:value ?profiles.
+#        FILTER (regex(?profiles,"wion","i"))
       }
     }
   '''
@@ -82,10 +82,10 @@ stage:UMLClasses a elmo:Representation;
         ?element rdfs:label ?element_label.
         ?element ea:stereotype ?stereotype.
         OPTIONAL {?element ea:alias ?alias}
-        ?element uml:taggedValue ?tv.
-        ?tv rdfs:label "profiles"^^xsd:string.
-        ?tv rdf:value ?profiles.
-        FILTER (regex(?profiles,"wion","i"))
+#        ?element uml:taggedValue ?tv.
+#        ?tv rdfs:label "profiles"^^xsd:string.
+#        ?tv rdf:value ?profiles.
+#        FILTER (regex(?profiles,"wion","i"))
       }
     }
   '''

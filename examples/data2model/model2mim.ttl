@@ -40,26 +40,26 @@ stage:model2mim_scene001 a elmo:Scene;
   elmo:index "001";
   rdfs:label "Add mim:Objecttype";
   elmo:query '''
-  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-  PREFIX owl: <http://www.w3.org/2002/07/owl#>
-  PREFIX sh: <http://www.w3.org/ns/shacl#>
-  PREFIX mim: <http://bp4mc2.org/def/mim#>
-  INSERT {
-    GRAPH <http://localhost:8080/data2model/container/mim> {
-      ?objecttype a mim:Objecttype.
-      ?objecttype rdfs:seeAlso ?nodeshape.
-    }
-  }
-  WHERE {
-    GRAPH <http://localhost:8080/data2model/container/model> {
-      SELECT (iri(replace(str(?nodeshape),"[#|/]([a-zA-Z0-9_-]+$)","-mim#$1")) as ?objecttype) ?nodeshape
-      WHERE {
-        ?nodeshape a sh:NodeShape.
-        ?nodeshape sh:targetClass ?class.
-        FILTER isIRI(?nodeshape)
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?objecttype a mim:Objecttype.
+        ?objecttype rdfs:seeAlso ?nodeshape.
       }
     }
-  }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/model> {
+        SELECT (iri(replace(str(?nodeshape),"[#|/]([a-zA-Z0-9_-]+$)","-mim#$1")) as ?objecttype) ?nodeshape
+        WHERE {
+          ?nodeshape a sh:NodeShape.
+          ?nodeshape sh:targetClass ?class.
+          FILTER isIRI(?nodeshape)
+        }
+      }
+    }
   '''
 .
 
@@ -67,47 +67,47 @@ stage:model2mim_scene002 a elmo:Scene;
   elmo:index "002";
   rdfs:label "Add mim:Attribuutsoort";
   elmo:query '''
-  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-  PREFIX owl: <http://www.w3.org/2002/07/owl#>
-  PREFIX sh: <http://www.w3.org/ns/shacl#>
-  PREFIX mim: <http://bp4mc2.org/def/mim#>
-  INSERT {
-    GRAPH <http://localhost:8080/data2model/container/mim> {
-      ?objecttype mim:attribuut ?attribuutsoort.
-      ?attribuutsoort a mim:Attribuutsoort.
-      ?attribuutsoort rdfs:seeAlso ?propertyshape.
-    }
-  }
-  WHERE {
-    GRAPH <http://localhost:8080/data2model/container/mim> {
-      ?objecttype a mim:Objecttype.
-      ?objecttype rdfs:seeAlso ?shape
-    }
-    GRAPH <http://localhost:8080/data2model/container/model> {
-      {
-        select (iri(replace(str(?propertyshape),"[#|/]([a-zA-Z0-9_-]+$)","-mim#$1")) as ?attribuutsoort) ?shape ?propertyshape
-        where {
-          ?shape a sh:NodeShape.
-          ?shape sh:property ?propertyshape.
-          ?propertyshape ?link ?datatype.
-          FILTER isIRI(?propertyshape)
-          FILTER (?link = sh:datatype || ?link = sh:node)
-        }
-      }
-      UNION
-      {
-        select (iri(concat(replace(str(?shape),"[#|/]([a-zA-Z0-9_-]+$)","-mim#$1"),".",?pname)) as ?attribuutsoort) ?shape ?propertyshape
-        where {
-          ?shape a sh:NodeShape.
-          ?shape sh:property ?propertyshape.
-          ?propertyshape ?link ?datatype.
-          ?propertyshape sh:name ?pname.
-          FILTER isBlank(?propertyshape)
-          FILTER (?link = sh:datatype || ?link = sh:node)
-        }
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?objecttype mim:attribuut ?attribuutsoort.
+        ?attribuutsoort a mim:Attribuutsoort.
+        ?attribuutsoort rdfs:seeAlso ?propertyshape.
       }
     }
-  }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?objecttype a mim:Objecttype.
+        ?objecttype rdfs:seeAlso ?shape
+      }
+      GRAPH <http://localhost:8080/data2model/container/model> {
+        {
+          select (iri(replace(str(?propertyshape),"[#|/]([a-zA-Z0-9_-]+$)","-mim#$1")) as ?attribuutsoort) ?shape ?propertyshape
+          where {
+            ?shape a sh:NodeShape.
+            ?shape sh:property ?propertyshape.
+            ?propertyshape ?link ?datatype.
+            FILTER isIRI(?propertyshape)
+            FILTER (?link = sh:datatype || ?link = sh:node)
+          }
+        }
+        UNION
+        {
+          select (iri(concat(replace(str(?shape),"[#|/]([a-zA-Z0-9_-]+$)","-mim#$1"),".",?pname)) as ?attribuutsoort) ?shape ?propertyshape
+          where {
+            ?shape a sh:NodeShape.
+            ?shape sh:property ?propertyshape.
+            ?propertyshape ?link ?datatype.
+            ?propertyshape sh:name ?pname.
+            FILTER isBlank(?propertyshape)
+            FILTER (?link = sh:datatype || ?link = sh:node)
+          }
+        }
+      }
+    }
   '''
 .
 
@@ -239,7 +239,7 @@ stage:model2mim_scene005 a elmo:Scene;
 .
 
 stage:model2mim_scene099 a elmo:Scene;
-  elmo:index "006";
+  elmo:index "099";
   rdfs:label "Add mim:Generalisatie";
   elmo:query '''
   PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>

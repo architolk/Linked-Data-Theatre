@@ -13,8 +13,24 @@ skos:Concept elmo:style "CONCEPT".
 rdf:Literal elmo:style "LITERAL".
 
 stage:Graph a elmo:Representation;
-  elmo:url-pattern "/query/graph(|.yed)$";
+  elmo:url-pattern "/query/graph(|\.ttl|\.json|\.xml)$";
+  elmo:contains stage:Menu;
   elmo:appearance elmo:TurtleAppearance;
+  elmo:query '''
+    PREFIX container: <http://localhost:8080/data2model/container/>
+    CONSTRUCT {
+      ?s?p?o
+    }
+    WHERE {
+      GRAPH container:data {
+        ?s?p?o
+      }
+    }
+  ''';
+.
+
+stage:Graph a elmo:Representation;
+  elmo:url-pattern "/query/graph\.yed$";
   elmo:fragment [
     elmo:applies-to "BLUE";
     yed:fill "#8080FF";
