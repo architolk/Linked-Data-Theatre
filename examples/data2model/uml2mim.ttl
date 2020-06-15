@@ -13,9 +13,18 @@ localupdatestage:uml2mim a elmo:Production;
   elmo:contains stage:uml2mim_scene001;
   elmo:contains stage:uml2mim_scene002;
   elmo:contains stage:uml2mim_scene003;
+  elmo:contains stage:uml2mim_scene004;
+  elmo:contains stage:uml2mim_scene006;
+  elmo:contains stage:uml2mim_scene007;
+  elmo:contains stage:uml2mim_scene008;
+  elmo:contains stage:uml2mim_scene009;
+  elmo:contains stage:uml2mim_scene010;
+  elmo:contains stage:uml2mim_scene011;
+  elmo:contains stage:uml2mim_scene012;
   elmo:contains stage:uml2mim_scene099;
-  elmo:contains stage:uml2mim_scene100;
   elmo:contains stage:uml2mim_scene101;
+  elmo:contains stage:uml2mim_scene102;
+  elmo:contains stage:uml2mim_scene104;
 .
 
 stage:uml2mim_scene000 a elmo:Scene;
@@ -28,6 +37,7 @@ stage:uml2mim_scene001 a elmo:Scene;
   elmo:index "001";
   rdfs:label "Add mim:Objecttype";
   elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
     PREFIX ea: <http://www.sparxsystems.com/extender/EA6.5#>
     PREFIX mim: <http://bp4mc2.org/def/mim#>
@@ -54,35 +64,36 @@ stage:uml2mim_scene002 a elmo:Scene;
   elmo:index "002";
   rdfs:label "Add mim:Attribuutsoort";
   elmo:query '''
-  PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
-  PREFIX ea: <http://www.sparxsystems.com/extender/EA6.5#>
-  PREFIX mim: <http://bp4mc2.org/def/mim#>
-  PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-  INSERT {
-    GRAPH <http://localhost:8080/data2model/container/mim> {
-      ?objecttype mim:attribuut ?attribuutsoort.
-      ?attribuutsoort a mim:Attribuutsoort.
-      ?attribuutsoort rdfs:seeAlso ?property.
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
+    PREFIX ea: <http://www.sparxsystems.com/extender/EA6.5#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?objecttype mim:attribuut ?attribuutsoort.
+        ?attribuutsoort a mim:Attribuutsoort.
+        ?attribuutsoort rdfs:seeAlso ?property.
+      }
     }
-  }
-  WHERE {
-    GRAPH <http://localhost:8080/data2model/container/mim> {
-      ?objecttype a mim:Objecttype.
-      ?objecttype rdfs:seeAlso ?class
-    }
-    GRAPH <http://localhost:8080/data2model/container/xmidata> {
-      select (?property as ?attribuutsoort) ?class ?property
-      where {
-        ?class a uml:Class.
-        ?class ea:stereotype "Objecttype"^^xsd:string.
-        ?class uml:ownedAttribute ?property.
-        ?property a uml:Property.
-        FILTER NOT EXISTS {
-          ?association uml:memberEnd ?property
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?objecttype a mim:Objecttype.
+        ?objecttype rdfs:seeAlso ?class
+      }
+      GRAPH <http://localhost:8080/data2model/container/xmidata> {
+        select (?property as ?attribuutsoort) ?class ?property
+        where {
+          ?class a uml:Class.
+          ?class ea:stereotype "Objecttype"^^xsd:string.
+          ?class uml:ownedAttribute ?property.
+          ?property a uml:Property.
+          FILTER NOT EXISTS {
+            ?association uml:memberEnd ?property
+          }
         }
       }
     }
-  }
   '''
 .
 
@@ -90,6 +101,7 @@ stage:uml2mim_scene003 a elmo:Scene;
   elmo:index "003";
   rdfs:label "Add Relatiesoort";
   elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
     PREFIX ea: <http://www.sparxsystems.com/extender/EA6.5#>
     PREFIX mim: <http://bp4mc2.org/def/mim#>
@@ -125,10 +137,282 @@ stage:uml2mim_scene003 a elmo:Scene;
   ''';
 .
 
+stage:uml2mim_scene004 a elmo:Scene;
+  elmo:index "004";
+  rdfs:label "Add mim:GestructureerdDatatype";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
+    PREFIX ea: <http://www.sparxsystems.com/extender/EA6.5#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?datatype a mim:GestructureerdDatatype.
+        ?datatype rdfs:seeAlso ?class.
+      }
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/xmidata> {
+        SELECT ?class as ?datatype ?class
+        WHERE {
+          ?class a uml:DataType.
+          ?class ea:stereotype "Complex datatype"^^xsd:string.
+        }
+      }
+    }
+  '''
+.
+
+stage:uml2mim_scene006 a elmo:Scene;
+  elmo:index "006";
+  rdfs:label "Add mim:Keuze";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
+    PREFIX ea: <http://www.sparxsystems.com/extender/EA6.5#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?keuze a mim:Keuze.
+        ?keuze rdfs:seeAlso ?union.
+      }
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/xmidata> {
+        SELECT ?union as ?keuze ?union
+        WHERE {
+          ?union a uml:DataType.
+          ?union ea:stereotype "Union"^^xsd:string.
+        }
+      }
+    }
+  '''
+.
+
+stage:uml2mim_scene007 a elmo:Scene;
+  elmo:index "007";
+  rdfs:label "Add mim:PrimitiefDatatype";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
+    PREFIX ea: <http://www.sparxsystems.com/extender/EA6.5#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?datatype a mim:PrimitiefDatatype.
+        ?datatype rdfs:seeAlso ?class.
+      }
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/xmidata> {
+        {
+          SELECT ?class as ?datatype ?class
+          WHERE {
+            ?class a uml:DataType.
+            ?class ea:stereotype "Simpel datatype"^^xsd:string.
+          }
+        }
+        UNION
+        {
+          SELECT ?class as ?datatype ?class
+          WHERE {
+            ?class a uml:PrimitiveType.
+          }
+        }
+      }
+    }
+  '''
+.
+
+stage:uml2mim_scene008 a elmo:Scene;
+  elmo:index "008";
+  rdfs:label "Add mim:DataElement";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
+    PREFIX ea: <http://www.sparxsystems.com/extender/EA6.5#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?datatype mim:dataElement ?dataelement.
+        ?dataelement a mim:DataElement.
+        ?dataelement rdfs:seeAlso ?property.
+      }
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?datatype a mim:GestructureerdDatatype.
+        ?datatype rdfs:seeAlso ?class
+      }
+      GRAPH <http://localhost:8080/data2model/container/xmidata> {
+        select (?property as ?dataelement) ?class ?property
+        where {
+          ?class a uml:DataType.
+          ?class ea:stereotype "Complex datatype"^^xsd:string.
+          ?class uml:ownedAttribute ?property.
+          ?property a uml:Property.
+          FILTER NOT EXISTS {
+            ?association uml:memberEnd ?property
+          }
+        }
+      }
+    }
+  '''
+.
+
+stage:uml2mim_scene009 a elmo:Scene;
+  elmo:index "009";
+  rdfs:label "Add mim:Enumeratie";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
+    PREFIX ea: <http://www.sparxsystems.com/extender/EA6.5#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?enumeratie a mim:Enumeratie.
+        ?enumeratie rdfs:seeAlso ?enumeration.
+      }
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/xmidata> {
+        SELECT ?enumeration as ?enumeratie ?enumeration
+        WHERE {
+          ?enumeration a uml:Enumeration.
+          ?enumeration ea:stereotype "Enumeratie"^^xsd:string.
+        }
+      }
+    }
+  '''
+.
+
+stage:uml2mim_scene010 a elmo:Scene;
+  elmo:index "010";
+  rdfs:label "Add mim:Enumeratiewaarde";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
+    PREFIX ea: <http://www.sparxsystems.com/extender/EA6.5#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?enumeratie mim:waarde ?waarde.
+        ?waarde a mim:Enumeratiewaarde.
+        ?waarde rdfs:seeAlso ?literal.
+      }
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?enumeratie a mim:Enumeratie.
+        ?enumeratie rdfs:seeAlso ?enumeration
+      }
+      GRAPH <http://localhost:8080/data2model/container/xmidata> {
+        select (?literal as ?waarde) ?class ?literal
+        where {
+          {
+            ?enumeration a uml:Enumeration.
+            ?enumeration ea:stereotype "Enumeratie"^^xsd:string.
+          }
+          {
+            {
+              ?enumeration uml:ownedLiteral ?literal.
+              ?literal a uml:EnumerationLiteral.
+            }
+            UNION
+            {
+              ?enumeration uml:ownedAttribute ?literal.
+              ?literal a uml:Property.
+            }
+          }
+        }
+      }
+    }
+  '''
+.
+
+stage:uml2mim_scene011 a elmo:Scene;
+  elmo:index "011";
+  rdfs:label "Add mim:RelatierolBron";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
+    PREFIX ea: <http://www.sparxsystems.com/extender/EA6.5#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?relatiesoort mim:relatierol ?relatierolbron.
+        ?relatierolbron a mim:RelatierolBron.
+        ?relatierolbron rdfs:seeAlso ?property.
+      }
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?relatiesoort a mim:Relatiesoort.
+        ?relatiesoort rdfs:seeAlso ?association
+      }
+      GRAPH <http://localhost:8080/data2model/container/xmidata> {
+        select (?property as ?relatierolbron) ?association ?property
+        where {
+          ?association a uml:Association.
+          ?association ea:stereotype "Relatiesoort"^^xsd:string.
+          ?association uml:ownedEnd ?property.
+          ?property a uml:Property.
+          ?property rdfs:label ?label #Rol zonder naam zien we niet als zinvolle toevoeging aan het model
+        }
+      }
+    }
+  '''
+.
+
+stage:uml2mim_scene012 a elmo:Scene;
+  elmo:index "012";
+  rdfs:label "Add mim:RelatierolDoel";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
+    PREFIX ea: <http://www.sparxsystems.com/extender/EA6.5#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?relatiesoort mim:relatierol ?relatieroldoel.
+        ?relatieroldoel a mim:RelatierolDoel.
+        ?relatieroldoel rdfs:seeAlso ?property.
+      }
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?relatiesoort a mim:Relatiesoort.
+        ?relatiesoort rdfs:seeAlso ?association
+      }
+      GRAPH <http://localhost:8080/data2model/container/xmidata> {
+        select (?property as ?relatieroldoel) ?association ?property
+        where {
+          ?association a uml:Association.
+          ?association ea:stereotype "Relatiesoort"^^xsd:string.
+          ?association uml:memberEnd ?property.
+          ?association uml:ownedEnd ?ownedend.
+          FILTER (?property != ?ownedend)
+          ?property a uml:Property.
+          ?property rdfs:label ?label #Rol zonder naam zien we niet als zinvolle toevoeging aan het model
+        }
+      }
+    }
+  '''
+.
+
 stage:uml2mim_scene099 a elmo:Scene;
   elmo:index "099";
   rdfs:label "Add mim:Generalisatie";
   elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
     PREFIX ea: <http://www.sparxsystems.com/extender/EA6.5#>
     PREFIX mim: <http://bp4mc2.org/def/mim#>
@@ -157,38 +441,15 @@ stage:uml2mim_scene099 a elmo:Scene;
   '''
 .
 
-stage:uml2mim_scene100 a elmo:Scene;
-  elmo:index "100";
-  rdfs:label "Add default datatypes";
-  elmo:query '''
-    PREFIX mim: <http://bp4mc2.org/def/mim#>
-    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-    INSERT {
-      GRAPH <http://localhost:8080/data2model/container/mim> {
-        mim:CharacterString rdfs:seeAlso xsd:string.
-        mim:Integer rdfs:seeAlso xsd:integer.
-        mim:Real rdfs:seeAlso xsd:decimal.
-        mim:Boolean rdfs:seeAlso xsd:boolean.
-        mim:Date rdfs:seeAlso xsd:date.
-        mim:DateTime rdfs:seeAlso xsd:dateTime.
-        mim:Year rdfs:seeAlso xsd:gYear.
-        mim:Day rdfs:seeAlso xsd:gDay.
-        mim:Month rdfs:seeAlso xsd:gMonth.
-        mim:URI rdfs:seeAlso xsd:AnyURI.
-      }
-    }
-    WHERE {}
-  ''';
-.
-
 stage:uml2mim_scene101 a elmo:Scene;
   elmo:index "101";
   rdfs:label "Add mim:name";
   elmo:query '''
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-    PREFIX owl: <http://www.w3.org/2002/07/owl#>
-    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
+    PREFIX ea: <http://www.sparxsystems.com/extender/EA6.5#>
     PREFIX mim: <http://bp4mc2.org/def/mim#>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
     INSERT {
       GRAPH <http://localhost:8080/data2model/container/mim> {
         ?element mim:naam ?naam
@@ -200,6 +461,56 @@ stage:uml2mim_scene101 a elmo:Scene;
       }
       GRAPH <http://localhost:8080/data2model/container/xmidata> {
         ?item rdfs:label ?naam
+      }
+    }
+  ''';
+.
+
+stage:uml2mim_scene102 a elmo:Scene;
+  elmo:index "102";
+  rdfs:label "Add mim:alias";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
+    PREFIX ea: <http://www.sparxsystems.com/extender/EA6.5#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?element mim:alias ?alias
+      }
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?element rdfs:seeAlso ?item
+      }
+      GRAPH <http://localhost:8080/data2model/container/xmidata> {
+        ?item ea:alias ?alias
+      }
+    }
+  ''';
+.
+
+stage:uml2mim_scene104 a elmo:Scene;
+  elmo:index "104";
+  rdfs:label "Add mim:definitie";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
+    PREFIX ea: <http://www.sparxsystems.com/extender/EA6.5#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?element mim:definitie ?definitie
+      }
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?element rdfs:seeAlso ?item
+      }
+      GRAPH <http://localhost:8080/data2model/container/xmidata> {
+        ?item ea:documentation ?definitie
       }
     }
   ''';
