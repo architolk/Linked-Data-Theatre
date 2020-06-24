@@ -1,0 +1,27 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix skos: <http://www.w3.org/2004/02/skos/core#>.
+@prefix skosthes: <http://purl.org/iso25964/skos-thes#>.
+@prefix skoslex: <http://bp4mc2.org/def/skos-lex#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+
+@prefix ex: <http://localhost:8080/concepts/id/concept/>.
+
+ex:BeslechtenGeschil a skoslex:Act;
+  rdfs:label "Beslechten van een geschil";
+  skoslex:actor ex:Partij;
+  skoslex:agent ex:Advocaat;
+.
+
+ex:HoudenPleidooi a skoslex:Act;
+  rdfs:label "Houden van een pleidooi";
+  skoslex:actor ex:Advocaat;
+.
+
+ex:Partij a skoslex:Actor;
+  rdfs:label "Partij";
+.
+
+ex:Advocaat a skoslex:Agent;
+  rdfs:label "Advocaat";
+.

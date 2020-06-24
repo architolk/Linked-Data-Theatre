@@ -29,6 +29,18 @@ stage:Menu elmo:appearance elmo:NavbarSearchAppearance;
 	  ];
 		elmo:data [
 			elmo:index "3";
+	    rdfs:label "Court"@en;
+	    rdfs:label "Rechtzaak"@nl;
+	    html:link "/concepts/resource?subject=http%3A%2F%2Flocalhost:8080%2Fconcepts%2Fid%2Fconcept%2FBeslechtenGeschil";
+	  ];
+		elmo:data [
+			elmo:index "4";
+	    rdfs:label "Employment"@en;
+	    rdfs:label "Arbeidscontract"@nl;
+	    html:link "/concepts/resource?subject=http%3A%2F%2Flocalhost:8080%2Fconcepts%2Fid%2Fconcept%2FInDienstNemen";
+	  ];
+		elmo:data [
+			elmo:index "5";
 	    rdfs:label "Scheme"@en;
 	    rdfs:label "Schema"@nl;
 	    html:link "/concepts/query/scheme";

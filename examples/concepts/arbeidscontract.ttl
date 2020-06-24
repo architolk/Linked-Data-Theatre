@@ -1,0 +1,33 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix skos: <http://www.w3.org/2004/02/skos/core#>.
+@prefix skosthes: <http://purl.org/iso25964/skos-thes#>.
+@prefix skoslex: <http://bp4mc2.org/def/skos-lex#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+
+@prefix ex: <http://localhost:8080/concepts/id/concept/>.
+
+ex:InDienstNemen a skoslex:Act;
+  rdfs:label "In dienst nemen";
+  skoslex:actor ex:Werkgever;
+  skoslex:actor ex:Werknemer;
+  skoslex:record ex:Arbeidscontract;
+.
+
+ex:ArbeidscontractOpstellen a skoslex:Act;
+  rdfs:label "Arbeidscontract opstellen";
+  skoslex:actor ex:Werkgever;
+  skoslex:object ex:Arbeidscontract;
+.
+
+ex:Werkgever a skoslex:Actor;
+  rdfs:label "Werkgever";
+.
+
+ex:Werknemer a skoslex:Agent;
+  rdfs:label "Werknemer";
+.
+
+ex:Arbeidscontract a skoslex:Record;
+  rdfs:label "Arbeidscontract";
+.
