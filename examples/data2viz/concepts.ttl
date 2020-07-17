@@ -1,0 +1,77 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+@prefix void: <http://rdfs.org/ns/void#>.
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
+@prefix stage: <http://localhost:8080/data2viz/stage#>.
+
+stage:Concepts a elmo:Representation;
+  elmo:url-pattern "/query/concepts(|\.ttl|\.json|\.xml)$";
+  elmo:contains stage:Menu;
+  elmo:query '''
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    CONSTRUCT {
+      ?begrip rdfs:label ?begriplabel.
+      ?begrip a skos:Concept.
+      ?begrip ?rel ?relbegrip.
+      ?begrip skos:inScheme ?scheme.
+      ?begrip ?begripprop ?begripobj.
+      ?scheme a skos:ConceptScheme.
+      ?scheme ?schemeprop ?schemeobj.
+    }
+    WHERE {
+      GRAPH <http://linkeddata.ordina.nl/data2viz/container/data> {
+        ?begrip a skos:Concept.
+        ?begrip rdfs:label ?begriplabel.
+        OPTIONAL {
+          ?begrip ?rel ?relbegrip.
+          ?relbegrip a skos:Concept.
+        }
+        OPTIONAL {
+          ?begrip skos:inScheme ?scheme.
+          ?scheme ?schemeprop ?schemeobj.
+        }
+        OPTIONAL {
+          ?begrip ?begripprop ?begripobj.
+          FILTER (isLiteral(?begripobj))
+        }
+      }
+    }
+  ''';
+.
+
+stage:YedConcepts a elmo:Representation;
+  elmo:url-pattern "/query/concepts\.yed$";
+  elmo:contains stage:Menu;
+  elmo:query '''
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    CONSTRUCT {
+      ?begrip rdfs:label ?begriplabel.
+      ?begrip a skos:Concept.
+      ?begrip ?rel ?relbegrip.
+      ?begrip rdfs:comment ?comment.
+      ?begrip rdfs:comment ?definition.
+      ?relbegrip a skos:Concept.
+      ?relbegrip rdfs:label ?relbegriplabel.
+    }
+    WHERE {
+      GRAPH <http://linkeddata.ordina.nl/data2viz/container/data> {
+        ?begrip a skos:Concept.
+        ?begrip (skos:prefLabel|rdfs:label) ?begriplabel.
+        OPTIONAL {
+          ?begrip ?rel ?relbegrip.
+          ?relbegrip a skos:Concept.
+          ?relbegrip rdfs:label ?relbegriplabel.
+        }
+        OPTIONAL {
+          ?begrip rdfs:comment ?comment
+        }
+        OPTIONAL {
+          ?begrip skos:definition ?definition
+          FILTER NOT EXISTS {?begrip rdfs:comment ?comment}
+        }
+      }
+    }
+  ''';
+.

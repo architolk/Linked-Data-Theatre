@@ -1,0 +1,53 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+@prefix void: <http://rdfs.org/ns/void#>.
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
+@prefix stage: <http://localhost:8080/data2viz/stage#>.
+
+stage:Home	a	elmo:Representation;
+	elmo:url-pattern	"/data2viz(|/|\\..+)$";
+	elmo:contains	stage:Menu;
+	elmo:contains	stage:Welkom;
+.
+
+stage:Menu elmo:appearance elmo:NavbarSearchAppearance;
+  elmo:index "~";
+  elmo:data [
+    rdfs:label "Visualise"@en;
+    rdfs:label "Visualisatie"@nl;
+    html:link "/data2viz";
+    elmo:data [
+      elmo:index "1";
+      rdfs:label "RDF upload";
+      html:link "container/uploaddata"
+    ];
+    elmo:data [
+      elmo:index "2";
+      rdfs:label "Visualisaties"@nl;
+      rdfs:label "Visualisation"@en;
+      elmo:data [elmo:index "1"; rdfs:label "Triples"; html:link "query/triples.yed"];
+      elmo:data [elmo:index "2"; rdfs:label "Concepts"@en; rdfs:label "Begrippen"@nl; html:link "query/concepts.yed"];
+			elmo:data [elmo:index "3"; rdfs:label "Model"; html:link "query/model.yed"];
+    ];
+  ]
+.
+
+stage:Welkom a elmo:Part;
+	elmo:appearance elmo:HtmlAppearance;
+	elmo:data [
+		rdfs:label "Welcome"@en;
+    rdfs:label "Welkom"@nl;
+		elmo:html '''
+			<div>
+        <p>Op deze site kan RDF data omgezet worden in een visualisatie.</p>
+        <p>De werkwijze hiervoor is:</p>
+        <ol>
+          <li>Upload RDF data (of geef een SPARQL query op)</li>
+          <li>Kies een visualisatievorm en download het resultaat (een .graphml bestand)</li>
+          <li>Open het .graphml bestand in een daarvoor geschikte editor, bijvoorbeeld <a href="https://www.yworks.com/products/yed">yEd</a></li>
+        </ol>
+ 			</div>''';
+	]
+.

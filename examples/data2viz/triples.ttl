@@ -5,19 +5,19 @@
 @prefix owl: <http://www.w3.org/2002/07/owl#>.
 @prefix yed: <http://bp4mc2.org/yed#>.
 @prefix skos: <http://www.w3.org/2004/02/skos/core#>.
-@prefix stage: <http://localhost:8080/data2model/stage#>.
+@prefix stage: <http://localhost:8080/data2viz/stage#>.
 
 owl:Class elmo:style "CLASS".
 rdfs:Class elmo:style "CLASS".
 skos:Concept elmo:style "CONCEPT".
 rdf:Literal elmo:style "LITERAL".
 
-stage:Graph a elmo:Representation;
-  elmo:url-pattern "/query/graph(|\.ttl|\.json|\.xml)$";
+stage:Triples a elmo:Representation;
+  elmo:url-pattern "/query/triples(|\.ttl|\.json|\.xml)$";
   elmo:contains stage:Menu;
   elmo:appearance elmo:TurtleAppearance;
   elmo:query '''
-    PREFIX container: <http://localhost:8080/data2model/container/>
+    PREFIX container: <http://localhost:8080/data2viz/container/>
     CONSTRUCT {
       ?s?p?o
     }
@@ -29,8 +29,8 @@ stage:Graph a elmo:Representation;
   ''';
 .
 
-stage:GraphYed a elmo:Representation;
-  elmo:url-pattern "/query/graph\.yed$";
+stage:TriplesYed a elmo:Representation;
+  elmo:url-pattern "/query/triples\.yed$";
   elmo:fragment [
     elmo:applies-to "BLUE";
     yed:fill "#8080FF";
@@ -111,7 +111,7 @@ stage:GraphYed a elmo:Representation;
   ];
 	elmo:query '''
     prefix elmo: <http://bp4mc2.org/elmo/def#>
-    prefix container: <http://localhost:8080/data2model/container/>
+    prefix container: <http://linkeddata.ordina.nl/data2viz/container/>
 		construct {
       ?s?p?o.
       ?s rdfs:label ?slabel.
@@ -167,8 +167,19 @@ stage:GraphYed a elmo:Representation;
         BIND (IF(BOUND(?cstyle),str(?cstyle),"RESOURCE") as ?style)
       }
       UNION
+      {
+        graph container:data {
+          ?so ?po ?s
+          FILTER (IsIri(?s))
+          FILTER NOT EXISTS {?s a ?st}
+          BIND (rdf:type as ?p)
+          BIND (rdfs:Resource as ?o)
+          BIND ("RESOURCE" as ?style)
+        }
+      }
+      UNION
 		  {
-        graph <http://localhost:8080/data2model/container/diagram> {
+        graph container:diagram {
           ?ds ?dp ?do
         }
       }
