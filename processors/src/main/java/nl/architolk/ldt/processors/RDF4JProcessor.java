@@ -1,6 +1,6 @@
 /**
  * NAME     RDF4JProcessor.java
- * VERSION  1.24.1
+ * VERSION  1.25.0
  * DATE     2020-07-19
  *
  * Copyright 2012-2020

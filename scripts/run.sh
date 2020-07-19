@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #
 # NAME     run.sh
-# VERSION  1.24.0
-# DATE     2020-01-10
+# VERSION  1.25.0
+# DATE     2020-07-19
 #
 # Copyright 2012-2020
 #

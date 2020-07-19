@@ -1,7 +1,7 @@
 <!--
 
     NAME     ttl2rdfaform.xsl
-    VERSION  1.24.1-SNAPSHOT
+    VERSION  1.25.0
     DATE     2020-07-19
 
     Copyright 2012-2020

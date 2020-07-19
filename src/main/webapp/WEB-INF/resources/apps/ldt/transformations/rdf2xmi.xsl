@@ -1,10 +1,10 @@
 <!--
 
     NAME     rdf2xmi.xsl
-    VERSION  1.24.1-SNAPSHOT
-    DATE     2020-05-19
+    VERSION  1.25.0
+    DATE     2020-07-19
 
-    Copyright 2012-2018
+    Copyright 2012-2020
 
     This file is part of the Linked Data Theatre.
 

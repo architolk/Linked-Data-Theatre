@@ -1,8 +1,8 @@
 <!--
 
     NAME     TextAppearance.xsl
-    VERSION  1.24.1-SNAPSHOT
-    DATE     2020-05-18
+    VERSION  1.25.0
+    DATE     2020-07-19
 
     Copyright 2012-2020
 

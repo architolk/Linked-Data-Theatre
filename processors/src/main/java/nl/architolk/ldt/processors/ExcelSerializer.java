@@ -1,9 +1,9 @@
 /**
  * NAME     ExcelSerializer.java
- * VERSION  1.22.0
- * DATE     2018-06-16
+ * VERSION  1.25.0
+ * DATE     2020-07-19
  *
- * Copyright 2012-2017
+ * Copyright 2012-2020
  *
  * This file is part of the Linked Data Theatre.
  *
