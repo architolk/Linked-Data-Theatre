@@ -1,9 +1,9 @@
 /**
  * NAME     RDF4JProcessor.java
- * VERSION  1.22.0
- * DATE     2018-06-16
+ * VERSION  1.24.1
+ * DATE     2020-07-19
  *
- * Copyright 2012-2017
+ * Copyright 2012-2020
  *
  * This file is part of the Linked Data Theatre.
  *
@@ -40,6 +40,7 @@
  * <cgraph>{uri}</cgraph>: The container graph that receives the data
  * <pgraph>{uri}</pgraph>: The parent graph to receive version information, if not equal to the container graph
  * <tgraph>{uri}</tgraph>: Optional, some target graph that (also) receives the data
+ * <prequery>{sparql}</prequery>: Optional, some sparql query that is used to populate the container (instead of a file)
  * <postquery>{sparql}</postquery>: Optional, some sparql query that should be performed after uploading the data
  * <uriprefix>{uri}</uriprefix>: Optional, the uri prefix that is used for relative uri's
  *
@@ -114,6 +115,7 @@ public class RDF4JProcessor extends SimpleProcessor {
 		String cgraph = configNode.valueOf("cgraph"); // Container graph, the main graph
 		String tgraph = configNode.valueOf("tgraph"); // The target graph
 		String pgraph = configNode.valueOf("pgraph"); // The parent graph, for version information
+    String preQuery = configNode.valueOf("prequery"); // Query to populate the container (instead of a file)
 		String postQuery = configNode.valueOf("postquery"); // Some post query, optional
 		String uriPrefix = configNode.valueOf("uriprefix"); // The uri prefix for relative uri's
 
@@ -176,6 +178,22 @@ public class RDF4JProcessor extends SimpleProcessor {
 					contentHandler.characters(msg.toCharArray(),0,msg.length());
 					contentHandler.endElement("", "scene", "scene");
 				}
+
+        // Populate container from query, if any
+        if (!preQuery.isEmpty()) {
+          String msg = "Query executed to populate container: <" + cgraph + ">";
+          try {
+						conn.prepareUpdate(preQuery).execute();
+					}
+					catch (Exception e) {
+						// In case of an error, put the errormessage in the result, but don't throw the exception
+						msg = e.toString();
+						errorMsg += e.getMessage() + ". \n";
+					}
+          contentHandler.startElement("", "scene", "scene", new AttributesImpl());
+					contentHandler.characters(msg.toCharArray(),0,msg.length());
+					contentHandler.endElement("", "scene", "scene");
+        }
 
 				// Insert documents into container graph
 				Document dataDocument = readInputAsDOM4J(context, INPUT_DATA);

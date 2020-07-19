@@ -14,6 +14,7 @@ stage:datatabs a elmo:Part;
     elmo:data [elmo:index "2"; rdfs:label "data entry"; html:link "/data2viz/container/data"];
     elmo:data [elmo:index "3"; rdfs:label "file append"; html:link "/data2viz/container/appenddata"];
     elmo:data [elmo:index "4"; rdfs:label "query"; html:link "/data2viz/container/query"];
+    elmo:data [elmo:index "5"; rdfs:label "url"; html:link "/data2viz/container/download"];
 	];
 .
 
@@ -69,4 +70,36 @@ container:appenddata a elmo:Container;
     insert { graph container:data {?s?p?o} }
     where { graph container:appenddata {?s?p?o} }
   '''
+.
+
+#Container for query
+containerlocal:query a elmo:Container;
+  rdfs:label "Query data";
+  elmo:contains stage:Menu;
+  elmo:contains stage:datatabs;
+  elmo:representation elmo:QueryRepresentation;
+  elmo:replaces container:data;
+.
+container:query a elmo:Container;
+  rdfs:label "Query data";
+  elmo:contains stage:Menu;
+  elmo:contains stage:datatabs;
+  elmo:representation elmo:QueryRepresentation;
+  elmo:replaces container:data;
+.
+
+#Container for url
+containerlocal:download a elmo:Container;
+  rdfs:label "Data from URL";
+  elmo:contains stage:Menu;
+  elmo:contains stage:datatabs;
+  elmo:representation elmo:DownloadRepresentation;
+  elmo:replaces container:data;
+.
+container:download a elmo:Container;
+  rdfs:label "Data from URL";
+  elmo:contains stage:Menu;
+  elmo:contains stage:datatabs;
+  elmo:representation elmo:DownloadRepresentation;
+  elmo:replaces container:data;
 .

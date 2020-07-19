@@ -1,8 +1,8 @@
 <!--
 
     NAME     container.xpl
-    VERSION  1.24.0
-    DATE     2020-01-10
+    VERSION  1.24.1
+    DATE     2020-07-19
 
     Copyright 2012-2020
 
@@ -725,6 +725,48 @@
 								<p:output name="data" id="filelist"/>
 							</p:processor>
 						</p:when>
+            <!-- Upload via query -->
+						<p:when test="exists(context/parameters/parameter[name='query']/value)" rdfs:label="upload via query">
+              <!-- Put query in filelist -->
+              <p:processor name="oxf:xslt">
+                <p:input name="config">
+                  <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+                    <xsl:template match="/">
+                      <files>
+                        <file name="sparql.query"/>
+                        <xsl:variable name="query"><xsl:value-of select="root/context/parameters/parameter[name='query']/value"/></xsl:variable>
+                        <xsl:choose>
+                          <xsl:when test="upper-case(substring($query,1,9))='CONSTRUCT' and matches(upper-case($query),'WHERE')">
+                            <xsl:variable name="upperwhere"><xsl:value-of select="substring(substring-before($query,'WHERE'),10)"/></xsl:variable>
+                            <xsl:variable name="lowerwhere"><xsl:value-of select="substring(substring-before($query,'where'),10)"/></xsl:variable>
+                            <query>
+                              <xsl:text>INSERT { GRAPH &lt;</xsl:text>
+                              <xsl:value-of select="root/container/version-url"/>
+                              <xsl:text>&gt; </xsl:text>
+                              <xsl:choose>
+                                <xsl:when test="string-length($upperwhere) > string-length($lowerwhere)">
+                                  <xsl:value-of select="$upperwhere"/>
+                                  <xsl:text>} WHERE</xsl:text>
+                                  <xsl:value-of select="substring-after($query,'WHERE')"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                  <xsl:value-of select="$lowerwhere"/>
+                                  <xsl:text>} WHERE</xsl:text>
+                                  <xsl:value-of select="substring-after($query,'where')"/>
+                                </xsl:otherwise>
+                              </xsl:choose>
+                            </query>
+                          </xsl:when>
+                          <xsl:otherwise><query/></xsl:otherwise>
+                        </xsl:choose>
+                      </files>
+                    </xsl:template>
+                  </xsl:stylesheet>
+                </p:input>
+                <p:input name="data" href="aggregate('root',#context,#containercontext)"/>
+                <p:output name="data" id="filelist"/>
+              </p:processor>
+            </p:when>
 						<!-- Something else, just create an empty filelist -->
 						<p:otherwise rdfs:label="no valid situation, empty upload">
 							<p:processor name="oxf:identity">
@@ -740,7 +782,7 @@
 	<p:input name="config">
 		<config/>
 	</p:input>
-	<p:input name="data" href="#context"/>
+	<p:input name="data" href="#filelist"/>
 </p:processor>
 -->
 					<p:for-each href="#filelist" select="/files/file" root="results" id="rdffile" rdfs:label="read and convert each file in filelist to rdf">
@@ -881,10 +923,14 @@
                         <xsl:otherwise><xsl:value-of select="$extension"/></xsl:otherwise>
                       </xsl:choose>
   									</firstformat>
+                    <!-- Files, remove files without a filename (should only be in case of a query)-->
 										<xsl:for-each select="results/file">
-											<file name="{@name}">
-												<xsl:value-of select="substring-after(.,'file:')"/>
-											</file>
+                      <xsl:variable name="filename"><xsl:value-of select="substring-after(.,'file:')"/></xsl:variable>
+                      <xsl:if test="$filename!=''">
+  											<file name="{@name}">
+  												<xsl:value-of select="substring-after(.,'file:')"/>
+  											</file>
+                      </xsl:if>
 										</xsl:for-each>
 									</filelist>
 								</xsl:template>
@@ -896,15 +942,16 @@
 
 					<!-- Check if extension is xml or ttl, return error if not -->
 					<p:choose href="#rdffilelist" rdfs:label="upload to virtuoso, check xml or ttl">
-						<p:when test="filelist/firstformat='xml' or filelist/firstformat='ttl' or filelist/firstformat='jsonld'">
+						<p:when test="filelist/firstformat='xml' or filelist/firstformat='ttl' or filelist/firstformat='jsonld' or filelist/firstformat='query'">
 							<!-- NEW VERSION: Using rdf4j instead of jdbc connection -->
 							<p:processor name="oxf:rdf4j-processor">
-								<p:input name="config" transform="oxf:xslt" href="#containercontext">
+								<p:input name="config" transform="oxf:xslt" href="aggregate('root',#containercontext,#filelist)">
 									<config xsl:version="2.0">
-										<action><xsl:value-of select="container/target-graph/@action"/></action>
-										<cgraph><xsl:value-of select="container/version-url"/></cgraph> <!-- Version-url is same as url for normal containers -->
-										<pgraph><xsl:value-of select="container/url"/></pgraph>
-										<tgraph><xsl:value-of select="container/target-graph"/></tgraph>
+										<action><xsl:value-of select="root/container/target-graph/@action"/></action>
+										<cgraph><xsl:value-of select="root/container/version-url"/></cgraph> <!-- Version-url is same as url for normal containers -->
+										<pgraph><xsl:value-of select="root/container/url"/></pgraph>
+										<tgraph><xsl:value-of select="root/container/target-graph"/></tgraph>
+                    <prequery><xsl:value-of select="root/files/query"/></prequery>
 									</config>
 								</p:input>
 								<p:input name="data" href="#rdffilelist"/>

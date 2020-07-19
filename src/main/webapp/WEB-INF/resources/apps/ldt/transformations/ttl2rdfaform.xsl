@@ -1,8 +1,8 @@
 <!--
 
     NAME     ttl2rdfaform.xsl
-    VERSION  1.24.0
-    DATE     2020-01-10
+    VERSION  1.24.1-SNAPSHOT
+    DATE     2020-07-19
 
     Copyright 2012-2020
 
@@ -97,7 +97,7 @@
 					<rdf:value>Upload succesful</rdf:value>
 				</rdf:Description>
 			</xsl:if>
-			<xsl:if test="root/container/representation!='http://bp4mc2.org/elmo/def#DownloadRepresentation'">
+			<xsl:if test="root/container/representation!='http://bp4mc2.org/elmo/def#DownloadRepresentation' and root/container/representation!='http://bp4mc2.org/elmo/def#QueryRepresentation'">
 				<rdf:Description rdf:nodeID="f2">
 					<rdfs:label>Upload</rdfs:label>
 					<elmo:applies-to>file</elmo:applies-to>
@@ -125,7 +125,7 @@
 					<xsl:copy-of select="*"/>
 				</rdf:Description>
 			</xsl:for-each>
-			<xsl:if test="root/container/representation!='http://bp4mc2.org/elmo/def#UploadRepresentation' and root/container/representation!='http://bp4mc2.org/elmo/def#DownloadRepresentation'">
+			<xsl:if test="root/container/representation!='http://bp4mc2.org/elmo/def#UploadRepresentation' and root/container/representation!='http://bp4mc2.org/elmo/def#DownloadRepresentation' and root/container/representation!='http://bp4mc2.org/elmo/def#QueryRepresentation'">
 				<rdf:Description rdf:nodeID="f6">
 					<rdfs:label>Content</rdfs:label>
 					<elmo:applies-to>content</elmo:applies-to>
@@ -134,10 +134,28 @@
 					<rdf:value><xsl:value-of select="root/turtle"/></rdf:value>
 				</rdf:Description>
 			</xsl:if>
-			<rdf:Description rdf:nodeID="f7">
+			<xsl:if test="root/container/representation='http://bp4mc2.org/elmo/def#QueryRepresentation'">
+				<rdf:Description rdf:nodeID="f7">
+					<rdfs:label>Query</rdfs:label>
+					<elmo:applies-to>query</elmo:applies-to>
+					<elmo:valueDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#String"/>
+					<elmo:appearance rdf:resource="http://bp4mc2.org/elmo/def#SparqlEditor"/>
+					<rdf:value>CONSTRUCT {?s a owl:Class}
+WHERE {
+  SERVICE &lt;http://dbpedia.org/sparql> {
+    GRAPH ?g {?s a owl:Class}
+    FILTER (?g =  &lt;http://dbpedia.org/resource/classes#>)
+  }
+}</rdf:value>
+				</rdf:Description>
+			</xsl:if>
+			<rdf:Description rdf:nodeID="f8">
 				<xsl:choose>
 					<xsl:when test="root/container/representation='http://bp4mc2.org/elmo/def#UploadRepresentation'">
 						<rdfs:label>Upload</rdfs:label>
+					</xsl:when>
+					<xsl:when test="root/container/representation='http://bp4mc2.org/elmo/def#QueryRepresentation'">
+						<rdfs:label>Execute</rdfs:label>
 					</xsl:when>
 					<xsl:otherwise>
 						<rdfs:label>Opslaan</rdfs:label>
