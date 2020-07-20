@@ -25,14 +25,30 @@ stage:ModelYed a elmo:Representation;
   elmo:contains stage:Menu;
   elmo:appearance elmo:VocabularyAppearance;
   elmo:query '''
-    construct {
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    CONSTRUCT {
 			?s ?p ?o.
 			?ds ?dp ?do.
+      ?qs sh:targetClass ?q
 		}
-    where {
-      { graph <http://linkeddata.ordina.nl/data2viz/container/data> {?s ?p ?o}}
+    WHERE {
+      {
+        GRAPH <http://linkeddata.ordina.nl/data2viz/container/data> {
+          {?s ?p ?o}
+          UNION
+          {
+            ?q a owl:Class.
+            FILTER NOT EXISTS {?shape sh:targetClass ?q}
+            BIND (Iri(Concat(Str(?q),"-shape-data2viz")) as ?qs)
+          }
+        }
+      }
 			UNION
-		  { graph <http://linkeddata.ordina.nl/data2viz/container/diagram> {?ds ?dp ?do}}
+		  {
+        GRAPH <http://linkeddata.ordina.nl/data2viz/container/diagram> {
+          ?ds ?dp ?do
+        }
+      }
     }
   ''';
 .
