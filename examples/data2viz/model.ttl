@@ -7,7 +7,7 @@
 @prefix stage: <http://localhost:8080/data2viz/stage#>.
 
 stage:Model a elmo:Representation;
-  elmo:url-pattern "/query/model(|\.ttl|\.json|\.xml)$$";
+  elmo:url-pattern "/query/modelx(|\.ttl|\.json|\.xml)$$";
   elmo:contains stage:Menu;
   elmo:appearance elmo:VocabularyAppearance;
   elmo:query '''
@@ -21,7 +21,7 @@ stage:Model a elmo:Representation;
 .
 
 stage:ModelYed a elmo:Representation;
-  elmo:url-pattern "/query/model.yed$";
+  elmo:url-pattern "/query/model";
   elmo:contains stage:Menu;
   elmo:appearance elmo:VocabularyAppearance;
   elmo:query '''
@@ -29,7 +29,12 @@ stage:ModelYed a elmo:Representation;
     CONSTRUCT {
 			?s ?p ?o.
 			?ds ?dp ?do.
-      ?qs sh:targetClass ?q
+      ?qs sh:targetClass ?q.
+      ?qs sh:property [ sh:path []]. #Hack om figuur te tonen
+      ?qs sh:property ?pshape.
+      ?pshape sh:name ?pname.
+      ?pshape sh:path ?prop.
+      ?pshape sh:class ?qrange.
 		}
     WHERE {
       {
@@ -37,9 +42,18 @@ stage:ModelYed a elmo:Representation;
           {?s ?p ?o}
           UNION
           {
-            ?q a owl:Class.
-            FILTER NOT EXISTS {?shape sh:targetClass ?q}
-            BIND (Iri(Concat(Str(?q),"-shape-data2viz")) as ?qs)
+            SELECT ?q (Iri(Concat(Str(?q),"-shape-data2viz")) as ?qs) ?prop (Replace(Str(?prop),"(.+)[:|#|/](.+)$","! $2") as ?pname) (Iri(Concat(Str(?prop),"-shape-data2viz")) as ?pshape) ?qrange
+            WHERE {
+              ?q a owl:Class.
+              FILTER NOT EXISTS {?shape sh:targetClass ?q}
+              OPTIONAL {
+                ?prop rdfs:domain ?q.
+                OPTIONAL {
+                  ?prop rdfs:range ?qrange.
+                  ?qrange a owl:Class.
+                }
+              }
+            }
           }
         }
       }
