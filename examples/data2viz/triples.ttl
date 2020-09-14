@@ -8,6 +8,9 @@
 @prefix stage: <http://localhost:8080/data2viz/stage#>.
 
 owl:Class elmo:style "CLASS".
+owl:ObjectProperty elmo:style "PROPERTY".
+owl:DatatypeProperty elmo:style "PROPERTY".
+rdf:Property elmo:style "PROPERTY".
 rdfs:Class elmo:style "CLASS".
 skos:Concept elmo:style "CONCEPT".
 rdf:Literal elmo:style "LITERAL".
@@ -79,6 +82,12 @@ stage:TriplesYed a elmo:Representation;
   ];
 	elmo:fragment [
 		elmo:applies-to "CLASS";
+    yed:fill "#D2E2FB";
+    yed:color "#6E8CBD";
+    yed:nodeType "ellipse";
+	];
+  elmo:fragment [
+		elmo:applies-to "PROPERTY";
     yed:fill "#D2E2FB";
     yed:color "#6E8CBD";
     yed:nodeType "ellipse";
