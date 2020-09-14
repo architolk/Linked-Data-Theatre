@@ -103,3 +103,18 @@ container:download a elmo:Container;
   elmo:representation elmo:DownloadRepresentation;
   elmo:replaces container:data;
 .
+
+# Container for upload diagram (placement of diagram elements)
+containerlocal:diagram a elmo:Container;
+  rdfs:label "Upload diagram (graphml)";
+  elmo:contains stage:Menu;
+  elmo:representation elmo:UploadRepresentation;
+  elmo:translator elmo:GraphmlTranslator;
+  elmo:replaces container:diagram;
+.
+container:diagram a elmo:Container;
+  rdfs:label "Upload diagram (graphml)";
+  elmo:contains stage:Menu;
+  elmo:representation elmo:UploadRepresentation;
+  elmo:translator elmo:GraphmlTranslator;
+.
