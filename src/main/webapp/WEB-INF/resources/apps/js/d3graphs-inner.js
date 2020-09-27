@@ -1,7 +1,7 @@
 /*
  * NAME     d3graphs-inner.js
- * VERSION  1.25.0
- * DATE     2020-07-19
+ * VERSION  1.25.1
+ * DATE     2020-09-27
  *
  * Copyright 2012-2020
  *
@@ -125,6 +125,15 @@ d3.xhr(jsonApiCall+encodeURIComponent(jsonApiSubject),"application/ld+json", fun
   //Parse xhr as if it was json, and expand (lose context)
   jsonld.expand(JSON.parse(xhr.responseText),function (err, json) {
     if (!err) {
+
+      //Change "@type" into "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+      json.forEach(function(resource, index, array) {
+        for (var property in resource) {
+          if (property=="@type") {
+            array[index]["http://www.w3.org/1999/02/22-rdf-syntax-ns#type"] = [{"@id": resource[property][0]}];
+          }
+        }
+      });
 
       //Stijlen ophalen
       json.forEach(function(resource) {
@@ -452,12 +461,14 @@ function update() {
 
 	//Keep only the visible nodes
 	var nodes = root.nodes.filter(function(d) {
-		return d.aggregateNode ? (!d.expanded) && (d.count>0) : ((d.linkCount>1) || ((d.parentLink.source.outLinks[d.parentLink.uri].length < maxNodes) && (d.parentLink.target.inLinks[d.parentLink.uri].length < maxNodes)))
+//		return d.aggregateNode ? (!d.expanded) && (d.count>0) : ((d.linkCount>1) || ((d.parentLink.source.outLinks[d.parentLink.uri].length < maxNodes) && (d.parentLink.target.inLinks[d.parentLink.uri].length < maxNodes)))
+    return d.aggregateNode ? (!d.expanded) && (d.count>0) : ((!d.hide) && ((d.linkCount>1) || ((d.parentLink.source.outLinks[d.parentLink.uri].length < maxNodes) && (d.parentLink.target.inLinks[d.parentLink.uri].length < maxNodes))))
 	});
 	var links = root.links;
 	//Keep only the visible links
 	links = root.links.filter(function(d) {
-		return d.source.aggregateNode ? (!d.source.expanded) && (d.source.count>0) : d.target.aggregateNode ? (!d.target.expanded) && (d.target.count>0) : (((d.source.linkCount>1) && (d.target.linkCount>1)) || ((d.source.outLinks[d.uri].length < maxNodes) && (d.target.inLinks[d.uri].length < maxNodes)))
+//		return d.source.aggregateNode ? (!d.source.expanded) && (d.source.count>0) : d.target.aggregateNode ? (!d.target.expanded) && (d.target.count>0) : (((d.source.linkCount>1) && (d.target.linkCount>1)) || ((d.source.outLinks[d.uri].length < maxNodes) && (d.target.inLinks[d.uri].length < maxNodes)))
+    return d.source.aggregateNode ? (!d.source.expanded) && (d.source.count>0) : d.target.aggregateNode ? (!d.target.expanded) && (d.target.count>0) : (!d.source.hide) && (!d.target.hide) && (((d.source.linkCount>1) && (d.target.linkCount>1)) || ((d.source.outLinks[d.uri].length < maxNodes) && (d.target.inLinks[d.uri].length < maxNodes)))
 	});
 
 	// Update the links
@@ -696,6 +707,15 @@ function expand() {
 	}
 }
 
+function hideNode() {
+  if (currentNode) {
+    //Only hide if the node is a leaf-node (doesn't work yet...)
+    currentNode.hide = true;
+    mouseoutPropertyBox();
+    update()
+  }
+}
+
 function dblclick(d) {
 	// Fixed position of a node can be relaxed after a user doubleclicks AND the node has been expanded
 	d.fixed = d.expanded ? !d.fixed : d.fixed;
@@ -710,6 +730,15 @@ function dblclick(d) {
         //Parse xhr as if it was json
         jsonld.expand(JSON.parse(xhr.responseText),function (err, json) {
           if (!err) {
+
+            //Change "@type" into "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            json.forEach(function(resource, index, array) {
+              for (var property in resource) {
+                if (property=="@type") {
+                  array[index]["http://www.w3.org/1999/02/22-rdf-syntax-ns#type"] = [{"@id": resource[property][0]}];
+                }
+              }
+            });
 
             //Stijlen ophalen
             json.forEach(function(resource) {

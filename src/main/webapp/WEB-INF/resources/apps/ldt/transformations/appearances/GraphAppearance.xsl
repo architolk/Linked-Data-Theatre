@@ -1,8 +1,8 @@
 <!--
 
     NAME     GraphAppearance.xsl
-    VERSION  1.25.0
-    DATE     2020-07-19
+    VERSION  1.25.1
+    DATE     2020-09-27
 
     Copyright 2012-2020
 
@@ -63,6 +63,10 @@
 			</i>
 			<i id="mbtnexpand" class="btn btn-primary" style="padding: 1px 4px;" onclick="clickPropertyBox();">
 				<span class="glyphicon glyphicon-zoom-in" style="cursor:pointer"/>
+			</i>
+			<!-- Experimental -->
+			<i id="mbtnhide" class="btn btn-primary" style="padding: 1px 4px;" onclick="hideNode();">
+				<span class="glyphicon glyphicon-eye-close" style="cursor:pointer"/>
 			</i>
 		</div>
 		<div class="panel panel-primary panel-secondary">
