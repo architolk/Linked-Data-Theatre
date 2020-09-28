@@ -1,8 +1,8 @@
 <!--
 
     NAME     XMI21Translator.xsl
-    VERSION  1.25.0
-    DATE     2020-07-19
+    VERSION  1.25.2-SNAPSHOT
+    DATE     2020-09-28
 
     Copyright 2012-2020
 
@@ -25,12 +25,12 @@
 <!--
     DESCRIPTION
 	Translates XMI2.1 to corresponding linked data (uml schema)
-	
+
 -->
 <xsl:stylesheet version="2.0"
 	xmlns:xmi="http://schema.omg.org/spec/XMI/2.1"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 	xmlns:RGB="http://www.sparxsystems.com/profiles/RGB/1.0#"
 	xmlns:uml="http://schema.omg.org/spec/UML/2.1.1#"
@@ -38,7 +38,7 @@
 	xmlns:uml21="http://schema.omg.org/spec/UML/2.1"
 	xmlns:ea="http://www.sparxsystems.com/extender/EA6.5#"
 >
-	
+
 <xsl:output method="xml" indent="yes"/>
 
 <xsl:variable name="domain">uuid:</xsl:variable>
@@ -106,7 +106,7 @@
 		<xsl:call-template name="explore-properties"/>
 
 	</xsl:element>
-	
+
 	<xsl:apply-templates select="*[exists(@xmi:type)]"/>
 </xsl:template>
 
@@ -119,10 +119,10 @@
 			<xsl:attribute name="rdf:about"><xsl:value-of select="$domain"/><xsl:value-of select="$id"/></xsl:attribute>
 
 			<xsl:call-template name="explore-properties"/>
-			
+
 		</xsl:element>
 	</xsl:if>
-	
+
 	<xsl:apply-templates select="*[exists(@xmi:type)]"/>
 </xsl:template>
 
@@ -131,7 +131,7 @@
 	<xsl:element name="RGB:{local-name(.)}">
 		<xsl:variable name="id" select="@base_Class"/>
 		<xsl:attribute name="rdf:about"><xsl:value-of select="$domain"/><xsl:value-of select="$id"/></xsl:attribute>
-		
+
 		<xsl:for-each select="@*">
 			<xsl:variable name="name" select="name(.)"/>
 			<xsl:variable name="value" select="."/>
@@ -141,7 +141,7 @@
 				</xsl:element>
 			</xsl:if>
 		</xsl:for-each>
-		
+
 	</xsl:element>
 </xsl:template>
 
@@ -232,15 +232,67 @@
 		<xsl:for-each select="properties/@*">
 			<xsl:element name="ea:{local-name(.)}"><xsl:value-of select="."/></xsl:element>
 		</xsl:for-each>
+		<xsl:for-each select="tags/tag">
+			<xsl:variable name="tagvalue">
+				<xsl:if test="exists(@value)">
+					<xsl:choose>
+						<xsl:when test="@value='&lt;memo&gt;'">
+							<xsl:value-of select="@notes"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:value-of select="@value"/>
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:if>
+			</xsl:variable>
+			<xsl:if test="$tagvalue!=''">
+				<uml:taggedValue>
+					<uml:TaggedValue>
+						<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
+						<rdf:value><xsl:value-of select="$tagvalue"/></rdf:value>
+					</uml:TaggedValue>
+				</uml:taggedValue>
+			</xsl:if>
+		</xsl:for-each>
 	</rdf:Description>
-	<xsl:if test="source/documentation/@value!=''">
+	<!-- Documentation and tags of roles are not part of the regular definitions, but only part of the extension -->
+	<!-- First test if any are present, then add extra information -->
+	<xsl:variable name="sourceinfo">
+		<xsl:value-of select="source/documentation/@value"/>
+		<xsl:for-each select="source/tags/tag/@value"><xsl:value-of select="."/></xsl:for-each>
+	</xsl:variable>
+	<xsl:if test="$sourceinfo!=''">
 		<rdf:Description rdf:about="{$domain}{replace(@xmi:idref,'(EAID_..)','EAID_src')}"> <!-- Hack: ea uses src -->
-			<ea:documentation><xsl:value-of select="source/documentation/@value"/></ea:documentation>
+			<xsl:if test="source/documentation/@value!=''"><ea:documentation><xsl:value-of select="source/documentation/@value"/></ea:documentation></xsl:if>
+			<xsl:for-each select="source/tags/tag">
+				<xsl:if test="@value!=''">
+					<uml:taggedValue>
+						<uml:TaggedValue>
+							<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
+							<rdf:value><xsl:value-of select="@value"/></rdf:value>
+						</uml:TaggedValue>
+					</uml:taggedValue>
+				</xsl:if>
+			</xsl:for-each>
 		</rdf:Description>
 	</xsl:if>
-	<xsl:if test="target/documentation/@value!=''">
+	<xsl:variable name="targetinfo">
+		<xsl:value-of select="target/documentation/@value"/>
+		<xsl:for-each select="target/tags/tag/@value"><xsl:value-of select="."/></xsl:for-each>
+	</xsl:variable>
+	<xsl:if test="$targetinfo!=''">
 		<rdf:Description rdf:about="{$domain}{replace(@xmi:idref,'(EAID_..)','EAID_dst')}"> <!-- Hack: ea uses dst -->
-			<ea:documentation><xsl:value-of select="target/documentation/@value"/></ea:documentation>
+			<xsl:if test="target/documentation/@value!=''"><ea:documentation><xsl:value-of select="target/documentation/@value"/></ea:documentation></xsl:if>
+			<xsl:for-each select="target/tags/tag">
+				<xsl:if test="@value!=''">
+					<uml:taggedValue>
+						<uml:TaggedValue>
+							<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
+							<rdf:value><xsl:value-of select="@value"/></rdf:value>
+						</uml:TaggedValue>
+					</uml:taggedValue>
+				</xsl:if>
+			</xsl:for-each>
 		</rdf:Description>
 	</xsl:if>
 </xsl:template>
