@@ -23,7 +23,7 @@ stage:Concepts a elmo:Representation;
     WHERE {
       GRAPH <http://linkeddata.ordina.nl/data2viz/container/data> {
         ?begrip a skos:Concept.
-        ?begrip rdfs:label ?begriplabel.
+        ?begrip (skos:prefLabel|rdfs:label) ?begriplabel.
         OPTIONAL {
           ?begrip ?rel ?relbegrip.
           ?relbegrip a skos:Concept.
@@ -62,7 +62,7 @@ stage:YedConcepts a elmo:Representation;
         OPTIONAL {
           ?begrip ?rel ?relbegrip.
           ?relbegrip a skos:Concept.
-          ?relbegrip rdfs:label ?relbegriplabel.
+          ?relbegrip (skos:prefLabel|rdfs:label) ?relbegriplabel.
         }
         OPTIONAL {
           ?begrip rdfs:comment ?comment

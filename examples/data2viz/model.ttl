@@ -28,6 +28,7 @@ stage:ModelYed a elmo:Representation;
     PREFIX sh: <http://www.w3.org/ns/shacl#>
     CONSTRUCT {
 			?s ?p ?o.
+      ?cs sh:targetClass ?c.
 			?ds ?dp ?do.
       ?qs sh:targetClass ?q.
       ?qs sh:property [ sh:path []]. #Hack om figuur te tonen
@@ -42,16 +43,32 @@ stage:ModelYed a elmo:Representation;
           {?s ?p ?o}
           UNION
           {
+            SELECT ?c (?c as ?cs)
+            WHERE {
+              ?c a owl:Class.
+              ?c a sh:NodeShape.
+            }
+          }
+          UNION
+          {
+            SELECT ?q (Iri(Concat(Str(?q),"-shape-data2viz")) as ?qs)
+            WHERE {
+              ?q a owl:Class.
+              FILTER NOT EXISTS {?shape sh:targetClass ?q}
+              FILTER NOT EXISTS {?q a sh:NodeShape}
+            }
+          }
+          UNION
+          {
             SELECT ?q (Iri(Concat(Str(?q),"-shape-data2viz")) as ?qs) ?prop (Replace(Str(?prop),"(.+)[:|#|/](.+)$","! $2") as ?pname) (Iri(Concat(Str(?prop),"-shape-data2viz")) as ?pshape) ?qrange
             WHERE {
               ?q a owl:Class.
               FILTER NOT EXISTS {?shape sh:targetClass ?q}
+              FILTER NOT EXISTS {?q a sh:NodeShape}
+              ?prop rdfs:domain ?q.
               OPTIONAL {
-                ?prop rdfs:domain ?q.
-                OPTIONAL {
-                  ?prop rdfs:range ?qrange.
-                  ?qrange a owl:Class.
-                }
+                ?prop rdfs:range ?qrange.
+                ?qrange a owl:Class.
               }
             }
           }
