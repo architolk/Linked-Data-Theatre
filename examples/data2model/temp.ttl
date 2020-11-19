@@ -1,0 +1,76 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+@prefix void: <http://rdfs.org/ns/void#>.
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
+@prefix stage: <http://localhost:8080/data2model/stage#>.
+
+stage:Temp a elmo:Representation;
+  elmo:url-pattern "/query/temp$";
+  elmo:contains stage:Menu;
+  elmo:fragment [
+    elmo:applies-to "slabel";
+    rdfs:label "Naam";
+  ];
+  elmo:fragment [
+    elmo:applies-to "value";
+    rdfs:label "Term";
+  ];
+  elmo:fragment [
+    elmo:applies-to "context";
+    rdfs:label "Context";
+  ];
+  elmo:fragment [
+    elmo:applies-to "def";
+    rdfs:label "Definitie";
+  ];
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX ea: <http://www.sparxsystems.com/extender/EA6.5#>
+    PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
+    select ?slabel ?value (group_concat(distinct ?olabel ; separator = ", ") as ?context) ?def
+    where {
+      graph <http://linkeddata.ordina.nl/data2model/container/data> {
+        select ?olabel ?slabel ?value (strbefore(concat(strafter(?doc,"-- Definition --\\n"),"\\n-- "),"\\n-- ") as ?def)
+        where {
+          ?s a ?t.
+          ?s rdfs:label ?slabel.
+          OPTIONAL {?s ea:documentation ?doc}
+          OPTIONAL {
+            ?o (uml:ownedAttribute|uml:packagedElement) ?s.
+            ?o rdfs:label ?olabel.
+          }
+          ?s uml:taggedValue ?tv.
+          ?tv rdfs:label "Term(NL)"^^xsd:string.
+          ?tv rdf:value ?value
+        }
+      }
+    }
+    group by ?slabel ?value ?def
+  ''';
+  elmo:xquery '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX ea: <http://www.sparxsystems.com/extender/EA6.5#>
+    PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
+    select *
+    where {
+      graph <http://localhost:8080/data2model/container/data> {
+        select distinct ?s ?s_label ?value (strbefore(concat(strafter(?doc,"-- Definition --\\n"),"\\n-- "),"\\n-- ") as ?def)
+        where {
+          ?s a ?t.
+          OPTIONAL {?s rdfs:label ?s_label}.
+          OPTIONAL {?s ea:documentation ?doc}
+          OPTIONAL {
+            ?o (uml:ownedAttribute|uml:packagedElement) ?s.
+            ?o rdfs:label ?o_label.
+          }
+          ?s uml:taggedValue ?tv.
+          ?tv rdfs:label "Term(NL)"^^xsd:string.
+          ?tv rdf:value ?value
+        }
+      }
+    }
+    order by lcase(?s_label) lcase(?o_label)
+  ''';
+.
