@@ -55,6 +55,12 @@ stage:Menu elmo:appearance elmo:NavbarSearchAppearance;
 			elmo:data [elmo:index "2"; rdfs:label "Edit MIM model"; html:link "container/mim"];
 			elmo:data [elmo:index "3"; rdfs:label "Upload UML model"; html:link "container/xmidata"];
 			elmo:data [elmo:index "3"; rdfs:label "Create MIM model from UML"; html:link "update/uml2mim"];
+		];
+		elmo:data [
+			elmo:index "7";
+			rdfs:label "ERD";
+			elmo:data [elmo:index "1"; rdfs:label "Upload ERD model"; html:link "container/ldmdata"];
+			elmo:data [elmo:index "2"; rdfs:label "Create model from ERD"; html:link "update/ldm2model"];
 		]
   ]
 .

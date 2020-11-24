@@ -11,6 +11,7 @@ stage:DefaultResource a elmo:Representation;
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:NavbarSearchAppearance;
 	elmo:contains stage:DefaultResource_graph;
+	elmo:contains stage:DefaultResource_tree;
 	elmo:layer elmo:BottomLayer;
 	elmo:query '''
 		construct {
@@ -31,6 +32,26 @@ stage:DefaultResource a elmo:Representation;
 		}
 	''';
 .
+
+stage:DefaultResource_tree a elmo:Part;
+	elmo:appearance elmo:TreeAppearance;
+	elmo:query '''
+		CONSTRUCT {
+			?s a ?t.
+			?s rdfs:label ?slabel.
+			?t rdfs:label ?tlabel.
+		}
+		WHERE {
+			GRAPH ?g {
+				<@SUBJECT@> a ?type.
+				?s a ?t.
+				?s rdfs:label ?slabel.
+				?t rdfs:label ?tlabel.
+			}
+		}
+	''';
+.
+
 stage:DefaultResource_graph a elmo:Part;
 	elmo:index "2";
 	elmo:appearance elmo:GraphAppearance;

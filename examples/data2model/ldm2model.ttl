@@ -1,0 +1,163 @@
+@prefix localupdatestage: <http://localhost:8080/data2model/update/>.
+@prefix updatestage: <http://linkeddata.ordina.nl/data2model/update/>.
+@prefix stage: <http://localhost:8080/data2model/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+#Production for local installations
+localupdatestage:ldm2model a elmo:Production;
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:Menu;
+	elmo:contains stage:ldm2model_scene1;
+	elmo:contains stage:ldm2model_scene2;
+	elmo:contains stage:ldm2model_scene3;
+	elmo:contains stage:ldm2model_scene4;
+	elmo:contains stage:ldm2model_scene5;
+.
+
+#Production for server installations
+updatestage:data2model a elmo:Production;
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:Menu;
+	elmo:contains stage:ldm2model_scene1;
+	elmo:contains stage:ldm2model_scene2;
+	elmo:contains stage:ldm2model_scene3;
+	elmo:contains stage:ldm2model_scene4;
+	elmo:contains stage:ldm2model_scene5;
+  # Extra for copy of result
+  elmo:contains stage:ldm2model_clearservergraph;
+  elmo:contains stage:ldm2model_copytoservergraph;
+.
+
+stage:ldm2model_clearservergraph a elmo:Scene;
+  elmo:index "98";
+  rdfs:label "Clear server graph";
+  elmo:query "clear graph <http://linkeddata.ordina.nl/data2model/container/model>";
+.
+stage:ldm2model_copytoservergraph a elmo:Scene;
+  elmo:index "99";
+  rdfs:label "Copy result to server graph";
+  elmo:query '''
+    insert into <http://linkeddata.ordina.nl/data2model/container/model> {
+      ?s ?p ?o
+    }
+    where {
+      graph <http://localhost:8080/data2model/container/model> {
+        ?s ?p ?o
+      }
+    }
+  '''
+.
+
+stage:ldm2model_scene1 a elmo:Scene;
+	elmo:index "01";
+	rdfs:label "Clear target graph";
+	elmo:query "clear graph <http://localhost:8080/data2model/container/model>";
+.
+
+stage:ldm2model_scene2 a elmo:Scene;
+	elmo:index "02";
+	rdfs:label "Add ldm:Entities";
+	elmo:query '''
+	  PREFIX ldm: <http://powerdesigner.com/def#>
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+    insert into <http://localhost:8080/data2model/container/model> {
+			?entity rdf:type sh:NodeShape.
+			?entity rdfs:label ?entitylabel.
+			?entity sh:name ?code.
+			?entity sh:targetClass ?class.
+			?class rdf:type owl:Class.
+			?class rdfs:label ?entitylabel.
+    }
+    where {
+      graph <http://localhost:8080/data2model/container/data> {
+        ?entity rdf:type ldm:Entity.
+        ?entity rdfs:label ?entitylabel.
+				?entity ldm:code ?code.
+				BIND (iri(concat("http://linkeddata.ordina.nl/ldm/def#",ucase(substr(?code,1,1)),lcase(substr(?code,2)))) as ?class)
+      }
+    }
+  ''';
+.
+
+stage:ldm2model_scene3 a elmo:Scene;
+	elmo:index "03";
+	rdfs:label "Add ldm:Attributes";
+	elmo:query '''
+	  PREFIX ldm: <http://powerdesigner.com/def#>
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+    insert into <http://localhost:8080/data2model/container/model> {
+			?entity sh:property ?attribute.
+			?attribute rdf:type sh:PropertyShape.
+			?attribute rdfs:label ?attributelabel.
+			?attribute sh:name ?code.
+			?attribute sh:path ?property.
+      ?property rdf:type owl:DatatypeProperty.
+      ?property rdfs:label ?attributelabel.
+    }
+    where {
+      graph <http://localhost:8080/data2model/container/data> {
+				?entity rdf:type ldm:Entity.
+				?entity ldm:attribute ?attribute.
+        ?attribute rdf:type ldm:Attribute.
+        ?attribute rdfs:label ?attributelabel.
+				?attribute ldm:code ?code.
+				BIND (iri(concat("http://linkeddata.ordina.nl/ldm/def#",lcase(?code))) as ?property)
+      }
+    }
+  ''';
+.
+
+stage:ldm2model_scene4 a elmo:Scene;
+	elmo:index "03";
+	rdfs:label "Add ldm:Relationship";
+	elmo:query '''
+	  PREFIX ldm: <http://powerdesigner.com/def#>
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+    insert into <http://localhost:8080/data2model/container/model> {
+			?entity sh:property ?relationship.
+			?relationship rdf:type sh:PropertyShape.
+			?relationship rdfs:label ?relationshiplabel.
+			?relationship sh:name ?code.
+			?relationship sh:path ?property.
+			?relationship sh:node ?entity2.
+      ?property rdf:type owl:ObjectProperty.
+      ?property rdfs:label ?relationshiplabel.
+    }
+    where {
+      graph <http://localhost:8080/data2model/container/data> {
+				?relationship rdf:type ldm:Relationship.
+				?relationship ldm:object1entity ?entity.
+				?relationship ldm:object2entity ?entity2.
+        ?relationship rdfs:label ?relationshiplabel.
+				?relationship ldm:code ?code.
+				BIND (iri(concat("http://linkeddata.ordina.nl/ldm/def#",lcase(?code))) as ?property)
+      }
+    }
+  ''';
+.
+
+stage:ldm2model_scene5 a elmo:Scene;
+	elmo:index "02";
+	rdfs:label "Add ldm:Inheritances";
+	elmo:query '''
+	  PREFIX ldm: <http://powerdesigner.com/def#>
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+    insert into <http://localhost:8080/data2model/container/model> {
+			?subclass rdfs:subClassOf ?superclass
+    }
+    where {
+      graph <http://localhost:8080/data2model/container/data> {
+				?inheritance rdf:type ldm:Inheritance.
+				?inheritance ldm:parentEntity ?parententity.
+				?parententity ldm:code ?parentcode.
+				?inheritancelink ldm:object1inheritance ?inheritance.
+				?inheritancelink ldm:object2entity ?entity.
+				?entity ldm:code ?code.
+				BIND (iri(concat("http://linkeddata.ordina.nl/ldm/def#",ucase(substr(?parentcode,1,1)),lcase(substr(?parentcode,2)))) as ?superclass)
+				BIND (iri(concat("http://linkeddata.ordina.nl/ldm/def#",ucase(substr(?code,1,1)),lcase(substr(?code,2)))) as ?subclass)
+      }
+    }
+  ''';
+.
