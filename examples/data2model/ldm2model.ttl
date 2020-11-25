@@ -14,10 +14,12 @@ localupdatestage:ldm2model a elmo:Production;
 	elmo:contains stage:ldm2model_scene3;
 	elmo:contains stage:ldm2model_scene4;
 	elmo:contains stage:ldm2model_scene5;
+	elmo:contains stage:ldm2model_scene6;
+	elmo:contains stage:ldm2model_scene7;
 .
 
 #Production for server installations
-updatestage:data2model a elmo:Production;
+updatestage:ldm2model a elmo:Production;
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:Menu;
 	elmo:contains stage:ldm2model_scene1;
@@ -25,17 +27,19 @@ updatestage:data2model a elmo:Production;
 	elmo:contains stage:ldm2model_scene3;
 	elmo:contains stage:ldm2model_scene4;
 	elmo:contains stage:ldm2model_scene5;
+	elmo:contains stage:ldm2model_scene6;
+	elmo:contains stage:ldm2model_scene7;
   # Extra for copy of result
-  elmo:contains stage:ldm2model_clearservergraph;
-  elmo:contains stage:ldm2model_copytoservergraph;
+  elmo:contains stage:ldm2model_xxclearservergraph;
+  elmo:contains stage:ldm2model_xxcopytoservergraph;
 .
 
-stage:ldm2model_clearservergraph a elmo:Scene;
+stage:ldm2model_xxclearservergraph a elmo:Scene;
   elmo:index "98";
   rdfs:label "Clear server graph";
   elmo:query "clear graph <http://linkeddata.ordina.nl/data2model/container/model>";
 .
-stage:ldm2model_copytoservergraph a elmo:Scene;
+stage:ldm2model_xxcopytoservergraph a elmo:Scene;
   elmo:index "99";
   rdfs:label "Copy result to server graph";
   elmo:query '''
@@ -58,6 +62,45 @@ stage:ldm2model_scene1 a elmo:Scene;
 
 stage:ldm2model_scene2 a elmo:Scene;
 	elmo:index "02";
+	rdfs:label "Create technical names";
+	elmo:query '''
+		PREFIX ldm: <http://powerdesigner.com/def#>
+		PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+		insert into <http://localhost:8080/data2model/container/model> {
+			?item skos:notation ?codefixed.
+		}
+		where {
+			graph <http://localhost:8080/data2model/container/data> {
+				?item ldm:code ?code
+				BIND (replace(?code,"[^a-zA-Z0-9_-]","_") as ?codefixed)
+			}
+		}
+	''';
+.
+
+stage:ldm2model_scene3 a elmo:Scene;
+	elmo:index "03";
+	rdfs:label "Add technical name when missing";
+	elmo:query '''
+		insert into <http://localhost:8080/data2model/container/model> {
+			?item skos:notation ?localname.
+		}
+		where {
+			graph <http://localhost:8080/data2model/container/data> {
+				?item a ?type.
+				BIND (strafter(str(?item),":") as ?localname)
+			}
+			filter not exists {
+				graph <http://localhost:8080/data2model/container/model> {
+					?item skos:notation ?code
+				}
+			}
+		}
+	''';
+.
+
+stage:ldm2model_scene4 a elmo:Scene;
+	elmo:index "04";
 	rdfs:label "Add ldm:Entities";
 	elmo:query '''
 	  PREFIX ldm: <http://powerdesigner.com/def#>
@@ -75,14 +118,17 @@ stage:ldm2model_scene2 a elmo:Scene;
         ?entity rdf:type ldm:Entity.
         ?entity rdfs:label ?entitylabel.
 				?entity ldm:code ?code.
-				BIND (iri(concat("http://linkeddata.ordina.nl/ldm/def#",ucase(substr(?code,1,1)),lcase(substr(?code,2)))) as ?class)
       }
+			graph <http://localhost:8080/data2model/container/model> {
+				?entity skos:notation ?notation
+				BIND (iri(concat("http://linkeddata.ordina.nl/ldm/def#",ucase(substr(?notation,1,1)),lcase(substr(?notation,2)))) as ?class)
+			}
     }
   ''';
 .
 
-stage:ldm2model_scene3 a elmo:Scene;
-	elmo:index "03";
+stage:ldm2model_scene5 a elmo:Scene;
+	elmo:index "05";
 	rdfs:label "Add ldm:Attributes";
 	elmo:query '''
 	  PREFIX ldm: <http://powerdesigner.com/def#>
@@ -103,14 +149,17 @@ stage:ldm2model_scene3 a elmo:Scene;
         ?attribute rdf:type ldm:Attribute.
         ?attribute rdfs:label ?attributelabel.
 				?attribute ldm:code ?code.
-				BIND (iri(concat("http://linkeddata.ordina.nl/ldm/def#",lcase(?code))) as ?property)
       }
+			graph <http://localhost:8080/data2model/container/model> {
+				?attribute skos:notation ?notation
+				BIND (iri(concat("http://linkeddata.ordina.nl/ldm/def#",lcase(?notation))) as ?property)
+			}
     }
   ''';
 .
 
-stage:ldm2model_scene4 a elmo:Scene;
-	elmo:index "03";
+stage:ldm2model_scene6 a elmo:Scene;
+	elmo:index "06";
 	rdfs:label "Add ldm:Relationship";
 	elmo:query '''
 	  PREFIX ldm: <http://powerdesigner.com/def#>
@@ -121,7 +170,7 @@ stage:ldm2model_scene4 a elmo:Scene;
 			?relationship rdfs:label ?relationshiplabel.
 			?relationship sh:name ?code.
 			?relationship sh:path ?property.
-			?relationship sh:node ?entity2.
+			?relationship sh:class ?refclass.
       ?property rdf:type owl:ObjectProperty.
       ?property rdfs:label ?relationshiplabel.
     }
@@ -132,14 +181,21 @@ stage:ldm2model_scene4 a elmo:Scene;
 				?relationship ldm:object2entity ?entity2.
         ?relationship rdfs:label ?relationshiplabel.
 				?relationship ldm:code ?code.
-				BIND (iri(concat("http://linkeddata.ordina.nl/ldm/def#",lcase(?code))) as ?property)
       }
+			graph <http://localhost:8080/data2model/container/model> {
+				?relationship skos:notation ?notation
+				BIND (iri(concat("http://linkeddata.ordina.nl/ldm/def#",lcase(?notation))) as ?property)
+			}
+			graph <http://localhost:8080/data2model/container/model> {
+				# Link to the original entities (not nodes) via hack:
+				?entity2 sh:targetClass ?refclass.
+			}
     }
   ''';
 .
 
-stage:ldm2model_scene5 a elmo:Scene;
-	elmo:index "02";
+stage:ldm2model_scene7 a elmo:Scene;
+	elmo:index "07";
 	rdfs:label "Add ldm:Inheritances";
 	elmo:query '''
 	  PREFIX ldm: <http://powerdesigner.com/def#>
@@ -151,13 +207,14 @@ stage:ldm2model_scene5 a elmo:Scene;
       graph <http://localhost:8080/data2model/container/data> {
 				?inheritance rdf:type ldm:Inheritance.
 				?inheritance ldm:parentEntity ?parententity.
-				?parententity ldm:code ?parentcode.
 				?inheritancelink ldm:object1inheritance ?inheritance.
 				?inheritancelink ldm:object2entity ?entity.
-				?entity ldm:code ?code.
-				BIND (iri(concat("http://linkeddata.ordina.nl/ldm/def#",ucase(substr(?parentcode,1,1)),lcase(substr(?parentcode,2)))) as ?superclass)
-				BIND (iri(concat("http://linkeddata.ordina.nl/ldm/def#",ucase(substr(?code,1,1)),lcase(substr(?code,2)))) as ?subclass)
       }
+			graph <http://localhost:8080/data2model/container/model> {
+				# Link to the original entities (not nodes) via hack:
+				?parententity sh:targetClass ?superclass.
+				?entity sh:targetClass ?subclass.
+			}
     }
   ''';
 .

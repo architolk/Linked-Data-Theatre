@@ -179,9 +179,23 @@ containerlocal:xmidata a elmo:Container;
   elmo:representation elmo:UploadRepresentation;
   elmo:replaces containerlocal:data;
 .
+container:xmidata a elmo:Container;
+  rdfs:label "Upload XMI data";
+  elmo:translator elmo:XMI21Translator;
+  elmo:contains stage:Menu;
+  elmo:representation elmo:UploadRepresentation;
+  elmo:replaces containerlocal:data;
+.
 
 # Container for LDM (Powerdesigner) models
 containerlocal:ldmdata a elmo:Container;
+  rdfs:label "Upload LDM (Powerdesigner) data";
+  elmo:translator elmo:LDMTranslator;
+  elmo:contains stage:Menu;
+  elmo:representation elmo:UploadRepresentation;
+  elmo:replaces containerlocal:data;
+.
+container:ldmdata a elmo:Container;
   rdfs:label "Upload LDM (Powerdesigner) data";
   elmo:translator elmo:LDMTranslator;
   elmo:contains stage:Menu;
