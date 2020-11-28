@@ -1,0 +1,191 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+@prefix void: <http://rdfs.org/ns/void#>.
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
+@prefix stage: <http://localhost:8080/data2model/stage#>.
+
+stage:Class a elmo:Representation;
+  elmo:applies-to [
+    a owl:Class
+  ];
+  elmo:layer elmo:TopLayer;
+  elmo:index "1";
+  elmo:contains stage:Menu;
+  elmo:contains stage:Class_attr;
+  elmo:contains stage:Class_rels;
+  elmo:contains stage:Class_model;
+  elmo:fragment [
+    elmo:applies-to rdf:type;
+    elmo:appearance elmo:HiddenAppearance;
+  ];
+  elmo:fragment [
+    elmo:applies-to rdfs:label;
+    elmo:appearance elmo:HiddenAppearance;
+  ];
+  elmo:fragment [
+    elmo:applies-to rdfs:subClassOf;
+    elmo:index "1";
+    rdfs:label "Subklasse van"@nl;
+    rdfs:label "Subclass of"@en;
+  ];
+  elmo:fragment [
+    elmo:applies-to rdfs:comment;
+    elmo:index "2";
+    rdfs:label "Omschrijving"@nl;
+    rdfs:label "Comment"@en;
+  ];
+  elmo:query '''
+    CONSTRUCT {
+      <@SUBJECT@>?p?o.
+      ?o rdfs:label ?olabel.
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/model> {
+        <@SUBJECT@>?p?o.
+        OPTIONAL {
+          ?o rdfs:label ?olabel
+        }
+      }
+    }
+  ''';
+.
+
+stage:Class_attr a elmo:Part;
+  elmo:index "2";
+  elmo:appearance elmo:ShortTableAppearance;
+  elmo:fragment [
+    elmo:applies-to "property";
+    rdfs:label "Eigenschap"@nl;
+    rdfs:label "Property"@en;
+  ];
+  elmo:query '''
+    prefix sh: <http://www.w3.org/ns/shacl#>
+    SELECT ?property ?property_label ?comment
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/model> {
+        ?shape sh:targetClass <@SUBJECT@>.
+        ?shape sh:property ?pshape.
+        ?pshape sh:path ?property.
+        ?property rdfs:label ?property_label.
+        OPTIONAL {?property rdfs:comment ?comment}
+        FILTER NOT EXISTS {
+          ?pshape sh:class ?class.
+        }
+      }
+    }
+  ''';
+.
+
+stage:Class_rels a elmo:Part;
+  elmo:index "3";
+  elmo:appearance elmo:ShortTableAppearance;
+  elmo:fragment [
+    elmo:applies-to "refclass";
+    rdfs:label "Van klasse"@nl;
+  ];
+  elmo:fragment [
+    elmo:applies-to "property";
+    rdfs:label "Relatie"@nl;
+  ];
+  elmo:fragment [
+    elmo:applies-to "class";
+    rdfs:label "Naar klasse"@nl;
+  ];
+  elmo:query '''
+    prefix sh: <http://www.w3.org/ns/shacl#>
+    SELECT ?refclass ?refclass_label ?property ?property_label ?class ?class_label
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/model> {
+        {
+          ?shape sh:targetClass <@SUBJECT@>.
+          ?shape sh:property ?pshape.
+          ?pshape sh:path ?property.
+          ?property rdfs:label ?property_label.
+          ?pshape sh:class ?class.
+          ?class rdfs:label ?class_label.
+        }
+        UNION
+        {
+          ?pshape sh:class <@SUBJECT@>.
+          ?pshape sh:path ?property.
+          ?property rdfs:label ?property_label.
+          ?rshape sh:property ?pshape.
+          ?rshape sh:targetClass ?refclass.
+          ?refclass rdfs:label ?refclass_label
+        }
+      }
+    }
+  ''';
+.
+
+stage:Class_model a elmo:Part;
+  elmo:index "4";
+  elmo:appearance elmo:ModelAppearance;
+  elmo:xquery '''
+    prefix sh: <http://www.w3.org/ns/shacl#>
+    CONSTRUCT {
+      <urn:shape> a sh:NodeShape;
+        rdfs:label "Shape";
+        sh:property [
+          sh:name "p1";
+          rdfs:label "p1";
+          sh:path <http://test.org/def#p1>
+        ];
+        sh:property [
+          sh:name "p2";
+          rdfs:label "p2";
+          sh:path <http://test.org/def#p2>
+        ]
+      .
+    }
+    WHERE {}
+  ''';
+  elmo:query '''
+    prefix sh: <http://www.w3.org/ns/shacl#>
+    CONSTRUCT {
+      <@SUBJECT@>?p?o.
+      ?shape a sh:NodeShape.
+      ?shape sh:targetClass <@SUBJECT@>.
+      ?shape ?shapep ?shapeo.
+      ?pshape ?pshapep ?pshapeo.
+      ?cshape ?cshapep ?cshapeo.
+      ?pcshape ?pcshapep ?pcshapeo.
+      ?rshape sh:property ?rshape.
+      ?prshape ?prshapep ?prshapeo.
+      ?rshape ?rshapep ?rshapeo.
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/model> {
+        {
+          <@SUBJECT@>?p?o
+        }
+        UNION
+        {
+          ?shape sh:targetClass <@SUBJECT@>.
+          ?shape ?shapep ?shapeo.
+          ?shape sh:property ?pshape.
+          ?pshape ?pshapep ?pshapeo.
+        }
+        UNION
+        {
+          ?shape sh:targetClass <@SUBJECT@>.
+          ?shape sh:property ?pshape.
+          ?pshape sh:class ?class.
+          ?cshape sh:targetClass ?class.
+          ?cshape ?cshapep ?cshapeo.
+          ?cshape sh:property ?pcshape.
+          ?pcshape ?pcshapep ?pcshapeo.
+        }
+        UNION
+        {
+          ?prshape sh:class <@SUBJECT@>.
+          ?rshape sh:property ?prshape.
+          ?prshape ?prshapep ?prshapeo.
+          ?rshape ?rshapep ?rshapeo.
+        }
+      }
+    }
+  '''
+.

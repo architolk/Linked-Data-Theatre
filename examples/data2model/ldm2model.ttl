@@ -112,12 +112,14 @@ stage:ldm2model_scene4 a elmo:Scene;
 			?entity sh:targetClass ?class.
 			?class rdf:type owl:Class.
 			?class rdfs:label ?entitylabel.
+			?class rdfs:comment ?comment.
     }
     where {
       graph <http://localhost:8080/data2model/container/data> {
         ?entity rdf:type ldm:Entity.
         ?entity rdfs:label ?entitylabel.
 				?entity ldm:code ?code.
+				OPTIONAL {?entity ldm:comment ?comment}
       }
 			graph <http://localhost:8080/data2model/container/model> {
 				?entity skos:notation ?notation
@@ -141,6 +143,7 @@ stage:ldm2model_scene5 a elmo:Scene;
 			?attribute sh:path ?property.
       ?property rdf:type owl:DatatypeProperty.
       ?property rdfs:label ?attributelabel.
+			?property rdfs:comment ?comment.
     }
     where {
       graph <http://localhost:8080/data2model/container/data> {
@@ -149,6 +152,7 @@ stage:ldm2model_scene5 a elmo:Scene;
         ?attribute rdf:type ldm:Attribute.
         ?attribute rdfs:label ?attributelabel.
 				?attribute ldm:code ?code.
+				OPTIONAL {?attribute ldm:comment ?comment}
       }
 			graph <http://localhost:8080/data2model/container/model> {
 				?attribute skos:notation ?notation
@@ -173,6 +177,7 @@ stage:ldm2model_scene6 a elmo:Scene;
 			?relationship sh:class ?refclass.
       ?property rdf:type owl:ObjectProperty.
       ?property rdfs:label ?relationshiplabel.
+			?property rdfs:comment ?comment.
     }
     where {
       graph <http://localhost:8080/data2model/container/data> {
@@ -181,6 +186,7 @@ stage:ldm2model_scene6 a elmo:Scene;
 				?relationship ldm:object2entity ?entity2.
         ?relationship rdfs:label ?relationshiplabel.
 				?relationship ldm:code ?code.
+				OPTIONAL {?entity ldm:comment ?comment}
       }
 			graph <http://localhost:8080/data2model/container/model> {
 				?relationship skos:notation ?notation
