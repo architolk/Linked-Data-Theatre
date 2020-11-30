@@ -41,6 +41,12 @@ stage:Menu elmo:appearance elmo:NavbarSearchAppearance;
 	  ];
 		elmo:data [
 			elmo:index "5";
+	    rdfs:label "Asbesto"@en;
+	    rdfs:label "Asbest"@nl;
+	    html:link "/concepts/resource?subject=http%3A%2F%2Flocalhost:8080%2Fconcepts%2Fid%2Fconcept%2FAsbest";
+	  ];
+		elmo:data [
+			elmo:index "6";
 	    rdfs:label "Scheme"@en;
 	    rdfs:label "Schema"@nl;
 	    html:link "/concepts/query/scheme";

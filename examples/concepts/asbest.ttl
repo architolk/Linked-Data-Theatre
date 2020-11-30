@@ -1,0 +1,71 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix skos: <http://www.w3.org/2004/02/skos/core#>.
+@prefix skosthes: <http://purl.org/iso25964/skos-thes#>.
+@prefix skoslex: <http://bp4mc2.org/def/skos-lex#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+
+@prefix ex: <http://localhost:8080/concepts/id/concept/>.
+
+ex:Asbest a skos:Concept;
+  rdfs:label "Asbest";
+.
+
+ex:Asbestvrijwaring a skoslex:Object;
+  rdfs:label "Asbestvrijwaring";
+  skosthes:broaderGeneric ex:Vrijwaring;
+  skos:semanticRelation ex:Asbest;
+.
+
+ex:Aansprakelijkheid a skoslex:Object;
+  rdfs:label "Aansprakelijkheid";
+.
+
+ex:Vrijwaring a skoslex:Object;
+  rdfs:label "Vrijwaring";
+  skos:semanticRelation ex:Aansprakelijkheid;
+.
+
+ex:VrijwarenVanAansprakelijkheidAsbest a skoslex:Act;
+  rdfs:label "Vrijwaren van aansprakelijkheid m.b.t. asbest";
+  skoslex:actor ex:Koper;
+  skoslex:actor ex:Verkoper;
+  skoslex:object ex:Asbestvrijwaring;
+  skoslex:object ex:Woning;
+  skosthes:broaderPartitive ex:Koop;
+.
+
+ex:Koop a skoslex:Act;
+  rdfs:label "Koop";
+  skoslex:actor ex:Koper;
+  skoslex:actor ex:Verkoper;
+  skoslex:agent ex:Makelaar;
+  skoslex:object ex:Woning;
+  skoslex:record ex:Koopovereenkomst;
+.
+
+ex:Woning a skoslex:Object;
+  rdfs:label "Woning";
+.
+
+ex:Verkoper a skoslex:Actor;
+  rdfs:label "Verkoper";
+.
+
+ex:Koper a skoslex:Actor;
+  rdfs:label "Koper";
+.
+
+ex:Makelaar a skoslex:Agent;
+  rdfs:label "Makelaar";
+.
+
+ex:Koopovereenkomst a skoslex:Record;
+  rdfs:label "Koopovereenkomst";
+  skos:narrowerPartitive ex:AsbestClausule;
+.
+
+ex:AsbestClausule a skoslex:Record;
+  rdfs:label "Asbestclausule";
+  skoslex:isAbout ex:Asbestvrijwaring;
+.
