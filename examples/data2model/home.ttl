@@ -54,7 +54,8 @@ stage:Menu elmo:appearance elmo:NavbarSearchAppearance;
 			elmo:data [elmo:index "1"; rdfs:label "Create MIM model"; html:link "update/model2mim"];
 			elmo:data [elmo:index "2"; rdfs:label "Edit MIM model"; html:link "container/mim"];
 			elmo:data [elmo:index "3"; rdfs:label "Upload UML model"; html:link "container/xmidata"];
-			elmo:data [elmo:index "3"; rdfs:label "Create MIM model from UML"; html:link "update/uml2mim"];
+			elmo:data [elmo:index "4"; rdfs:label "Create MIM model from UML"; html:link "update/uml2mim"];
+			elmo:data [elmo:index "5"; rdfs:label "Create model from MIM"; html:link "update/mim2model"];
 		];
 		elmo:data [
 			elmo:index "7";

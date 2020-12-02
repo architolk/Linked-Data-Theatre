@@ -24,6 +24,7 @@ localupdatestage:uml2mim a elmo:Production;
   elmo:contains stage:uml2mim_scene099;
   elmo:contains stage:uml2mim_scene101;
   elmo:contains stage:uml2mim_scene102;
+  elmo:contains stage:uml2mim_scene103;
   elmo:contains stage:uml2mim_scene104;
 .
 
@@ -99,7 +100,7 @@ stage:uml2mim_scene002 a elmo:Scene;
 
 stage:uml2mim_scene003 a elmo:Scene;
   elmo:index "003";
-  rdfs:label "Add Relatiesoort";
+  rdfs:label "Add mim:Relatiesoort";
   elmo:query '''
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
@@ -486,6 +487,37 @@ stage:uml2mim_scene102 a elmo:Scene;
       }
       GRAPH <http://localhost:8080/data2model/container/xmidata> {
         ?item ea:alias ?alias
+      }
+    }
+  ''';
+.
+
+stage:uml2mim_scene103 a elmo:Scene;
+  elmo:index "103";
+  rdfs:label "Add mim:begrip and mim:begripsterm";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
+    PREFIX ea: <http://www.sparxsystems.com/extender/EA6.5#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?element ?property ?begrip.
+      }
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?element rdfs:seeAlso ?item
+      }
+      GRAPH <http://localhost:8080/data2model/container/xmidata> {
+        SELECT (IF(REGEX(?value,"^(http://|https://)[^ ]+$"),mim:begrip,mim:begripsterm) as ?property)
+               (IF(REGEX(?value,"^(http://|https://)[^ ]+$"),iri(?value),?value) as ?begrip) ?item
+        WHERE {
+          ?item uml:taggedValue ?tag.
+          ?tag rdfs:label "Begrip"^^xsd:string.
+          ?tag rdf:value ?value.
+        }
       }
     }
   ''';
