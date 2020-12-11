@@ -91,7 +91,7 @@ stage:uml2scheme_scene3 a elmo:Scene;
 			}
 		}
 		WHERE {
-			graph <http://localhost:8080/data2model/container/xmidata> {
+			graph <http://localhost:8080/data2model/container/data> {
 				select ?class (IRI(concat("urn:classconcept:",md5(str(?class)))) as ?concept)
 				where {
 					?class a uml:Class.
@@ -115,7 +115,7 @@ stage:uml2scheme_scene4 a elmo:Scene;
 			}
 		}
 		WHERE {
-			graph <http://localhost:8080/data2model/container/xmidata> {
+			graph <http://localhost:8080/data2model/container/data> {
 				select ?property (IRI(concat("urn:propertyconcept:",md5(str(?property)))) as ?concept)
 				where {
 					?property a uml:Property.
@@ -140,7 +140,7 @@ stage:uml2scheme_scene5 a elmo:Scene;
 				?concept a skos:Concept.
 				?concept dct:source ?item.
 			}
-			graph <http://localhost:8080/data2model/container/xmidata> {
+			graph <http://localhost:8080/data2model/container/data> {
 				?item rdfs:label ?label
 			}
 		}
@@ -163,7 +163,7 @@ stage:uml2scheme_scene6 a elmo:Scene;
 				?concept a skos:Concept.
 				?concept dct:source ?item.
 			}
-			graph <http://localhost:8080/data2model/container/xmidata> {
+			graph <http://localhost:8080/data2model/container/data> {
 				?item ea:documentation ?definition
 			}
 		}
@@ -188,7 +188,7 @@ stage:uml2scheme_scene7 a elmo:Scene;
 				?ownerconcept a skos:Concept.
 				?ownerconcept dct:source ?owner.
 			}
-			graph <http://localhost:8080/data2model/container/xmidata> {
+			graph <http://localhost:8080/data2model/container/data> {
 				?owner uml:ownedAttribute ?attribute
 			}
 		}
@@ -207,7 +207,7 @@ stage:uml2scheme_scene8 a elmo:Scene;
       }
     }
     WHERE {
-      GRAPH <http://localhost:8080/data2model/container/xmidata> {
+      GRAPH <http://localhost:8080/data2model/container/data> {
         SELECT (?generalization as ?generalisatie) ?generalization ?class ?general
         WHERE {
           ?class uml:generalization ?generalization.

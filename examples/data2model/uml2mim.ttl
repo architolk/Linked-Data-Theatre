@@ -50,7 +50,7 @@ stage:uml2mim_scene001 a elmo:Scene;
       }
     }
     WHERE {
-      GRAPH <http://localhost:8080/data2model/container/xmidata> {
+      GRAPH <http://localhost:8080/data2model/container/data> {
         SELECT ?class as ?objecttype ?class
         WHERE {
           ?class a uml:Class.
@@ -82,7 +82,7 @@ stage:uml2mim_scene002 a elmo:Scene;
         ?objecttype a mim:Objecttype.
         ?objecttype rdfs:seeAlso ?class
       }
-      GRAPH <http://localhost:8080/data2model/container/xmidata> {
+      GRAPH <http://localhost:8080/data2model/container/data> {
         select (?property as ?attribuutsoort) ?class ?property
         where {
           ?class a uml:Class.
@@ -122,7 +122,7 @@ stage:uml2mim_scene003 a elmo:Scene;
         ?doel a mim:Objecttype.
         ?doel rdfs:seeAlso ?target.
       }
-      GRAPH <http://localhost:8080/data2model/container/xmidata> {
+      GRAPH <http://localhost:8080/data2model/container/data> {
         select (?association as ?relatiesoort) ?association ?source ?target
         where {
           ?association a uml:Association.
@@ -154,7 +154,7 @@ stage:uml2mim_scene004 a elmo:Scene;
       }
     }
     WHERE {
-      GRAPH <http://localhost:8080/data2model/container/xmidata> {
+      GRAPH <http://localhost:8080/data2model/container/data> {
         SELECT ?class as ?datatype ?class
         WHERE {
           ?class a uml:DataType.
@@ -181,7 +181,7 @@ stage:uml2mim_scene006 a elmo:Scene;
       }
     }
     WHERE {
-      GRAPH <http://localhost:8080/data2model/container/xmidata> {
+      GRAPH <http://localhost:8080/data2model/container/data> {
         SELECT ?union as ?keuze ?union
         WHERE {
           ?union a uml:DataType.
@@ -208,7 +208,7 @@ stage:uml2mim_scene007 a elmo:Scene;
       }
     }
     WHERE {
-      GRAPH <http://localhost:8080/data2model/container/xmidata> {
+      GRAPH <http://localhost:8080/data2model/container/data> {
         {
           SELECT ?class as ?datatype ?class
           WHERE {
@@ -249,7 +249,7 @@ stage:uml2mim_scene008 a elmo:Scene;
         ?datatype a mim:GestructureerdDatatype.
         ?datatype rdfs:seeAlso ?class
       }
-      GRAPH <http://localhost:8080/data2model/container/xmidata> {
+      GRAPH <http://localhost:8080/data2model/container/data> {
         select (?property as ?dataelement) ?class ?property
         where {
           ?class a uml:DataType.
@@ -281,7 +281,7 @@ stage:uml2mim_scene009 a elmo:Scene;
       }
     }
     WHERE {
-      GRAPH <http://localhost:8080/data2model/container/xmidata> {
+      GRAPH <http://localhost:8080/data2model/container/data> {
         SELECT ?enumeration as ?enumeratie ?enumeration
         WHERE {
           ?enumeration a uml:Enumeration.
@@ -313,7 +313,7 @@ stage:uml2mim_scene010 a elmo:Scene;
         ?enumeratie a mim:Enumeratie.
         ?enumeratie rdfs:seeAlso ?enumeration
       }
-      GRAPH <http://localhost:8080/data2model/container/xmidata> {
+      GRAPH <http://localhost:8080/data2model/container/data> {
         select (?literal as ?waarde) ?class ?literal
         where {
           {
@@ -358,7 +358,7 @@ stage:uml2mim_scene011 a elmo:Scene;
         ?relatiesoort a mim:Relatiesoort.
         ?relatiesoort rdfs:seeAlso ?association
       }
-      GRAPH <http://localhost:8080/data2model/container/xmidata> {
+      GRAPH <http://localhost:8080/data2model/container/data> {
         select (?property as ?relatierolbron) ?association ?property
         where {
           ?association a uml:Association.
@@ -393,7 +393,7 @@ stage:uml2mim_scene012 a elmo:Scene;
         ?relatiesoort a mim:Relatiesoort.
         ?relatiesoort rdfs:seeAlso ?association
       }
-      GRAPH <http://localhost:8080/data2model/container/xmidata> {
+      GRAPH <http://localhost:8080/data2model/container/data> {
         select (?property as ?relatieroldoel) ?association ?property
         where {
           ?association a uml:Association.
@@ -427,7 +427,7 @@ stage:uml2mim_scene099 a elmo:Scene;
       }
     }
     WHERE {
-      GRAPH <http://localhost:8080/data2model/container/xmidata> {
+      GRAPH <http://localhost:8080/data2model/container/data> {
         SELECT (?generalization as ?generalisatie) ?generalization ?class ?general
         WHERE {
           ?class uml:generalization ?generalization.
@@ -460,7 +460,7 @@ stage:uml2mim_scene101 a elmo:Scene;
       GRAPH <http://localhost:8080/data2model/container/mim> {
         ?element rdfs:seeAlso ?item
       }
-      GRAPH <http://localhost:8080/data2model/container/xmidata> {
+      GRAPH <http://localhost:8080/data2model/container/data> {
         ?item rdfs:label ?naam
       }
     }
@@ -485,7 +485,7 @@ stage:uml2mim_scene102 a elmo:Scene;
       GRAPH <http://localhost:8080/data2model/container/mim> {
         ?element rdfs:seeAlso ?item
       }
-      GRAPH <http://localhost:8080/data2model/container/xmidata> {
+      GRAPH <http://localhost:8080/data2model/container/data> {
         ?item ea:alias ?alias
       }
     }
@@ -510,7 +510,7 @@ stage:uml2mim_scene103 a elmo:Scene;
       GRAPH <http://localhost:8080/data2model/container/mim> {
         ?element rdfs:seeAlso ?item
       }
-      GRAPH <http://localhost:8080/data2model/container/xmidata> {
+      GRAPH <http://localhost:8080/data2model/container/data> {
         SELECT (IF(REGEX(?value,"^(http://|https://)[^ ]+$"),mim:begrip,mim:begripsterm) as ?property)
                (IF(REGEX(?value,"^(http://|https://)[^ ]+$"),iri(?value),?value) as ?begrip) ?item
         WHERE {
@@ -541,7 +541,7 @@ stage:uml2mim_scene104 a elmo:Scene;
       GRAPH <http://localhost:8080/data2model/container/mim> {
         ?element rdfs:seeAlso ?item
       }
-      GRAPH <http://localhost:8080/data2model/container/xmidata> {
+      GRAPH <http://localhost:8080/data2model/container/data> {
         ?item ea:documentation ?definitie
       }
     }
