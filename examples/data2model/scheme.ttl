@@ -195,3 +195,30 @@ stage:WebScheme_collections a elmo:Part;
     ORDER BY ucase(?collectie_label)
   ''';
 .
+
+stage:TableScheme a elmo:Representation;
+  elmo:url-pattern "/query/tablescheme(|.csv|.json|.xml)$";
+  elmo:contains stage:Menu;
+  elmo:fragment [
+    elmo:applies-to "concept";
+    rdfs:label "Concept"@nl;
+    rdfs:label "Concept"@en;
+  ];
+  elmo:fragment [
+    elmo:applies-to "definition";
+    rdfs:label "Definitie"@nl;
+    rdfs:label "Definition"@en;
+  ];
+  elmo:query '''
+    SELECT ?concept ?concept_label ?definition
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/scheme> {
+        ?concept a skos:Concept.
+        ?concept rdfs:label ?concept_label.
+        OPTIONAL {
+          ?concept skos:definition ?definition
+        }
+      }
+    }
+  '''
+.

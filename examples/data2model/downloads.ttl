@@ -28,6 +28,7 @@ stage:Downloads a elmo:Representation;
           <li><a href="query/vocabularies">Vocabularies gebruik</a></li>
           <li><a href="query/scheme">Begrippenkader</a></li>
           <li><a href="query/scheme.yed">Begrippenkader grafisch</a></li>
+          <li><a href="query/tablescheme">Begrippenkader in een tabel</a></li>
           <li><a href="query/webscheme">Begrippenkader in een webpagina</a></li>
           <li><a href="query/graph.yed">De data in een grafische weergave</a></li>
           <li><a href="query/graph">De data in turtle</a></li>
