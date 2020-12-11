@@ -63,6 +63,11 @@ stage:Menu elmo:appearance elmo:NavbarSearchAppearance;
 			rdfs:label "ERD";
 			elmo:data [elmo:index "1"; rdfs:label "Upload ERD model"; html:link "container/ldmdata"];
 			elmo:data [elmo:index "2"; rdfs:label "Create model from ERD"; html:link "update/ldm2model"];
+		];
+		elmo:data [
+			elmo:index "8";
+			rdfs:label "Clean";
+			html:link "update/clean";
 		]
   ]
 .
