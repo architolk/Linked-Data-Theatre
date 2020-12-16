@@ -1,0 +1,160 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+@prefix dc: <http://purl.org/dc/elements/1.1/>.
+@prefix void: <http://rdfs.org/ns/void#>.
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
+@prefix stage: <http://localhost:8080/data2model/stage#>.
+
+stage:Concept a elmo:Representation;
+  elmo:applies-to [
+    a skos:Concept
+  ];
+  elmo:layer elmo:TopLayer;
+  elmo:index "1";
+  elmo:contains stage:Menu;
+  elmo:contains stage:Concept_tree;
+  elmo:contains stage:Concept_graph;
+  elmo:fragment [
+    elmo:applies-to rdf:type;
+    elmo:appearance elmo:HiddenAppearance;
+  ];
+  elmo:fragment [
+    elmo:applies-to rdfs:label;
+    elmo:appearance elmo:HiddenAppearance;
+  ];
+  elmo:fragment [
+    elmo:applies-to skos:definition;
+    rdfs:label "Definitie"@nl;
+    rdfs:label "Definition"@en;
+    elmo:index "01";
+  ];
+  elmo:fragment [
+    elmo:applies-to skos:scopeNote;
+    rdfs:label "Toelichting"@nl;
+    rdfs:label "Scope note"@en;
+    elmo:index "02";
+  ];
+  elmo:fragment [
+    elmo:applies-to dc:source;
+    rdfs:label "Herkomst"@nl;
+    rdfs:label "Source"@en;
+    elmo:index "03";
+  ];
+  elmo:fragment [
+    elmo:applies-to skos:inScheme;
+    rdfs:label "Schema"@nl;
+    rdfs:label "Scheme"@en;
+    elmo:index "10";
+  ];
+  elmo:fragment [
+    elmo:applies-to skos:broader;
+    rdfs:label "Specialisatie van"@nl;
+    rdfs:label "Specialisation of"@en;
+    elmo:index "11";
+  ];
+  elmo:fragment [
+    elmo:applies-to skos:related;
+    rdfs:label "Gerelateerd"@nl;
+    rdfs:label "Related"@en;
+    elmo:index "11";
+  ];
+  elmo:query '''
+    CONSTRUCT {
+      <@SUBJECT@>?p?o.
+      ?o rdfs:label ?olabel.
+      <@SUBJECT@> skos:narrower ?cn.
+      ?cn rdfs:label ?cnlabel.
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/scheme> {
+        {
+          <@SUBJECT@>?p?o.
+          FILTER (isLiteral(?o))
+        }
+        UNION
+        {
+          <@SUBJECT@>?p?o.
+          ?o rdfs:label ?olabel
+        }
+        UNION
+        {
+          ?cn skos:broader <@SUBJECT@>.
+          ?cn rdfs:label ?cnlabel.
+        }
+      }
+    }
+  ''';
+.
+
+stage:Concept_tree a elmo:Part;
+  elmo:appearance elmo:TreeAppearance;
+  elmo:query '''
+    CONSTRUCT {
+      ?sn skos:broader ?sb.
+      ?sn rdfs:label ?snlabel.
+      ?sb rdfs:label ?sblabel.
+      ?c skos:inScheme ?s.
+      ?c rdfs:label ?clabel.
+      ?s rdfs:label ?slabel.
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/scheme> {
+        {
+          ?c skos:inScheme ?s.
+          ?c rdfs:label ?clabel.
+          ?s rdfs:label ?slabel.
+          FILTER NOT EXISTS {
+            ?c skos:broader ?ob.
+          }
+        }
+        UNION
+        {
+          ?sn skos:broader ?sb.
+          ?sn rdfs:label ?snlabel.
+          ?sb rdfs:label ?sblabel.
+        }
+        UNION
+        {
+          ?sb skos:narrower ?sn.
+          ?sn rdfs:label ?snlabel.
+          ?sb rdfs:label ?sblabel.
+        }
+      }
+    }
+  ''';
+.
+
+stage:Concept_graph a elmo:Part;
+  elmo:index "4";
+  elmo:appearance elmo:GraphAppearance;
+  elmo:query '''
+    CONSTRUCT {
+      <@SUBJECT@> rdfs:label ?label.
+      <@SUBJECT@> ?po ?o.
+      ?o rdfs:label ?olabel.
+      ?s ?ps <@SUBJECT@>.
+      ?s rdfs:label ?slabel
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/scheme> {
+        {
+          <@SUBJECT@> rdfs:label ?label
+        }
+        UNION
+        {
+          <@SUBJECT@> ?po ?o.
+          ?o rdfs:label ?olabel
+          FILTER (?po = skos:related || ?po = skos:broader)
+        }
+        UNION
+        {
+          ?s ?ps <@SUBJECT@>.
+          ?s rdfs:label ?slabel
+          FILTER (?ps = skos:related || ?po = skos:broader)
+        }
+      }
+    }
+  '''
+.

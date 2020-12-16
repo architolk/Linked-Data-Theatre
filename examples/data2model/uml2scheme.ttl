@@ -17,6 +17,10 @@ localupdatestage:uml2scheme a elmo:Production;
 	elmo:contains stage:uml2scheme_scene6;
 	elmo:contains stage:uml2scheme_scene7;
 	elmo:contains stage:uml2scheme_scene8;
+	elmo:contains stage:uml2scheme_scene9;
+	elmo:contains stage:uml2scheme_scene81;
+	elmo:contains stage:uml2scheme_scene82;
+	elmo:contains stage:uml2scheme_scene83;
 .
 
 #Production for server installations
@@ -31,6 +35,10 @@ updatestage:uml2scheme a elmo:Production;
 	elmo:contains stage:uml2scheme_scene6;
 	elmo:contains stage:uml2scheme_scene7;
 	elmo:contains stage:uml2scheme_scene8;
+	elmo:contains stage:uml2scheme_scene9;
+	elmo:contains stage:uml2scheme_scene81;
+	elmo:contains stage:uml2scheme_scene82;
+	elmo:contains stage:uml2scheme_scene83;
 	# Extra for copy of result
   elmo:contains stage:uml2scheme_clearservergraph;
   elmo:contains stage:uml2scheme_copytoservergraph;
@@ -171,7 +179,7 @@ stage:uml2scheme_scene6 a elmo:Scene;
 .
 
 stage:uml2scheme_scene7 a elmo:Scene;
-	elmo:index "06";
+	elmo:index "07";
 	rdfs:label "Create relation for uml:ownedAttribute";
 	elmo:query '''
 		PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
@@ -196,7 +204,32 @@ stage:uml2scheme_scene7 a elmo:Scene;
 .
 
 stage:uml2scheme_scene8 a elmo:Scene;
-  elmo:index "08";
+	elmo:index "08";
+	rdfs:label "Create relation for uml:type (target end of relationship)";
+	elmo:query '''
+		PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
+		PREFIX dct: <http://purl.org/dc/terms/>
+		insert {
+		 	graph <http://localhost:8080/data2model/container/scheme> {
+				?concept skos:related ?typeconcept
+			}
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept a skos:Concept.
+				?concept dct:source ?attribute.
+				?typeconcept a skos:Concept.
+				?typeconcept dct:source ?type.
+			}
+			graph <http://localhost:8080/data2model/container/data> {
+				?attribute uml:type ?type
+			}
+		}
+	''';
+.
+
+stage:uml2scheme_scene9 a elmo:Scene;
+  elmo:index "09";
   rdfs:label "Create broader for uml:Generalization";
   elmo:query '''
 		PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
@@ -220,4 +253,84 @@ stage:uml2scheme_scene8 a elmo:Scene;
       }
     }
   '''
+.
+
+stage:uml2scheme_scene81 a elmo:Scene;
+	elmo:index "81";
+	rdfs:label "Filter source from definition";
+	elmo:query '''
+		INSERT {
+			GRAPH <http://localhost:8080/data2model/container/scheme> {
+				?concept dc:source ?source
+			}
+		}
+		WHERE {
+			GRAPH <http://localhost:8080/data2model/container/scheme> {
+				{
+					select ?concept (strafter(?def,"-- Source --\\n") as ?source)
+			    where {
+			      graph <http://localhost:8080/data2model/container/scheme> {
+			        ?concept skos:definition ?def
+			      }
+			    }
+				}
+				FILTER (?source!='')
+			}
+		}
+	'''
+.
+
+stage:uml2scheme_scene82 a elmo:Scene;
+	elmo:index "82";
+	rdfs:label "Filter description from definition";
+	elmo:query '''
+		INSERT {
+			GRAPH <http://localhost:8080/data2model/container/scheme> {
+				?concept skos:scopeNote ?scopenote
+			}
+		}
+		WHERE {
+			GRAPH <http://localhost:8080/data2model/container/scheme> {
+				{
+					select ?concept (strafter(strbefore(concat(?def,"-- Source --"),"-- Source --"),"-- Description --\\n") as ?scopenote)
+			    where {
+			      graph <http://localhost:8080/data2model/container/scheme> {
+			        ?concept skos:definition ?def
+			      }
+			    }
+				}
+				FILTER (?scopenote!='')
+			}
+		}
+	'''
+.
+
+stage:uml2scheme_scene83 a elmo:Scene;
+	elmo:index "83";
+	rdfs:label "Filter definition";
+	elmo:query '''
+		DELETE {
+			GRAPH <http://localhost:8080/data2model/container/scheme> {
+				?concept skos:definition ?def
+			}
+		}
+		INSERT {
+			GRAPH <http://localhost:8080/data2model/container/scheme> {
+				?concept skos:definition ?definition
+			}
+		}
+		WHERE {
+			GRAPH <http://localhost:8080/data2model/container/scheme> {
+				{
+					select ?concept ?def (strafter(strbefore(concat(?def,"-- Description --"),"-- Description --"),"-- Definition --\\n") as ?definition)
+			    where {
+			      graph <http://localhost:8080/data2model/container/scheme> {
+			        ?concept skos:definition ?def
+			      }
+			    }
+				}
+				FILTER (?definition!='')
+			}
+		}
+	'''
 .
