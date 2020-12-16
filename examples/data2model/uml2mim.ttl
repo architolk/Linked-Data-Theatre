@@ -28,6 +28,52 @@ localupdatestage:uml2mim a elmo:Production;
   elmo:contains stage:uml2mim_scene104;
 .
 
+#Production for server installations
+updatestage:uml2mim a elmo:Production;
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:Menu;
+  elmo:contains stage:uml2mim_scene000;
+  elmo:contains stage:uml2mim_scene001;
+  elmo:contains stage:uml2mim_scene002;
+  elmo:contains stage:uml2mim_scene003;
+  elmo:contains stage:uml2mim_scene004;
+  elmo:contains stage:uml2mim_scene006;
+  elmo:contains stage:uml2mim_scene007;
+  elmo:contains stage:uml2mim_scene008;
+  elmo:contains stage:uml2mim_scene009;
+  elmo:contains stage:uml2mim_scene010;
+  elmo:contains stage:uml2mim_scene011;
+  elmo:contains stage:uml2mim_scene012;
+  elmo:contains stage:uml2mim_scene099;
+  elmo:contains stage:uml2mim_scene101;
+  elmo:contains stage:uml2mim_scene102;
+  elmo:contains stage:uml2mim_scene103;
+  elmo:contains stage:uml2mim_scene104;
+	# Extra for copy of result
+  elmo:contains stage:uml2mim_clearservergraph;
+  elmo:contains stage:uml2mim_copytoservergraph;
+.
+
+stage:uml2mim_clearservergraph a elmo:Scene;
+  elmo:index "998";
+  rdfs:label "Clear server graph";
+  elmo:query "clear graph <http://linkeddata.ordina.nl/data2model/container/mim>";
+.
+stage:uml2mim_copytoservergraph a elmo:Scene;
+  elmo:index "999";
+  rdfs:label "Copy result to server graph";
+  elmo:query '''
+    insert into <http://linkeddata.ordina.nl/data2model/container/mim> {
+      ?s ?p ?o
+    }
+    where {
+      graph <http://localhost:8080/data2model/container/mim> {
+        ?s ?p ?o
+      }
+    }
+  '''
+.
+
 stage:uml2mim_scene000 a elmo:Scene;
   elmo:index "000";
   rdfs:label "Clear target graph";

@@ -170,6 +170,10 @@ containerlocal:mim a elmo:Container;
   rdfs:label "Upload MIM model";
   elmo:contains stage:Menu;
 .
+container:mim a elmo:Container;
+  rdfs:label "Upload MIM model";
+  elmo:contains stage:Menu;
+.
 
 # Container for XMI models
 containerlocal:xmidata a elmo:Container;
