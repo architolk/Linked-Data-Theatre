@@ -66,10 +66,10 @@ stage:YedConcepts a elmo:Representation;
         }
         OPTIONAL {
           ?begrip rdfs:comment ?comment
+          FILTER NOT EXISTS {?begrip skos:definition ?definition}
         }
         OPTIONAL {
           ?begrip skos:definition ?definition
-          FILTER NOT EXISTS {?begrip rdfs:comment ?comment}
         }
       }
     }
