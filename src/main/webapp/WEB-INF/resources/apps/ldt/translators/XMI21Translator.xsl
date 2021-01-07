@@ -180,8 +180,12 @@
 
 <xsl:template match="attribute" mode="extension">
 	<rdf:Description rdf:about="{$domain}{@xmi:idref}">
+		<!-- Documentation and Stereotype are for attributes not part of the properties element, but are separate elements -->
 		<xsl:if test="documentation/@value!=''">
 			<ea:documentation><xsl:value-of select="documentation/@value"/></ea:documentation>
+		</xsl:if>
+		<xsl:if test="stereotype/@stereotype!=''">
+			<ea:stereotype><xsl:value-of select="stereotype/@stereotype"/></ea:stereotype>
 		</xsl:if>
 		<xsl:for-each select="properties/@*">
 			<xsl:element name="ea:{local-name(.)}"><xsl:value-of select="."/></xsl:element>

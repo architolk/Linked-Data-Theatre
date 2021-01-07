@@ -14,6 +14,9 @@ localupdatestage:mim2model a elmo:Production;
 	elmo:contains stage:mim2model_scene001;
 	elmo:contains stage:mim2model_scene002;
 	elmo:contains stage:mim2model_scene003;
+	elmo:contains stage:mim2model_scene005;
+	elmo:contains stage:mim2model_scene006;
+	elmo:contains stage:mim2model_scene015;
 	elmo:contains stage:mim2model_scene099;
 	elmo:contains stage:mim2model_scene103;
 	elmo:contains stage:mim2model_scene104;
@@ -131,6 +134,38 @@ stage:mim2model_scene001 a elmo:Scene;
 
 stage:mim2model_scene002 a elmo:Scene;
   elmo:index "002";
+  rdfs:label "Convert mim:Gegevensgroeptype";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+		PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/model> {
+        ?class a owl:Class, sh:NodeShape.
+				?class sh:targetClass ?class.
+				?class rdfs:label ?naam.
+				?class sh:name ?code.
+				?class rdfs:seeAlso ?gegevensgroeptype.
+      }
+    }
+    WHERE {
+			SELECT (iri(concat("http://test/def#",?code)) as ?class) ?code ?naam ?gegevensgroeptype
+			WHERE {
+				GRAPH <http://localhost:8080/data2model/container/mim> {
+					?gegevensgroeptype a mim:Gegevensgroeptype.
+					?gegevensgroeptype mim:naam ?naam.
+				}
+				GRAPH <http://localhost:8080/data2model/container/model> {
+					?gegevensgroeptype skos:notation ?code.
+				}
+			}
+    }
+  '''
+.
+
+stage:mim2model_scene003 a elmo:Scene;
+  elmo:index "003";
   rdfs:label "Convert mim:Attribuutsoort";
 	elmo:query '''
 		PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -156,10 +191,11 @@ stage:mim2model_scene002 a elmo:Scene;
 						 ?code ?naam ?attribuutsoort
 			WHERE {
 				GRAPH <http://localhost:8080/data2model/container/mim> {
-					?owner a mim:Objecttype. #Mogelijk nog andere zaken dan objecttypen - beter safe than sorry
+					?owner a ?mimtype.
 					?owner mim:attribuut ?attribuutsoort.
 					?attribuutsoort a mim:Attribuutsoort.
 					?attribuutsoort mim:naam ?naam.
+					FILTER (?mimtype = mim:Objecttype || ?mimtype = mim:Gegevensgroeptype)
 				}
 				GRAPH <http://localhost:8080/data2model/container/model> {
 					?attribuutsoort skos:notation ?code.
@@ -170,8 +206,8 @@ stage:mim2model_scene002 a elmo:Scene;
 	''';
 .
 
-stage:mim2model_scene003 a elmo:Scene;
-  elmo:index "003";
+stage:mim2model_scene005 a elmo:Scene;
+  elmo:index "005";
   rdfs:label "Convert mim:Relatiesoort";
 	elmo:query '''
 		PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -212,6 +248,96 @@ stage:mim2model_scene003 a elmo:Scene;
 			}
 		}
 	''';
+.
+
+stage:mim2model_scene006 a elmo:Scene;
+  elmo:index "006";
+  rdfs:label "Convert mim:ExterneKoppeling";
+	elmo:query '''
+		PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+		PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+		PREFIX mim: <http://bp4mc2.org/def/mim#>
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		INSERT {
+			GRAPH <http://localhost:8080/data2model/container/model> {
+				?property a owl:ObjectProperty.
+				?property rdfs:label ?naam.
+				?property rdfs:seeAlso ?externekoppeling.
+				?owner sh:property ?predicate.
+				?predicate a sh:PropertyShape.
+				?predicate sh:name ?code.
+				?predicate sh:path ?property.
+				?predicate sh:class ?class.
+				?predicate rdfs:seeAlso ?externekoppeling
+			}
+		}
+		WHERE {
+			SELECT (iri(concat("http://test/def#",?code)) as ?property)
+						 (iri(concat("http://test/def#",?ownercode,".",?code)) as ?predicate)
+						 (iri(concat("http://test/def#",?ownercode)) as ?owner)
+						 (iri(concat("http://test/def#",?classcode)) as ?class)
+						 ?code ?naam ?externekoppeling
+			WHERE {
+				GRAPH <http://localhost:8080/data2model/container/mim> {
+					?externekoppeling a mim:ExterneKoppeling.
+					?externekoppeling mim:naam ?naam.
+	        ?externekoppeling mim:bron ?bron.
+	        ?externekoppeling mim:doel ?doel.
+				}
+				GRAPH <http://localhost:8080/data2model/container/model> {
+					?externekoppeling skos:notation ?code.
+					?bron skos:notation ?ownercode.
+					?doel skos:notation ?classcode.
+				}
+			}
+		}
+	''';
+.
+
+stage:mim2model_scene015 a elmo:Scene;
+  elmo:index "015";
+  rdfs:label "Convert mim:Gegevensgroep";
+  elmo:query '''
+		PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+		PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+		PREFIX mim: <http://bp4mc2.org/def/mim#>
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		INSERT {
+			GRAPH <http://localhost:8080/data2model/container/model> {
+				?property a owl:ObjectProperty.
+				?property rdfs:label ?naam.
+				?property rdfs:seeAlso ?attribuutsoort.
+				?owner sh:property ?predicate.
+				?predicate a sh:PropertyShape.
+				?predicate sh:name ?code.
+				?predicate sh:path ?property.
+				?predicate sh:nodeKind sh:BlankNode.
+				?predicate sh:class ?class.
+				?predicate rdfs:seeAlso ?gegevensgroep
+			}
+		}
+		WHERE {
+			SELECT (iri(concat("http://test/def#",?code)) as ?property)
+						 (iri(concat("http://test/def#",?ownercode,".",?code)) as ?predicate)
+						 (iri(concat("http://test/def#",?ownercode)) as ?owner)
+						 (iri(concat("http://test/def#",?typecode)) as ?class)
+						 ?code ?naam ?gegevensgroep
+			WHERE {
+				GRAPH <http://localhost:8080/data2model/container/mim> {
+					?owner a mim:Objecttype.
+					?owner mim:gegevensgroep ?gegevensgroep.
+					?gegevensgroep a mim:Gegevensgroep.
+					?gegevensgroep mim:naam ?naam.
+					?gegevensgroep mim:gegevensgroeptype ?type
+				}
+				GRAPH <http://localhost:8080/data2model/container/model> {
+					?gegevensgroep skos:notation ?code.
+					?owner skos:notation ?ownercode.
+					?type skos:notation ?typecode.
+				}
+			}
+		}
+  '''
 .
 
 stage:mim2model_scene099 a elmo:Scene;
