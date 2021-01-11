@@ -16,6 +16,17 @@ stage:datatabs a elmo:Part;
 	];
 .
 
+#Container for selection
+containerlocal:selection a elmo:Container;
+  rdfs:label "Upload selection";
+  elmo:contains stage:Menu;
+.
+container:selection a elmo:Container;
+  rdfs:label "Upload selection";
+  elmo:contains stage:Menu;
+  elmo:replaces containerlocal:selection;
+.
+
 #Container for upload data
 containerlocal:data a elmo:Container;
   rdfs:label "Upload data";

@@ -128,3 +128,65 @@ stage:ModelYed a elmo:Representation;
     }
   ''';
 .
+
+stage:ModelSelectionYed a elmo:Representation;
+  elmo:url-pattern "/query/modelselection(.ttl|.yed)$";
+  elmo:contains stage:Menu;
+  elmo:appearance elmo:VocabularyAppearance;
+  elmo:query '''
+    prefix sh: <http://www.w3.org/ns/shacl#>
+    construct {
+			?ns ?nsp ?nso.
+      ?ps ?psp ?pso.
+      ?class ?cp ?co.
+      ?rns ?rnsp ?rnso.
+      ?rps ?rpsp ?rpso.
+      ?subclass rdfs:subClassOf ?class.
+      ?subclass a rdfs:Class.
+      ?sns ?snsp ?snso.
+      ?sps ?spsp ?spso.
+			?ds ?dp ?do.
+		}
+    where {
+      {
+        graph <http://localhost:8080/data2model/container/model> {
+          {
+            ?class ?cp ?co.
+            OPTIONAL {
+              ?ns sh:targetClass ?class.
+              ?ns ?nsp ?nso
+              OPTIONAL {
+                ?ns sh:property ?ps.
+                ?ps ?psp ?pso
+              }
+            }
+          }
+          UNION
+          {
+            ?ns sh:targetClass ?class.
+            ?ns sh:property/sh:class ?refclass.
+            ?rns sh:targetClass ?refclass.
+            ?rns ?rnsp ?rnso.
+            OPTIONAL {
+              ?rns sh:property ?rps.
+              ?rps ?rpsp ?rpso
+            }
+          }
+          UNION
+          {
+            ?subclass rdfs:subClassOf ?class.
+            ?sns sh:targetClass ?subclass.
+            ?sns ?snsp ?snso.
+            OPTIONAL {
+              ?sns sh:property ?sps.
+              ?sps ?spsp ?spso
+            }
+          }
+        }
+        graph <http://localhost:8080/data2model/container/selection> {?sel ?selp ?class}
+      }
+			UNION
+		  { graph <http://localhost:8080/data2model/container/diagram> {?ds ?dp ?do}}
+    }
+  ''';
+.

@@ -16,6 +16,7 @@ localupdatestage:ldm2model a elmo:Production;
 	elmo:contains stage:ldm2model_scene5;
 	elmo:contains stage:ldm2model_scene6;
 	elmo:contains stage:ldm2model_scene7;
+	elmo:contains stage:ldm2model_scene8;
 .
 
 #Production for server installations
@@ -29,6 +30,7 @@ updatestage:ldm2model a elmo:Production;
 	elmo:contains stage:ldm2model_scene5;
 	elmo:contains stage:ldm2model_scene6;
 	elmo:contains stage:ldm2model_scene7;
+	elmo:contains stage:ldm2model_scene8;
   # Extra for copy of result
   elmo:contains stage:ldm2model_xxclearservergraph;
   elmo:contains stage:ldm2model_xxcopytoservergraph;
@@ -221,6 +223,25 @@ stage:ldm2model_scene7 a elmo:Scene;
 				?parententity sh:targetClass ?superclass.
 				?entity sh:targetClass ?subclass.
 			}
+    }
+  ''';
+.
+
+stage:ldm2model_scene8 a elmo:Scene;
+	elmo:index "08";
+	rdfs:label "Add ldm:ExtendedDependency";
+	elmo:query '''
+	  PREFIX ldm: <http://powerdesigner.com/def#>
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+    insert into <http://localhost:8080/data2model/container/model> {
+			?object1 rdfs:seeAlso ?object2
+    }
+    where {
+      graph <http://localhost:8080/data2model/container/data> {
+				?dependency rdf:type ldm:ExtendedDependency.
+				?dependency ldm:object1entity ?object1.
+				?dependency ldm:object2entity ?object2.
+      }
     }
   ''';
 .
