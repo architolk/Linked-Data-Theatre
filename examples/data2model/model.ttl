@@ -141,6 +141,8 @@ stage:ModelSelectionYed a elmo:Representation;
       ?class ?cp ?co.
       ?rns ?rnsp ?rnso.
       ?rps ?rpsp ?rpso.
+      ?dns ?dnsp ?dnso.
+      ?dps ?dpsp ?dpso.
       ?subclass rdfs:subClassOf ?class.
       ?subclass a rdfs:Class.
       ?sns ?snsp ?snso.
@@ -159,6 +161,15 @@ stage:ModelSelectionYed a elmo:Representation;
                 ?ns sh:property ?ps.
                 ?ps ?psp ?pso
               }
+            }
+          }
+          UNION
+          {
+            ?dns sh:property/sh:class ?class.
+            ?dns ?dnsp ?dnso.
+            OPTIONAL {
+              ?dns sh:property ?dps.
+              ?dps ?dpsp ?dpso
             }
           }
           UNION

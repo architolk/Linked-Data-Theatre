@@ -9,40 +9,46 @@
 localupdatestage:ldm2model a elmo:Production;
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:Menu;
-	elmo:contains stage:ldm2model_scene1;
-	elmo:contains stage:ldm2model_scene2;
-	elmo:contains stage:ldm2model_scene3;
-	elmo:contains stage:ldm2model_scene4;
-	elmo:contains stage:ldm2model_scene5;
-	elmo:contains stage:ldm2model_scene6;
-	elmo:contains stage:ldm2model_scene7;
-	elmo:contains stage:ldm2model_scene8;
+	elmo:contains stage:ldm2model_scene001;
+	elmo:contains stage:ldm2model_scene002;
+	elmo:contains stage:ldm2model_scene003;
+	elmo:contains stage:ldm2model_scene004;
+	elmo:contains stage:ldm2model_scene005;
+	elmo:contains stage:ldm2model_scene006;
+	elmo:contains stage:ldm2model_scene007;
+	elmo:contains stage:ldm2model_scene008;
+	elmo:contains stage:ldm2model_scene101;
+	elmo:contains stage:ldm2model_scene102;
+	elmo:contains stage:ldm2model_scene103;
 .
 
 #Production for server installations
 updatestage:ldm2model a elmo:Production;
 	elmo:contains stage:HeaderAppearance;
 	elmo:contains stage:Menu;
-	elmo:contains stage:ldm2model_scene1;
-	elmo:contains stage:ldm2model_scene2;
-	elmo:contains stage:ldm2model_scene3;
-	elmo:contains stage:ldm2model_scene4;
-	elmo:contains stage:ldm2model_scene5;
-	elmo:contains stage:ldm2model_scene6;
-	elmo:contains stage:ldm2model_scene7;
-	elmo:contains stage:ldm2model_scene8;
+	elmo:contains stage:ldm2model_scene001;
+	elmo:contains stage:ldm2model_scene002;
+	elmo:contains stage:ldm2model_scene003;
+	elmo:contains stage:ldm2model_scene004;
+	elmo:contains stage:ldm2model_scene005;
+	elmo:contains stage:ldm2model_scene006;
+	elmo:contains stage:ldm2model_scene007;
+	elmo:contains stage:ldm2model_scene008;
+	elmo:contains stage:ldm2model_scene101;
+	elmo:contains stage:ldm2model_scene102;
+	elmo:contains stage:ldm2model_scene103;
   # Extra for copy of result
   elmo:contains stage:ldm2model_xxclearservergraph;
   elmo:contains stage:ldm2model_xxcopytoservergraph;
 .
 
 stage:ldm2model_xxclearservergraph a elmo:Scene;
-  elmo:index "98";
+  elmo:index "998";
   rdfs:label "Clear server graph";
   elmo:query "clear graph <http://linkeddata.ordina.nl/data2model/container/model>";
 .
 stage:ldm2model_xxcopytoservergraph a elmo:Scene;
-  elmo:index "99";
+  elmo:index "999";
   rdfs:label "Copy result to server graph";
   elmo:query '''
     insert into <http://linkeddata.ordina.nl/data2model/container/model> {
@@ -56,14 +62,14 @@ stage:ldm2model_xxcopytoservergraph a elmo:Scene;
   '''
 .
 
-stage:ldm2model_scene1 a elmo:Scene;
-	elmo:index "01";
+stage:ldm2model_scene001 a elmo:Scene;
+	elmo:index "001";
 	rdfs:label "Clear target graph";
 	elmo:query "clear graph <http://localhost:8080/data2model/container/model>";
 .
 
-stage:ldm2model_scene2 a elmo:Scene;
-	elmo:index "02";
+stage:ldm2model_scene002 a elmo:Scene;
+	elmo:index "002";
 	rdfs:label "Create technical names";
 	elmo:query '''
 		PREFIX ldm: <http://powerdesigner.com/def#>
@@ -80,8 +86,8 @@ stage:ldm2model_scene2 a elmo:Scene;
 	''';
 .
 
-stage:ldm2model_scene3 a elmo:Scene;
-	elmo:index "03";
+stage:ldm2model_scene003 a elmo:Scene;
+	elmo:index "003";
 	rdfs:label "Add technical name when missing";
 	elmo:query '''
 		insert into <http://localhost:8080/data2model/container/model> {
@@ -101,8 +107,8 @@ stage:ldm2model_scene3 a elmo:Scene;
 	''';
 .
 
-stage:ldm2model_scene4 a elmo:Scene;
-	elmo:index "04";
+stage:ldm2model_scene004 a elmo:Scene;
+	elmo:index "004";
 	rdfs:label "Add ldm:Entities";
 	elmo:query '''
 	  PREFIX ldm: <http://powerdesigner.com/def#>
@@ -131,8 +137,8 @@ stage:ldm2model_scene4 a elmo:Scene;
   ''';
 .
 
-stage:ldm2model_scene5 a elmo:Scene;
-	elmo:index "05";
+stage:ldm2model_scene005 a elmo:Scene;
+	elmo:index "005";
 	rdfs:label "Add ldm:Attributes";
 	elmo:query '''
 	  PREFIX ldm: <http://powerdesigner.com/def#>
@@ -142,6 +148,7 @@ stage:ldm2model_scene5 a elmo:Scene;
 			?attribute rdf:type sh:PropertyShape.
 			?attribute rdfs:label ?attributelabel.
 			?attribute sh:name ?code.
+			?attribute sh:maxCount 1 .      # It seems that attributes can only have cardinality of max 1
 			?attribute sh:path ?property.
       ?property rdf:type owl:DatatypeProperty.
       ?property rdfs:label ?attributelabel.
@@ -164,8 +171,8 @@ stage:ldm2model_scene5 a elmo:Scene;
   ''';
 .
 
-stage:ldm2model_scene6 a elmo:Scene;
-	elmo:index "06";
+stage:ldm2model_scene006 a elmo:Scene;
+	elmo:index "006";
 	rdfs:label "Add ldm:Relationship";
 	elmo:query '''
 	  PREFIX ldm: <http://powerdesigner.com/def#>
@@ -202,8 +209,8 @@ stage:ldm2model_scene6 a elmo:Scene;
   ''';
 .
 
-stage:ldm2model_scene7 a elmo:Scene;
-	elmo:index "07";
+stage:ldm2model_scene007 a elmo:Scene;
+	elmo:index "007";
 	rdfs:label "Add ldm:Inheritances";
 	elmo:query '''
 	  PREFIX ldm: <http://powerdesigner.com/def#>
@@ -227,8 +234,8 @@ stage:ldm2model_scene7 a elmo:Scene;
   ''';
 .
 
-stage:ldm2model_scene8 a elmo:Scene;
-	elmo:index "08";
+stage:ldm2model_scene008 a elmo:Scene;
+	elmo:index "008";
 	rdfs:label "Add ldm:ExtendedDependency";
 	elmo:query '''
 	  PREFIX ldm: <http://powerdesigner.com/def#>
@@ -238,10 +245,71 @@ stage:ldm2model_scene8 a elmo:Scene;
     }
     where {
       graph <http://localhost:8080/data2model/container/data> {
-				?dependency rdf:type ldm:ExtendedDependency.
+				?dependency a ldm:ExtendedDependency.
 				?dependency ldm:object1entity ?object1.
 				?dependency ldm:object2entity ?object2.
       }
     }
   ''';
+.
+
+stage:ldm2model_scene101 a elmo:Scene;
+	elmo:index "101";
+	rdfs:label "Add attribute mandatory";
+	elmo:query '''
+		PREFIX ldm: <http://powerdesigner.com/def#>
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		insert into <http://localhost:8080/data2model/container/model> {
+			?attribute sh:minCount 1
+		}
+		where {
+			graph <http://localhost:8080/data2model/container/data> {
+				?attribute a ldm:Attribute.
+				?attribute ldm:mandatory "1"^^xsd:string
+			}
+		}
+	''';
+.
+
+stage:ldm2model_scene102 a elmo:Scene;
+	elmo:index "102";
+	rdfs:label "Add relationship minimum cardinality";
+	elmo:query '''
+		PREFIX ldm: <http://powerdesigner.com/def#>
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		insert into <http://localhost:8080/data2model/container/model> {
+			?relationship sh:minCount ?mincount.
+		}
+		where {
+			select ?relationship (xsd:integer(strbefore(?card,",")) as ?mincount)
+			where {
+				graph <http://localhost:8080/data2model/container/data> {
+					?relationship a ldm:Relationship.
+					?relationship ldm:entity2toEntity1roleCardinality ?card
+				}
+			}
+		}
+	''';
+.
+
+stage:ldm2model_scene103 a elmo:Scene;
+	elmo:index "103";
+	rdfs:label "Add relationship maximum cardinality";
+	elmo:query '''
+		PREFIX ldm: <http://powerdesigner.com/def#>
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		insert into <http://localhost:8080/data2model/container/model> {
+			?relationship sh:maxCount ?maxcount.
+		}
+		where {
+			select ?relationship (xsd:integer(strafter(?card,",")) as ?maxcount)
+			where {
+				graph <http://localhost:8080/data2model/container/data> {
+					?relationship a ldm:Relationship.
+					?relationship ldm:entity2toEntity1roleCardinality ?card
+					FILTER (strafter(?card,",")!="n")
+				}
+			}
+		}
+	''';
 .
