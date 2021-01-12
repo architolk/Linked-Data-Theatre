@@ -76,6 +76,12 @@ stage:TriplesYed a elmo:Representation;
     yed:nodeType "ellipse";
   ];
   elmo:fragment [
+    elmo:applies-to "BNODE";
+    yed:fill "#FFFFFF";
+    yed:color "#000000";
+    yed:nodeType "ellipse";
+  ];
+  elmo:fragment [
     elmo:applies-to "INDIVIDUAL";
     yed:fill "#FAE0C1";
     yed:nodeType "ellipse";
@@ -137,7 +143,7 @@ stage:TriplesYed a elmo:Representation;
           {
             {
       				?s?p?o
-              FILTER (?p != elmo:style && IsIri(?o))
+              FILTER (?p != elmo:style && (!IsLiteral(?o)))
             }
             UNION
             {
@@ -173,7 +179,7 @@ stage:TriplesYed a elmo:Representation;
             FILTER NOT EXISTS {?s rdf:type owl:Class}
           }
         }
-        BIND (IF(BOUND(?cstyle),str(?cstyle),"RESOURCE") as ?style)
+        BIND (IF(BOUND(?cstyle),str(?cstyle),IF(isIRI(?s),"RESOURCE","BNODE")) as ?style)
       }
       UNION
       {
