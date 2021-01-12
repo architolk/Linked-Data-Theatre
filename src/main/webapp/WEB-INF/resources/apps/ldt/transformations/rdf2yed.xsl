@@ -1,8 +1,8 @@
 <!--
 
     NAME     rdf2yed.xsl
-    VERSION  1.25.0
-    DATE     2020-07-19
+		VERSION  1.25.3-SNAPSHOT
+    DATE     2021-01-12
 
     Copyright 2012-2020
 
@@ -448,7 +448,7 @@
 
 <xsl:template match="rdf:RDF" mode="yed-default">
 	<!-- Nodes -->
-	<xsl:for-each select="rdf:Description[exists(rdf:type)]">
+	<xsl:for-each select="rdf:Description[exists(*)]">
 		<xsl:variable name="resource" select="."/>
 		<xsl:apply-templates select="$resource" mode="yed-default-node">
 			<xsl:with-param name="geometry" select="key('blanks',yed:geometry[1]/@rdf:nodeID)"/>
@@ -495,7 +495,7 @@
 				<xsl:otherwise>y:PolyLineEdge</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
-		<edge source="{../@rdf:about}" target="{@rdf:resource}">-
+		<edge source="{../(@rdf:about|@rdf:nodeID)}" target="{@rdf:resource}">
 			<data key="d10">
 				<xsl:element name="{$edgetype}">
 					<y:LineStyle color="{$linecolor}" type="{$line}" width="1.0"/>
@@ -514,8 +514,8 @@
 		</edge>
 	</xsl:for-each>
 	<!-- Edges for blank nodes -->
-	<xsl:for-each select="rdf:Description/*[exists(key('blanks',@rdf:nodeID)/rdf:type)]">
-		<edge source="{../@rdf:about}" target="{@rdf:nodeID}">-
+	<xsl:for-each select="rdf:Description/*[exists(key('blanks',@rdf:nodeID))]">
+		<edge source="{../@rdf:about}" target="{@rdf:nodeID}">
 			<data key="d10">
 				<y:PolyLineEdge>
 					<y:LineStyle color="#000000" type="line" width="1.0"/>
