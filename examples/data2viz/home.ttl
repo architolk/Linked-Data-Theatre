@@ -30,6 +30,7 @@ stage:Menu elmo:appearance elmo:NavbarSearchAppearance;
       elmo:data [elmo:index "1"; rdfs:label "Triples"; html:link "query/triples.yed"];
       elmo:data [elmo:index "2"; rdfs:label "Concepts"@en; rdfs:label "Begrippen"@nl; html:link "query/concepts.yed"];
 			elmo:data [elmo:index "3"; rdfs:label "Model"; html:link "query/model.yed"];
+			elmo:data [elmo:index "9"; rdfs:label "Upload original diagram"; html:link "container/diagram"];
     ];
   ]
 .
@@ -47,6 +48,7 @@ stage:Welkom a elmo:Part;
           <li>Upload RDF data (of geef een SPARQL query op)</li>
           <li>Kies een visualisatievorm en download het resultaat (een .graphml bestand)</li>
           <li>Open het .graphml bestand in een daarvoor geschikte editor, bijvoorbeeld <a href="https://www.yworks.com/products/yed">yEd</a></li>
+					<li>Je kunt eventueel een eerder gegenereerd origineel .graphml bestand <a href="/data2viz/container/diagram">uploaden</a>, zodat jou opmaak bewaard blijft</li>
         </ol>
  			</div>''';
 	]

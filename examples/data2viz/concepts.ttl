@@ -46,6 +46,7 @@ stage:YedConcepts a elmo:Representation;
   elmo:contains stage:Menu;
   elmo:query '''
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    prefix container: <http://linkeddata.ordina.nl/data2viz/container/>
     CONSTRUCT {
       ?begrip rdfs:label ?begriplabel.
       ?begrip a skos:Concept.
@@ -54,22 +55,31 @@ stage:YedConcepts a elmo:Representation;
       ?begrip rdfs:comment ?definition.
       ?relbegrip a skos:Concept.
       ?relbegrip rdfs:label ?relbegriplabel.
+      ?ds ?dp ?do.
     }
     WHERE {
-      GRAPH <http://linkeddata.ordina.nl/data2viz/container/data> {
-        ?begrip a skos:Concept.
-        ?begrip (skos:prefLabel|rdfs:label) ?begriplabel.
-        OPTIONAL {
-          ?begrip ?rel ?relbegrip.
-          ?relbegrip a skos:Concept.
-          ?relbegrip (skos:prefLabel|rdfs:label) ?relbegriplabel.
+      {
+        GRAPH <http://linkeddata.ordina.nl/data2viz/container/data> {
+          ?begrip a skos:Concept.
+          ?begrip (skos:prefLabel|rdfs:label) ?begriplabel.
+          OPTIONAL {
+            ?begrip ?rel ?relbegrip.
+            ?relbegrip a skos:Concept.
+            ?relbegrip (skos:prefLabel|rdfs:label) ?relbegriplabel.
+          }
+          OPTIONAL {
+            ?begrip rdfs:comment ?comment
+            FILTER NOT EXISTS {?begrip skos:definition ?definition}
+          }
+          OPTIONAL {
+            ?begrip skos:definition ?definition
+          }
         }
-        OPTIONAL {
-          ?begrip rdfs:comment ?comment
-          FILTER NOT EXISTS {?begrip skos:definition ?definition}
-        }
-        OPTIONAL {
-          ?begrip skos:definition ?definition
+      }
+      UNION
+		  {
+        graph container:diagram {
+          ?ds ?dp ?do
         }
       }
     }
