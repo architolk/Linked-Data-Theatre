@@ -32,6 +32,14 @@ stage:Menu elmo:appearance elmo:NavbarSearchAppearance;
 			elmo:data [elmo:index "3"; rdfs:label "Model"; html:link "query/model.yed"];
 			elmo:data [elmo:index "9"; rdfs:label "Upload original diagram"; html:link "container/diagram"];
     ];
+		elmo:data [
+			elmo:index "3";
+			rdfs:label "Downloads"@nl;
+			rdfs:label "Downloads"@en;
+			elmo:data [elmo:index "1"; rdfs:label "Turtle"; html:link "query/triples.ttl"];
+			elmo:data [elmo:index "2"; rdfs:label "JSON-LD"; html:link "query/triples.json"];
+			elmo:data [elmo:index "3"; rdfs:label "RDF/XML"; html:link "query/triples.xml"];
+		]
   ]
 .
 

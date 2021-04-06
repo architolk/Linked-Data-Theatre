@@ -20,7 +20,7 @@ stage:Triples a elmo:Representation;
   elmo:contains stage:Menu;
   elmo:appearance elmo:TurtleAppearance;
   elmo:query '''
-    PREFIX container: <http://localhost:8080/data2viz/container/>
+    PREFIX container: <http://linkeddata.ordina.nl/data2viz/container/>
     CONSTRUCT {
       ?s?p?o
     }
@@ -194,6 +194,9 @@ stage:TriplesYed a elmo:Representation;
       }
       UNION
 		  {
+        graph container:data {
+          ?ds ?dsp ?dso.
+        }
         graph container:diagram {
           ?ds ?dp ?do
         }
