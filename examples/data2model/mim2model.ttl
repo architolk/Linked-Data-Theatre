@@ -14,8 +14,10 @@ localupdatestage:mim2model a elmo:Production;
 	elmo:contains stage:mim2model_scene001;
 	elmo:contains stage:mim2model_scene002;
 	elmo:contains stage:mim2model_scene003;
+	# scene004 al opgepakt bij scene003
 	elmo:contains stage:mim2model_scene005;
 	elmo:contains stage:mim2model_scene006;
+	elmo:contains stage:mim2model_scene013;
 	elmo:contains stage:mim2model_scene015;
 	elmo:contains stage:mim2model_scene099;
 	elmo:contains stage:mim2model_scene103;
@@ -292,6 +294,51 @@ stage:mim2model_scene006 a elmo:Scene;
 			}
 		}
 	''';
+.
+
+stage:mim2model_scene013 a elmo:Scene;
+  elmo:index "013";
+  rdfs:label "Convert mim:RelatierolBron";
+	elmo:query '''
+		PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+		PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+		PREFIX mim: <http://bp4mc2.org/def/mim#>
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		INSERT {
+			GRAPH <http://localhost:8080/data2model/container/model> {
+				?property a owl:ObjectProperty.
+				?property rdfs:label ?naam.
+				?property rdfs:seeAlso ?relatierolbron.
+				?owner sh:property ?predicate.
+				?predicate a sh:PropertyShape.
+				?predicate sh:name ?code.
+				?predicate sh:path ?property.
+				?predicate sh:class ?class.
+				?predicate rdfs:seeAlso ?relatierolbron
+			}
+		}
+		WHERE {
+			SELECT (iri(concat("http://test/def#",?code)) as ?property)
+						 (iri(concat("http://test/def#",?ownercode,".",?code)) as ?predicate)
+						 (iri(concat("http://test/def#",?ownercode)) as ?owner)
+						 (iri(concat("http://test/def#",?classcode)) as ?class)
+						 ?code ?naam ?relatiesoort
+			WHERE {
+				GRAPH <http://localhost:8080/data2model/container/mim> {
+					?relatierolbron a mim:RelatierolBron.
+					?relatierolbron mim:naam ?naam.
+					?relatiesoort mim:relatierol ?relatierolbron.
+					?relatiesoort mim:bron ?bron.
+	        ?relatiesoort mim:doel ?doel.
+				}
+				GRAPH <http://localhost:8080/data2model/container/model> {
+					?relatierolbron skos:notation ?code.
+					?doel skos:notation ?ownercode.
+					?bron skos:notation ?classcode.
+				}
+			}
+		}
+	'''
 .
 
 stage:mim2model_scene015 a elmo:Scene;
