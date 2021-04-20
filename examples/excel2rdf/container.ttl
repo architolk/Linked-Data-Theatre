@@ -3,7 +3,7 @@
 @prefix xhtml: <http://www.w3.org/1999/xhtml/vocab#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 @prefix containerlocal: <http://localhost:8080/excel2rdf/container/>.
-@prefix container: <http://some-server-domain/excel2rdf/container/>.
+@prefix container: <http://linkeddata.ordina.nl/excel2rdf/container/>.
 
 containerlocal:excel-upload a elmo:Container;
   elmo:replaces containerlocal:upload;
