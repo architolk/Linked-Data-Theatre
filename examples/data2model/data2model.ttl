@@ -30,6 +30,29 @@ localupdatestage:data2model a elmo:Production;
 	elmo:contains stage:ShapeProduction_scene91;
 .
 
+#Light production (for large datasets), local
+#Wat feitlijk niet gebeurt is de cardinaliteit en rollen: die is te ingewikkeld
+localupdatestage:data2model-light a elmo:Production;
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:Menu;
+	# Basics, owl/rdfs
+	elmo:contains stage:ShapeProduction_scene1;
+	elmo:contains stage:ShapeProduction_scene4;
+	elmo:contains stage:ShapeProduction_scene5;
+	elmo:contains stage:ShapeProduction_scene6;
+	elmo:contains stage:ShapeProduction_scene7;
+	elmo:contains stage:ShapeProduction_scene8;
+	# Basics, shacl
+	elmo:contains stage:ShapeProduction_scene9;
+	elmo:contains stage:ShapeProduction_scene10;
+	elmo:contains stage:ShapeProduction_scene11;
+	elmo:contains stage:ShapeProduction_scene12;
+	elmo:contains stage:ShapeProduction_scene13;
+	# Postprocessing
+	elmo:contains stage:ShapeProduction_scene90;
+	elmo:contains stage:ShapeProduction_scene91;
+.
+
 #Production for server installations
 updatestage:data2model a elmo:Production;
 	elmo:contains stage:HeaderAppearance;

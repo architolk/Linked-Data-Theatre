@@ -21,6 +21,7 @@ localupdatestage:uml2scheme a elmo:Production;
 	elmo:contains stage:uml2scheme_scene81;
 	elmo:contains stage:uml2scheme_scene82;
 	elmo:contains stage:uml2scheme_scene83;
+	elmo:contains stage:uml2scheme_scene51;
 .
 
 #Production for server installations
@@ -39,6 +40,7 @@ updatestage:uml2scheme a elmo:Production;
 	elmo:contains stage:uml2scheme_scene81;
 	elmo:contains stage:uml2scheme_scene82;
 	elmo:contains stage:uml2scheme_scene83;
+	elmo:contains stage:uml2scheme_scene51;
 	# Extra for copy of result
   elmo:contains stage:uml2scheme_clearservergraph;
   elmo:contains stage:uml2scheme_copytoservergraph;
@@ -333,4 +335,29 @@ stage:uml2scheme_scene83 a elmo:Scene;
 			}
 		}
 	'''
+.
+
+stage:uml2scheme_scene51 a elmo:Scene;
+	elmo:index "51";
+	rdfs:label "Create alternative labels";
+	elmo:query '''
+		PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
+		PREFIX dct: <http://purl.org/dc/terms/>
+		insert {
+		 	graph <http://localhost:8080/data2model/container/scheme> {
+				?concept skos:altLabel ?altlabel
+			}
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept a skos:Concept.
+				?concept dct:source ?item.
+			}
+			graph <http://localhost:8080/data2model/container/data> {
+				?item uml:taggedValue ?tag.
+				?tag rdfs:label "Term(NL)"^^xsd:string.
+				?tag rdf:value ?altlabel
+			}
+		}
+	''';
 .

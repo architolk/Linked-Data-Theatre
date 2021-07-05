@@ -222,3 +222,37 @@ stage:TableScheme a elmo:Representation;
     }
   '''
 .
+
+stage:SchemeUMLTrace a elmo:Representation;
+  elmo:url-pattern "/query/scheme-uml-trace$";
+  elmo:contains stage:Menu;
+  elmo:query '''
+    PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
+    PREFIX dct: <http://purl.org/dc/terms/>
+    PREFIX ea: <http://www.sparxsystems.com/extender/EA6.5#>
+    SELECT ?stereotype (?item as ?type) (strafter(str(?typeuri),"#") as ?type_label) ?context ?concept ?concept_label ?term ?definitie
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/scheme> {
+        ?concept a skos:Concept.
+        ?concept rdfs:label ?concept_label.
+        ?concept dct:source ?item.
+        OPTIONAL {
+          ?concept skos:altLabel ?term
+        }
+        OPTIONAL {
+          ?concept skos:definition ?definitie
+        }
+      }
+      GRAPH <http://localhost:8080/data2model/container/data> {
+        ?item a ?typeuri.
+        OPTIONAL {
+          ?item ea:stereotype ?stereotype.
+        }
+        OPTIONAL {
+          ?owner (uml:ownedAttribute|uml:packagedElement) ?item.
+          ?owner rdfs:label ?context
+        }
+      }
+    }
+  ''';
+.
