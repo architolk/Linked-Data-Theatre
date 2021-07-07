@@ -67,6 +67,11 @@ stage:Menu elmo:appearance elmo:NavbarSearchAppearance;
 		];
 		elmo:data [
 			elmo:index "8";
+			rdfs:label "XML";
+			elmo:data [elmo:index "1"; rdfs:label "Upload XML data"; html:link "container/xmldata"];
+		];
+		elmo:data [
+			elmo:index "9";
 			rdfs:label "Clean";
 			html:link "update/clean";
 		]

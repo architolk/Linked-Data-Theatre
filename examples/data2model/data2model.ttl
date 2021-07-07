@@ -26,6 +26,11 @@ localupdatestage:data2model a elmo:Production;
 	elmo:contains stage:ShapeProduction_scene15;
 	elmo:contains stage:ShapeProduction_scene16;
 	elmo:contains stage:ShapeProduction_scene17;
+	elmo:contains stage:ShapeProduction_scene18;
+	elmo:contains stage:ShapeProduction_scene19;
+	elmo:contains stage:ShapeProduction_scene20;
+	elmo:contains stage:ShapeProduction_scene21;
+	elmo:contains stage:ShapeProduction_scene22;
 	elmo:contains stage:ShapeProduction_scene90;
 	elmo:contains stage:ShapeProduction_scene91;
 .
@@ -74,6 +79,11 @@ updatestage:data2model a elmo:Production;
 	elmo:contains stage:ShapeProduction_scene15;
 	elmo:contains stage:ShapeProduction_scene16;
 	elmo:contains stage:ShapeProduction_scene17;
+	elmo:contains stage:ShapeProduction_scene18;
+	elmo:contains stage:ShapeProduction_scene19;
+	elmo:contains stage:ShapeProduction_scene20;
+	elmo:contains stage:ShapeProduction_scene21;
+	elmo:contains stage:ShapeProduction_scene22;
 	elmo:contains stage:ShapeProduction_scene90;
 	elmo:contains stage:ShapeProduction_scene91;
   # Extra for copy of result
@@ -574,6 +584,134 @@ stage:ShapeProduction_scene17 a elmo:Scene;
       }
     }
   ''';
+.
+
+stage:ShapeProduction_scene18 a elmo:Scene;
+	elmo:index "18";
+	rdfs:label "Remove redundant constraints due to roles (role)";
+	elmo:query '''
+		prefix sh: <http://www.w3.org/ns/shacl#>
+		delete from <http://localhost:8080/data2model/container/model> {
+			?roleshape sh:property ?proleshape.
+		}
+		where {
+			graph <http://localhost:8080/data2model/container/model> {
+				?shape sh:property ?tshape.
+				?tshape sh:path rdf:type.
+				?tshape sh:hasValue ?roleclass.
+				?shape sh:property ?pshape.
+				?roleshape sh:targetClass ?roleclass.
+				?roleshape sh:property ?proleshape.
+				?pshape sh:path ?property.
+				?proleshape sh:path ?property.
+				FILTER EXISTS {
+					?shape2 sh:property ?tshape2.
+					?tshape2 sh:path rdf:type.
+					?tshape2 sh:hasValue ?roleclass.
+					FILTER NOT EXISTS {
+						?shape2 sh:property ?pshape2.
+						?pshape2 sh:path ?property
+					}
+				}
+			}
+		}
+	'''
+.
+
+stage:ShapeProduction_scene19 a elmo:Scene;
+	elmo:index "19";
+	rdfs:label "Remove redundant constraints due to roles (sub)";
+	elmo:query '''
+		prefix sh: <http://www.w3.org/ns/shacl#>
+		delete from <http://localhost:8080/data2model/container/model> {
+			?shape sh:property ?pshape.
+		}
+		where {
+			graph <http://localhost:8080/data2model/container/model> {
+				?shape sh:property ?tshape.
+				?tshape sh:path rdf:type.
+				?tshape sh:hasValue ?roleclass.
+				?shape sh:property ?pshape.
+				?roleshape sh:targetClass ?roleclass.
+				?roleshape sh:property ?proleshape.
+				?pshape sh:path ?property.
+				?proleshape sh:path ?property.
+				FILTER (?property!=rdf:type)
+			}
+		}
+	'''
+.
+
+stage:ShapeProduction_scene20 a elmo:Scene;
+	elmo:index "20";
+	rdfs:label "Remove redundant role relationships (sub)";
+	elmo:query '''
+		prefix sh: <http://www.w3.org/ns/shacl#>
+		delete from <http://localhost:8080/data2model/container/model> {
+			?pshape sh:class ?class.
+		}
+		where {
+			graph <http://localhost:8080/data2model/container/model> {
+				?shape sh:property ?pshape.
+				?pshape sh:class ?subclass.
+				?pshape sh:class ?roleclass.
+				?subshape sh:targetClass ?subclass.
+				?subshape sh:property ?tshape.
+				?tshape sh:path rdf:type.
+				?tshape sh:hasValue ?roleclass.
+				FILTER EXISTS {
+					?pshape sh:class ?sub2class.
+					?sub2shape sh:targetClass ?sub2class.
+					?sub2shape sh:property ?tshape2.
+					?tshape2 sh:path rdf:type.
+					?tshape2 sh:hasValue ?roleclass.
+				}
+			}
+		}
+	'''
+.
+
+stage:ShapeProduction_scene21 a elmo:Scene;
+	elmo:index "21";
+	rdfs:label "Remove redundant role relationships (role)";
+	elmo:query '''
+		prefix sh: <http://www.w3.org/ns/shacl#>
+		delete from <http://localhost:8080/data2model/container/model> {
+			?pshape sh:class ?roleclass.
+		}
+		where {
+			graph <http://localhost:8080/data2model/container/model> {
+				?shape sh:property ?pshape.
+				?pshape sh:class ?subclass.
+				?pshape sh:class ?roleclass.
+				?subshape sh:targetClass ?subclass.
+				?subshape sh:property ?tshape.
+				?tshape sh:path rdf:type.
+				?tshape sh:hasValue ?roleclass.
+			}
+		}
+	'''
+.
+
+stage:ShapeProduction_scene22 a elmo:Scene;
+	elmo:index "22";
+	rdfs:label "Remove role if subclass";
+	elmo:query '''
+		prefix sh: <http://www.w3.org/ns/shacl#>
+		delete from <http://localhost:8080/data2model/container/model> {
+			?subshape sh:property ?role.
+		}
+		where {
+			graph <http://localhost:8080/data2model/container/model> {
+				?subshape sh:targetClass ?subclass.
+				?supershape sh:targetClass ?superclass.
+				?subclass rdfs:subClassOf ?superclass.
+				?subshape sh:property ?role.
+				?role sh:path rdf:type.
+				?role sh:hasValue ?superclass.
+			}
+		}
+	'''
 .
 
 stage:ShapeProduction_scene90 a elmo:Scene;
