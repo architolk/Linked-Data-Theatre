@@ -33,6 +33,7 @@ localupdatestage:uml2mim a elmo:Production;
   elmo:contains stage:uml2mim_scene103;
   elmo:contains stage:uml2mim_scene104;
   elmo:contains stage:uml2mim_scene105;
+  elmo:contains stage:uml2mim_scene106;
 .
 
 #Production for server installations
@@ -63,6 +64,7 @@ updatestage:uml2mim a elmo:Production;
   elmo:contains stage:uml2mim_scene103;
   elmo:contains stage:uml2mim_scene104;
   elmo:contains stage:uml2mim_scene105;
+  elmo:contains stage:uml2mim_scene106;
 	# Extra for copy of result
   elmo:contains stage:uml2mim_clearservergraph;
   elmo:contains stage:uml2mim_copytoservergraph;
@@ -837,6 +839,33 @@ stage:uml2mim_scene105 a elmo:Scene;
       }
       GRAPH <http://localhost:8080/data2model/container/data> {
         ?property uml:type ?type.
+      }
+    }
+  ''';
+.
+
+stage:uml2mim_scene106 a elmo:Scene;
+  elmo:index "106";
+  rdfs:label "Add mim:kardinaliteit";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?element mim:kardinaliteit ?kardinaliteit
+      }
+    }
+    WHERE {
+      SELECT ?element (concat(?lower,"..",?upper) as ?kardinaliteit)
+      WHERE {
+        GRAPH <http://localhost:8080/data2model/container/data> {
+          ?property uml:lowerValue ?lower.
+          ?property uml:upperValue ?upper.
+        }
+        GRAPH <http://localhost:8080/data2model/container/mim> {
+          ?element rdfs:seeAlso ?property
+        }
       }
     }
   ''';

@@ -27,6 +27,8 @@ localupdatestage:mim2model a elmo:Production;
 	elmo:contains stage:mim2model_scene105a;
 	elmo:contains stage:mim2model_scene105b;
 	elmo:contains stage:mim2model_scene105z;
+	elmo:contains stage:mim2model_scene106a;
+	elmo:contains stage:mim2model_scene106b;
 	elmo:contains stage:mim2model_xxcleanup;
 .
 
@@ -541,7 +543,7 @@ stage:mim2model_scene105a a elmo:Scene;
 		PREFIX sh: <http://www.w3.org/ns/shacl#>
     INSERT {
       GRAPH <http://localhost:8080/data2model/container/model> {
-        ?element sh:datatype ?datatype
+        ?pshape sh:datatype ?datatype
       }
     }
     WHERE {
@@ -550,7 +552,8 @@ stage:mim2model_scene105a a elmo:Scene;
 				?type a mim:PrimitiefDatatype.
       }
 			GRAPH <http://localhost:8080/data2model/container/model> {
-        ?element rdfs:seeAlso ?item.
+				?pshape a sh:PropertyShape.
+        ?pshape rdfs:seeAlso ?item.
 				?datatype rdfs:seeAlso ?type.
       }
     }
@@ -565,7 +568,7 @@ stage:mim2model_scene105b a elmo:Scene;
 		PREFIX sh: <http://www.w3.org/ns/shacl#>
     INSERT {
       GRAPH <http://localhost:8080/data2model/container/model> {
-        ?element sh:class ?refclass
+        ?pshape sh:class ?refclass
       }
     }
     WHERE {
@@ -574,7 +577,8 @@ stage:mim2model_scene105b a elmo:Scene;
 				?type a mim:Referentielijst.
       }
 			GRAPH <http://localhost:8080/data2model/container/model> {
-        ?element rdfs:seeAlso ?item.
+				?pshape a sh:PropertyShape.
+        ?pshape rdfs:seeAlso ?item.
 				?refclass rdfs:seeAlso ?type.
       }
     }
@@ -599,9 +603,78 @@ stage:mim2model_scene105z a elmo:Scene;
     }
     WHERE {
 			GRAPH <http://localhost:8080/data2model/container/model> {
+				?pshape a sh:PropertyShape.
         ?pshape sh:class ?class.
 				?pshape sh:path ?property.
       }
+    }
+  ''';
+.
+
+stage:mim2model_scene106a a elmo:Scene;
+  elmo:index "106a";
+  rdfs:label "Convert mim:kardinaliteit (minimum)";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/model> {
+        ?pshape sh:minCount ?mincount.
+      }
+    }
+    WHERE {
+			{
+	      SELECT ?pshape (strbefore(?kardinaliteit,"..") as ?mincount)
+	      WHERE {
+	        GRAPH <http://localhost:8080/data2model/container/mim> {
+	          ?element mim:kardinaliteit ?kardinaliteit
+	        }
+	        GRAPH <http://localhost:8080/data2model/container/model> {
+						?pshape a sh:PropertyShape.
+	          ?pshape rdfs:seeAlso ?element
+	        }
+	      }
+			}
+			FILTER (?mincount!="0")
+    }
+  ''';
+.
+
+stage:mim2model_scene106b a elmo:Scene;
+  elmo:index "106b";
+  rdfs:label "Convert mim:kardinaliteit (maximum)";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/model> {
+				?pshape sh:maxCount ?maxcount.
+      }
+    }
+    WHERE {
+			{
+	      SELECT ?pshape (strafter(?kardinaliteit,"..") as ?maxcount)
+	      WHERE {
+	        GRAPH <http://localhost:8080/data2model/container/mim> {
+	          ?element mim:kardinaliteit ?kardinaliteit
+	        }
+	        GRAPH <http://localhost:8080/data2model/container/model> {
+	          {
+							?pshape a sh:PropertyShape.
+							?pshape rdfs:seeAlso ?element
+						}
+						UNION
+						{
+							?pshape a sh:PropertyShape.
+							?pshape rdfs:seeAlso ?relatiesoort.
+							?relatiesoort mim:relatierol ?element
+						}
+	        }
+	      }
+			}
+			FILTER (?maxcount!="-1")
     }
   ''';
 .
