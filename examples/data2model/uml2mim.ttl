@@ -25,11 +25,14 @@ localupdatestage:uml2mim a elmo:Production;
   elmo:contains stage:uml2mim_scene013;
   elmo:contains stage:uml2mim_scene014;
   elmo:contains stage:uml2mim_scene015;
+  elmo:contains stage:uml2mim_scene016;
+  elmo:contains stage:uml2mim_scene017;
   elmo:contains stage:uml2mim_scene099;
   elmo:contains stage:uml2mim_scene101;
   elmo:contains stage:uml2mim_scene102;
   elmo:contains stage:uml2mim_scene103;
   elmo:contains stage:uml2mim_scene104;
+  elmo:contains stage:uml2mim_scene105;
 .
 
 #Production for server installations
@@ -52,11 +55,14 @@ updatestage:uml2mim a elmo:Production;
   elmo:contains stage:uml2mim_scene013;
   elmo:contains stage:uml2mim_scene014;
   elmo:contains stage:uml2mim_scene015;
+  elmo:contains stage:uml2mim_scene016;
+  elmo:contains stage:uml2mim_scene017;
   elmo:contains stage:uml2mim_scene099;
   elmo:contains stage:uml2mim_scene101;
   elmo:contains stage:uml2mim_scene102;
   elmo:contains stage:uml2mim_scene103;
   elmo:contains stage:uml2mim_scene104;
+  elmo:contains stage:uml2mim_scene105;
 	# Extra for copy of result
   elmo:contains stage:uml2mim_clearservergraph;
   elmo:contains stage:uml2mim_copytoservergraph;
@@ -318,7 +324,7 @@ stage:uml2mim_scene007 a elmo:Scene;
         SELECT ?class as ?datatype ?class
         WHERE {
           ?class a uml:DataType.
-          ?class ea:stereotype "Complex datatype"^^xsd:string.
+          ?class ea:stereotype "Gestructureerd datatype"^^xsd:string.
         }
       }
     }
@@ -345,7 +351,7 @@ stage:uml2mim_scene008 a elmo:Scene;
         SELECT ?union as ?keuze ?union
         WHERE {
           ?union a uml:DataType.
-          ?union ea:stereotype "Union"^^xsd:string.
+          ?union ea:stereotype "Keuze"^^xsd:string.
         }
       }
     }
@@ -373,7 +379,7 @@ stage:uml2mim_scene009 a elmo:Scene;
           SELECT ?class as ?datatype ?class
           WHERE {
             ?class a uml:DataType.
-            ?class ea:stereotype "Simpel datatype"^^xsd:string.
+            ?class ea:stereotype "Primitief datatype"^^xsd:string.
           }
         }
         UNION
@@ -413,7 +419,6 @@ stage:uml2mim_scene010 a elmo:Scene;
         select (?property as ?dataelement) ?class ?property
         where {
           ?class a uml:DataType.
-          ?class ea:stereotype "Complex datatype"^^xsd:string.
           ?class uml:ownedAttribute ?property.
           ?property a uml:Property.
           FILTER NOT EXISTS {
@@ -611,6 +616,69 @@ stage:uml2mim_scene015 a elmo:Scene;
   '''
 .
 
+stage:uml2mim_scene016 a elmo:Scene;
+  elmo:index "016";
+  rdfs:label "Add mim:Referentielijst";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
+    PREFIX ea: <http://www.sparxsystems.com/extender/EA6.5#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?datatype a mim:Referentielijst.
+        ?datatype rdfs:seeAlso ?class.
+      }
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/data> {
+        SELECT ?class as ?datatype ?class
+        WHERE {
+          ?class a uml:DataType.
+          ?class ea:stereotype "Referentielijst"^^xsd:string.
+        }
+      }
+    }
+  '''
+.
+
+stage:uml2mim_scene017 a elmo:Scene;
+  elmo:index "017";
+  rdfs:label "Add mim:ReferentieElement";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
+    PREFIX ea: <http://www.sparxsystems.com/extender/EA6.5#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?referentielijst mim:referentieElement ?referentieelement.
+        ?referentieelement a mim:ReferentieElement.
+        ?referentieelement rdfs:seeAlso ?property.
+      }
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?datatype a mim:Referentielijst.
+        ?datatype rdfs:seeAlso ?class
+      }
+      GRAPH <http://localhost:8080/data2model/container/data> {
+        select (?property as ?referentieelement) ?class ?property
+        where {
+          ?class a uml:DataType.
+          ?class uml:ownedAttribute ?property.
+          ?property a uml:Property.
+          FILTER NOT EXISTS {
+            ?association uml:memberEnd ?property
+          }
+        }
+      }
+    }
+  '''
+.
+
 stage:uml2mim_scene099 a elmo:Scene;
   elmo:index "099";
   rdfs:label "Add mim:Generalisatie";
@@ -745,6 +813,30 @@ stage:uml2mim_scene104 a elmo:Scene;
       }
       GRAPH <http://localhost:8080/data2model/container/data> {
         ?item ea:documentation ?definitie
+      }
+    }
+  ''';
+.
+
+stage:uml2mim_scene105 a elmo:Scene;
+  elmo:index "105";
+  rdfs:label "Add mim:type";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?element mim:type ?datatype
+      }
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?element rdfs:seeAlso ?property.
+        ?datatype rdfs:seeAlso ?type.
+      }
+      GRAPH <http://localhost:8080/data2model/container/data> {
+        ?property uml:type ?type.
       }
     }
   ''';
