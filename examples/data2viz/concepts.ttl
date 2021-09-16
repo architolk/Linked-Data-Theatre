@@ -5,6 +5,7 @@
 @prefix void: <http://rdfs.org/ns/void#>.
 @prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
 @prefix stage: <http://localhost:8080/data2viz/stage#>.
+@prefix yed: <http://bp4mc2.org/yed#>.
 
 stage:Concepts a elmo:Representation;
   elmo:url-pattern "/query/concepts(|\.ttl|\.json|\.xml)$";
@@ -44,9 +45,20 @@ stage:Concepts a elmo:Representation;
 stage:YedConcepts a elmo:Representation;
   elmo:url-pattern "/query/concepts\.yed$";
   elmo:contains stage:Menu;
+  elmo:fragment [
+    elmo:applies-to skos:broader;
+    rdfs:label "is een";
+    yed:sourceArrow "none";
+		yed:targetArrow "white_delta";
+  ];
+  elmo:fragment [
+    elmo:applies-to skos:related;
+    rdfs:label "gerelateerd aan";
+  ];
   elmo:query '''
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
     prefix container: <http://linkeddata.ordina.nl/data2viz/container/>
+    prefix yed: <http://bp4mc2.org/yed#>
     CONSTRUCT {
       ?begrip rdfs:label ?begriplabel.
       ?begrip a skos:Concept.
@@ -78,7 +90,11 @@ stage:YedConcepts a elmo:Representation;
       }
       UNION
 		  {
-        graph container:diagram {
+        GRAPH <http://linkeddata.ordina.nl/data2viz/container/data> {
+          ?begrip a skos:Concept.
+        }
+        GRAPH container:diagram {
+          ?ds yed:geometry ?begrip.
           ?ds ?dp ?do
         }
       }
