@@ -109,7 +109,7 @@ function calcLinear(data, x, y, maxX, maxY){
 
 }
 
-function plotChart(data, appearance, xtype, ytype) {
+function plotChart(name, data, appearance, xtype, ytype) {
 
  function getX(d) {return (typeof x.rangeBand)!= "undefined" ? x(d.d)+x.rangeBand()/2 : x(d.d)};
  function getY(d) {return (typeof y.rangeBand)!= "undefined" ? y(d.m)+y.rangeBand()/2 : y(d.m)};
@@ -145,7 +145,7 @@ function plotChart(data, appearance, xtype, ytype) {
    .scale(y)
    .orient("left");
 
- var chart = d3.select("#chart").append("svg")
+ var chart = d3.select(name).append("svg")
    .attr("width", width + margin.left + margin.right)
    .attr("height", height + margin.top + margin.bottom)
    .append("g")

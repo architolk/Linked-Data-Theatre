@@ -1,8 +1,8 @@
 <!--
 
     NAME     ChartAppearance.xsl
-    VERSION  1.25.0
-    DATE     2020-07-19
+		VERSION  1.25.1-SNAPSHOT
+    DATE     2021-11-21
 
     Copyright 2012-2020
 
@@ -47,7 +47,7 @@
 	<xsl:variable name="dimensions" select="qb:DimensionProperty|rdf:Description[rdf:type/@rdf:resource='http://purl.org/linked-data/cube#DimensionProperty']"/>
 	<!-- Get observations -->
 	<xsl:variable name="observations">
-		<xsl:for-each select="rdf:Description">
+		<xsl:for-each select="rdf:Description"><xsl:sort select="elmo:index"/>
 			<xsl:variable name="filters">
 				<xsl:for-each select="*">
 					<xsl:variable name="uri" select="concat(namespace-uri(),local-name())"/>
@@ -81,8 +81,14 @@
 		</xsl:for-each>
 	</xsl:variable>
 	<div class="panel panel-primary">
-		<div class="panel-heading"/>
-		<div id="chart" class="panel-body">
+		<div class="panel-heading">
+			<xsl:if test="exists(@elmo:label)">
+				<h3 class="panel-title">
+					<xsl:value-of select="@elmo:label"/>
+				</h3>
+			</xsl:if>
+		</div>
+		<div id="chart{@elmo:index}" class="panel-body chart">
 		</div>
 	</div>
 	<script src="{$staticroot}/js/chart.min.js" type="text/javascript"/>
@@ -101,7 +107,7 @@
 		</xsl:for-each>
 		<xsl:text>];</xsl:text>
 
-		plotChart(data,"<xsl:value-of select="substring-after(@elmo:appearance,'#')"/>","<xsl:value-of select="substring-after($observations/observation[1]/@dimension-datatype,'#')"/>","<xsl:value-of select="substring-after($observations/observation[1]/@measure-datatype,'#')"/>")
+		plotChart("#chart<xsl:value-of select="@elmo:index"/>",data,"<xsl:value-of select="substring-after(@elmo:appearance,'#')"/>","<xsl:value-of select="substring-after($observations/observation[1]/@dimension-datatype,'#')"/>","<xsl:value-of select="substring-after($observations/observation[1]/@measure-datatype,'#')"/>")
 
 	</script>
 </xsl:template>

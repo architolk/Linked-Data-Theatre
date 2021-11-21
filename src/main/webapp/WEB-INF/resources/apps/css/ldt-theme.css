@@ -235,27 +235,27 @@ body {
 /* ------------------- */
 
 /*ChartAppearance styling*/
-#chart .bar {
+.chart .bar {
   fill: steelblue;
 }
-#chart .line {
+.chart .line {
   stroke-width: 2;
   stroke: steelblue;
   fill: none;
 }
 
-#chart .axis text {
+.chart .axis text {
   font: 10px sans-serif;
 }
 
-#chart .axis path,
-#chart .axis line {
+.chart .axis path,
+.chart .axis line {
   fill: none;
   stroke: #000;
   shape-rendering: crispEdges;
 }
 
-#chart .x.axis path {
+.chart .x.axis path {
   display: none;
 }
 /* ------------------- */
