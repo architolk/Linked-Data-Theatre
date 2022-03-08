@@ -47,7 +47,7 @@
 	<xsl:variable name="resource-uri">
 		<xsl:call-template name="resource-uri">
 			<xsl:with-param name="uri" select="$uri"/>
-			<xsl:with-param name="var" select=".."/> <!-- Was rdf:Description, maar dit lijkt beter -->
+			<xsl:with-param name="var" select="."/> <!-- Relevant for using stuff link html:link in fragments -->
 		</xsl:call-template>
 	</xsl:variable>
 	<xsl:variable name="new">

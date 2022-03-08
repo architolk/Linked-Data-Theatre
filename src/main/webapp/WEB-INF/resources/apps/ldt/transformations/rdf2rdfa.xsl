@@ -359,8 +359,9 @@
 				</xsl:for-each-group>
 			</xsl:when>
 			<xsl:when test="$appearance='http://bp4mc2.org/elmo/def#TreeAppearance'">
+				<xsl:variable name="link" select="fragment/html:link"/>
 				<xsl:for-each-group select="/root/results/rdf:RDF[position()=$index]/rdf:Description" group-by="@rdf:about">
-					<rdf:Description rdf:about="{@rdf:about}">
+					<rdf:Description rdf:about="{@rdf:about}" elmo:link="{$link}">
 						<xsl:copy-of select="current-group()/*"/>
 					</rdf:Description>
 				</xsl:for-each-group>

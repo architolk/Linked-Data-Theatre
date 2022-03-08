@@ -11,7 +11,7 @@ stage:Tabular a elmo:Representation;
 .
 
 stage:Table a elmo:Representation;
-	elmo:uri-pattern "upload/.+/table$";
+	elmo:url-pattern "/query/tab$";
 	elmo:contains stage:Menu;
 	elmo:index "1";
 	elmo:contains stage:Tabular_tables;
@@ -20,6 +20,10 @@ stage:Table a elmo:Representation;
 
 stage:Tabular_tables a elmo:Part;
 	elmo:appearance elmo:TreeAppearance;
+	elmo:fragment [
+		elmo:applies-to elmo:Appearance;
+		xhtml:link "/excel2rdf/query/tab";
+	];
 	elmo:query '''
 		prefix csvw: <http://www.w3.org/ns/csvw#>
 		prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
