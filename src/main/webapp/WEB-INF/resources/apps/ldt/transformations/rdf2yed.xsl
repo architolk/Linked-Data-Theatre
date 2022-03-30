@@ -2,9 +2,9 @@
 
     NAME     rdf2yed.xsl
 		VERSION  1.25.3-SNAPSHOT
-    DATE     2021-01-12
+    DATE     2021-11-07
 
-    Copyright 2012-2020
+    Copyright 2012-2021
 
     This file is part of the Linked Data Theatre.
 
@@ -102,13 +102,19 @@
 					</xsl:otherwise>
 				</xsl:choose>
 				<y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
-				<y:BorderStyle color="#000000" type="line" width="1.0"/>
+				<xsl:variable name="linestyle">
+					<xsl:choose>
+						<xsl:when test="@class-uri!=''">line</xsl:when>
+						<xsl:otherwise>dashed</xsl:otherwise>
+					</xsl:choose>
+				</xsl:variable>
+				<y:BorderStyle color="#000000" type="{$linestyle}" width="1.0"/>
 				<y:NodeLabel alignment="center" autoSizePolicy="node_width" configuration="CroppingLabel" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" modelName="internal" modelPosition="t" textColor="#000000" visible="true" hasBackgroundColor="false">
 					<xsl:value-of select="$label"/>
 				</y:NodeLabel>
-				<y:NodeLabel alignment="left" autoSizePolicy="node_width" fontFamily="Dialog" fontSize="10" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" modelName="custom" textColor="#000000" visible="true">
+				<y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="10" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" modelName="custom" textColor="#000000" visible="true" y="30.1328125">
 					<!--Properties-->
-					<xsl:for-each select="property[not(exists(refshape[@type='role']) or exists(ref-nodes/item) or exists(refshape[@empty='false']))]"><xsl:sort select="@order" data-type="number"/>
+					<xsl:for-each select="property[@nodekind='BlankNode' or not(exists(refshape[@type='role']) or exists(ref-nodes/item) or exists(refshape[@empty='false']))]"><xsl:sort select="@order"/>
 						<xsl:if test="position()!=1"><xsl:text>
 </xsl:text></xsl:if><xsl:apply-templates select="." mode="property-placement"/>
 					</xsl:for-each>
@@ -128,6 +134,14 @@
 						<y:ErdAttributesNodeLabelModelParameter/>
 					</y:ModelParameter>
 				</y:NodeLabel>
+				<xsl:if test="exists(description)">
+						<y:NodeLabel alignment="left" autoSizePolicy="node_width" configuration="CroppingLabel" fontFamily="Dialog" fontSize="8" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" modelName="internal" modelPosition="b" textColor="#000000" visible="true">
+							<xsl:for-each select="description">
+								<xsl:if test="position()!=1"><xsl:text>
+</xsl:text></xsl:if><xsl:value-of select="."/>
+							</xsl:for-each>
+						</y:NodeLabel>
+				</xsl:if>
 				<y:StyleProperties>
 					<y:Property class="java.lang.Boolean" name="y.view.ShadowNodePainter.SHADOW_PAINTING" value="true"/>
 				</y:StyleProperties>
@@ -500,7 +514,13 @@
 				<xsl:element name="{$edgetype}">
 					<y:LineStyle color="{$linecolor}" type="{$line}" width="1.0"/>
 					<y:Arrows source="{$source}" target="{$target}"/>
-					<y:EdgeLabel alignment="center" backgroundColor="#FFFFFF" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true"><xsl:value-of select="$label"/><y:LabelModel>
+					<xsl:variable name="hasbgc">
+						<xsl:choose>
+							<xsl:when test="$label!=''">true</xsl:when>
+							<xsl:otherwise>false</xsl:otherwise>
+						</xsl:choose>
+					</xsl:variable>
+					<y:EdgeLabel alignment="center" backgroundColor="#FFFFFF" hasBackgroundColor="{$hasbgc}" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true"><xsl:value-of select="$label"/><y:LabelModel>
 							<y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
 						</y:LabelModel>
 						<y:ModelParameter>

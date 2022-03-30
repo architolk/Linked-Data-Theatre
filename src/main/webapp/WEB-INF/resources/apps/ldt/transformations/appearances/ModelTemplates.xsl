@@ -1,8 +1,8 @@
 <!--
 
     NAME     ModelTemplates.xsl
-    VERSION  1.25.0
-    DATE     2020-07-19
+    VERSION  1.25.1-SNAPSHOT
+    DATE     2021-11-07
 
     Copyright 2012-2020
 
@@ -161,7 +161,7 @@
 						</xsl:choose>
 					</xsl:variable>
 					<refshape uri="{@rdf:about}" empty="{$empty}">
-						<xsl:if test="$empty='true'">
+						<xsl:if test="$empty='true' or $nodekind='BlankNode'"> <!-- Empty shape or blanknode, so show in propertylist -->
 							<xsl:attribute name="shapename"><xsl:value-of select="sh:name"/></xsl:attribute>
 						</xsl:if>
 					</refshape>
@@ -177,7 +177,7 @@
 						</xsl:choose>
 					</xsl:variable>
 					<refshape uri="{@rdf:about}" empty="{$empty}" type="role">
-						<xsl:if test="$empty='true'">
+						<xsl:if test="$empty='true' or $nodekind='BlankNode'"> <!-- Empty shape or blanknode, so show in propertylist -->
 							<xsl:attribute name="shapename"><xsl:value-of select="sh:name"/></xsl:attribute>
 						</xsl:if>
 					</refshape>
@@ -200,7 +200,7 @@
 						</xsl:choose>
 					</xsl:variable>
 					<refshape uri="{@rdf:about}" empty="{$empty}">
-						<xsl:if test="$empty='true'">
+						<xsl:if test="$empty='true' or $nodekind='BlankNode'"> <!-- Empty shape or blanknode, so show in propertylist -->
 							<xsl:attribute name="shapename"><xsl:value-of select="sh:name"/></xsl:attribute>
 						</xsl:if>
 					</refshape>
@@ -284,9 +284,11 @@
 			<xsl:variable name="property-shape-uri" select="@rdf:about|@rdf:nodeID"/>
 			<xsl:variable name="property-order">
 				<xsl:choose>
+					<xsl:when test="sh:order/@rdf:datatype='http://www.w3.org/2001/XMLSchema#decimal' or sh:order/@rdf:datatype='http://www.w3.org/2001/XMLSchema#integer'"><xsl:value-of select="format-number(sh:order,'00000')"/></xsl:when>
 					<xsl:when test="exists(sh:order)"><xsl:value-of select="sh:order"/></xsl:when>
-					<xsl:otherwise>99999</xsl:otherwise>
+					<xsl:otherwise>~</xsl:otherwise>
 				</xsl:choose>
+				<xsl:value-of select="sh:name[1]"/> <!-- Predicate order by sh:order, AND name afterwards -->
 			</xsl:variable>
 			<propertyShape name="{sh:name[1]}" uri="{$property-shape-uri}" order="{$property-order}">
 				<xsl:if test="$predicate!=''"><xsl:attribute name="predicate" select="$predicate"/></xsl:if>
@@ -503,6 +505,9 @@
 						<xsl:otherwise>true</xsl:otherwise>
 					</xsl:choose>
 				</xsl:attribute>
+				<xsl:for-each select="sh:description">
+					<description><xsl:value-of select="."/></description>
+				</xsl:for-each>
 				<!-- superclass refnodes -->
 				<xsl:for-each select="../rdf:Description[@rdf:about=$class]/rdfs:subClassOf">
 					<xsl:variable name="superclass" select="@rdf:resource"/>

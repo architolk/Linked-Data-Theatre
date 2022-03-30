@@ -31,6 +31,7 @@
 <xsl:stylesheet version="2.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 	xmlns:csvw="http://www.w3.org/ns/csvw#"
 
 	xmlns:fn="fn" exclude-result-prefixes="fn"
@@ -61,6 +62,7 @@
 						<xsl:variable name="sheetnr" select="position()"/>
 						<csvw:table>
 							<csvw:Table rdf:about="{$container}/s{fn:qname(@name,concat('',position()))}">
+								<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
 								<xsl:variable name="head" select="row[1]"/>
 								<xsl:for-each select="row[position()&gt;1]">
 									<xsl:variable name="pos" select="@id"/>
