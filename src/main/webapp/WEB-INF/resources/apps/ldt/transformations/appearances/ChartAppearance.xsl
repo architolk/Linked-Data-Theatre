@@ -69,13 +69,17 @@
 					</observation>
 				</xsl:when>
 				<!-- Fallback: using rdfs:label for dimension and rdf:value for measure -->
+				<xsl:when test="exists(rdfs:label) and exists(rdf:value)">
+					<xsl:variable name="label">
+						<xsl:call-template name="normalize-language"><xsl:with-param name="text" select="rdfs:label"/></xsl:call-template>
+					</xsl:variable>
+					<observation dimension="{$label}" dimension-datatype="string" measure-datatype="{rdf:value[1]/@rdf:datatype}"><xsl:value-of select="rdf:value[1]"/></observation>
+				</xsl:when>
 				<xsl:otherwise>
-					<xsl:if test="exists(rdfs:label) and exists(rdf:value)">
-						<xsl:variable name="label">
-							<xsl:call-template name="normalize-language"><xsl:with-param name="text" select="rdfs:label"/></xsl:call-template>
-						</xsl:variable>
-						<observation dimension="{$label}" dimension-datatype="string" measure-datatype="{rdf:value[1]/@rdf:datatype}"><xsl:value-of select="rdf:value[1]"/></observation>
-					</xsl:if>
+					<!-- Hack to get a artificial minimum or maximum -->
+					<xsl:for-each select="rdf:value">
+						<observation measure-datatype="{@rdf:datatype}"><xsl:value-of select="."/></observation>
+					</xsl:for-each>
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:for-each>
@@ -96,13 +100,17 @@
 		<xsl:text>var data=[</xsl:text>
 		<xsl:for-each select="$observations/observation">
 			<xsl:if test="position()!=1">,</xsl:if>
-			<xsl:text>{d:</xsl:text>
-			<xsl:if test="@dimension-datatype='http://www.w3.org/2001/XMLSchema#dateTime'">new Date(</xsl:if>
-			<xsl:if test="@dimension-datatype!='http://www.w3.org/2001/XMLSchema#decimal' and @dimension-datatype!='http://www.w3.org/2001/XMLSchema#integer'">"</xsl:if>
-			<xsl:value-of select="@dimension"/>
-			<xsl:if test="@dimension-datatype!='http://www.w3.org/2001/XMLSchema#decimal' and @dimension-datatype!='http://www.w3.org/2001/XMLSchema#integer'">"</xsl:if>
-			<xsl:if test="@dimension-datatype='http://www.w3.org/2001/XMLSchema#dateTime'">)</xsl:if>
-			<xsl:text>,m:</xsl:text><xsl:value-of select="."/>
+			<xsl:text>{</xsl:text>
+			<xsl:if test="exists(@dimension)">
+				<xsl:text>d:</xsl:text>
+				<xsl:if test="@dimension-datatype='http://www.w3.org/2001/XMLSchema#dateTime'">new Date(</xsl:if>
+				<xsl:if test="@dimension-datatype!='http://www.w3.org/2001/XMLSchema#decimal' and @dimension-datatype!='http://www.w3.org/2001/XMLSchema#integer'">"</xsl:if>
+				<xsl:value-of select="@dimension"/>
+				<xsl:if test="@dimension-datatype!='http://www.w3.org/2001/XMLSchema#decimal' and @dimension-datatype!='http://www.w3.org/2001/XMLSchema#integer'">"</xsl:if>
+				<xsl:if test="@dimension-datatype='http://www.w3.org/2001/XMLSchema#dateTime'">)</xsl:if>
+				<xsl:text>,</xsl:text>
+			</xsl:if>
+			<xsl:text>m:</xsl:text><xsl:value-of select="."/>
 			<xsl:text>}</xsl:text>
 		</xsl:for-each>
 		<xsl:text>];</xsl:text>
