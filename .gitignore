@@ -4,3 +4,4 @@ target/
 /local/
 docs/*.bak
 examples/excel2rdf/config.zip
+examples/data2model/extensions/*.ttl
