@@ -14,11 +14,13 @@ localupdatestage:mim2model a elmo:Production;
 	elmo:contains stage:mim2model_scene001;
 	elmo:contains stage:mim2model_scene002;
 	elmo:contains stage:mim2model_scene003;
-	# scene004 al opgepakt bij scene003
+	elmo:contains stage:mim2model_scene004;
 	elmo:contains stage:mim2model_scene005;
 	elmo:contains stage:mim2model_scene006;
 	elmo:contains stage:mim2model_scene009;
 	elmo:contains stage:mim2model_scene013;
+	elmo:contains stage:mim2model_scene014;
+	elmo:contains stage:mim2model_scene014a;
 	elmo:contains stage:mim2model_scene015;
 	elmo:contains stage:mim2model_scene016;
 	elmo:contains stage:mim2model_scene099;
@@ -173,8 +175,46 @@ stage:mim2model_scene002 a elmo:Scene;
   '''
 .
 
+#
+# Conversie van relatieklasse moet NA de Objecttype en Gegevensgroeptype, maar VOOR Attribuutsoort
+#
 stage:mim2model_scene003 a elmo:Scene;
   elmo:index "003";
+  rdfs:label "Convert mim:Relatieklasse";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+		PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/model> {
+        ?class a owl:Class, sh:NodeShape.
+				?class sh:targetClass ?class.
+				?class rdfs:label ?naam.
+				?class sh:name ?code.
+				?class rdfs:seeAlso ?relatieklasse.
+      }
+    }
+    WHERE {
+			SELECT (iri(concat("http://test/def#",?code)) as ?class) ?code ?naam ?relatieklasse
+			WHERE {
+				GRAPH <http://localhost:8080/data2model/container/mim> {
+					?relatieklasse a mim:Relatieklasse.
+					?relatieklasse mim:naam ?naam.
+				}
+				GRAPH <http://localhost:8080/data2model/container/model> {
+					?relatieklasse skos:notation ?code.
+				}
+			}
+    }
+  '''
+.
+
+#
+# Feitelijk combinatie van 003 en 004
+#
+stage:mim2model_scene004 a elmo:Scene;
+  elmo:index "004";
   rdfs:label "Convert mim:Attribuutsoort";
 	elmo:query '''
 		PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -204,7 +244,7 @@ stage:mim2model_scene003 a elmo:Scene;
 					?owner mim:attribuut ?attribuutsoort.
 					?attribuutsoort a mim:Attribuutsoort.
 					?attribuutsoort mim:naam ?naam.
-					FILTER (?mimtype = mim:Objecttype || ?mimtype = mim:Gegevensgroeptype)
+					FILTER (?mimtype = mim:Objecttype || ?mimtype = mim:Gegevensgroeptype || ?mimtype = mim:Relatieklasse)
 				}
 				GRAPH <http://localhost:8080/data2model/container/model> {
 					?attribuutsoort skos:notation ?code.
@@ -248,6 +288,11 @@ stage:mim2model_scene005 a elmo:Scene;
 					?relatiesoort mim:naam ?naam.
 	        ?relatiesoort mim:bron ?bron.
 	        ?relatiesoort mim:doel ?doel.
+					FILTER NOT EXISTS {
+						?relatiesoort mim:relatierol ?relatieroldoel.
+						?relatieroldoel a mim:RelatierolDoel.
+						?relatieroldoel mim:naam ?relatieroldoelnaam
+					}
 				}
 				GRAPH <http://localhost:8080/data2model/container/model> {
 					?relatiesoort skos:notation ?code.
@@ -359,7 +404,7 @@ stage:mim2model_scene013 a elmo:Scene;
 						 (iri(concat("http://test/def#",?ownercode,".",?code)) as ?predicate)
 						 (iri(concat("http://test/def#",?ownercode)) as ?owner)
 						 (iri(concat("http://test/def#",?classcode)) as ?class)
-						 ?code ?naam ?relatiesoort
+						 ?code ?naam ?relatierolbron
 			WHERE {
 				GRAPH <http://localhost:8080/data2model/container/mim> {
 					?relatierolbron a mim:RelatierolBron.
@@ -372,6 +417,106 @@ stage:mim2model_scene013 a elmo:Scene;
 					?relatierolbron skos:notation ?code.
 					?doel skos:notation ?ownercode.
 					?bron skos:notation ?classcode.
+				}
+			}
+		}
+	'''
+.
+
+stage:mim2model_scene014 a elmo:Scene;
+  elmo:index "014";
+  rdfs:label "Convert mim:RelatierolDoel";
+	elmo:query '''
+		PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+		PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+		PREFIX mim: <http://bp4mc2.org/def/mim#>
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		INSERT {
+			GRAPH <http://localhost:8080/data2model/container/model> {
+				?property a owl:ObjectProperty.
+				?property rdfs:label ?naam.
+				?property rdfs:seeAlso ?relatieroldoel.
+				?owner sh:property ?predicate.
+				?predicate a sh:PropertyShape.
+				?predicate sh:name ?code.
+				?predicate sh:path ?property.
+				?predicate sh:class ?class.
+				?predicate rdfs:seeAlso ?relatieroldoel.
+			}
+		}
+		WHERE {
+			SELECT (iri(concat("http://test/def#",?code)) as ?property)
+						 (iri(concat("http://test/def#",?ownercode,".",?code)) as ?predicate)
+						 (iri(concat("http://test/def#",?ownercode)) as ?owner)
+						 (iri(concat("http://test/def#",?classcode)) as ?class)
+						 ?code ?naam ?relatieroldoel
+			WHERE {
+				GRAPH <http://localhost:8080/data2model/container/mim> {
+					?relatieroldoel a mim:RelatierolDoel.
+					?relatieroldoel mim:naam ?naam.
+					?relatiesoort mim:relatierol ?relatieroldoel.
+					?relatiesoort mim:bron ?bron.
+	        ?relatiesoort mim:doel ?doel.
+				}
+				GRAPH <http://localhost:8080/data2model/container/model> {
+					?relatieroldoel skos:notation ?code.
+					?doel skos:notation ?classcode.
+					?bron skos:notation ?ownercode.
+				}
+			}
+		}
+	'''
+.
+
+stage:mim2model_scene014a a elmo:Scene;
+  elmo:index "014a";
+  rdfs:label "Convert mim:RelatierolDoel of mim:Relatieklasse";
+	elmo:query '''
+		PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+		PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+		PREFIX mim: <http://bp4mc2.org/def/mim#>
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		INSERT {
+			GRAPH <http://localhost:8080/data2model/container/model> {
+				?statement rdf:subClassOf rdf:Statement.
+				?statement sh:property ?subjectps.
+				?statement sh:property ?predicateps.
+				?statement sh:property ?objectps.
+				?predicateps a sh:PropertyShape.
+				?predicateps sh:path rdf:predicate.
+				?predicateps sh:hasValue ?predicate.
+				?predicateps sh:minCount 1 .
+				?predicateps sh:maxCount 1 .
+				?subjectps a sh:PropertyShape.
+				?subjectps sh:path rdf:subject.
+				?subjectps sh:class ?subject.
+				?objectps a sh:PropertyShape.
+				?objectps sh:path rdf:object.
+				?objectps sh:class ?object.
+			}
+		}
+		WHERE {
+			SELECT (iri(concat("http://test/def#",?code)) as ?statement)
+						 (iri(concat("http://test/def#",?objectcode)) as ?object)
+						 (iri(concat("http://test/def#",?subjectcode)) as ?subject)
+						 (iri(concat("http://test/def#",?predicatecode)) as ?predicate)
+						 (iri(concat("http://test/def#",?code,".object")) as ?objectps)
+						 (iri(concat("http://test/def#",?code,".subject")) as ?subjectps)
+						 (iri(concat("http://test/def#",?code,".predicate")) as ?predicateps)
+						 ?code ?naam ?relatieroldoel
+			WHERE {
+				GRAPH <http://localhost:8080/data2model/container/mim> {
+					?relatieroldoel a mim:RelatierolDoel.
+					?relatieklasse a mim:Relatieklasse.
+					?relatieklasse mim:relatierol ?relatieroldoel.
+					?relatieklasse mim:bron ?bron.
+	        ?relatieklasse mim:doel ?doel.
+				}
+				GRAPH <http://localhost:8080/data2model/container/model> {
+					?relatieklasse skos:notation ?code.
+					?relatieroldoel skos:notation ?predicatecode.
+					?doel skos:notation ?objectcode.
+					?bron skos:notation ?subjectcode.
 				}
 			}
 		}

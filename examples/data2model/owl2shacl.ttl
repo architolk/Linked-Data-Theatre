@@ -1,0 +1,84 @@
+@prefix localupdatestage: <http://localhost:8080/data2model/update/>.
+@prefix updatestage: <http://linkeddata.ordina.nl/data2model/update/>.
+@prefix stage: <http://localhost:8080/data2model/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+#Production for local installations
+localupdatestage:owl2shacl a elmo:Production;
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:Menu;
+	elmo:contains stage:owl2shacl_scene1;
+	elmo:contains stage:owl2shacl_scene2;
+.
+
+#Production for server installations
+updatestage:owl2shacl a elmo:Production;
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:Menu;
+	elmo:contains stage:owl2shacl_scene1;
+.
+
+stage:owl2shacl_scene1 a elmo:Scene;
+	elmo:index "01";
+	rdfs:label "Add sh:NodeShape to every owl:Class";
+	elmo:query '''
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		PREFIX owl: <http://www.w3.org/2002/07/owl#>
+		insert into <http://localhost:8080/data2model/container/model> {
+			?c a sh:NodeShape.
+			?c sh:targetClass ?c.
+			?c sh:name ?name
+		}
+		WHERE {
+			SELECT ?c (strafter(str(?c),"#") as ?name)
+			WHERE {
+				graph <http://localhost:8080/data2model/container/model> {
+					?c a owl:Class.
+				}
+			}
+		}
+	''';
+.
+
+stage:owl2shacl_scene2 a elmo:Scene;
+	elmo:index "02";
+	rdfs:label "Add sh:PropertyShape to every owl:Restriction";
+	elmo:query '''
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		PREFIX owl: <http://www.w3.org/2002/07/owl#>
+		insert into <http://localhost:8080/data2model/container/model> {
+			?c sh:property [
+				sh:path ?property;
+				sh:name ?pname;
+				sh:minCount ?mincard;
+				sh:maxCount ?maxcard;
+				sh:minCount ?card;
+				sh:maxCount ?card;
+				sh:class ?class;
+				sh:datatype ?datatype
+			]
+		}
+		WHERE {
+			SELECT ?c ?property (strafter(str(?property),"#") as ?pname) ?mincard ?maxcard ?card ?class ?datatype
+			WHERE {
+				graph <http://localhost:8080/data2model/container/model> {
+					?c rdfs:subClassOf ?sub.
+					?sub owl:onProperty ?property.
+					OPTIONAL {?sub owl:minCardinality ?mincard}
+					OPTIONAL {?sub owl:maxCardinality ?maxcard}
+					OPTIONAL {?sub owl:cardinality ?card}
+					OPTIONAL {
+						?property rdfs:range ?class.
+						?class a owl:Class
+					}
+					OPTIONAL {
+						?property rdfs:range ?datatype.
+						FILTER NOT EXISTS {?datatype a owl:Class}
+					}
+				}
+			}
+		}
+	''';
+.

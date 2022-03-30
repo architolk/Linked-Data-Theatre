@@ -32,38 +32,43 @@ stage:Menu elmo:appearance elmo:NavbarSearchAppearance;
 			elmo:data [elmo:index "4"; rdfs:label "Make selection"; html:link "container/selection"];
 			elmo:data [elmo:index "5"; rdfs:label "Copy data as model"; html:link "update/copy"];
 			elmo:data [elmo:index "6"; rdfs:label "Enhance model"; html:link "update/model2model"];
-			elmo:data [elmo:index "7"; rdfs:label "Create concept scheme"; html:link "update/model2scheme"];
+			elmo:data [elmo:index "7"; rdfs:label "Create SHACL model from OWL model"; html:link "update/owl2shacl"];
+			elmo:data [elmo:index "8"; rdfs:label "Create concept scheme"; html:link "update/model2scheme"];
     ];
     elmo:data [
       elmo:index "3";
       rdfs:label "Downloads";
       html:link "query/downloads";
     ];
-    elmo:data [
-      elmo:index "4";
-      rdfs:label "Edit model";
-      html:link "container/model"
-    ];
 		elmo:data [
-      elmo:index "5";
-      rdfs:label "Edit scheme";
-      html:link "container/scheme"
-    ];
+			elmo:index "4";
+			rdfs:label "RDF";
+			elmo:data [elmo:index "1"; rdfs:label "Edit model"; html:link "container/model"];
+			elmo:data [elmo:index "2"; rdfs:label "Edit scheme"; html:link "container/scheme"];
+		];
 		elmo:data [
-			elmo:index "6";
+			elmo:index "5";
 			rdfs:label "UML";
 			elmo:data [elmo:index "1"; rdfs:label "Upload UML model"; html:link "container/xmidata"];
 			elmo:data [elmo:index "2"; rdfs:label "Extract terms from UML model"; html:link "update/uml2scheme"];
 			elmo:data [elmo:index "2"; rdfs:label "Create MIM model"; html:link "update/model2mim"];
 			elmo:data [elmo:index "3"; rdfs:label "Edit MIM model"; html:link "container/mim"];
-			elmo:data [elmo:index "4"; rdfs:label "Create MIM model from UML"; html:link "update/uml2mim"];
-			elmo:data [elmo:index "5"; rdfs:label "Create model from MIM"; html:link "update/mim2model"];
+			elmo:data [elmo:index "4"; rdfs:label "View MIM model"; html:link "query/mim"];
+			elmo:data [elmo:index "5"; rdfs:label "Create MIM model from UML"; html:link "update/uml2mim"];
+			elmo:data [elmo:index "6"; rdfs:label "Create model from MIM"; html:link "update/mim2model"];
 		];
 		elmo:data [
-			elmo:index "7";
+			elmo:index "6";
 			rdfs:label "ERD";
 			elmo:data [elmo:index "1"; rdfs:label "Upload ERD model"; html:link "container/ldmdata"];
 			elmo:data [elmo:index "2"; rdfs:label "Create model from ERD"; html:link "update/ldm2model"];
+		];
+		elmo:data [
+			elmo:index "7";
+			rdfs:label "FBM";
+			elmo:data [elmo:index "1"; rdfs:label "Upload SM/FBM model"; html:link "container/fbmdata"];
+			elmo:data [elmo:index "2"; rdfs:label "Create scheme from SM"; html:link "update/fbm2scheme"];
+			elmo:data [elmo:index "3"; rdfs:label "Create model from FBM"; html:link "update/fbm2model"];
 		];
 		elmo:data [
 			elmo:index "8";

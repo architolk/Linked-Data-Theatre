@@ -1,0 +1,246 @@
+@prefix localupdatestage: <http://localhost:8080/data2model/update/>.
+@prefix updatestage: <http://linkeddata.ordina.nl/data2model/update/>.
+@prefix stage: <http://localhost:8080/data2model/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+#Production for local installations
+localupdatestage:fbm2model a elmo:Production;
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:Menu;
+	elmo:contains stage:fbm2model_clear;
+	elmo:contains stage:fbm2model_scene000;
+	elmo:contains stage:fbm2model_scene001;
+	elmo:contains stage:fbm2model_scene002;
+	elmo:contains stage:fbm2model_scene003;
+	elmo:contains stage:fbm2model_scene100;
+	elmo:contains stage:fbm2model_scene101;
+	elmo:contains stage:fbm2model_scene102;
+	elmo:contains stage:fbm2model_scene103;
+.
+
+#Production for server installations
+updatestage:fbm2model a elmo:Production;
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:Menu;
+	elmo:contains stage:fbm2model_scene1;
+  # Extra for copy of result
+
+  elmo:contains stage:fbm2model_xxclearservergraph;
+  elmo:contains stage:fbm2model_xxcopytoservergraph;
+.
+
+stage:fbm2model_clear a elmo:Scene;
+	elmo:index " ";
+	rdfs:label "Clear target graph";
+	elmo:query "clear graph <http://localhost:8080/data2model/container/model>";
+.
+
+stage:fbm2model_scene000 a elmo:Scene;
+	elmo:index "000";
+	rdfs:label "Add default datatypes";
+	elmo:query '''
+		PREFIX prov: <http://www.w3.org/ns/prov#>
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+		PREFIX fbm: <http://cognitatie.com/def/fbm#>
+		insert {
+			graph <http://localhost:8080/data2model/container/model> {
+			  xsd:int skos:notation "int"^^xsd:string.
+				xsd:string skos:notation "string"^^xsd:string.
+				xsd:float skos:notation "float"^^xsd:string.
+				xsd:dateTime skos:notation "date/time"^^xsd:string.
+			}
+		}
+		WHERE {}
+	''';
+.
+
+stage:fbm2model_scene001 a elmo:Scene;
+	elmo:index "001";
+	rdfs:label "Create a NodeShape for every fbm:Facttype";
+	elmo:query '''
+		PREFIX prov: <http://www.w3.org/ns/prov#>
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		PREFIX fbm: <http://cognitatie.com/def/fbm#>
+		insert {
+			graph <http://localhost:8080/data2model/container/model> {
+				?shape a sh:NodeShape.
+				?shape sh:name ?name.
+				?shape prov:wasDerivedFrom ?facttype
+			}
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/data> {
+				select ?facttype ?name (IRI(concat("urn:shape:",?id)) as ?shape)
+				where {
+					?facttype a fbm:Facttype.
+					?facttype fbm:id ?id.
+					OPTIONAL {?facttype fbm:name ?name}
+				}
+			}
+		}
+	''';
+.
+
+stage:fbm2model_scene002 a elmo:Scene;
+	elmo:index "002";
+	rdfs:label "Create a Class for every fbm:Entitytype";
+	elmo:query '''
+		PREFIX prov: <http://www.w3.org/ns/prov#>
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		PREFIX fbm: <http://cognitatie.com/def/fbm#>
+		insert {
+			graph <http://localhost:8080/data2model/container/model> {
+				?class a owl:Class.
+				?class rdfs:label ?label.
+				?class prov:wasDerivedFrom ?entitytype.
+			}
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/data> {
+				select ?entitytype ?label (IRI(concat("urn:class:",?id)) as ?class)
+				where {
+					?entitytype a fbm:Entitytype.
+					?entitytype fbm:id ?id.
+					OPTIONAL {?entitytype rdfs:label ?label}
+				}
+			}
+		}
+	''';
+.
+
+stage:fbm2model_scene003 a elmo:Scene;
+	elmo:index "003";
+	rdfs:label "Create a PropertyShape for every fbm:Role";
+	elmo:query '''
+		PREFIX prov: <http://www.w3.org/ns/prov#>
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		PREFIX fbm: <http://cognitatie.com/def/fbm#>
+		insert {
+			graph <http://localhost:8080/data2model/container/model> {
+				?shape sh:property ?property.
+				?property a sh:PropertyShape.
+				?property sh:name ?name.
+				?property prov:wasDerivedFrom ?role
+			}
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/data> {
+				select ?facttype ?role ?name (IRI(concat("urn:role:",?id)) as ?property)
+				where {
+					?facttype fbm:role ?role.
+					?role fbm:id ?id.
+					OPTIONAL {?role fbm:name ?name}
+				}
+			}
+			graph <http://localhost:8080/data2model/container/model> {
+				?shape prov:wasDerivedFrom ?facttype
+			}
+		}
+	''';
+.
+
+stage:fbm2model_scene100 a elmo:Scene;
+	elmo:index "100";
+	rdfs:label "Link facttype to entitytype";
+	elmo:query '''
+		PREFIX prov: <http://www.w3.org/ns/prov#>
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		PREFIX fbm: <http://cognitatie.com/def/fbm#>
+		insert {
+			graph <http://localhost:8080/data2model/container/model> {
+				?shape sh:targetClass ?class.
+			}
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/data> {
+				?entitytype fbm:isObjectifiedFromFacttype ?facttype.
+			}
+			graph <http://localhost:8080/data2model/container/model> {
+				?class prov:wasDerivedFrom ?entitytype.
+				?shape prov:wasDerivedFrom ?facttype
+			}
+		}
+	''';
+.
+
+stage:fbm2model_scene101 a elmo:Scene;
+	elmo:index "101";
+	rdfs:label "Link role to entitytype";
+	elmo:query '''
+		PREFIX prov: <http://www.w3.org/ns/prov#>
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		PREFIX fbm: <http://cognitatie.com/def/fbm#>
+		insert {
+			graph <http://localhost:8080/data2model/container/model> {
+				?property sh:class ?class.
+			}
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/data> {
+				?role fbm:isPlayedByObjecttype ?entitytype
+			}
+			graph <http://localhost:8080/data2model/container/model> {
+				?property prov:wasDerivedFrom ?role.
+				?class prov:wasDerivedFrom ?entitytype
+			}
+		}
+	''';
+.
+
+#
+# Onderstaande is een shortcut: eigenlijk gaat het via een valuetype, maar da's redelijke dubbel
+#
+stage:fbm2model_scene102 a elmo:Scene;
+	elmo:index "102";
+	rdfs:label "Link role to datatype of valuetype";
+	elmo:query '''
+		PREFIX prov: <http://www.w3.org/ns/prov#>
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		PREFIX fbm: <http://cognitatie.com/def/fbm#>
+		insert {
+			graph <http://localhost:8080/data2model/container/model> {
+				?property sh:datatype ?datatype.
+			}
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/data> {
+				?role fbm:isPlayedByObjecttype ?valuetype.
+				?valuetype fbm:datatype ?datatypecode.
+			}
+			graph <http://localhost:8080/data2model/container/model> {
+				?property prov:wasDerivedFrom ?role.
+				?datatype skos:notation ?datatypecode.
+			}
+		}
+	''';
+.
+
+#
+# Onderstaande is een shortcut: eigenlijk gaat het via een communicatiepatroon, maar da's redelijke dubbel
+#
+stage:fbm2model_scene103 a elmo:Scene;
+	elmo:index "103";
+	rdfs:label "Add communication pattern as description";
+	elmo:query '''
+		PREFIX prov: <http://www.w3.org/ns/prov#>
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		PREFIX fbm: <http://cognitatie.com/def/fbm#>
+		insert {
+			graph <http://localhost:8080/data2model/container/model> {
+				?shape sh:description ?label
+			}
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/data> {
+				?facttype fbm:communicationPattern ?cp.
+				?cp rdfs:label ?label
+			}
+			graph <http://localhost:8080/data2model/container/model> {
+				?shape prov:wasDerivedFrom ?facttype.
+			}
+		}
+	''';
+.

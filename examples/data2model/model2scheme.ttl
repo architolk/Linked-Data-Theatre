@@ -18,6 +18,7 @@ localupdatestage:model2scheme a elmo:Production;
 	elmo:contains stage:model2scheme_scene6;
 	elmo:contains stage:model2scheme_scene7;
 	elmo:contains stage:model2scheme_scene8;
+	elmo:contains stage:model2scheme_scene9;
 .
 
 #Production for server installations
@@ -33,6 +34,7 @@ updatestage:model2scheme a elmo:Production;
 	elmo:contains stage:model2scheme_scene6;
 	elmo:contains stage:model2scheme_scene7;
 	elmo:contains stage:model2scheme_scene8;
+	elmo:contains stage:model2scheme_scene9;
 	# Extra for copy of result
   elmo:contains stage:model2scheme_clearservergraph;
   elmo:contains stage:model2scheme_copytoservergraph;
@@ -334,4 +336,30 @@ stage:model2scheme_scene8 a elmo:Scene;
 			}
 		}
 	''';
+.
+
+stage:model2scheme_scene9 a elmo:Scene;
+	elmo:index "09";
+	rdfs:label "Create broader relation from subclassing";
+	elmo:query '''
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		PREFIX dct: <http://purl.org/dc/terms/>
+		PREFIX localcontainer: <http://localhost:8080/data2model/container/>
+		insert {
+		 	graph localcontainer:scheme {
+				?concept skos:broader ?broader
+			}
+		}
+		WHERE {
+			graph localcontainer:scheme {
+				?concept a skos:Concept.
+				?broader a skos:Concept.
+			}
+			graph localcontainer:model {
+				?class rdfs:subClassOf ?super.
+				?class ^sh:targetClass/dct:subject ?concept.
+				?super ^sh:targetClass/dct:subject ?broader
+			}
+		}
+	'''
 .

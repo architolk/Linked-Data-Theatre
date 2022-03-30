@@ -9,11 +9,27 @@
 stage:Search a elmo:Representation;
   elmo:url-pattern "/search$";
   elmo:contains stage:Menu;
+  elmo:fragment [
+    elmo:applies-to "location";
+    rdfs:label "Locatie"@nl;
+    rdfs:label "Location"@en;
+  ];
+  elmo:fragment [
+    elmo:applies-to "t";
+    rdfs:label "Type"@nl;
+    rdfs:label "Type"@en;
+  ];
+  elmo:fragment [
+    elmo:applies-to "s";
+    rdfs:label "Zoekresultaat"@nl;
+    rdfs:label "Search result"@en;
+  ];
   elmo:query '''
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-    select distinct (replace(str(?g),".+/([a-zA-z0-9_]+)$","$1") as ?location) ?s ?s_label
+    select distinct (replace(str(?g),".+/([a-zA-z0-9_]+)$","$1") as ?location) ?t ?s ?s_label
     where {
       GRAPH ?g {
+        OPTIONAL {?s a ?t}
         ?s rdfs:label ?s_label.
         FILTER (REGEX(?s_label,"@TERM@","i"))
       }

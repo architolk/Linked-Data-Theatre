@@ -3,6 +3,8 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 @prefix dcterms: <http://purl.org/dc/terms/>.
 @prefix void: <http://rdfs.org/ns/void#>.
+@prefix skos: <http://www.w3.org/2004/02/skos/core#>.
+@prefix skosthes: <http://purl.org/iso25964/skos-thes#>.
 @prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
 @prefix stage: <http://localhost:8080/data2viz/stage#>.
 @prefix yed: <http://bp4mc2.org/yed#>.
@@ -48,6 +50,18 @@ stage:YedConcepts a elmo:Representation;
   elmo:fragment [
     elmo:applies-to skos:broader;
     rdfs:label "is een";
+    yed:sourceArrow "none";
+		yed:targetArrow "white_delta";
+  ];
+  elmo:fragment [
+    elmo:applies-to skosthes:broaderGeneric;
+    rdfs:label "is een specialisatie van";
+    yed:sourceArrow "none";
+		yed:targetArrow "white_delta";
+  ];
+  elmo:fragment [
+    elmo:applies-to skosthes:broaderInstantial;
+    rdfs:label "is een examplaar van";
     yed:sourceArrow "none";
 		yed:targetArrow "white_delta";
   ];

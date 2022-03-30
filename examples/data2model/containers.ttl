@@ -219,6 +219,13 @@ container:ldmdata a elmo:Container;
 .
 
 # Generic XML container
+container:xmldata a elmo:Container;
+  rdfs:label "Upload XML data";
+  elmo:translator elmo:GenericXMLTranslator;
+  elmo:contains stage:Menu;
+  elmo:representation elmo:UploadRepresentation;
+  elmo:replaces containerlocal:data;
+.
 containerlocal:xmldata a elmo:Container;
   rdfs:label "Upload XML data";
   elmo:translator elmo:GenericXMLTranslator;
@@ -228,6 +235,13 @@ containerlocal:xmldata a elmo:Container;
 .
 
 # FBM container (iKnow)
+container:fbmdata a elmo:Container;
+  rdfs:label "Upload FBM (iKnow) data";
+  elmo:translator elmo:FBMTranslator;
+  elmo:contains stage:Menu;
+  elmo:representation elmo:UploadRepresentation;
+  elmo:replaces containerlocal:data;
+.
 containerlocal:fbmdata a elmo:Container;
   rdfs:label "Upload FBM (iKnow) data";
   elmo:translator elmo:FBMTranslator;

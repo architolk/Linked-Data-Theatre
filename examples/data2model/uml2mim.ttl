@@ -12,7 +12,9 @@ localupdatestage:uml2mim a elmo:Production;
   elmo:contains stage:uml2mim_scene000;
   elmo:contains stage:uml2mim_scene001;
   elmo:contains stage:uml2mim_scene002;
+  elmo:contains stage:uml2mim_scene002a;
   elmo:contains stage:uml2mim_scene003;
+  elmo:contains stage:uml2mim_scene003a;
   elmo:contains stage:uml2mim_scene004;
   elmo:contains stage:uml2mim_scene005;
   elmo:contains stage:uml2mim_scene006;
@@ -24,7 +26,9 @@ localupdatestage:uml2mim a elmo:Production;
   elmo:contains stage:uml2mim_scene012;
   elmo:contains stage:uml2mim_scene013;
   elmo:contains stage:uml2mim_scene014;
-  elmo:contains stage:uml2mim_scene015;
+  elmo:contains stage:uml2mim_scene014a;
+  elmo:contains stage:uml2mim_scene015a;
+  elmo:contains stage:uml2mim_scene015b;
   elmo:contains stage:uml2mim_scene016;
   elmo:contains stage:uml2mim_scene017;
   elmo:contains stage:uml2mim_scene099;
@@ -43,7 +47,9 @@ updatestage:uml2mim a elmo:Production;
   elmo:contains stage:uml2mim_scene000;
   elmo:contains stage:uml2mim_scene001;
   elmo:contains stage:uml2mim_scene002;
+  elmo:contains stage:uml2mim_scene002a;
   elmo:contains stage:uml2mim_scene003;
+  elmo:contains stage:uml2mim_scene003a;
   elmo:contains stage:uml2mim_scene004;
   elmo:contains stage:uml2mim_scene005;
   elmo:contains stage:uml2mim_scene006;
@@ -55,7 +61,9 @@ updatestage:uml2mim a elmo:Production;
   elmo:contains stage:uml2mim_scene012;
   elmo:contains stage:uml2mim_scene013;
   elmo:contains stage:uml2mim_scene014;
-  elmo:contains stage:uml2mim_scene015;
+  elmo:contains stage:uml2mim_scene014a;
+  elmo:contains stage:uml2mim_scene015a;
+  elmo:contains stage:uml2mim_scene015b;
   elmo:contains stage:uml2mim_scene016;
   elmo:contains stage:uml2mim_scene017;
   elmo:contains stage:uml2mim_scene099;
@@ -150,6 +158,51 @@ stage:uml2mim_scene002 a elmo:Scene;
   '''
 .
 
+#
+# Een Relatieklasse heeft kenmerken van zowel een Objecttype als een Relatiesoort
+# Zie ook bij Relatiesoort de opmerking over Gegevensgroeptype als bron van eeen Relatie(klasse|soort)
+#
+stage:uml2mim_scene002a a elmo:Scene;
+  elmo:index "003";
+  rdfs:label "Add mim:Relatieklasse";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
+    PREFIX ea: <http://www.sparxsystems.com/extender/EA6.5#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?relatieklasse a mim:Relatieklasse.
+        ?relatieklasse rdfs:seeAlso ?associationclass.
+        ?relatieklasse mim:bron ?bron.
+        ?relatieklasse mim:doel ?doel.
+      }
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?bron a ?brontype.
+        ?bron rdfs:seeAlso ?source.
+        ?doel a mim:Objecttype.
+        ?doel rdfs:seeAlso ?target.
+        FILTER (?brontype = mim:Objecttype || mim:Gegevensgroeptype)
+      }
+      GRAPH <http://localhost:8080/data2model/container/data> {
+        select (?associationclass as ?relatieklasse) ?associationclass ?source ?target
+        where {
+          ?associationclass a uml:AssociationClass.
+          ?associationclass ea:stereotype "Relatieklasse"^^xsd:string.
+          ?associationclass uml:ownedEnd ?ownedend.
+          ?associationclass uml:memberEnd ?memberend.
+          FILTER (?ownedend != ?memberend).
+          ?ownedend uml:type ?source.
+          ?memberend uml:type ?target.
+        }
+      }
+    }
+  ''';
+.
+
 stage:uml2mim_scene003 a elmo:Scene;
   elmo:index "003";
   rdfs:label "Add mim:Attribuutsoort of mim:Objecttype";
@@ -176,6 +229,44 @@ stage:uml2mim_scene003 a elmo:Scene;
         where {
           ?class a uml:Class.
           ?class ea:stereotype "Objecttype"^^xsd:string.
+          ?class uml:ownedAttribute ?property.
+          ?property a uml:Property.
+          ?property ea:stereotype "Attribuutsoort"^^xsd:string.
+          FILTER NOT EXISTS {
+            ?association uml:memberEnd ?property
+          }
+        }
+      }
+    }
+  '''
+.
+
+stage:uml2mim_scene003a a elmo:Scene;
+  elmo:index "004";
+  rdfs:label "Add mim:Attribuutsoort of mim:Relatieklasse";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
+    PREFIX ea: <http://www.sparxsystems.com/extender/EA6.5#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?relatieklasse mim:attribuut ?attribuutsoort.
+        ?attribuutsoort a mim:Attribuutsoort.
+        ?attribuutsoort rdfs:seeAlso ?property.
+      }
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?relatieklasse a mim:Relatieklasse.
+        ?relatieklasse rdfs:seeAlso ?class
+      }
+      GRAPH <http://localhost:8080/data2model/container/data> {
+        select (?property as ?attribuutsoort) ?class ?property
+        where {
+          ?class a uml:AssociationClass.
+          ?class ea:stereotype "Relatieklasse"^^xsd:string.
           ?class uml:ownedAttribute ?property.
           ?property a uml:Property.
           ?property ea:stereotype "Attribuutsoort"^^xsd:string.
@@ -226,6 +317,10 @@ stage:uml2mim_scene004 a elmo:Scene;
   '''
 .
 
+#
+# Formeel mag volgens Mim een Gegevensgroeptype geen relatiesoort hebben, maar dat staan we hier wel toe
+# De "doel"-kant moet wel gewoon een Objecttype zijn
+#
 stage:uml2mim_scene005 a elmo:Scene;
   elmo:index "005";
   rdfs:label "Add mim:Relatiesoort";
@@ -245,10 +340,11 @@ stage:uml2mim_scene005 a elmo:Scene;
     }
     WHERE {
       GRAPH <http://localhost:8080/data2model/container/mim> {
-        ?bron a mim:Objecttype.
+        ?bron a ?brontype.
         ?bron rdfs:seeAlso ?source.
         ?doel a mim:Objecttype.
         ?doel rdfs:seeAlso ?target.
+        FILTER (?brontype = mim:Objecttype || mim:Gegevensgroeptype)
       }
       GRAPH <http://localhost:8080/data2model/container/data> {
         select (?association as ?relatiesoort) ?association ?source ?target
@@ -481,7 +577,7 @@ stage:uml2mim_scene012 a elmo:Scene;
         ?enumeratie rdfs:seeAlso ?enumeration
       }
       GRAPH <http://localhost:8080/data2model/container/data> {
-        select (?literal as ?waarde) ?class ?literal
+        select (?literal as ?waarde) ?class ?literal ?enumeration
         where {
           {
             ?enumeration a uml:Enumeration.
@@ -541,7 +637,7 @@ stage:uml2mim_scene013 a elmo:Scene;
 
 stage:uml2mim_scene014 a elmo:Scene;
   elmo:index "014";
-  rdfs:label "Add mim:RelatierolDoel";
+  rdfs:label "Add mim:RelatierolDoel of mim:Relatiesoort";
   elmo:query '''
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
@@ -576,9 +672,46 @@ stage:uml2mim_scene014 a elmo:Scene;
   '''
 .
 
-stage:uml2mim_scene015 a elmo:Scene;
-  elmo:index "015";
-  rdfs:label "Add mim:Gegevensgroep";
+stage:uml2mim_scene014a a elmo:Scene;
+  elmo:index "014a";
+  rdfs:label "Add mim:RelatierolDoel of mim:Relatieklasse";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
+    PREFIX ea: <http://www.sparxsystems.com/extender/EA6.5#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?relatieklasse mim:relatierol ?relatieroldoel.
+        ?relatieroldoel a mim:RelatierolDoel.
+        ?relatieroldoel rdfs:seeAlso ?property.
+      }
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?relatieklasse a mim:Relatieklasse.
+        ?relatieklasse rdfs:seeAlso ?associationclass
+      }
+      GRAPH <http://localhost:8080/data2model/container/data> {
+        select (?property as ?relatieroldoel) ?associationclass ?property
+        where {
+          ?associationclass a uml:AssociationClass.
+          ?associationclass ea:stereotype "Relatieklasse"^^xsd:string.
+          ?associationclass uml:memberEnd ?property.
+          ?associationclass uml:ownedEnd ?ownedend.
+          FILTER (?property != ?ownedend)
+          ?property a uml:Property.
+          ?property rdfs:label ?label #Rol zonder naam zien we niet als zinvolle toevoeging aan het model
+        }
+      }
+    }
+  '''
+.
+
+stage:uml2mim_scene015a a elmo:Scene;
+  elmo:index "015a";
+  rdfs:label "Add mim:Gegevensgroep of mim:Objecttype";
   elmo:query '''
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
@@ -597,8 +730,6 @@ stage:uml2mim_scene015 a elmo:Scene;
       GRAPH <http://localhost:8080/data2model/container/mim> {
         ?objecttype a mim:Objecttype.
         ?objecttype rdfs:seeAlso ?class.
-        ?gegevensgroeptype a mim:Gegevensgroeptype.
-        ?gegevensgroeptype rdfs:seeAlso ?type.
       }
       GRAPH <http://localhost:8080/data2model/container/data> {
         select (?property as ?gegevensgroep) ?class ?property ?type
@@ -612,6 +743,58 @@ stage:uml2mim_scene015 a elmo:Scene;
           FILTER NOT EXISTS {
             ?association uml:memberEnd ?property
           }
+        }
+      }
+      OPTIONAL {
+        GRAPH <http://localhost:8080/data2model/container/mim> {
+          ?gegevensgroeptype a mim:Gegevensgroeptype.
+          ?gegevensgroeptype rdfs:seeAlso ?type.
+        }
+      }
+    }
+  '''
+.
+
+stage:uml2mim_scene015b a elmo:Scene;
+  elmo:index "015b";
+  rdfs:label "Add mim:Gegevensgroep of mim:Gegevensgroeptype";
+  elmo:query '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX uml: <http://schema.omg.org/spec/UML/2.1.1#>
+    PREFIX ea: <http://www.sparxsystems.com/extender/EA6.5#>
+    PREFIX mim: <http://bp4mc2.org/def/mim#>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    INSERT {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?gegevensgroeptypeowner mim:gegevensgroep ?gegevensgroep.
+        ?gegevensgroep a mim:Gegevensgroep.
+        ?gegevensgroep rdfs:seeAlso ?property.
+        ?gegevensgroep mim:gegevensgroeptype ?gegevensgroeptype.
+      }
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/mim> {
+        ?gegevensgroeptypeowner a mim:Gegevensgroeptype.
+        ?gegevensgroeptypeowner rdfs:seeAlso ?class.
+      }
+      GRAPH <http://localhost:8080/data2model/container/data> {
+        select (?property as ?gegevensgroep) ?class ?property ?type
+        where {
+          ?class a uml:Class.
+          ?class ea:stereotype "Gegevensgroeptype"^^xsd:string.
+          ?class uml:ownedAttribute ?property.
+          ?property a uml:Property.
+          ?property ea:stereotype "Gegevensgroep"^^xsd:string.
+          ?property uml:type ?type.
+          FILTER NOT EXISTS {
+            ?association uml:memberEnd ?property
+          }
+        }
+      }
+      OPTIONAL {
+        GRAPH <http://localhost:8080/data2model/container/mim> {
+          ?gegevensgroeptype a mim:Gegevensgroeptype.
+          ?gegevensgroeptype rdfs:seeAlso ?type.
         }
       }
     }

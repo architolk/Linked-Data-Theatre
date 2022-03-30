@@ -16,9 +16,10 @@ stage:Advanced a elmo:Representation;
     elmo:html '''
       <div>
         <ul>
-        <li><a href="/data2model/container/anchormodel">Anchor model XML upload</a></li>
+          <li><a href="/data2model/container/anchormodel">Anchor model XML upload</a></li>
           <li><a href="/data2model/container/xmidata">XMI upload</a></li>
         </ul>
+        <p>More extensions can be found at: <a href="/data2model/query/extensions">extensions</a></p>
       </div>
     ''';
   ]

@@ -1,0 +1,74 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix yed: <http://bp4mc2.org/yed#>.
+@prefix skos: <http://www.w3.org/2004/02/skos/core#>.
+@prefix stage: <http://localhost:8080/data2viz/stage#>.
+
+stage:Subjects a elmo:Representation;
+  elmo:url-pattern "/query/subjects(|\.ttl|\.json|\.xml|\.yed)$";
+  elmo:contains stage:Menu;
+  elmo:appearance elmo:TurtleAppearance;
+  elmo:query '''
+    PREFIX container: <http://linkeddata.ordina.nl/data2viz/container/>
+    PREFIX yed: <http://bp4mc2.org/yed#>
+    CONSTRUCT {
+      ?s a ?t.
+      ?s ?p ?o.
+      ?s rdfs:label ?l.
+      ?s rdfs:comment ?c.
+      ?p rdfs:label ?pl.
+      ?s yed:geometry ?ds.
+      ?ds ?dp ?do.
+    }
+    WHERE {
+      {
+        GRAPH container:data {
+          {
+            ?s a ?t.
+            ?s rdfs:label ?l
+          }
+          UNION
+          {
+            ?s a ?t.
+            ?s ?p ?o.
+            OPTIONAL {?p rdfs:label ?pl}
+            FILTER (isIri(?o))
+          }
+          UNION
+          {
+            select ?s (group_concat(concat(?plabel," ",?o); separator="\\n") as ?c)
+            where {
+              {
+                ?s a ?t.
+                ?t rdfs:label ?o.
+                rdf:type rdfs:label ?plabel
+              }
+              UNION
+              {
+                ?s a ?t.
+                ?s ?p ?o.
+                ?p rdfs:label ?plabel.
+                FILTER (isLiteral(?o) && ?p!=rdfs:label)
+              }
+            }
+            group by ?s
+          }
+        }
+      }
+      UNION
+      {
+        GRAPH container:data {
+          ?s a ?t
+        }
+        GRAPH container:diagram {
+          ?s yed:geometry ?ds.
+          ?ds ?dp ?do
+        }
+      }
+
+    }
+  ''';
+.

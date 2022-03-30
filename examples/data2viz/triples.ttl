@@ -16,7 +16,7 @@ skos:Concept elmo:style "CONCEPT".
 rdf:Literal elmo:style "LITERAL".
 
 stage:Triples a elmo:Representation;
-  elmo:url-pattern "/query/triples(|\.ttl|\.json|\.xml)$";
+  elmo:url-pattern "/query/triples(\.ttl|\.json|\.xml)$";
   elmo:contains stage:Menu;
   elmo:appearance elmo:TurtleAppearance;
   elmo:query '''
@@ -33,10 +33,22 @@ stage:Triples a elmo:Representation;
 .
 
 stage:TriplesYed a elmo:Representation;
-  elmo:url-pattern "/query/triples\.yed$";
+  elmo:url-pattern "/query/triples(yed|\.yed)$";
   elmo:fragment [
     elmo:applies-to "BLUE";
     yed:fill "#8080FF";
+    yed:color "#0000A0";
+    yed:nodeType "ellipse";
+  ];
+  elmo:fragment [
+    elmo:applies-to "RED";
+    yed:fill "#FF8080";
+    yed:color "#0000A0";
+    yed:nodeType "ellipse";
+  ];
+  elmo:fragment [
+    elmo:applies-to "WHITE";
+    yed:fill "#FFFFFF";
     yed:color "#0000A0";
     yed:nodeType "ellipse";
   ];
@@ -189,7 +201,8 @@ stage:TriplesYed a elmo:Representation;
           FILTER NOT EXISTS {?s a ?st}
           BIND (rdf:type as ?p)
           BIND (rdfs:Resource as ?o)
-          BIND ("RESOURCE" as ?style)
+          OPTIONAL {?s elmo:style ?cstyle}
+          BIND (IF(BOUND(?cstyle),str(?cstyle),"RESOURCE") as ?style)
         }
       }
       UNION
@@ -203,4 +216,89 @@ stage:TriplesYed a elmo:Representation;
       }
 		}
 	''';
+.
+
+stage:TriplesMd a elmo:Representation;
+  elmo:url-pattern "/query/triples(|\.md)$";
+  elmo:contains stage:TriplesMd_Events;
+  elmo:contains stage:TriplesMd_Statements;
+.
+stage:TriplesMd_Events a elmo:Part;
+  elmo:index "1";
+  elmo:query '''
+    PREFIX prov: <http://www.w3.org/ns/prov#>
+    SELECT (replace(str(?e),"^.*[#|/]([^(#|/)]*)$","$1") as ?no) (if(datatype(?timestamp)=xsd:dateTime,concat(str(hours(?timestamp)),":",concat(if(minutes(?timestamp)<10,"0",""),str(minutes(?timestamp)))),concat(str(day(?timestamp)),"-",str(month(?timestamp)),"-",str(year(?timestamp)))) as ?time) ?event
+    WHERE {
+      GRAPH <http://linkeddata.ordina.nl/data2viz/container/data> {
+        ?s prov:wasDerivedFrom ?e.
+        ?e rdfs:label ?event.
+        ?e ?p ?timestamp.
+        FILTER (datatype(?timestamp)=xsd:dateTime || datatype(?timestamp)=xsd:date)
+      }
+    }
+    GROUP BY ?e ?timestamp ?event
+    ORDER BY ?timestamp ?e
+  ''';
+.
+stage:TriplesMd_Statements a elmo:Part;
+  elmo:index "2";
+  elmo:query '''
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX prov: <http://www.w3.org/ns/prov#>
+    PREFIX oa: <http://www.w3.org/ns/oa#>
+    SELECT ?subject ?p ?p_label ?object ?event ?classifier (replace(str(?event),"^.*[#|/]([^(#|/)]*)$","$1") as ?event_label)
+    WHERE {
+      GRAPH <http://linkeddata.ordina.nl/data2viz/container/data> {
+        {
+          SELECT ?subject ?p ?p_label (group_concat(?obj; separator=" & ") as ?object) ?event ?classifier
+          WHERE {
+            ?ss ?p ?o.
+            ?ss owl:sameAs ?s.
+            ?s rdfs:label ?subject.
+            OPTIONAL {?o rdfs:label ?obj}
+            OPTIONAL {?p rdfs:label ?p_label}
+            FILTER (isIRI(?o) && ?p!=rdf:type && ?p!=owl:sameAs && ?p!=prov:wasDerivedFrom)
+            OPTIONAL {?ss prov:wasDerivedFrom ?event}
+            OPTIONAL {
+              ?a oa:hasTarget ?ss.
+              ?a oa:hasBody/rdfs:label ?classifier
+            }
+          }
+          GROUP BY ?subject ?p ?p_label ?event ?classifier
+        }
+        UNION
+        {
+          ?ss ?p ?object.
+          ?ss owl:sameAs ?s.
+          ?s rdfs:label ?subject.
+          FILTER(isLiteral(?object))
+          OPTIONAL {?ss prov:wasDerivedFrom ?event}
+          OPTIONAL {?p rdfs:label ?p_label}
+          OPTIONAL {
+            ?a oa:hasTarget ?ss.
+            ?a oa:hasBody/rdfs:label ?classifier
+          }
+        }
+        UNION
+        {
+          ?subject a ?object.
+          FILTER NOT EXISTS {
+            ?subject owl:sameAs ?k.
+            ?k a ?kt
+          }
+          FILTER NOT EXISTS {?k owl:sameAs ?subject}
+          FILTER NOT EXISTS {?s prov:wasDerivedFrom ?subject}
+          FILTER NOT EXISTS {?subject oa:hasTarget/rdf:type ?t}
+          BIND ("is an unknown" as ?p)
+        }
+        UNION
+        {
+          ?subject rdfs:label ?object.
+          FILTER NOT EXISTS {{?so ?po ?subject} UNION {?sp ?subject ?po}}
+          BIND ("is an unused resource with label" as ?p)
+        }
+      }
+    }
+    ORDER BY ?event ?subject ?p
+  ''';
 .

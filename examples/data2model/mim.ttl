@@ -7,7 +7,7 @@
 @prefix stage: <http://localhost:8080/data2model/stage#>.
 
 stage:MimModel a elmo:Representation;
-  elmo:url-pattern "/query/mim-model(|.ttl)$";
+  elmo:url-pattern "/query/mim-download(|.ttl)$";
   elmo:contains stage:Menu;
   elmo:appearance elmo:TurtleAppearance;
   elmo:query '''
@@ -22,7 +22,7 @@ stage:MimModel a elmo:Representation;
   '''
 .
 
-stage:MiMComplete a elmo:Representation;
+stage:MimComplete a elmo:Representation;
   elmo:url-pattern "/query/mim-complete$";
   elmo:contains stage:Menu;
   elmo:query '''
@@ -40,5 +40,159 @@ stage:MiMComplete a elmo:Representation;
         }
       }
     }
+  ''';
+.
+
+stage:MimView a elmo:Representation;
+  elmo:url-pattern "/query/mim$";
+  elmo:contains stage:Menu;
+  elmo:contains stage:MimView_classes;
+  elmo:contains stage:MimView_rels;
+  elmo:contains stage:MimView_properties;
+  elmo:contains stage:MimView_attributes;
+.
+
+stage:MimView_classes a elmo:Part;
+  elmo:index "1";
+  elmo:fragment [
+    elmo:applies-to "element";
+    rdfs:label "Element"@nl;
+    rdfs:label "Element"@en;
+  ];
+  elmo:fragment [
+    elmo:applies-to "type";
+    rdfs:label "Type"@nl;
+    rdfs:label "Type"@en;
+  ];
+  elmo:fragment [
+    elmo:applies-to "definition";
+    rdfs:label "Definitie"@nl;
+    rdfs:label "Definition"@en;
+  ];
+  elmo:query '''
+    prefix mim: <http://bp4mc2.org/def/mim#>
+    select ?element ?element_label ?type (strafter(str(?type),"#") as ?type_label) ?definition
+    where {
+      graph <http://localhost:8080/data2model/container/mim> {
+        ?element a ?type.
+        ?element mim:naam ?element_label.
+        OPTIONAL {?element mim:definitie ?definition}
+        FILTER (?type = mim:Objecttype || ?type = mim:Gegevensgroeptype || ?type = mim:PrimitiefDatatype || ?type = mim:Enumeratie)
+      }
+    }
+    order by ?type ?element
+  ''';
+.
+
+stage:MimView_properties a elmo:Part;
+  elmo:index "2";
+  elmo:fragment [
+    elmo:applies-to "c";
+    rdfs:label "Klasse";
+  ];
+  elmo:fragment [
+    elmo:applies-to "t";
+    rdfs:label "Type";
+  ];
+  elmo:fragment [
+    elmo:applies-to "prel";
+    rdfs:label "Property type";
+  ];
+  elmo:fragment [
+    elmo:applies-to "p";
+    rdfs:label "Property";
+  ];
+  elmo:query '''
+    prefix mim: <http://bp4mc2.org/def/mim#>
+    select *
+    where {
+      graph <http://localhost:8080/data2model/container/mim> {
+        ?c a ?t.
+        ?c mim:naam ?c_label.
+        ?c ?prel ?p.
+        ?p mim:naam ?p_label.
+        FILTER (?t = mim:Objecttype || ?t = mim:Gegevensgroeptype || ?t = mim:PrimitiefDatatype || ?t = mim:Enumeratie || ?t = mim:Relatieklasse)
+        FILTER (?prel = mim:attribuut || ?prel = mim:gegevensgroep || ?prel = mim:waarde)
+      }
+    }
+  ''';
+.
+
+stage:MimView_rels a elmo:Part;
+  elmo:fragment [
+    elmo:applies-to "s";
+    rdfs:label "Klasse";
+  ];
+  elmo:fragment [
+    elmo:applies-to "doel";
+    rdfs:label "Doelklasse";
+  ];
+  elmo:fragment [
+    elmo:applies-to "bron";
+    rdfs:label "Bronklasse";
+  ];
+  elmo:fragment [
+    elmo:applies-to "rel";
+    rdfs:label "Relatiesoort";
+  ];
+  elmo:fragment [
+    elmo:applies-to "reldoel";
+    rdfs:label "Rol van doel";
+  ];
+  elmo:fragment [
+    elmo:applies-to "relbron";
+    rdfs:label "Rol van bron";
+  ];
+  elmo:index "3";
+  elmo:query '''
+    prefix mim: <http://bp4mc2.org/def/mim#>
+    select ?s ?s_label ?bron ?bron_label ?rel ?rel_label ?doel ?doel_label ?reldoel ?reldoel_label ?reldoel_count ?relbron ?relbron_label ?relbron_count
+    where {
+      graph <http://localhost:8080/data2model/container/mim> {
+        ?s mim:naam ?s_label.
+        ?rel mim:bron ?bron.
+        ?rel mim:doel ?doel.
+        ?bron mim:naam ?bron_label.
+        ?doel mim:naam ?doel_label.
+        FILTER (?bron=?s || ?doel=?s)
+        OPTIONAL {?rel mim:naam ?rel_label}
+        OPTIONAL {
+          ?rel mim:relatierol ?reldoel.
+          ?reldoel a mim:RelatierolDoel.
+          OPTIONAL {?reldoel mim:naam ?reldoel_label}
+          OPTIONAL {?reldoel mim:kardinaliteit ?reldoel_count}
+        }
+        OPTIONAL {
+          ?rel mim:relatierol ?relbron.
+          ?relbron a mim:RelatierolBron
+          OPTIONAL {?relbron mim:naam ?relbron_label}
+          OPTIONAL {?relbron mim:kardinaliteit ?relbron_count}
+        }
+      }
+    }
+  ''';
+.
+
+stage:MimView_attributes a elmo:Part;
+  elmo:index "4";
+  elmo:query '''
+    prefix mim: <http://bp4mc2.org/def/mim#>
+    select ?c ?c_label ?p ?p_label ?datatype ?datatype_label ?definition
+    where {
+      graph <http://localhost:8080/data2model/container/mim> {
+        ?c a ?t.
+        ?c mim:naam ?c_label.
+        ?c ?prel ?p.
+        ?p mim:naam ?p_label.
+        OPTIONAL {?p mim:definitie ?definition}
+        OPTIONAL {
+          ?p mim:type ?datatype.
+          ?datatype mim:naam ?datatype_label
+        }
+        FILTER (?t = mim:Objecttype || ?t = mim:Gegevensgroeptype || ?t = mim:Relatieklasse)
+        FILTER (?prel = mim:attribuut || ?prel = mim:gegevensgroep)
+      }
+    }
+    order by ?c ?p
   ''';
 .

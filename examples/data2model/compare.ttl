@@ -1,0 +1,63 @@
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix yed: <http://bp4mc2.org/yed#>.
+@prefix skos: <http://www.w3.org/2004/02/skos/core#>.
+@prefix stage: <http://localhost:8080/data2model/stage#>.
+
+stage:Compare a elmo:Representation;
+  elmo:url-pattern "/query/compare$";
+  elmo:contains stage:Menu;
+  elmo:fragment [
+    elmo:applies-to "s";
+    rdfs:label "Subject";
+  ];
+  elmo:fragment [
+    elmo:applies-to "pold";
+    rdfs:label "Verwijderde eigenschap"@nl;
+    rdfs:label "Deleted property"@en;
+  ];
+  elmo:fragment [
+    elmo:applies-to "oold";
+    rdfs:label "Verwijderde waarde"@nl;
+    rdfs:label "Deleted value"@en;
+  ];
+  elmo:fragment [
+    elmo:applies-to "pnew";
+    rdfs:label "Toegevoegde eigenschap"@nl;
+    rdfs:label "Added property"@en;
+  ];
+  elmo:fragment [
+    elmo:applies-to "onew";
+    rdfs:label "Toegevoegde waarde"@nl;
+    rdfs:label "Added value"@en;
+  ];
+  elmo:query '''
+    select ?s ?pold ?oold ?pnew ?onew
+    where {
+      {
+        graph <http://localhost:8080/data2model/container/model> {
+          ?s ?pold ?oold
+        }
+        FILTER NOT EXISTS {
+          graph <http://localhost:8080/data2model/container/data> {
+            ?s ?pold ?oold
+          }
+        }
+      }
+      UNION
+      {
+        graph <http://localhost:8080/data2model/container/data> {
+          ?s ?pnew ?onew
+        }
+        FILTER NOT EXISTS {
+          graph <http://localhost:8080/data2model/container/model> {
+            ?s ?pnew ?onew
+          }
+        }
+      }
+    }
+  ''';
+.

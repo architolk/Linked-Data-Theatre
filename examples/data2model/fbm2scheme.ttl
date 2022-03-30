@@ -1,0 +1,561 @@
+@prefix localupdatestage: <http://localhost:8080/data2model/update/>.
+@prefix updatestage: <http://linkeddata.ordina.nl/data2model/update/>.
+@prefix stage: <http://localhost:8080/data2model/stage#>.
+@prefix elmo: <http://bp4mc2.org/elmo/def#>.
+@prefix html: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+#Production for local installations
+localupdatestage:fbm2scheme a elmo:Production;
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:Menu;
+	elmo:contains stage:fbm2scheme_scene0;
+	# Classes
+	elmo:contains stage:fbm2scheme_scene1;
+	elmo:contains stage:fbm2scheme_scene2;
+	# Extra types and label
+	elmo:contains stage:fbm2scheme_scene10;
+	# DatatypeProperties
+	elmo:contains stage:fbm2scheme_scene11;
+	elmo:contains stage:fbm2scheme_scene12;
+	# ObjecttypeProperties
+	elmo:contains stage:fbm2scheme_scene21;
+	elmo:contains stage:fbm2scheme_scene22;
+	elmo:contains stage:fbm2scheme_scene23;
+	elmo:contains stage:fbm2scheme_scene24;
+	elmo:contains stage:fbm2scheme_scene25;
+	elmo:contains stage:fbm2scheme_scene26;
+	elmo:contains stage:fbm2scheme_scene27;
+	elmo:contains stage:fbm2scheme_scene28;
+	# Extra subtypes
+	elmo:contains stage:fbm2scheme_scene30;
+	elmo:contains stage:fbm2scheme_scene31;
+	elmo:contains stage:fbm2scheme_scene32;
+	elmo:contains stage:fbm2scheme_scene33;
+.
+
+#Production for server installations
+updatestage:fbm2scheme a elmo:Production;
+	elmo:contains stage:HeaderAppearance;
+	elmo:contains stage:Menu;
+	elmo:contains stage:fbm2scheme_scene0;
+	elmo:contains stage:fbm2scheme_scene1;
+	elmo:contains stage:fbm2scheme_scene2;
+	# Extra for copy of result
+  elmo:contains stage:fbm2scheme_clearservergraph;
+  elmo:contains stage:fbm2scheme_copytoservergraph;
+.
+
+stage:fbm2scheme_clearservergraph a elmo:Scene;
+  elmo:index "98";
+  rdfs:label "Clear server graph";
+  elmo:query "clear graph <http://linkeddata.ordina.nl/data2model/container/scheme>";
+.
+stage:fbm2scheme_copytoservergraph a elmo:Scene;
+  elmo:index "99";
+  rdfs:label "Copy result to server graph";
+  elmo:query '''
+    insert into <http://linkeddata.ordina.nl/data2model/container/scheme> {
+      ?s ?p ?o
+    }
+    where {
+      graph <http://localhost:8080/data2model/container/scheme> {
+        ?s ?p ?o
+      }
+    }
+  '''
+.
+stage:fbm2scheme_scene0 a elmo:Scene;
+	elmo:index "00";
+	rdfs:label "Clear target graph";
+	elmo:query "clear graph <http://localhost:8080/data2model/container/scheme>";
+.
+
+stage:fbm2scheme_scene1 a elmo:Scene;
+	elmo:index "01";
+	rdfs:label "Create concept scheme";
+	elmo:query '''
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		insert {
+			graph <http://localhost:8080/data2model/container/scheme> {
+				<urn:conceptscheme> a skos:ConceptScheme;
+					rdfs:label "Concept scheme for SM"
+				.
+			}
+		}
+		WHERE {}
+	''';
+.
+
+stage:fbm2scheme_scene2 a elmo:Scene;
+	elmo:index "02";
+	rdfs:label "Create a concept for every sm:Concept";
+	elmo:query '''
+		PREFIX prov: <http://www.w3.org/ns/prov#>
+		PREFIX sm: <http://cognitatie.com/def/sm#>
+		insert {
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept a skos:Concept.
+				?concept skos:inScheme <urn:conceptscheme>.
+				?concept prov:wasDerivedFrom ?smconcept
+			}
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/data> {
+				select ?smconcept (IRI(concat("urn:smconcept:",?id)) as ?concept)
+				where {
+					?smconcept a sm:Concept.
+					?smconcept sm:id ?id.
+				}
+			}
+		}
+	''';
+.
+
+stage:fbm2scheme_scene10 a elmo:Scene;
+	elmo:index "10";
+	rdfs:label "Add extra subtypes from sm:type";
+	elmo:query '''
+		PREFIX prov: <http://www.w3.org/ns/prov#>
+		PREFIX sm: <http://cognitatie.com/def/sm#>
+		insert {
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept a ?type
+			}
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept a skos:Concept.
+				?concept prov:wasDerivedFrom ?smconcept
+			}
+			graph <http://localhost:8080/data2model/container/data> {
+				select ?smconcept (IRI(concat("http://bp4mc2.org/def/las#",strafter(str(?smtype),"#"))) as ?type)
+				where {
+					?smconcept sm:type ?smtype
+				}
+			}
+		}
+	''';
+.
+
+stage:fbm2scheme_scene11 a elmo:Scene;
+	elmo:index "11";
+	rdfs:label "Create label and prefLabel for every sm:name";
+	elmo:query '''
+		PREFIX prov: <http://www.w3.org/ns/prov#>
+		PREFIX sm: <http://cognitatie.com/def/sm#>
+		insert {
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept rdfs:label ?name.
+				?concept skos:prefLabel ?name.
+			}
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept a skos:Concept.
+				?concept prov:wasDerivedFrom ?smconcept
+			}
+			graph <http://localhost:8080/data2model/container/data> {
+				?smconcept sm:name ?name.
+			}
+		}
+	''';
+.
+
+stage:fbm2scheme_scene12 a elmo:Scene;
+	elmo:index "12";
+	rdfs:label "Create definition for every sm:definition";
+	elmo:query '''
+		PREFIX prov: <http://www.w3.org/ns/prov#>
+		PREFIX sm: <http://cognitatie.com/def/sm#>
+		insert {
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept skos:definition ?definition.
+			}
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept a skos:Concept.
+				?concept prov:wasDerivedFrom ?smconcept
+			}
+			graph <http://localhost:8080/data2model/container/data> {
+				?smconcept sm:definition ?definition.
+			}
+		}
+	''';
+.
+
+# Objectrelaties, bij foutief naamsgebruik (deze worden NIET omgezet, want fout!):
+# - afgeleidFeittype (relatie naar feitmodel?)
+# - afgeleideVariabele (relatie naar feitmodel?)
+# - eigenschapVanRechtsobjectID
+# - eigenschapVanRechtssubjectID
+
+# Eigenschappen, de volgende worden onderkend:
+# - createdate
+# - id
+# - inhoudelijkeOpmerking
+# - interpretatie
+# - name
+# - updatedate
+# - validfrom
+# - voorbeelden
+
+# Eigenschappen naar referentietabellen
+# - domein (lijkt een rare op begripsniveau...)
+# - domeinsoort
+# - status
+# - termijn
+
+# Eigenschappen die eigenlijk weer een subtypering bevatten
+# - soortOperator
+# - soortPersoon
+# x soortRechtsbetrekking
+# x soortRechtsfeit
+# x soortRechtsobject
+# - soortTijdsaanduiding
+# x soortVerplichting
+# - soortVoorwaarde
+# x type
+
+# Objectrelaties, de volgende worden onderkend
+# x bestaatUitRechtsobject
+# x plichtdragendeRechtssubject
+# x rechthebbendeRechtssubject
+# x rechtsobject
+# x specialisatieVanRechtssubject
+# x uitvoerendRechtsubject
+# x eigenschapVanRechtsobject
+# x eigenschapVanRechtssubject
+
+stage:fbm2scheme_scene21 a elmo:Scene;
+	elmo:index "21";
+	rdfs:label "plichtdragendeRechtssubject";
+	elmo:query '''
+		PREFIX prov: <http://www.w3.org/ns/prov#>
+		PREFIX sm: <http://cognitatie.com/def/sm#>
+		PREFIX las: <http://bp4mc2.org/def/las#>
+		insert {
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept las:plichtdragendeRechtssubject ?conceptref.
+			}
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/data> {
+				?smconcept sm:plichtdragendeRechtssubject ?smconceptref.
+			}
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept prov:wasDerivedFrom ?smconcept.
+				?conceptref prov:wasDerivedFrom ?smconceptref.
+			}
+		}
+	''';
+.
+
+stage:fbm2scheme_scene22 a elmo:Scene;
+	elmo:index "22";
+	rdfs:label "rechthebbendeRechtssubject";
+	elmo:query '''
+		PREFIX prov: <http://www.w3.org/ns/prov#>
+		PREFIX sm: <http://cognitatie.com/def/sm#>
+		PREFIX las: <http://bp4mc2.org/def/las#>
+		insert {
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept las:rechthebbendeRechtssubject ?conceptref.
+			}
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/data> {
+				?smconcept sm:rechthebbendeRechtssubject ?smconceptref.
+			}
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept prov:wasDerivedFrom ?smconcept.
+				?conceptref prov:wasDerivedFrom ?smconceptref.
+			}
+		}
+	''';
+.
+
+stage:fbm2scheme_scene23 a elmo:Scene;
+	elmo:index "23";
+	rdfs:label "rechtsobject";
+	elmo:query '''
+		PREFIX prov: <http://www.w3.org/ns/prov#>
+		PREFIX sm: <http://cognitatie.com/def/sm#>
+		PREFIX las: <http://bp4mc2.org/def/las#>
+		insert {
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept las:rechtsobject ?conceptref.
+			}
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/data> {
+				?smconcept sm:rechtsobject ?smconceptref.
+			}
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept prov:wasDerivedFrom ?smconcept.
+				?conceptref prov:wasDerivedFrom ?smconceptref.
+			}
+		}
+	''';
+.
+
+stage:fbm2scheme_scene24 a elmo:Scene;
+	elmo:index "24";
+	rdfs:label "Convert sm:specialisatieVanRechtssubject to skos:broader (or skosthes:broaderGeneric?)";
+	elmo:query '''
+		PREFIX prov: <http://www.w3.org/ns/prov#>
+		PREFIX sm: <http://cognitatie.com/def/sm#>
+		PREFIX las: <http://bp4mc2.org/def/las#>
+		insert {
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept skos:broader ?conceptref.
+			}
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/data> {
+				?smconcept sm:specialisatieVanRechtssubject ?smconceptref.
+			}
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept prov:wasDerivedFrom ?smconcept.
+				?conceptref prov:wasDerivedFrom ?smconceptref.
+			}
+		}
+	''';
+.
+
+stage:fbm2scheme_scene25 a elmo:Scene;
+	elmo:index "25";
+	rdfs:label "uitvoerendRechtsubject";
+	elmo:query '''
+		PREFIX prov: <http://www.w3.org/ns/prov#>
+		PREFIX sm: <http://cognitatie.com/def/sm#>
+		PREFIX las: <http://bp4mc2.org/def/las#>
+		insert {
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept las:uitvoerendRechtsubject ?conceptref.
+			}
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/data> {
+				?smconcept sm:uitvoerendRechtsubject ?smconceptref.
+			}
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept prov:wasDerivedFrom ?smconcept.
+				?conceptref prov:wasDerivedFrom ?smconceptref.
+			}
+		}
+	''';
+.
+
+stage:fbm2scheme_scene26 a elmo:Scene;
+	elmo:index "26";
+	rdfs:label "Convert sm:bestaatUitRechtsobject to skos:broader (or skosthes:broaderPartitive?)";
+	elmo:query '''
+		PREFIX prov: <http://www.w3.org/ns/prov#>
+		PREFIX sm: <http://cognitatie.com/def/sm#>
+		PREFIX las: <http://bp4mc2.org/def/las#>
+		insert {
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept skos:broader ?conceptref.
+			}
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/data> {
+				?smconcept sm:bestaatUitRechtsobject ?smconceptref.
+			}
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept prov:wasDerivedFrom ?smconcept.
+				?conceptref prov:wasDerivedFrom ?smconceptref.
+			}
+		}
+	''';
+.
+
+stage:fbm2scheme_scene27 a elmo:Scene;
+	elmo:index "27";
+	rdfs:label "eigenschapVanRechtsobject";
+	elmo:query '''
+		PREFIX prov: <http://www.w3.org/ns/prov#>
+		PREFIX sm: <http://cognitatie.com/def/sm#>
+		PREFIX las: <http://bp4mc2.org/def/las#>
+		insert {
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept las:eigenschapVanRechtsobject ?conceptref.
+			}
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/data> {
+				?smconcept sm:eigenschapVanRechtsobject ?smconceptref.
+			}
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept prov:wasDerivedFrom ?smconcept.
+				?conceptref prov:wasDerivedFrom ?smconceptref.
+			}
+		}
+	''';
+.
+
+stage:fbm2scheme_scene28 a elmo:Scene;
+	elmo:index "28";
+	rdfs:label "eigenschapVanRechtssubject";
+	elmo:query '''
+		PREFIX prov: <http://www.w3.org/ns/prov#>
+		PREFIX sm: <http://cognitatie.com/def/sm#>
+		PREFIX las: <http://bp4mc2.org/def/las#>
+		insert {
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept las:eigenschapVanRechtssubject ?conceptref.
+			}
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/data> {
+				?smconcept sm:eigenschapVanRechtssubject ?smconceptref.
+			}
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept prov:wasDerivedFrom ?smconcept.
+				?conceptref prov:wasDerivedFrom ?smconceptref.
+			}
+		}
+	''';
+.
+
+stage:fbm2scheme_scene30 a elmo:Scene;
+	elmo:index "30";
+	rdfs:label "Add extra subtypes from sm:soortRechtsobject";
+	elmo:query '''
+		PREFIX prov: <http://www.w3.org/ns/prov#>
+		PREFIX sm: <http://cognitatie.com/def/sm#>
+		insert {
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept a ?type
+			}
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept a skos:Concept.
+				?concept prov:wasDerivedFrom ?smconcept
+			}
+			graph <http://localhost:8080/data2model/container/data> {
+				select ?smconcept (IRI(concat("http://bp4mc2.org/def/las#",
+					if(?typename="enkelvoudigrechtsobject","EnkelvoudigRechtsobject",
+						if(?typename="samengesteldrechtsobject","SamengesteldRechtsobject",
+						  if(?typename="Administratiefobject","AdministratiefRechtsobject",?typename
+							)
+						)
+					))) as ?type)
+				where {
+					select ?smconcept (strafter(str(?smtype),"#") as ?typename)
+					where {
+						?smconcept sm:soortRechtsobject ?smtype
+					}
+				}
+			}
+		}
+	''';
+.
+
+stage:fbm2scheme_scene31 a elmo:Scene;
+	elmo:index "31";
+	rdfs:label "Add extra subtypes from sm:soortRechtsfeit";
+	elmo:query '''
+		PREFIX prov: <http://www.w3.org/ns/prov#>
+		PREFIX sm: <http://cognitatie.com/def/sm#>
+		insert {
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept a ?type
+			}
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept a skos:Concept.
+				?concept prov:wasDerivedFrom ?smconcept
+			}
+			graph <http://localhost:8080/data2model/container/data> {
+				select ?smconcept (IRI(concat("http://bp4mc2.org/def/las#",
+					if(?typename="Rechtshandeling","Rechtshandeling",
+						if(?typename="Gebeurtenismetrechtsgevolg","GebeurtenisMetRechtsgevolg",
+						  if(?typename="Tijdsverloopmetrechtsgevolg","TijdsverloopMetRechtsgevolg",?typename
+							)
+						)
+					))) as ?type)
+				where {
+					select ?smconcept (strafter(str(?smtype),"#") as ?typename)
+					where {
+						?smconcept sm:soortRechtsfeit ?smtype
+					}
+				}
+			}
+		}
+	''';
+.
+
+stage:fbm2scheme_scene32 a elmo:Scene;
+	elmo:index "32";
+	rdfs:label "Add extra subtypes from sm:soortRechtsbetrekking";
+	elmo:query '''
+		PREFIX prov: <http://www.w3.org/ns/prov#>
+		PREFIX sm: <http://cognitatie.com/def/sm#>
+		insert {
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept a ?type
+			}
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept a skos:Concept.
+				?concept prov:wasDerivedFrom ?smconcept
+			}
+			graph <http://localhost:8080/data2model/container/data> {
+				select ?smconcept (IRI(concat("http://bp4mc2.org/def/las#",
+					if(?typename="Aanspraak-Verplichting","AanspraakVerplichting",
+						if(?typename="Bevoegdheid-Gehoudenheid","BevoegdheidGehoudenheid",
+						  if(?typename="Immuniteit-Geen bevoegdheid","ImmuniteitGeenBevoegdheid",?typename
+							)
+						)
+					))) as ?type)
+				where {
+					select ?smconcept (strafter(str(?smtype),"#") as ?typename)
+					where {
+						?smconcept sm:soortRechtsbetrekking ?smtype
+					}
+				}
+			}
+		}
+	''';
+.
+
+stage:fbm2scheme_scene33 a elmo:Scene;
+	elmo:index "33";
+	rdfs:label "Add extra subtypes from sm:soortVerplichting";
+	elmo:query '''
+		PREFIX prov: <http://www.w3.org/ns/prov#>
+		PREFIX sm: <http://cognitatie.com/def/sm#>
+		insert {
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept a ?type
+			}
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/scheme> {
+				?concept a skos:Concept.
+				?concept prov:wasDerivedFrom ?smconcept
+			}
+			graph <http://localhost:8080/data2model/container/data> {
+				select ?smconcept (IRI(concat("http://bp4mc2.org/def/las#",
+					if(?typename="krachtige-fatale","KrachtigeAanspraakFataleVerplichting",
+						if(?typename="naingebrekestelling","AanspraakVerplichtingNaIngebrekestelling",
+						  if(?typename="zwakke","ZwakkeAanspraakVerplichting",?typename
+							)
+						)
+					))) as ?type)
+				where {
+					select ?smconcept (strafter(str(?smtype),"#") as ?typename)
+					where {
+						?smconcept sm:soortVerplichting ?smtype
+					}
+				}
+			}
+		}
+	''';
+.

@@ -54,7 +54,7 @@ containerlocal:appenddata a elmo:Container;
   elmo:contains stage:datatabs;
   elmo:representation elmo:UploadRepresentation;
   elmo:query '''
-    prefix container: <http://localhost:8080/data2viz/container/>
+    prefix container: <http://linkeddata.ordina.nl/data2viz/container/>
     prefix containerlocal: <http://localhost:8080/data2viz/container/>
     insert { graph container:data {?s?p?o} }
     where { graph containerlocal:appenddata {?s?p?o} }

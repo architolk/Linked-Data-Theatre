@@ -76,6 +76,45 @@ stage:YedScheme a elmo:Representation;
   ''';
 .
 
+stage:ExtendedScheme a elmo:Representation;
+  elmo:url-pattern "/query/scheme-extended(|.ttl|.json|.xml|.yed)$";
+  elmo:contains stage:Menu;
+  elmo:query '''
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    PREFIX las: <http://bp4mc2.org/def/las#>
+    CONSTRUCT {
+      ?begrip a skos:Concept.
+      ?begrip rdfs:label ?begriptype.
+      ?begrip rdfs:comment ?begriplabel.
+      ?begrip ?rel ?relbegrip.
+    }
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/scheme> {
+        {
+          ?begrip a skos:Concept.
+          ?begrip rdfs:label ?begriplabel
+        }
+        UNION
+        {
+          ?begrip a skos:Concept.
+          ?begrip ?rel ?relbegrip.
+          ?relbegrip a skos:Concept.
+        }
+        UNION
+        {
+          select ?begrip (group_concat(strafter(str(?type),"#") ; separator=",") as ?begriptype)
+          where {
+            ?begrip a skos:Concept.
+            ?begrip a ?type.
+            FILTER (?type!=skos:Concept)
+          }
+          group by ?begrip
+        }
+      }
+    }
+  ''';
+.
+
 stage:WebScheme a elmo:Representation;
   elmo:url-pattern "/query/webscheme$";
   elmo:contains stage:Menu;
@@ -200,6 +239,11 @@ stage:TableScheme a elmo:Representation;
   elmo:url-pattern "/query/tablescheme(|.csv|.json|.xml)$";
   elmo:contains stage:Menu;
   elmo:fragment [
+    elmo:applies-to "type";
+    rdfs:label "Type"@nl;
+    rdfs:label "Type"@en;
+  ];
+  elmo:fragment [
     elmo:applies-to "concept";
     rdfs:label "Concept"@nl;
     rdfs:label "Concept"@en;
@@ -209,14 +253,23 @@ stage:TableScheme a elmo:Representation;
     rdfs:label "Definitie"@nl;
     rdfs:label "Definition"@en;
   ];
+  elmo:fragment [
+    elmo:applies-to "language";
+    rdfs:label "Taal"@nl;
+    rdfs:label "Language"@en;
+  ];
   elmo:query '''
-    SELECT ?concept ?concept_label ?definition
+    SELECT ?type ?concept ?concept_label ?definition (lang(?definition) as ?language)
     WHERE {
       GRAPH <http://localhost:8080/data2model/container/scheme> {
         ?concept a skos:Concept.
         ?concept rdfs:label ?concept_label.
         OPTIONAL {
           ?concept skos:definition ?definition
+        }
+        OPTIONAL {
+          ?concept a ?type
+          FILTER (?type!=skos:Concept)
         }
       }
     }
