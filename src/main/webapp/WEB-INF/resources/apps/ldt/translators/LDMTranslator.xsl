@@ -114,8 +114,28 @@
 	</xsl:template>
 
 	<xsl:template match="a:ListOfValues" mode="properties">
-		<!-- TODO: list of values are values separated by line ends -->
-		<ldm:ListOfValues><xsl:value-of select="."/></ldm:ListOfValues>
+    <ldm:listOfValues>
+      <rdf:Seq>
+        <xsl:for-each select="tokenize(.,'\n')">
+          <rdf:li>
+            <ldm:Value>
+              <xsl:variable name="value"><xsl:value-of select="tokenize(.,'\t')[1]"/></xsl:variable>
+              <xsl:variable name="label"><xsl:value-of select="tokenize(.,'\t')[2]"/></xsl:variable>
+              <ldm:value><xsl:value-of select="$value"/></ldm:value>
+              <xsl:choose>
+                <xsl:when test="$label!=''">
+                  <ldm:label><xsl:value-of select="$label"/></ldm:label>
+                  <rdfs:label><xsl:value-of select="$label"/></rdfs:label>
+                </xsl:when>
+                <xsl:otherwise>
+                  <rdfs:label><xsl:value-of select="$value"/></rdfs:label>
+                </xsl:otherwise>
+              </xsl:choose>
+            </ldm:Value>
+          </rdf:li>
+        </xsl:for-each>
+      </rdf:Seq>
+    </ldm:listOfValues>
 	</xsl:template>
 
 	<xsl:template match="a:Entity1ToEntity2Role" mode="properties">
@@ -135,7 +155,13 @@
 	</xsl:template>
 
 	<xsl:template match="a:DependentRole" mode="properties">
+    <!-- Seems to be some reference list: A en B? -->
 		<ldm:dependentRole><xsl:value-of select="."/></ldm:dependentRole>
+	</xsl:template>
+
+  <xsl:template match="a:DominantRole" mode="properties">
+    <!-- Seems to be some reference list: A en B? -->
+		<ldm:dominantRole><xsl:value-of select="."/></ldm:dominantRole>
 	</xsl:template>
 
 	<xsl:template match="a:MutuallyExclusive" mode="properties">
@@ -158,9 +184,114 @@
 		<ldm:lowValue><xsl:value-of select="."/></ldm:lowValue>
 	</xsl:template>
 
+  <xsl:template match="a:HighValue" mode="properties">
+		<ldm:highValue><xsl:value-of select="."/></ldm:highValue>
+	</xsl:template>
+
 	<xsl:template match="a:Precision" mode="properties">
 		<ldm:precision><xsl:value-of select="."/></ldm:precision>
 	</xsl:template>
+
+  <xsl:template match="a:DefaultValue" mode="properties">
+    <ldm:defaultValue><xsl:value-of select="."/></ldm:defaultValue>
+  </xsl:template>
+
+  <xsl:template match="a:TargetModelURL" mode="properties">
+    <ldm:targetModelURL><xsl:value-of select="."/></ldm:targetModelURL>
+  </xsl:template>
+
+  <xsl:template match="a:TargetModelID" mode="properties">
+    <ldm:targetModelID><xsl:value-of select="."/></ldm:targetModelID>
+  </xsl:template>
+
+  <xsl:template match="a:TargetModelClassID" mode="properties">
+    <ldm:targetModelClassID><xsl:value-of select="."/></ldm:targetModelClassID>
+</xsl:template>
+
+  <xsl:template match="a:TargetModelLastModificationDate" mode="properties">
+    <ldm:targetModelLastModificationDate><xsl:value-of select="."/></ldm:targetModelLastModificationDate>
+  </xsl:template>
+
+  <xsl:template match="a:TargetStereotype" mode="properties">
+    <xsl:if test=".!=''">
+      <ldm:targetStereotype><xsl:value-of select="."/></ldm:targetStereotype>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="a:TargetID" mode="properties">
+    <ldm:targetID><xsl:value-of select="."/></ldm:targetID>
+  </xsl:template>
+
+  <xsl:template match="a:TargetClassID" mode="properties">
+    <ldm:targetClassID><xsl:value-of select="."/></ldm:targetClassID>
+  </xsl:template>
+
+  <xsl:template match="a:TargetPackagePath" mode="properties">
+    <ldm:targetPackagePath><xsl:value-of select="."/></ldm:targetPackagePath>
+  </xsl:template>
+
+  <xsl:template match="a:DataFormat.Type" mode="properties">
+    <ldm:dataFormatType><xsl:value-of select="."/></ldm:dataFormatType>
+  </xsl:template>
+
+  <xsl:template match="a:DataFormat.Expression" mode="properties">
+    <ldm:dataFormatExpression><xsl:value-of select="."/></ldm:dataFormatExpression>
+  </xsl:template>
+
+  <xsl:template match="a:Generated" mode="properties">
+    <!-- Lijkt een boolean? Waarde kan in ieder geval 0 zijn -->
+    <ldm:generated><xsl:value-of select="."/></ldm:generated>
+  </xsl:template>
+
+  <xsl:template match="a:Displayed" mode="properties">
+    <!-- Lijkt een boolean? Waarde kan in ieder geval 0 zijn -->
+    <ldm:displayed><xsl:value-of select="."/></ldm:displayed>
+  </xsl:template>
+
+  <xsl:template match="a:OriginalUOL" mode="properties">
+    <ldm:originalUOL><xsl:value-of select="."/></ldm:originalUOL>
+  </xsl:template>
+
+  <xsl:template match="a:OriginalClassID" mode="properties">
+    <ldm:originalClassID><xsl:value-of select="."/></ldm:originalClassID>
+  </xsl:template>
+
+  <xsl:template match="a:OriginalID" mode="properties">
+    <ldm:originalID><xsl:value-of select="."/></ldm:originalID>
+  </xsl:template>
+
+  <xsl:template match="a:History" mode="properties">
+    <!-- TODO: History is a string, but seems to be structured -->
+  </xsl:template>
+
+  <xsl:template match="a:ExtendedAttributesText" mode="properties">
+    <!-- Extended attributes text contains the particular extensions to the "normal" fields -->
+    <!-- Related to a XEM, but haven't parsed one yet... -->
+    <xsl:for-each select="tokenize(.,'\n')">
+      <xsl:variable name="key" select="substring-before(substring-after(.,'{'),'}')"/>
+      <xsl:if test="$key!=''">
+        <ldm:extendedAttributeText>
+          <rdf:Description>
+            <ldm:key rdf:resource="{$prefix}{$key}"/>
+            <ldm:unparsedText><xsl:value-of select="."/></ldm:unparsedText> <!-- TODO: Parse this! -->
+          </rdf:Description>
+        </ldm:extendedAttributeText>
+      </xsl:if>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="a:ExtendedBaseCollection.CollectionName" mode="properties">
+    <ldm:collectionName><xsl:value-of select="."/></ldm:collectionName>
+  </xsl:template>
+
+  <xsl:template match="a:BaseDataSource.ModelType" mode="properties">
+    <ldm:modelType rdf:resource="{$prefix}{.}"/>
+  </xsl:template>
+
+  <xsl:template match="a:AccessType" mode="properties">>
+    <!-- Seems to be a list of values. Value RO is allowed -->
+    <ldm:accessType><xsl:value-of select="."/></ldm:accessType>
+  </xsl:template>
 
 	<!-- Relatie properties (inline links) -->
 	<xsl:template match="o:EntityAttribute" mode="properties">
@@ -231,7 +362,7 @@
 	</xsl:template>
 
 	<xsl:template match="c:Domain" mode="properties">
-		<xsl:for-each select="o:Domain">
+		<xsl:for-each select="o:Domain|o:Shortcut">
 			<ldm:domain rdf:resource="{$prefix}{key('item',@Ref)/a:ObjectID}"/>
 		</xsl:for-each>
 	</xsl:template>
@@ -248,6 +379,181 @@
 		</xsl:for-each>
 	</xsl:template>
 
+  <xsl:template match="c:ExtendedModelDefinitions" mode="properties">
+    <xsl:for-each select="o:Shortcut">
+      <ldm:hasExtendedModelDefinition rdf:resource="{$prefix}{a:ObjectID}"/>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="c:Domains" mode="properties">
+    <xsl:for-each select="o:Domain">
+      <ldm:hasDomain rdf:resource="{$prefix}{a:ObjectID}"/>
+    </xsl:for-each>
+    <xsl:for-each select="o:Shortcut">
+      <ldm:hasDomain rdf:resource="{$prefix}{a:ObjectID}"/>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="c:TargetModels" mode="properties">
+    <xsl:for-each select="o:TargetModel">
+      <ldm:hasTargetModel rdf:resource="{$prefix}{a:ObjectID}"/>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="c:Relationships" mode="properties">
+    <xsl:for-each select="o:Relationship">
+      <ldm:hasRelationship rdf:resource="{$prefix}{a:ObjectID}"/>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="c:Replications" mode="properties">
+    <xsl:for-each select="o:Replication">
+      <ldm:hasReplication rdf:resource="{$prefix}{a:ObjectID}"/>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="c:SubReplications" mode="properties">
+    <xsl:for-each select="o:SubReplication">
+      <ldm:hasSubReplication rdf:resource="{$prefix}{a:ObjectID}"/>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="c:Entities" mode="properties">
+    <xsl:for-each select="o:Entity">
+      <ldm:hasEntity rdf:resource="{$prefix}{a:ObjectID}"/>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="c:SubEntities" mode="properties">
+    <xsl:for-each select="o:Shortcut">
+      <ldm:hasSubEntity rdf:resource="{$prefix}{a:ObjectID}"/>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="c:FullShortcutReplica" mode="properties">
+    <xsl:for-each select="o:Replication|o:SubReplication">
+      <ldm:hasFullShortcutReplica rdf:resource="{$prefix}{key('item',@Ref)/a:ObjectID}"/>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="c:SubShortcuts" mode="properties">
+    <xsl:for-each select="o:Shortcut">
+      <ldm:subShortcut rdf:resource="{$prefix}{a:ObjectID}"/>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="c:FormatObjects" mode="properties">
+    <xsl:for-each select="o:DataFormat">
+      <ldm:formatObject rdf:resource="{$prefix}{key('item',@Ref)/a:ObjectID}"/>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="c:GeneratedModels" mode="properties">
+    <xsl:for-each select="o:Shortcut">
+      <ldm:hasGeneratedModel rdf:resource="{$prefix}{a:ObjectID}"/>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="c:SourceModels" mode="properties">
+    <xsl:for-each select="o:Shortcut">
+      <ldm:hasSourceModel rdf:resource="{$prefix}{a:ObjectID}"/>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="c:Mappings" mode="properties">
+    <xsl:for-each select="o:DefaultObjectMapping">
+      <ldm:hasMapping rdf:resource="{$prefix}{a:ObjectID}"/>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="c:Classifier" mode="properties">
+    <xsl:for-each select="o:Entity">
+      <ldm:classifier rdf:resource="{$prefix}{key('item',@Ref)/a:ObjectID}"/>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="c:SourceClassifiers" mode="properties">
+    <xsl:for-each select="o:Shortcut">
+      <ldm:sourceClassifier rdf:resource="{$prefix}{key('item',@Ref)/a:ObjectID}"/>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="c:DefaultMapping" mode="properties">
+    <xsl:for-each select="o:DefaultObjectMapping">
+      <ldm:defaultMapping rdf:resource="{$prefix}{key('item',@Ref)/a:ObjectID}"/>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="c:SessionShortcuts" mode="properties">
+    <xsl:for-each select="o:Shortcut">
+      <ldm:sessionShortcut rdf:resource="{$prefix}{key('item',@Ref)/a:ObjectID}"/>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="c:PersistentSelectionManagers" mode="properties">
+    <!-- TODO: Voorlopig niet -->
+    <!--
+    <xsl:for-each select="o:PersistentSelectionManager" mode="properties">
+      <ldm:hasPersistentSelectionManager rdf:resource="{$prefix}{a:ObjectID}"/>
+    </xsl:for-each>
+    -->
+  </xsl:template>
+
+  <xsl:template match="c:SessionReplications" mode="properties">
+    <xsl:for-each select="o:Replication">
+      <ldm:sessionReplication rdf:resource="{$prefix}{key('item',@Ref)/a:ObjectID}"/>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="c:FullShortcutModel" mode="properties">
+    <xsl:for-each select="o:Model">
+      <ldm:hasFullShortcutModel rdf:resource="{$prefix}{a:ObjectID}"/>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="c:LinkShortcutExtremities" mode="properties">
+    <xsl:for-each select="o:Shortcut">
+      <ldm:linkShortcutExtremities rdf:resource="{$prefix}{key('item',@Ref)/a:ObjectID}"/>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="c:Content" mode="properties">
+    <xsl:for-each select="o:Shortcut">
+      <ldm:hasContent rdf:resource="{$prefix}{key('item',@Ref)/a:ObjectID}"/>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="c:ReplicaObject" mode="properties">
+    <!-- Replica objects can be anything, so a * for-each -->
+    <xsl:for-each select="*">
+      <ldm:hasReplicaObject rdf:resource="{$prefix}{key('item',@Ref)/a:ObjectID}"/>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="c:BaseStructuralFeatureMapping.Feature" mode="properties">
+    <xsl:for-each select="a:EntityAttribute">
+      <ldm:feature rdf:resource="{$prefix}{key('item',@Ref)/a:ObjectID}"/>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="c:SourceFeatures" mode="properties">
+    <xsl:for-each select="a:Shortcut">
+      <ldm:sourceFeature rdf:resource="{$prefix}{key('item',@Ref)/a:ObjectID}"/>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="c:DataSource" mode="properties">
+    <xsl:for-each select="o:DefaultDataSource">
+      <ldm:dataSource rdf:resource="{$prefix}{key('item',@Ref)/a:ObjectID}"/>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="c:BaseDataSource.SourceModels" mode="properties">
+    <xsl:for-each select="o:Shortcut">
+      <ldm:sourceModel rdf:resource="{$prefix}{key('item',@Ref)/a:ObjectID}"/>
+    </xsl:for-each>
+  </xsl:template>
+
 	<!-- Catch all properties -->
 	<xsl:template match="*" mode="properties">
 		<rdfs:label>TODO: <xsl:value-of select="../local-name()"/>/<xsl:value-of select="local-name()"/></rdfs:label>
@@ -256,12 +562,33 @@
 	<!-- Resource parsing -->
 	<xsl:template match="o:Model" mode="parse">
 		<ldm:Model rdf:about="{$prefix}{a:ObjectID}">
-			<xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate|a:Description|a:Stereotype|a:Comment|a:Author|a:Version|a:RepositoryFilename" mode="properties"/>
+      <!-- Literal properties -->
+			<xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate|a:Description|a:Stereotype|a:Comment|a:Author|a:Version|a:RepositoryFilename|a:History" mode="properties"/>
+      <!-- Relations properties -->
+      <xsl:apply-templates select="c:ExtendedModelDefinitions|c:Domains|c:TargetModels|c:Relationships|c:Replications|c:Entities|c:GeneratedModels|c:SourceModels|c:PersistentSelectionManagers" mode="properties"/>
 		</ldm:Model>
 		<xsl:apply-templates select="*" mode="parse"/>
 	</xsl:template>
 
-	<xsl:template match="c:LogicalDiagrams|c:DefaultDiagram|c:Reports|c:TargetModels|a:PackageOptionsText|a:ModelOptionsText" mode="parse">
+  <xsl:template match="c:TargetModels" mode="parse">
+    <xsl:apply-templates select="*" mode="parse"/>
+  </xsl:template>
+
+  <xsl:template match="o:TargetModel" mode="parse">
+    <ldm:Targetmodel rdf:about="{$prefix}{a:ObjectID}">
+      <!-- Literal properties -->
+      <xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate|a:TargetModelURL|a:TargetModelID|a:TargetModelClassID|a:TargetModelLastModificationDate" mode="properties"/>
+      <!-- Relations properties -->
+      <xsl:apply-templates select="c:SessionReplications|c:FullShortcutModel" mode="properties"/>
+    </ldm:Targetmodel>
+    <xsl:apply-templates select="*" mode="parse"/>
+  </xsl:template>
+
+  <xsl:template match="c:FullShortcutModel" mode="parse">
+    <xsl:apply-templates select="*" mode="parse"/>
+  </xsl:template>
+
+	<xsl:template match="c:LogicalDiagrams|c:DefaultDiagram|c:Reports|a:PackageOptionsText|a:ModelOptionsText" mode="parse">
 		<!-- Don't process diagrams or technical options: that's visualisation! -->
 	</xsl:template>
 
@@ -272,15 +599,34 @@
 	<xsl:template match="o:Entity" mode="parse">
 		<ldm:Entity rdf:about="{$prefix}{a:ObjectID}">
 			<!-- Literal properties -->
-			<xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate|a:Description|a:Stereotype|a:Comment" mode="properties"/>
+			<xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate|a:Description|a:Stereotype|a:Comment|a:Generated|a:History" mode="properties"/>
 			<!-- Relations properties -->
 			<xsl:apply-templates select="c:Attributes/o:EntityAttribute" mode="properties"/> <!-- Inline -->
 			<xsl:apply-templates select="c:Identifiers/o:Identifier" mode="properties"/> <!-- Inline -->
 			<xsl:apply-templates select="c:PrimaryIdentifier" mode="properties"/> <!-- Refs -->
 			<xsl:apply-templates select="c:AttachedRules" mode="properties"/> <!-- Refs -->
+      <xsl:apply-templates select="c:SubEntities" mode="properties"/> <!-- Inline -->
 		</ldm:Entity>
 		<xsl:apply-templates select="*" mode="parse"/>
 	</xsl:template>
+
+  <xsl:template match="c:SubEntities" mode="parse">
+    <xsl:apply-templates select="*" mode="parse"/>
+  </xsl:template>
+
+  <xsl:template match="c:ExtendedCollections" mode="parse">
+    <xsl:apply-templates select="*" mode="parse"/>
+  </xsl:template>
+
+  <xsl:template match="o:ExtendedCollection" mode="parse">
+    <ldm:ExtenedCollection rdf:about="{$prefix}{a:ObjectID}">
+      <!-- Literal properties -->
+      <xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate|a:ExtendedBaseCollection.CollectionName" mode="properties"/>
+      <!-- Relations properties -->
+			<xsl:apply-templates select="c:Content" mode="properties"/>
+    </ldm:ExtenedCollection>
+    <xsl:apply-templates select="*" mode="parse"/>
+  </xsl:template>
 
 	<xsl:template match="c:Attributes" mode="parse">
 		<xsl:apply-templates select="*" mode="parse"/>
@@ -297,9 +643,9 @@
 				<xsl:apply-templates select="c:DataItem" mode="properties"/>
 			</xsl:when>
 			<xsl:otherwise>
-					<xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate|a:Description|a:Stereotype|a:Comment|a:LogicalAttribute.Mandatory|a:DataType|a:Length|a:ListOfValues|a:LowValue|a:Format|a:Precision" mode="properties"/>
+					<xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate|a:Description|a:Stereotype|a:Comment|a:LogicalAttribute.Mandatory|a:DataType|a:Length|a:ListOfValues|a:LowValue|a:HighValue|a:Format|a:Precision|a:DefaultValue|a:History|a:Displayed|a:ExtendedAttributesText" mode="properties"/>
 					<!-- Relations properties -->
-					<xsl:apply-templates select="c:InheritedFrom|c:Domain" mode="properties"/>
+					<xsl:apply-templates select="c:InheritedFrom|c:Domain|c:FormatObjects" mode="properties"/>
 			</xsl:otherwise>
 		</xsl:choose>
 		</ldm:Attribute>
@@ -325,7 +671,7 @@
 
 	<xsl:template match="o:Identifier" mode="parse">
 		<ldm:Identifier rdf:about="{$prefix}{a:ObjectID}">
-			<xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate|a:Description|a:Stereotype|a:Comment" mode="properties"/>
+			<xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate|a:Description|a:Stereotype|a:Comment|a:History" mode="properties"/>
 			<!-- Relations properties -->
 			<xsl:apply-templates select="c:Identifier.Attributes" mode="properties"/>
 		</ldm:Identifier>
@@ -338,7 +684,7 @@
 
 	<xsl:template match="o:Relationship" mode="parse">
 		<ldm:Relationship rdf:about="{$prefix}{a:ObjectID}">
-			<xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate|a:Description|a:Stereotype|a:Comment|a:Entity1ToEntity2Role|a:Entity2ToEntity1Role|a:Entity1ToEntity2RoleCardinality|a:Entity2ToEntity1RoleCardinality|a:DependentRole" mode="properties"/>
+			<xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate|a:Description|a:Stereotype|a:Comment|a:Entity1ToEntity2Role|a:Entity2ToEntity1Role|a:Entity1ToEntity2RoleCardinality|a:Entity2ToEntity1RoleCardinality|a:DependentRole|a:DominantRole|a:History" mode="properties"/>
 			<!-- Relations properties -->
 			<xsl:apply-templates select="c:Joins/o:RelationshipJoin" mode="properties"/>
 			<xsl:apply-templates select="c:Object1|c:Object2|c:ParentIdentifier" mode="properties"/>
@@ -401,10 +747,27 @@
 
 	<xsl:template match="o:Domain" mode="parse">
 		<ldm:Domain rdf:about="{$prefix}{a:ObjectID}">
-			<xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate|a:Description|a:Stereotype|a:Comment|a:DataType|a:Length|a:ListOfValues|a:LowValue|a:Format|a:Precision" mode="properties"/>
+			<xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate|a:Description|a:Stereotype|a:Comment|a:DataType|a:Length|a:ListOfValues|a:LowValue|a:HighValue|a:Format|a:Precision|a:DefaultValue" mode="properties"/>
+      <!-- Relations properties -->
+      <xsl:apply-templates select="c:FormatObjects" mode="properties"/>
 		</ldm:Domain>
 		<xsl:apply-templates select="*" mode="parse"/>
 	</xsl:template>
+
+  <!-- Shortcuts can be anything, some information is available from the shortcut itself -->
+  <xsl:template match="o:Shortcut" mode="parse">
+    <ldm:Shortcut rdf:about="{$prefix}{a:ObjectID}">
+      <!-- Literal properties -->
+      <xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate|a:TargetStereotype|a:TargetID|a:TargetClassID|a:TargetPackagePath|a:History" mode="properties"/>
+      <!-- Relations properties -->
+      <xsl:apply-templates select="c:FullShortcutReplica|c:SubShortcuts|c:LinkShortcutExtremities" mode="properties"/>
+    </ldm:Shortcut>
+    <xsl:apply-templates select="*" mode="parse"/>
+  </xsl:template>
+
+  <xsl:template match="c:SubShortcuts" mode="parse">
+    <xsl:apply-templates select="*" mode="parse"/>
+  </xsl:template>
 
 	<xsl:template match="c:BusinessRules" mode="parse">
 		<xsl:apply-templates select="*" mode="parse"/>
@@ -422,6 +785,7 @@
 
 	<xsl:template match="o:ExtendedDependency" mode="parse">
 		<ldm:ExtendedDependency rdf:about="{$prefix}{a:ObjectID}">
+      <!-- Literal properties -->
 			<xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate|a:Description|a:Stereotype|a:Comment" mode="properties"/>
 			<!-- Relations properties -->
 			<xsl:apply-templates select="c:Object1|c:Object2" mode="properties"/>
@@ -430,20 +794,114 @@
 	</xsl:template>
 
 	<xsl:template match="c:GeneratedModels" mode="parse">
-		<!-- might be lineage, but won't do for now -->
+		<xsl:apply-templates select="*" mode="parse"/>
 	</xsl:template>
+
+  <xsl:template match="c:SourceModels" mode="parse">
+    <xsl:apply-templates select="*" mode="parse"/>
+  </xsl:template>
+
+  <xsl:template match="c:Mappings" mode="parse">
+    <xsl:apply-templates select="*" mode="parse"/>
+  </xsl:template>
 
 	<xsl:template match="c:ConceptualDiagrams" mode="parse">
 		<!-- Don't bother with layout -->
 	</xsl:template>
 
+  <xsl:template match="c:Replications" mode="parse">
+    <xsl:apply-templates select="*" mode="parse"/>
+  </xsl:template>
+
+  <xsl:template match="o:Replication" mode="parse">
+    <ldm:Replication rdf:about="{$prefix}{a:ObjectID}">
+      <!-- Literal properties -->
+      <xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate|a:OriginalUOL|a:OriginalClassID|a:OriginalID" mode="properties"/>
+      <!-- Relations properties -->
+			<xsl:apply-templates select="c:SubReplications|c:ReplicaObject" mode="properties"/>
+    </ldm:Replication>
+    <xsl:apply-templates select="*" mode="parse"/>
+  </xsl:template>
+
+  <xsl:template match="c:SubReplications" mode="parse">
+    <xsl:apply-templates select="*" mode="parse"/>
+  </xsl:template>
+
+  <xsl:template match="o:SubReplication" mode="parse">
+    <ldm:SubReplication rdf:about="{$prefix}{a:ObjectID}">
+      <xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate|a:OriginalUOL|a:OriginalClassID|a:OriginalID" mode="properties"/>
+    </ldm:SubReplication>
+    <xsl:apply-templates select="*" mode="parse"/>
+  </xsl:template>
+
+  <xsl:template match="c:ExtendedModelDefinitions" mode="parse">
+    <xsl:apply-templates select="*" mode="parse"/>
+  </xsl:template>
+
+  <xsl:template match="c:DataFormats" mode="parse">
+    <xsl:apply-templates select="*" mode="parse"/>
+  </xsl:template>
+
+  <xsl:template match="o:DataFormat" mode="parse">
+    <ldm:DataFormat rdf:about="{$prefix}{a:ObjectID}">
+      <xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate|a:DataFormat.Type|a:DataFormat.Expression" mode="properties"/>
+    </ldm:DataFormat>
+    <xsl:apply-templates select="*" mode="parse"/>
+  </xsl:template>
+
+  <xsl:template match="o:DefaultObjectMapping" mode="parse">
+    <ldm:DefaultObjectMapping rdf:about="{$prefix}{a:ObjectID}">
+      <!-- Literal properties -->
+      <xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate" mode="properties"/>
+      <!-- Relations properties -->
+			<xsl:apply-templates select="c:Classifier|c:SourceClassifiers|c:DataSource" mode="properties"/>
+    </ldm:DefaultObjectMapping>
+    <xsl:apply-templates select="*" mode="parse"/>
+  </xsl:template>
+
+  <xsl:template match="c:StructuralFeatureMaps" mode="parse">
+    <xsl:apply-templates select="*" mode="parse"/>
+  </xsl:template>
+
+  <xsl:template match="o:DefaultStructuralFeatureMapping" mode="parse">
+    <ldm:DefaultStructuralFeatureMapping rdf:about="{$prefix}{a:ObjectID}">
+      <!-- Literal properties -->
+      <xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate" mode="properties"/>
+      <!-- Relations properties -->
+			<xsl:apply-templates select="c:BaseStructuralFeatureMapping.Feature|c:SourceFeatures" mode="properties"/>
+    </ldm:DefaultStructuralFeatureMapping>
+    <xsl:apply-templates select="*" mode="parse"/>
+  </xsl:template>
+
+  <xsl:template match="c:PersistentSelectionManagers" mode="parse">
+    <xsl:apply-templates select="o:PersistentSelectionManager" mode="parse"/>
+  </xsl:template>
+
+  <xsl:template match="o:PersistentSelectionManager" mode="parse">
+    <!-- TODO: Doesn't seem that important -->
+  </xsl:template>
+
+  <xsl:template match="c:DataSources" mode="parse">
+    <xsl:apply-templates select="*" mode="parse"/>
+  </xsl:template>
+
+  <xsl:template match="o:DefaultDataSource" mode="parse">
+    <ldm:DefaultDataSource rdf:about="{$prefix}{a:ObjectID}">
+      <!-- Literal properties -->
+      <xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate|a:BaseDataSource.ModelType|a:AccessType" mode="properties"/>
+      <!-- Relations properties -->
+      <xsl:apply-templates select="c:BaseDataSource.SourceModels" mode="properties"/>
+    </ldm:DefaultDataSource>
+    <xsl:apply-templates select="*" mode="parse"/>
+  </xsl:template>
+
 	<!-- Properties, don't parse them as resources -->
-	<xsl:template match="a:SessionID|a:ObjectID|a:Name|a:Code|a:Creator|a:Modifier|a:CreationDate|a:ModificationDate|a:Description|a:Stereotype|a:Comment|a:Author|a:Version|a:RepositoryFilename|a:BaseAttribute.Mandatory|a:LogicalAttribute.Mandatory|a:DataType|a:Length|a:ListOfValues|a:Entity1ToEntity2Role|a:Entity2ToEntity1Role|a:Entity1ToEntity2RoleCardinality|a:Entity2ToEntity1RoleCardinality|a:DependentRole|a:MutuallyExclusive|a:InheritAll|a:BaseLogicalInheritance.Complete|a:LowValue|a:Format|a:Precision" mode="parse">
+	<xsl:template match="a:SessionID|a:ObjectID|a:Name|a:Code|a:Creator|a:Modifier|a:CreationDate|a:ModificationDate|a:Description|a:Stereotype|a:Comment|a:Author|a:Version|a:RepositoryFilename|a:BaseAttribute.Mandatory|a:LogicalAttribute.Mandatory|a:DataType|a:Length|a:ListOfValues|a:Entity1ToEntity2Role|a:Entity2ToEntity1Role|a:Entity1ToEntity2RoleCardinality|a:Entity2ToEntity1RoleCardinality|a:DependentRole|a:DominantRole|a:MutuallyExclusive|a:InheritAll|a:BaseLogicalInheritance.Complete|a:LowValue|a:HighValue|a:Format|a:Precision|a:TargetModelURL|a:TargetModelID|a:TargetModelClassID|a:TargetModelLastModificationDate|a:TargetStereotype|a:TargetID|a:TargetClassID|a:TargetPackagePath|a:DefaultValue|a:DataFormat.Type|a:DataFormat.Expression|a:Generated|a:OriginalUOL|a:OriginalClassID|a:OriginalID|a:History|a:Displayed|a:ExtendedAttributesText|a:ExtendedBaseCollection.CollectionName|a:BaseDataSource.ModelType|a:AccessType" mode="parse">
 		<!-- Nothing to do -->
 	</xsl:template>
 
 	<!-- Relation properties, don't parse them as resources -->
-	<xsl:template match="c:PrimaryIdentifier|c:Identifier.Attributes|c:Object1|c:Object2|c:AttachedRules|c:ParentIdentifier|c:InheritedFrom|c:Domain|c:ParentEntity|c:DataItem" mode="parse">
+	<xsl:template match="c:PrimaryIdentifier|c:Identifier.Attributes|c:Object1|c:Object2|c:AttachedRules|c:ParentIdentifier|c:InheritedFrom|c:Domain|c:ParentEntity|c:DataItem|c:FullShortcutReplica|c:FormatObjects|c:Classifier|c:SourceClassifiers|c:DefaultMapping|c:SessionShortcuts|c:SessionReplications|c:LinkShortcutExtremities|c:Content|c:ReplicaObject|c:BaseStructuralFeatureMapping.Feature|c:SourceFeatures|c:DataSource|c:BaseDataSource.SourceModels" mode="parse">
 		<!-- Nothing to do -->
 	</xsl:template>
 
