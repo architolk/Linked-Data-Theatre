@@ -27,6 +27,8 @@
  */
 package nl.architolk.ldt.processors;
 
+import org.jsoup.safety.Cleaner;
+import org.jsoup.safety.Safelist;
 import org.orbeon.oxf.pipeline.api.PipelineContext;
 import org.orbeon.oxf.processor.ProcessorInputOutputInfo;
 import org.orbeon.oxf.processor.SimpleProcessor;
@@ -323,7 +325,7 @@ public class HttpClientProcessor extends SimpleProcessor {
 									if (configNode.valueOf("tidy").equals("yes") && contentType.getValue().startsWith("text/html")) {
 										org.jsoup.nodes.Document doc = Jsoup.parse(inStream,"UTF-8",configNode.valueOf("url")); //TODO UTF-8 should be read from response!
 
-										RDFCleaner cleaner = new RDFCleaner();
+                    Cleaner cleaner = new Cleaner(Safelist.relaxed().addAttributes(":all","class"));
 										org.jsoup.nodes.Document cleandoc = cleaner.clean(doc);
 										cleandoc.outputSettings().escapeMode(Entities.EscapeMode.xhtml);
 										cleandoc.outputSettings().syntax(org.jsoup.nodes.Document.OutputSettings.Syntax.xml);
