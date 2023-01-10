@@ -861,7 +861,8 @@
 									<p:output name="data" id="translator"/>
 								</p:processor>
 								<!-- Translate -->
-								<p:processor name="oxf:xslt">
+                <!-- Using unsafe-xslt instead of xslt to use external functions (so you can use external functions in translators) -->
+								<p:processor name="oxf:unsafe-xslt">
 									<p:input name="config" href="#translator"/>
 									<p:input name="data" href="aggregate('root',#xmldata,#containercontext,current())"/>
 									<p:output name="data" id="rdfdata"/>
