@@ -32,7 +32,7 @@
 	<xsl:output name="xml" method="xml" version="1.0" encoding="UTF-8" indent="no"/>
 
 	<xsl:template match="/root|/croot|/sroot">
-		<xsl:variable name="uri-filter">[^a-zA-Z0-9:\.\-_~/()#&amp;=,]</xsl:variable> <!-- ampersand and equal-sign added for Juriconnect -->
+		<xsl:variable name="uri-filter">[^a-zA-Z0-9:\.\-_~/()#&amp;=,\?]</xsl:variable> <!-- ampersand and equal-sign added for Juriconnect -->
 		<xsl:variable name="para-filter">[^a-zA-Z0-9:\.\-_~/()#%&amp;=,&lt;&gt;{} `!\?\*\+@\[\]\^\$]</xsl:variable> <!-- Remove anything that's not in the list - maybe to strict?? -->
 		<xsl:variable name="para-filter-relaxed">[\p{Cc}-[\t\n]]</xsl:variable> <!-- Remove control characters, except new line and tab -->
 		<xsl:variable name="para-name-filter">[^a-zA-Z\-_]</xsl:variable>
