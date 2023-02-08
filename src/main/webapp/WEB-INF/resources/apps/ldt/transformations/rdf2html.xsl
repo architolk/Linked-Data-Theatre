@@ -131,6 +131,9 @@
 			<xsl:value-of select="$params"/>
 		</xsl:when> <!-- Link fragment, so locally derefenceable -->
 		<xsl:when test="$var/@elmo:appearance='http://bp4mc2.org/elmo/def#GlobalLink'"><xsl:value-of select="$uri"/></xsl:when> <!-- Global link, so plain uri -->
+		<xsl:when test="$var/@elmo:appearance='http://bp4mc2.org/elmo/def#GlobalLinkParams'">
+			<xsl:value-of select="$uri"/>?<xsl:value-of select="substring($params,2,255)"/>
+		</xsl:when> <!-- Global link with params -->
 		<xsl:when test="$urlpart=''"><xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource?subject=<xsl:value-of select="encode-for-uri($uri)"/></xsl:when> <!-- Make non-dereferenceable uri's locally dereferenceable -->
 		<xsl:when test="$linkstrategy!='global' and $domain!=$serverdomain"><xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource?subject=<xsl:value-of select="encode-for-uri($uri)"/></xsl:when> <!-- External uri's are treated as non-dereferenceable -->
 		<xsl:when test="$linkstrategy!='global' and matches($uri,'#')"><xsl:value-of select="$docroot"/><xsl:value-of select="$subdomain"/>/resource?subject=<xsl:value-of select="encode-for-uri($uri)"/></xsl:when> <!-- Hash uri's are treated as non-dereferenceable (to avoid losing the part after the hash) -->
