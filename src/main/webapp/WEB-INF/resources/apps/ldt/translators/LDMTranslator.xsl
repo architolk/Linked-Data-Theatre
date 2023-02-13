@@ -124,7 +124,11 @@
 	</xsl:template>
 
 	<xsl:template match="a:LogicalAttribute.Mandatory|a:BaseAttribute.Mandatory" mode="properties">
-		<ldm:mandatory><xsl:value-of select="."/></ldm:mandatory>
+		<xsl:choose>
+			<xsl:when test=".='1'"><ldm:mandatory rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ldm:mandatory></xsl:when>
+			<xsl:when test=".='0'"><ldm:mandatory rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ldm:mandatory></xsl:when>
+			<xsl:otherwise><ldm:mandatory><xsl:value-of select="."/></ldm:mandatory></xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 
 	<xsl:template match="a:DataType" mode="properties">
@@ -348,7 +352,7 @@
 	</xsl:template>
 
 	<xsl:template match="c:Object1" mode="properties">
-		<xsl:for-each select="o:Entity">
+		<xsl:for-each select="o:Entity|o:Shortcut"> <!--Not sure if shortcut is always an entity, but cannot find out... -->
 			<ldm:object1entity rdf:resource="{$prefix}{key('item',@Ref)/a:ObjectID}"/>
 		</xsl:for-each>
 		<xsl:for-each select="o:EntityAttribute">
@@ -360,7 +364,7 @@
 	</xsl:template>
 
 	<xsl:template match="c:Object2" mode="properties">
-		<xsl:for-each select="o:Entity">
+		<xsl:for-each select="o:Entity|o:Shortcut"> <!--Not sure if shortcut is always an entity, but cannot find out... -->
 			<ldm:object2entity rdf:resource="{$prefix}{key('item',@Ref)/a:ObjectID}"/>
 		</xsl:for-each>
 		<xsl:for-each select="o:EntityAttribute">
