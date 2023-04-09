@@ -45,9 +45,22 @@
 <xsl:variable name="language"><xsl:value-of select="/results/context/language"/></xsl:variable>
 
 <xsl:template match="/">
-	<xsl:for-each select="results/rdf:RDF[1]">
-		<xsl:apply-templates select="rdf:Description/elmo:data/rdf:Description" mode="iteratelist"/>
-	</xsl:for-each>
+  <xsl:choose>
+    <xsl:when test="exists(results/rdf:RDF[1]/rdf:Description/elmo:data/rdf:Description)">
+      <!-- Complex version for MD, using data elements (more control over de visualisation) -->
+    	<xsl:for-each select="results/rdf:RDF[1]">
+    		<xsl:apply-templates select="rdf:Description/elmo:data/rdf:Description" mode="iteratelist"/>
+    	</xsl:for-each>
+    </xsl:when>
+    <xsl:otherwise>
+      <!-- Regular version, works with "normal" appearances -->
+      <xsl:for-each select="results">
+    		<xsl:for-each select="rdf:RDF"><xsl:sort select="@elmo:index"/>
+    			<xsl:apply-templates select="." mode="present"/>
+    		</xsl:for-each>
+    	</xsl:for-each>
+    </xsl:otherwise>
+  </xsl:choose>
 </xsl:template>
 
 <xsl:template match="rdf:Description" mode="iteratelist">

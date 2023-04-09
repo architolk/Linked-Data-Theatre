@@ -448,6 +448,9 @@
     <xsl:for-each select="o:Entity">
       <ldm:hasEntity rdf:resource="{$prefix}{a:ObjectID}"/>
     </xsl:for-each>
+		<xsl:for-each select="o:Shortcut">
+      <ldm:hasEntity rdf:resource="{$prefix}{a:ObjectID}"/>
+    </xsl:for-each>
   </xsl:template>
 
   <xsl:template match="c:SubEntities" mode="properties">
@@ -548,7 +551,7 @@
   </xsl:template>
 
   <xsl:template match="c:Content" mode="properties">
-    <xsl:for-each select="o:Shortcut">
+    <xsl:for-each select="o:Shortcut|o:Entity">
       <ldm:hasContent rdf:resource="{$prefix}{key('item',@Ref)/a:ObjectID}"/>
     </xsl:for-each>
   </xsl:template>
@@ -583,6 +586,12 @@
       <ldm:sourceModel rdf:resource="{$prefix}{key('item',@Ref)/a:ObjectID}"/>
     </xsl:for-each>
   </xsl:template>
+
+	<xsl:template match="c:ExtendedCollections" mode="properties">
+		<xsl:for-each select="o:ExtendedCollection">
+			<ldm:extendedCollection rdf:resource="{$prefix}{a:ObjectID}"/>
+		</xsl:for-each>
+	</xsl:template>
 
 	<!-- Catch all properties -->
 	<xsl:template match="*" mode="properties">
@@ -636,6 +645,7 @@
 			<xsl:apply-templates select="c:PrimaryIdentifier" mode="properties"/> <!-- Refs -->
 			<xsl:apply-templates select="c:AttachedRules" mode="properties"/> <!-- Refs -->
       <xsl:apply-templates select="c:SubEntities" mode="properties"/> <!-- Inline -->
+			<xsl:apply-templates select="c:ExtendedCollections" mode="properties"/> <!-- Inline -->
 		</ldm:Entity>
 		<xsl:apply-templates select="*" mode="parse"/>
 	</xsl:template>
@@ -649,12 +659,12 @@
   </xsl:template>
 
   <xsl:template match="o:ExtendedCollection" mode="parse">
-    <ldm:ExtenedCollection rdf:about="{$prefix}{a:ObjectID}">
+    <ldm:ExtendedCollection rdf:about="{$prefix}{a:ObjectID}">
       <!-- Literal properties -->
       <xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate|a:ExtendedBaseCollection.CollectionName" mode="properties"/>
       <!-- Relations properties -->
 			<xsl:apply-templates select="c:Content" mode="properties"/>
-    </ldm:ExtenedCollection>
+    </ldm:ExtendedCollection>
     <xsl:apply-templates select="*" mode="parse"/>
   </xsl:template>
 
@@ -664,20 +674,21 @@
 
 	<xsl:template match="o:EntityAttribute" mode="parse">
 		<ldm:Attribute rdf:about="{$prefix}{a:ObjectID}">
-		<xsl:choose>
-			<xsl:when test="c:DataItem/o:DataItem/@Ref!=''">
-				<!-- When DataItem exists, the DataItems are the "first class citizens" -->
-				<rdfs:label><xsl:value-of select="key('item',c:DataItem/o:DataItem/@Ref)/a:Name"/></rdfs:label>
-				<xsl:apply-templates select="a:ObjectID|a:BaseAttribute.Mandatory" mode="properties"/>
-				<!-- Relations propertie -->
-				<xsl:apply-templates select="c:DataItem" mode="properties"/>
-			</xsl:when>
-			<xsl:otherwise>
-					<xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate|a:Description|a:Annotation|a:Stereotype|a:Comment|a:LogicalAttribute.Mandatory|a:DataType|a:Length|a:ListOfValues|a:LowValue|a:HighValue|a:Format|a:Precision|a:DefaultValue|a:History|a:Displayed|a:ExtendedAttributesText" mode="properties"/>
-					<!-- Relations properties -->
-					<xsl:apply-templates select="c:InheritedFrom|c:Domain|c:FormatObjects" mode="properties"/>
-			</xsl:otherwise>
-		</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="c:DataItem/o:DataItem/@Ref!=''">
+					<!-- When DataItem exists, the DataItems are the "first class citizens" -->
+					<rdfs:label><xsl:value-of select="key('item',c:DataItem/o:DataItem/@Ref)/a:Name"/></rdfs:label>
+					<xsl:apply-templates select="a:ObjectID|a:BaseAttribute.Mandatory" mode="properties"/>
+					<!-- Relations propertie -->
+					<xsl:apply-templates select="c:DataItem" mode="properties"/>
+				</xsl:when>
+				<xsl:otherwise>
+						<xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate|a:Description|a:Annotation|a:Stereotype|a:Comment|a:LogicalAttribute.Mandatory|a:DataType|a:Length|a:ListOfValues|a:LowValue|a:HighValue|a:Format|a:Precision|a:DefaultValue|a:History|a:Displayed|a:ExtendedAttributesText" mode="properties"/>
+						<!-- Relations properties -->
+						<xsl:apply-templates select="c:InheritedFrom|c:Domain|c:FormatObjects" mode="properties"/>
+						<xsl:apply-templates select="c:ExtendedCollections" mode="properties"/> <!-- Inline -->
+				</xsl:otherwise>
+			</xsl:choose>
 		</ldm:Attribute>
 		<xsl:apply-templates select="*" mode="parse"/>
 	</xsl:template>
@@ -718,6 +729,7 @@
 			<!-- Relations properties -->
 			<xsl:apply-templates select="c:Joins/o:RelationshipJoin" mode="properties"/>
 			<xsl:apply-templates select="c:Object1|c:Object2|c:ParentIdentifier" mode="properties"/>
+			<xsl:apply-templates select="c:ExtendedCollections" mode="properties"/> <!-- Inline -->
 		</ldm:Relationship>
 		<xsl:apply-templates select="*" mode="parse"/>
 	</xsl:template>

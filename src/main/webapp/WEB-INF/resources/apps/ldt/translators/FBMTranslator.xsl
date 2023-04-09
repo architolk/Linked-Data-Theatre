@@ -41,8 +41,16 @@
 	<xsl:variable name="smprefix">http://cognitatie.com/def/sm#</xsl:variable>
 	<xsl:variable name="dataprefix">urn:uuid:</xsl:variable>
 
+  <!--
+	Helpers
+	-->
+  <xsl:template match="@*" mode="datetime">
+    <!-- Format in source is 2022-11-16 10:16:51.215138+01, should be 2022-11-16T10:16:51.215138+01 -->
+    <xsl:value-of select="replace(.,' ','T')"/>
+  </xsl:template>
+
 	<!--
-	Custom properties (alleen SM)
+	Custom properties (SM)
 	-->
 
 	<xsl:template match="property[@name='Soort rechtsobject']" mode="custompropertydef">
@@ -318,13 +326,6 @@
 		<sm:voorwaardeLijst><xsl:value-of select="@value"/></sm:voorwaardeLijst>
 	</xsl:template>
 
-	<xsl:template match="property[@name='Additionele beperkingsregels (tijdelijk)']" mode="custompropertydef">
-		<rdf:Property rdf:about="{$smprefix}additioneleBeperkingsregel"><rdfs:label><xsl:value-of select="@name"/></rdfs:label></rdf:Property>
-	</xsl:template>
-	<xsl:template match="property[@name='Additionele beperkingsregels (tijdelijk)']" mode="customproperty">
-		<sm:additioneleBeperkingsregel><xsl:value-of select="@value"/></sm:additioneleBeperkingsregel>
-	</xsl:template>
-
 	<xsl:template match="property[@name='Concept heeft Synoniem']" mode="custompropertydef">
 		<rdf:Property rdf:about="{$smprefix}heeftSynoniem"><rdfs:label><xsl:value-of select="@name"/></rdfs:label></rdf:Property>
 	</xsl:template>
@@ -368,7 +369,18 @@
 		</xsl:choose>
 	</xsl:template>
 
-	<!-- Indien het een onbekende eigenschap is, dan wordt dit generieke mechanisme gebruikt -->
+  <!--
+	Custom properties (FBM)
+	-->
+
+  <xsl:template match="property[@name='Additionele beperkingsregels (tijdelijk)']" mode="custompropertydef">
+		<rdf:Property rdf:about="{$smprefix}additioneleBeperkingsregel"><rdfs:label><xsl:value-of select="@name"/></rdfs:label></rdf:Property>
+	</xsl:template>
+	<xsl:template match="property[@name='Additionele beperkingsregels (tijdelijk)']" mode="customproperty">
+		<sm:additioneleBeperkingsregel><xsl:value-of select="@value"/></sm:additioneleBeperkingsregel>
+	</xsl:template>
+
+	<!-- Indien het een onbekende eigenschap is, dan wordt dit generieke mechanisme gebruikt, zowel SM als FBM -->
 	<xsl:template match="property" mode="custompropertydef"/>
 	<xsl:template match="property" mode="customproperty">
 		<sm:property>
@@ -416,6 +428,14 @@
 			<xsl:otherwise><sm:documentID><xsl:value-of select="."/></sm:documentID></xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
+
+  <xsl:template match="@createdate" mode="sm-attribute">
+    <sm:createdate rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:apply-templates select="." mode="datetime"/></sm:createdate>
+  </xsl:template>
+
+  <xsl:template match="@updatedate" mode="sm-attribute">
+    <sm:updatedate rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:apply-templates select="." mode="datetime"/></sm:updatedate>
+  </xsl:template>
 
 	<xsl:template match="@*" mode="sm-attribute-def">
 		<rdf:Property rdf:about="{$smprefix}{name()}"><rdfs:label><xsl:value-of select="name()"/></rdfs:label></rdf:Property>
@@ -636,6 +656,9 @@
 	-->
 
 	<xsl:template match="knowledgedomain" mode="parse">
+    <sm:KnowledgeDomain rdf:about="urn:knowledgedomain:{@name}">
+      <sm:exportDateTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:apply-templates select="@exportdatetime" mode="datetime"/></sm:exportDateTime>
+    </sm:KnowledgeDomain>
 		<xsl:apply-templates select="semanticmodel|formallinguisticmodel" mode="parse"/>
 	</xsl:template>
 

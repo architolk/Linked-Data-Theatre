@@ -33,6 +33,7 @@
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 	xmlns:csvw="http://www.w3.org/ns/csvw#"
+  xmlns:owl="http://www.w3.org/2002/07/owl#"
 
 	xmlns:fn="fn" exclude-result-prefixes="fn"
 >
@@ -71,6 +72,7 @@
 											<csvw:rownum rdf:datatype="http://www.w3.org/2001/XMLSchema#integer"><xsl:value-of select="$pos"/></csvw:rownum>
 											<csvw:describes>
 												<rdf:Description rdf:about="{$container}/r{$sheetnr}-{$pos}s">
+                          <owl:sameAs xmlns:uuid="java:java.util.UUID" rdf:resource="urn:uuid:{uuid:randomUUID()}"/>
 													<xsl:for-each select="column">
 														<xsl:variable name="id" select="@id"/>
 														<xsl:if test=".!=''">
