@@ -6,6 +6,33 @@
 @prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
 @prefix stage: <http://localhost:8080/data2model/stage#>.
 
+stage:TabelLite a elmo:Representation;
+  elmo:url-pattern "/query/tabel-lite$";
+  elmo:contains stage:Menu;
+  elmo:query '''
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    SELECT ?label ?plabel ?comment
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/model> {
+        {
+          ?shape a sh:NodeShape.
+          ?shape rdfs:label ?label.
+          ?shape rdfs:comment ?comment
+        }
+        UNION
+        {
+          ?shape a sh:NodeShape.
+          ?shape rdfs:label ?label.
+          ?shape sh:property ?pshape.
+          ?pshape rdfs:label ?plabel.
+          ?pshape rdfs:comment ?comment
+        }
+      }
+    }
+    ORDER BY ?label ?plabel
+  ''';
+.
+
 stage:Tabel a elmo:Representation;
   elmo:url-pattern "/query/tabel$";
   elmo:contains stage:Menu;
