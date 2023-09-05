@@ -601,6 +601,10 @@
 	<!-- Resource parsing -->
 	<xsl:template match="o:Model" mode="parse">
 		<ldm:Model rdf:about="{$prefix}{a:ObjectID}">
+			<!-- In case of root model -->
+			<xsl:if test="../../local-name()='RootObject'">
+				<rdf:type rdf:resource="http://powerdesigner.com/def#RootModel"/>
+			</xsl:if>
       <!-- Literal properties -->
 			<xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate|a:Description|a:Annotation|a:Stereotype|a:Comment|a:Author|a:Version|a:RepositoryFilename|a:History" mode="properties"/>
       <!-- Relations properties -->
