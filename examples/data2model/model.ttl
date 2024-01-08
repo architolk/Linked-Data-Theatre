@@ -129,6 +129,42 @@ stage:ModelYed a elmo:Representation;
   ''';
 .
 
+stage:ModelYed2 a elmo:Representation;
+  elmo:url-pattern "/query/model-labels.yed$";
+  elmo:contains stage:Menu;
+  elmo:appearance elmo:VocabularyAppearance;
+  elmo:query '''
+    prefix sh: <http://www.w3.org/ns/shacl#>
+    construct {
+			?s ?p ?o.
+      ?sl sh:name ?label.
+      ?sn sh:name ?name.
+			?ds ?dp ?do.
+		}
+    where {
+      {
+        graph <http://localhost:8080/data2model/container/model> {
+          {
+            ?s ?p ?o
+            FILTER (?p!=sh:name && ?p!=rdfs:label)
+          }
+          UNION
+          {
+            ?sl rdfs:label ?label
+          }
+          UNION
+          {
+            ?sn sh:name ?name
+            FILTER NOT EXISTS {?sn rdfs:label ?lbl}
+          }
+        }
+      }
+			UNION
+		  { graph <http://localhost:8080/data2model/container/diagram> {?ds ?dp ?do}}
+    }
+  ''';
+.
+
 stage:ModelSelectionYed a elmo:Representation;
   elmo:url-pattern "/query/modelselection(.ttl|.yed)$";
   elmo:contains stage:Menu;

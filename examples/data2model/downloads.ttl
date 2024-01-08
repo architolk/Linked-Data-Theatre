@@ -24,7 +24,8 @@ stage:Downloads a elmo:Representation;
           <li><a href="query/model.ttl">SHACL turtle specificatie</a></li>
           <li><a href="query/model.yed">Grafische weergave (technische namen)</a></li>
           <li><a href="query/modelselection.yed">Grafische weergave (technische namen) - selectie</a></li>
-          <li><a href="query/modellang?format=yed">Grafische weergave (functionele namen)</a></li>
+          <li><a href="query/model-labels.yed">Grafische weergave (functionele labels)</a></li>
+          <li><a href="query/modellang?format=yed">Grafische weergave (functionele begripsnamen)</a></li>
           <li><a href="query/namespaces">Namespaces gebruik</a></li>
           <li><a href="query/uritemplates">URI templates</a></li>
           <li><a href="query/vocabularies">Vocabularies gebruik</a></li>

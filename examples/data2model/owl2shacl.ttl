@@ -12,6 +12,8 @@ localupdatestage:owl2shacl a elmo:Production;
 	elmo:contains stage:owl2shacl_scene1;
 	elmo:contains stage:owl2shacl_scene2;
 	elmo:contains stage:owl2shacl_scene3;
+	elmo:contains stage:owl2shacl_scene4;
+	elmo:contains stage:owl2shacl_scene5;
 .
 
 #Production for server installations
@@ -52,6 +54,7 @@ stage:owl2shacl_scene2 a elmo:Scene;
 		insert into <http://localhost:8080/data2model/container/model> {
 			?c sh:property ?pshape.
 			?pshape
+				a sh:PropertyShape;
 				sh:path ?property;
 				sh:name ?pname;
 				sh:minCount ?mincard;
@@ -65,19 +68,22 @@ stage:owl2shacl_scene2 a elmo:Scene;
 			SELECT ?c ?property (iri(concat(str(?c),".",strafter(str(?property),"#"))) as ?pshape) (strafter(str(?property),"#") as ?pname) ?mincard ?maxcard ?card ?class ?datatype
 			WHERE {
 				graph <http://localhost:8080/data2model/container/model> {
-					?c rdfs:subClassOf ?sub.
-					?sub owl:onProperty ?property.
-					OPTIONAL {?sub owl:minCardinality ?mincard}
-					OPTIONAL {?sub owl:maxCardinality ?maxcard}
-					OPTIONAL {?sub owl:cardinality ?card}
-					OPTIONAL {?sub owl:allValuesFrom ?class}
-					OPTIONAL {
-						?property rdfs:range ?class.
-						?class a owl:Class
+					{
+						?c rdfs:subClassOf ?sub.
+						?sub owl:onProperty ?property.
+						OPTIONAL {?sub owl:minCardinality ?mincard}
+						OPTIONAL {?sub owl:maxCardinality ?maxcard}
+						OPTIONAL {?sub owl:cardinality ?card}
+						OPTIONAL {?sub owl:allValuesFrom ?class}
 					}
-					OPTIONAL {
-						?property rdfs:range ?datatype.
-						FILTER NOT EXISTS {?datatype a owl:Class}
+					UNION
+					{
+						?c rdfs:subClassOf ?sub.
+						?sub owl:onProperty ?property.
+						OPTIONAL {
+							?property rdfs:range ?class.
+							?class a owl:Class
+						}
 					}
 				}
 			}
@@ -94,6 +100,7 @@ stage:owl2shacl_scene3 a elmo:Scene;
 		INSERT INTO <http://localhost:8080/data2model/container/model> {
 			?c sh:property ?pshape.
 		  ?pshape
+				a sh:PropertyShape;
 				sh:path ?property;
 				sh:name ?pname;
 				sh:class ?class;
@@ -110,8 +117,48 @@ stage:owl2shacl_scene3 a elmo:Scene;
 					}
 					OPTIONAL {
 						?property rdfs:range ?datatype.
-						FILTER (strbefore(str(?datatype),"#")="http://www.w3.org/2001/XMLSchema#")
+						FILTER NOT EXISTS {?datatype a owl:Class}
 					}
+				}
+			}
+		}
+	''';
+.
+
+stage:owl2shacl_scene4 a elmo:Scene;
+	elmo:index "04";
+	rdfs:label "Add rdfs:label for propertyshape from property";
+	elmo:query '''
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		PREFIX owl: <http://www.w3.org/2002/07/owl#>
+		INSERT INTO <http://localhost:8080/data2model/container/model> {
+			?pshape rdfs:label ?label
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/model> {
+				?pshape sh:path ?property.
+				?property rdfs:label ?label
+			}
+		}
+	''';
+.
+
+stage:owl2shacl_scene5 a elmo:Scene;
+	elmo:index "05";
+	rdfs:label "Add dummy property to force show of classes";
+	elmo:query '''
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		PREFIX owl: <http://www.w3.org/2002/07/owl#>
+		INSERT INTO <http://localhost:8080/data2model/container/model> {
+			?c sh:property [
+				sh:path []
+			]
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/model> {
+				?c a owl:Class.
+				FILTER NOT EXISTS {
+					?c sh:property ?p
 				}
 			}
 		}
