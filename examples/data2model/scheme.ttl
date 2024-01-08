@@ -54,24 +54,29 @@ stage:YedScheme a elmo:Representation;
       ?begrip rdfs:comment ?definition.
       ?relbegrip a skos:Concept.
       ?relbegrip rdfs:label ?relbegriplabel.
+      ?ds ?dp ?do
     }
     WHERE {
-      GRAPH <http://localhost:8080/data2model/container/scheme> {
-        ?begrip a skos:Concept.
-        ?begrip rdfs:label ?begriplabel.
-        OPTIONAL {
-          ?begrip ?rel ?relbegrip.
-          ?relbegrip a skos:Concept.
-          ?relbegrip rdfs:label ?relbegriplabel.
-        }
-        OPTIONAL {
-          ?begrip rdfs:comment ?comment
-        }
-        OPTIONAL {
-          ?begrip skos:definition ?definition
-          FILTER NOT EXISTS {?begrip rdfs:comment ?comment}
+      {
+        GRAPH <http://localhost:8080/data2model/container/scheme> {
+          ?begrip a skos:Concept.
+          ?begrip rdfs:label ?begriplabel.
+          OPTIONAL {
+            ?begrip ?rel ?relbegrip.
+            ?relbegrip a skos:Concept.
+            ?relbegrip rdfs:label ?relbegriplabel.
+          }
+          OPTIONAL {
+            ?begrip rdfs:comment ?comment
+          }
+          OPTIONAL {
+            ?begrip skos:definition ?definition
+            FILTER NOT EXISTS {?begrip rdfs:comment ?comment}
+          }
         }
       }
+      UNION
+      { graph <http://localhost:8080/data2model/container/diagram> {?ds ?dp ?do}}
     }
   ''';
 .
@@ -273,6 +278,40 @@ stage:TableScheme a elmo:Representation;
         }
       }
     }
+  '''
+.
+
+stage:TableSchemeExtended a elmo:Representation;
+  elmo:url-pattern "/query/tablescheme-extended(|.csv|.json|.xml)$";
+  elmo:contains stage:Menu;
+  elmo:query '''
+    PREFIX dct: <http://purl.org/dc/terms/>
+    SELECT ?concept ?concept_label
+           (GROUP_CONCAT(if(bound(?ref_label),?ref_label,?ref); separator=", ") as ?source)
+           ?definition
+           (GROUP_CONCAT(?snote; separator="; ") as ?scopenote)
+           (GROUP_CONCAT(?enote; separator="; ") as ?editorialnote)
+    WHERE {
+      GRAPH <http://localhost:8080/data2model/container/scheme> {
+        ?concept a skos:Concept.
+        ?concept rdfs:label ?concept_label.
+        OPTIONAL {?concept skos:definition ?definition}
+        OPTIONAL {?concept skos:scopeNote ?snote}
+        OPTIONAL {?concept skos:scopeNote ?enote}
+      }
+      OPTIONAL {
+        GRAPH <http://localhost:8080/data2model/container/scheme> {
+          ?concept dct:source ?ref.
+        }
+        OPTIONAL {
+          GRAPH <http://localhost:8080/data2model/container/data> {
+            ?ref rdfs:label ?ref_label
+          }
+        }
+      }
+    }
+    GROUP BY ?concept ?concept_label ?definition
+    ORDER BY ?concept_label
   '''
 .
 

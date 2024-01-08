@@ -11,6 +11,7 @@ localupdatestage:owl2shacl a elmo:Production;
 	elmo:contains stage:Menu;
 	elmo:contains stage:owl2shacl_scene1;
 	elmo:contains stage:owl2shacl_scene2;
+	elmo:contains stage:owl2shacl_scene3;
 .
 
 #Production for server installations
@@ -49,7 +50,8 @@ stage:owl2shacl_scene2 a elmo:Scene;
 		PREFIX sh: <http://www.w3.org/ns/shacl#>
 		PREFIX owl: <http://www.w3.org/2002/07/owl#>
 		insert into <http://localhost:8080/data2model/container/model> {
-			?c sh:property [
+			?c sh:property ?pshape.
+			?pshape
 				sh:path ?property;
 				sh:name ?pname;
 				sh:minCount ?mincard;
@@ -58,10 +60,9 @@ stage:owl2shacl_scene2 a elmo:Scene;
 				sh:maxCount ?card;
 				sh:class ?class;
 				sh:datatype ?datatype
-			]
 		}
 		WHERE {
-			SELECT ?c ?property (strafter(str(?property),"#") as ?pname) ?mincard ?maxcard ?card ?class ?datatype
+			SELECT ?c ?property (iri(concat(str(?c),".",strafter(str(?property),"#"))) as ?pshape) (strafter(str(?property),"#") as ?pname) ?mincard ?maxcard ?card ?class ?datatype
 			WHERE {
 				graph <http://localhost:8080/data2model/container/model> {
 					?c rdfs:subClassOf ?sub.
@@ -69,6 +70,7 @@ stage:owl2shacl_scene2 a elmo:Scene;
 					OPTIONAL {?sub owl:minCardinality ?mincard}
 					OPTIONAL {?sub owl:maxCardinality ?maxcard}
 					OPTIONAL {?sub owl:cardinality ?card}
+					OPTIONAL {?sub owl:allValuesFrom ?class}
 					OPTIONAL {
 						?property rdfs:range ?class.
 						?class a owl:Class
@@ -76,6 +78,39 @@ stage:owl2shacl_scene2 a elmo:Scene;
 					OPTIONAL {
 						?property rdfs:range ?datatype.
 						FILTER NOT EXISTS {?datatype a owl:Class}
+					}
+				}
+			}
+		}
+	''';
+.
+
+stage:owl2shacl_scene3 a elmo:Scene;
+	elmo:index "03";
+	rdfs:label "Add sh:PropertyShape to every rdfs:domain/rdfs:range (might result in overlap with previous!)";
+	elmo:query '''
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		PREFIX owl: <http://www.w3.org/2002/07/owl#>
+		INSERT INTO <http://localhost:8080/data2model/container/model> {
+			?c sh:property ?pshape.
+		  ?pshape
+				sh:path ?property;
+				sh:name ?pname;
+				sh:class ?class;
+				sh:datatype ?datatype
+		}
+		WHERE {
+			SELECT ?c ?property (iri(concat(str(?c),".",strafter(str(?property),"#"))) as ?pshape)(strafter(str(?property),"#") as ?pname) ?class ?datatype
+			WHERE {
+				graph <http://localhost:8080/data2model/container/model> {
+					?property rdfs:domain ?c.
+					OPTIONAL {
+						?property rdfs:range ?class.
+						?class a owl:Class
+					}
+					OPTIONAL {
+						?property rdfs:range ?datatype.
+						FILTER (strbefore(str(?datatype),"#")="http://www.w3.org/2001/XMLSchema#")
 					}
 				}
 			}
