@@ -40,6 +40,7 @@
 >
 
 	<xsl:key name="item" match="//*" use="@Id"/>
+	<xsl:key name="target" match="//*" use="a:TargetID"/>
 
 	<xsl:variable name="prefix">urn:uuid:</xsl:variable>
 
@@ -222,6 +223,22 @@
     <ldm:defaultValue><xsl:value-of select="."/></ldm:defaultValue>
   </xsl:template>
 
+	<xsl:template match="a:CharacterCase" mode="properties">
+		<xsl:variable name="ccase">
+			<xsl:choose>
+				<xsl:when test=".=0">MixedCase</xsl:when>
+				<xsl:when test=".=1">Uppercase</xsl:when>
+				<xsl:when test=".=2">Lowercase</xsl:when>
+				<xsl:when test=".=3">SentenceCase</xsl:when>
+				<xsl:when test=".=4">TitleCase</xsl:when>
+				<xsl:otherwise>unknown</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<xsl:if test=".!=''">
+    	<ldm:characterCase rdf:resource="http://powerdesigner.com/def#{$ccase}"/>
+		</xsl:if>
+  </xsl:template>
+
   <xsl:template match="a:TargetModelURL" mode="properties">
     <ldm:targetModelURL><xsl:value-of select="."/></ldm:targetModelURL>
   </xsl:template>
@@ -290,22 +307,6 @@
     <!-- TODO: History is a string, but seems to be structured -->
   </xsl:template>
 
-  <xsl:template match="a:ExtendedAttributesText" mode="properties">
-    <!-- Extended attributes text contains the particular extensions to the "normal" fields -->
-    <!-- Related to a XEM, but haven't parsed one yet... -->
-    <xsl:for-each select="tokenize(.,'\n')">
-      <xsl:variable name="key" select="substring-before(substring-after(.,'{'),'}')"/>
-      <xsl:if test="$key!=''">
-        <ldm:extendedAttributeText>
-          <rdf:Description>
-            <ldm:key rdf:resource="{$prefix}{$key}"/>
-            <ldm:unparsedText><xsl:value-of select="."/></ldm:unparsedText> <!-- TODO: Parse this! -->
-          </rdf:Description>
-        </ldm:extendedAttributeText>
-      </xsl:if>
-    </xsl:for-each>
-  </xsl:template>
-
   <xsl:template match="a:ExtendedBaseCollection.CollectionName" mode="properties">
     <ldm:collectionName><xsl:value-of select="."/></ldm:collectionName>
   </xsl:template>
@@ -318,6 +319,26 @@
     <!-- Seems to be a list of values. Value RO is allowed -->
     <ldm:accessType><xsl:value-of select="."/></ldm:accessType>
   </xsl:template>
+
+	<xsl:template match="a:ExtendedAttributesText" mode="properties">
+		<xsl:variable name="targetid">
+			<xsl:value-of select="key('target',substring-after(substring-before(.,'},'),'{'))[1]/a:Code"/>
+		</xsl:variable>
+		<xsl:if test="$targetid!=''">
+			<xsl:variable name="ea">
+				<xsl:for-each select="tokenize(.,',')">
+					<item><xsl:value-of select="."/></item>
+				</xsl:for-each>
+			</xsl:variable>
+			<xsl:for-each select="$ea/item">
+				<xsl:if test="((position() mod 2)=1) and (position()>1)">
+					<xsl:variable name="pos" select="position()"/>
+					<xsl:variable name="len" select="number(substring-before(.,'='))"/>
+					<xsl:element name="{$ea/item[$pos - 1]}" namespace="http://powerdesigner.com/{$targetid}/def#"><xsl:value-of select="substring(substring-after(.,'='),1,$len)"/></xsl:element>
+				</xsl:if>
+			</xsl:for-each>
+		</xsl:if>
+	</xsl:template>
 
 	<!-- Relatie properties (inline links) -->
 	<xsl:template match="o:EntityAttribute" mode="properties">
@@ -532,6 +553,12 @@
     <!-- TODO: Voorlopig niet -->
   </xsl:template>
 
+	<xsl:template match="c:ExtendedCompositions" mode="properties">
+		<xsl:for-each select="o:ExtendedComposition">
+			<ldm:extendedComposition rdf:resource="{$prefix}{a:ObjectID}"/>
+		</xsl:for-each>
+	</xsl:template>
+
   <xsl:template match="c:SessionReplications" mode="properties">
     <xsl:for-each select="o:Replication">
       <ldm:sessionReplication rdf:resource="{$prefix}{key('item',@Ref)/a:ObjectID}"/>
@@ -553,6 +580,12 @@
   <xsl:template match="c:Content" mode="properties">
     <xsl:for-each select="o:Shortcut|o:Entity">
       <ldm:hasContent rdf:resource="{$prefix}{key('item',@Ref)/a:ObjectID}"/>
+    </xsl:for-each>
+  </xsl:template>
+
+	<xsl:template match="c:ExtendedComposition.Content" mode="properties">
+    <xsl:for-each select="o:ExtendedSubObject">
+      <ldm:hasContent rdf:resource="{$prefix}{a:ObjectID}"/>
     </xsl:for-each>
   </xsl:template>
 
@@ -608,7 +641,7 @@
       <!-- Literal properties -->
 			<xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate|a:Description|a:Annotation|a:Stereotype|a:Comment|a:Author|a:Version|a:RepositoryFilename|a:History" mode="properties"/>
       <!-- Relations properties -->
-      <xsl:apply-templates select="c:ExtendedModelDefinitions|c:Domains|c:TargetModels|c:Relationships|c:Replications|c:Entities|c:GeneratedModels|c:SourceModels|c:PersistentSelectionManagers|c:ListReports" mode="properties"/>
+      <xsl:apply-templates select="c:ExtendedModelDefinitions|c:Domains|c:TargetModels|c:Relationships|c:Replications|c:Entities|c:GeneratedModels|c:SourceModels|c:PersistentSelectionManagers|c:ListReports|c:ExtendedCompositions" mode="properties"/>
 		</ldm:Model>
 		<xsl:apply-templates select="*" mode="parse"/>
 	</xsl:template>
@@ -671,6 +704,31 @@
     </ldm:ExtendedCollection>
     <xsl:apply-templates select="*" mode="parse"/>
   </xsl:template>
+
+	<xsl:template match="c:ExtendedCompositions" mode="parse">
+		<xsl:apply-templates select="o:ExtendedComposition" mode="parse"/>
+	</xsl:template>
+
+	<xsl:template match="o:ExtendedComposition" mode="parse">
+		<ldm:ExtendedComposition rdf:about="{$prefix}{a:ObjectID}">
+			<!-- Literal properties -->
+			<xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate|a:ExtendedBaseCollection.CollectionName" mode="properties"/>
+      <!-- Relations properties -->
+			<xsl:apply-templates select="c:ExtendedComposition.Content" mode="properties"/>
+		</ldm:ExtendedComposition>
+		<xsl:apply-templates select="*" mode="parse"/>
+	</xsl:template>
+
+	<xsl:template match="c:ExtendedComposition.Content" mode="parse">
+		<xsl:apply-templates select="o:ExtendedSubObject" mode="parse"/>
+	</xsl:template>
+
+	<xsl:template match="o:ExtendedSubObject" mode="parse">
+		<ldm:ExtendedSubObject rdf:about="{$prefix}{a:ObjectID}">
+			<!-- Literal properties -->
+			<xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate|a:Stereotype|a:ExtendedAttributesText" mode="properties"/>
+		</ldm:ExtendedSubObject>
+	</xsl:template>
 
 	<xsl:template match="c:Attributes" mode="parse">
 		<xsl:apply-templates select="*" mode="parse"/>
@@ -793,7 +851,7 @@
 
 	<xsl:template match="o:Domain" mode="parse">
 		<ldm:Domain rdf:about="{$prefix}{a:ObjectID}">
-			<xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate|a:Description|a:Annotation|a:Stereotype|a:Comment|a:DataType|a:Length|a:ListOfValues|a:LowValue|a:HighValue|a:Format|a:Precision|a:DefaultValue" mode="properties"/>
+			<xsl:apply-templates select="a:ObjectID|a:Name|a:Code|a:Creator|a:CreationDate|a:Modifier|a:ModificationDate|a:Description|a:Annotation|a:Stereotype|a:Comment|a:DataType|a:Length|a:ListOfValues|a:LowValue|a:HighValue|a:Format|a:Precision|a:DefaultValue|a:CharacterCase" mode="properties"/>
       <!-- Relations properties -->
       <xsl:apply-templates select="c:FormatObjects" mode="properties"/>
 		</ldm:Domain>
@@ -950,7 +1008,7 @@
   </xsl:template>
 
 	<!-- Properties, don't parse them as resources -->
-	<xsl:template match="a:SessionID|a:ObjectID|a:Name|a:Code|a:Creator|a:Modifier|a:CreationDate|a:ModificationDate|a:Description|a:Annotation|a:Stereotype|a:Comment|a:Author|a:Version|a:RepositoryFilename|a:BaseAttribute.Mandatory|a:LogicalAttribute.Mandatory|a:DataType|a:Length|a:ListOfValues|a:Entity1ToEntity2Role|a:Entity2ToEntity1Role|a:Entity1ToEntity2RoleCardinality|a:Entity2ToEntity1RoleCardinality|a:DependentRole|a:DominantRole|a:MutuallyExclusive|a:InheritAll|a:BaseLogicalInheritance.Complete|a:LowValue|a:HighValue|a:Format|a:Precision|a:TargetModelURL|a:TargetModelID|a:TargetModelClassID|a:TargetModelLastModificationDate|a:TargetStereotype|a:TargetID|a:TargetClassID|a:TargetPackagePath|a:DefaultValue|a:DataFormat.Type|a:DataFormat.Expression|a:Generated|a:OriginalUOL|a:OriginalClassID|a:OriginalID|a:History|a:Displayed|a:ExtendedAttributesText|a:ExtendedBaseCollection.CollectionName|a:BaseDataSource.ModelType|a:AccessType" mode="parse">
+	<xsl:template match="a:SessionID|a:ObjectID|a:Name|a:Code|a:Creator|a:Modifier|a:CreationDate|a:ModificationDate|a:Description|a:Annotation|a:Stereotype|a:Comment|a:Author|a:Version|a:RepositoryFilename|a:BaseAttribute.Mandatory|a:LogicalAttribute.Mandatory|a:DataType|a:Length|a:ListOfValues|a:Entity1ToEntity2Role|a:Entity2ToEntity1Role|a:Entity1ToEntity2RoleCardinality|a:Entity2ToEntity1RoleCardinality|a:DependentRole|a:DominantRole|a:MutuallyExclusive|a:InheritAll|a:BaseLogicalInheritance.Complete|a:LowValue|a:HighValue|a:Format|a:Precision|a:TargetModelURL|a:TargetModelID|a:TargetModelClassID|a:TargetModelLastModificationDate|a:TargetStereotype|a:TargetID|a:TargetClassID|a:TargetPackagePath|a:DefaultValue|a:DataFormat.Type|a:DataFormat.Expression|a:Generated|a:OriginalUOL|a:OriginalClassID|a:OriginalID|a:History|a:Displayed|a:ExtendedAttributesText|a:ExtendedBaseCollection.CollectionName|a:BaseDataSource.ModelType|a:AccessType|a:CharacterCase" mode="parse">
 		<!-- Nothing to do -->
 	</xsl:template>
 
