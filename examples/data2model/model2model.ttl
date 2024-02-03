@@ -15,6 +15,7 @@ localupdatestage:model2model a elmo:Production;
 	elmo:contains stage:model2model_scene4;
 	elmo:contains stage:model2model_scene5;
 	elmo:contains stage:model2model_scene6;
+	elmo:contains stage:model2model_scene7;
 .
 
 #Production for server installations
@@ -27,6 +28,7 @@ updatestage:model2model a elmo:Production;
 	elmo:contains stage:model2model_scene4;
 	elmo:contains stage:model2model_scene5;
 	elmo:contains stage:model2model_scene6;
+	elmo:contains stage:model2model_scene7;
 .
 
 stage:model2model_scene1 a elmo:Scene;
@@ -146,6 +148,23 @@ stage:model2model_scene6 a elmo:Scene;
 #					?someshape sh:name ?somename
 					?shape sh:name ?somename
 				}
+			}
+		}
+	''';
+.
+
+stage:model2model_scene7 a elmo:Scene;
+	elmo:index "07";
+	rdfs:label "Add sh:PropertyShape type to propertyshapes without a type declaration";
+	elmo:query '''
+		PREFIX sh: <http://www.w3.org/ns/shacl#>
+		INSERT INTO <http://localhost:8080/data2model/container/model> {
+			?pshape a sh:PropertyShape
+		}
+		WHERE {
+			graph <http://localhost:8080/data2model/container/model> {
+				?shape sh:property ?pshape.
+				FILTER NOT EXISTS {?pshape a sh:PropertyShape}
 			}
 		}
 	''';

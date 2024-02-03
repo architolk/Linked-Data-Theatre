@@ -160,7 +160,7 @@ stage:TabelScheme a elmo:Representation;
     PREFIX sh: <http://www.w3.org/ns/shacl#>
     PREFIX dct: <http://purl.org/dc/terms/>
     PREFIX localcontainer: <http://localhost:8080/data2model/container/>
-    SELECT DISTINCT ?type ?term ?label ?labelnl ?source ?definition ?definitionnl ?scopenotenl ?editorialnotenl
+    SELECT DISTINCT ?scheme ?type ?term ?label ?labelnl ?source ?definition ?definitionnl ?scopenotenl ?editorialnotenl
     WHERE {
       {
         GRAPH localcontainer:model {
@@ -220,6 +220,11 @@ stage:TabelScheme a elmo:Representation;
           }
           OPTIONAL {
             ?subject skos:notation ?notation
+          }
+          OPTIONAL {
+            ?subject skos:inScheme ?cs.
+            ?cs rdfs:label ?scheme.
+            FILTER (lang(?scheme)="nl")
           }
         }
         OPTIONAL {

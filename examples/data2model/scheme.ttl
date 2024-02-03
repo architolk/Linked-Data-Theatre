@@ -297,7 +297,7 @@ stage:TableSchemeExtended a elmo:Representation;
         ?concept rdfs:label ?concept_label.
         OPTIONAL {?concept skos:definition ?definition}
         OPTIONAL {?concept skos:scopeNote ?snote}
-        OPTIONAL {?concept skos:scopeNote ?enote}
+        OPTIONAL {?concept skos:editorialNote ?enote}
       }
       OPTIONAL {
         GRAPH <http://localhost:8080/data2model/container/scheme> {
